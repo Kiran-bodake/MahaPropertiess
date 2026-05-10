@@ -1,0 +1,425 @@
+{
+  "states": [
+    {
+      "name": "Maharashtra",
+      "cities": [
+        {
+          "name": "Nashik",
+          "localities": [
+            "Gangapur Road", "Nashik Road", "Ambad MIDC", "Satpur MIDC",
+            "Pathardi Phata", "Trimbak Road", "Meri Village", "Panchavati",
+            "College Road", "Indira Nagar", "Igatpuri", "Sinnar",
+            "Deolali", "Ozar", "Dindori", "Malegaon Road", "Cidco",
+            "Sinner Road", "Mumbai Naka", "Dwarka", "Tapovan Road",
+            "Canada Corner", "Sharanpur Road", "Nashik Phata", "Adgaon"
+          ]
+        },
+        {
+          "name": "Mumbai",
+          "localities": [
+            "Andheri East", "Andheri West", "Bandra East", "Bandra West",
+            "Powai", "Thane", "Navi Mumbai", "Worli", "Dadar", "Kurla",
+            "Borivali", "Malad", "Goregaon", "Kandivali", "Mulund",
+            "Vikhroli", "Ghatkopar", "Chembur", "Matunga", "Sion",
+            "Wadala", "Dharavi", "Khar", "Santacruz", "Juhu",
+            "Versova", "Oshiwara", "Jogeshwari", "Vikhroli", "Bhandup"
+          ]
+        },
+        {
+          "name": "Pune",
+          "localities": [
+            "Baner", "Hinjewadi", "Kothrud", "Wakad", "Pimpri",
+            "Chinchwad", "Viman Nagar", "Koregaon Park", "Hadapsar",
+            "Kharadi", "Balewadi", "Aundh", "Shivajinagar", "Karve Nagar",
+            "Warje", "Katraj", "Ambegaon", "Undri", "Kondhwa",
+            "Bibwewadi", "Sinhagad Road", "Deccan Gymkhana", "Camp",
+            "Kalyani Nagar", "Nagar Road", "Wagholi", "Lohegaon",
+            "Pimple Saudagar", "Pimple Nilakh", "Ravet"
+          ]
+        },
+        {
+          "name": "Nagpur",
+          "localities": [
+            "Sitabuldi", "Dharampeth", "Sadar", "Itwari", "Hingna MIDC",
+            "Butibori", "Wardha Road", "Katol Road", "Kamptee Road",
+            "Amravati Road", "Manish Nagar", "Subhash Nagar",
+            "Civil Lines", "Ramdaspeth", "Bajaj Nagar", "Pratap Nagar",
+            "Trimurti Nagar", "Nandanvan", "Laxmi Nagar", "Gaddigodam"
+          ]
+        },
+        {
+          "name": "Aurangabad",
+          "localities": [
+            "CIDCO", "N-2", "N-6", "N-7", "Waluj MIDC", "Chikalthana",
+            "Garkheda", "Cantonment", "Harsul", "Satara Road",
+            "Osmanpura", "Padampura", "Kranti Chowk", "Beed Bypass",
+            "TV Centre", "Gulmandi", "Mondha", "Mukundwadi"
+          ]
+        },
+        {
+          "name": "Thane",
+          "localities": [
+            "Kopri", "Majiwada", "Manpada", "Ghodbunder Road",
+            "Bhiwandi", "Dombivli East", "Dombivli West", "Kalyan East",
+            "Kalyan West", "Ambernath", "Badlapur", "Ulhasnagar",
+            "Mira Road", "Bhayander", "Vasai", "Virar",
+            "Kasarvadavali", "Kolshet", "Wagle Estate", "Naupada"
+          ]
+        },
+        {
+          "name": "Solapur",
+          "localities": [
+            "Hotgi Road", "Akkalkot Road", "Bijapur Road", "Osmanabad Road",
+            "Pandharpur Road", "Shegaon Naka", "Vijapur Road",
+            "Bhoom Road", "Kegaon", "Kambar Camp", "Murarji Peth"
+          ]
+        },
+        {
+          "name": "Kolhapur",
+          "localities": [
+            "Shivaji Peth", "Rajaram Road", "Tarabai Park",
+            "Kasba Bawada", "Shahupuri", "Rajarampuri",
+            "New Shahupuri", "Udyamnagar", "Nagala Park", "Kalamba"
+          ]
+        },
+        {
+          "name": "Sangli",
+          "localities": [
+            "Miraj", "Kupwad MIDC", "Sangli Wadi", "Vishrambag",
+            "Gaon Bhag", "Madhavnagar", "Pandharpur Road"
+          ]
+        },
+        {
+          "name": "Satara",
+          "localities": [
+            "Koregaon", "Panchgani", "Mahabaleshwar", "Wai",
+            "Karad", "Vaduj", "Shirval", "Medha"
+          ]
+        },
+        {
+          "name": "Ahmednagar",
+          "localities": [
+            "Shrirampur", "Kopargaon", "Rahuri", "Sangamner",
+            "Nagar MIDC", "Savedi", "Maliwada", "Bhingar"
+          ]
+        },
+        {
+          "name": "Jalgaon",
+          "localities": [
+            "Bhusawal", "Pachora", "Amalner", "Chopda",
+            "MIDC Jalgaon", "Savda", "Yawal", "Dharangaon"
+          ]
+        },
+        {
+          "name": "Dhule",
+          "localities": [
+            "Shirpur", "Sakri", "Dondaicha", "Sindkheda",
+            "Dhule MIDC", "Shastri Nagar", "Ram Nagar"
+          ]
+        },
+        {
+          "name": "Nandurbar",
+          "localities": [
+            "Shahada", "Navapur", "Taloda", "Akkalkuwa",
+            "Dhadgaon", "Nandurbar City"
+          ]
+        },
+        {
+          "name": "Buldhana",
+          "localities": [
+            "Khamgaon", "Malkapur", "Chikhli", "Shegaon",
+            "Nandura", "Motala", "Mehkar"
+          ]
+        },
+        {
+          "name": "Akola",
+          "localities": [
+            "Akot", "Telhara", "Balapur", "Murtijapur",
+            "Akola MIDC", "Civil Lines", "Ramdas Peth"
+          ]
+        },
+        {
+          "name": "Washim",
+          "localities": [
+            "Malegaon", "Risod", "Karanja", "Mangrulpir", "Manora"
+          ]
+        },
+        {
+          "name": "Amravati",
+          "localities": [
+            "Achalpur", "Daryapur", "Anjangaon", "Chandur Bazar",
+            "Amravati MIDC", "Rajapeth", "Shivajinagar"
+          ]
+        },
+        {
+          "name": "Yavatmal",
+          "localities": [
+            "Wani", "Pusad", "Umarkhed", "Arni", "Digras",
+            "Pandharkawada", "Ralegaon"
+          ]
+        },
+        {
+          "name": "Wardha",
+          "localities": [
+            "Hinganghat", "Wardha City", "Arvi", "Seloo",
+            "Samudrapur", "Pulgaon", "Deoli"
+          ]
+        },
+        {
+          "name": "Bhandara",
+          "localities": [
+            "Tumsar", "Sakoli", "Lakhani", "Pauni",
+            "Bhandara City", "Mohadi"
+          ]
+        },
+        {
+          "name": "Gondia",
+          "localities": [
+            "Gondia City", "Tirora", "Amgaon", "Goregaon",
+            "Arjuni Morgaon", "Salekasa"
+          ]
+        },
+        {
+          "name": "Chandrapur",
+          "localities": [
+            "Chandrapur City", "Ballarpur", "Rajura", "Warora",
+            "Chimur", "Bhadravati", "Gondpipri"
+          ]
+        },
+        {
+          "name": "Gadchiroli",
+          "localities": [
+            "Gadchiroli City", "Sironcha", "Aheri", "Chamorshi", "Armori"
+          ]
+        },
+        {
+          "name": "Osmanabad",
+          "localities": [
+            "Latur", "Tuljapur", "Umerga", "Washi",
+            "Osmanabad City", "Kalamb"
+          ]
+        },
+        {
+          "name": "Latur",
+          "localities": [
+            "Latur City", "Udgir", "Nilanga", "Ausa",
+            "Chakur", "Shirur Anantpal"
+          ]
+        },
+        {
+          "name": "Nanded",
+          "localities": [
+            "Nanded City", "Hadgaon", "Kinwat", "Mukhed",
+            "Biloli", "Deglur", "Naigaon"
+          ]
+        },
+        {
+          "name": "Hingoli",
+          "localities": [
+            "Hingoli City", "Basmat", "Kalamnuri", "Sengaon", "Aundha Nagnath"
+          ]
+        },
+        {
+          "name": "Parbhani",
+          "localities": [
+            "Parbhani City", "Gangakhed", "Pathri", "Jintur",
+            "Manwath", "Selu", "Purna"
+          ]
+        },
+        {
+          "name": "Ratnagiri",
+          "localities": [
+            "Chiplun", "Khed", "Guhagar", "Dapoli",
+            "Mandangad", "Ratnagiri City", "Sangameshwar"
+          ]
+        },
+        {
+          "name": "Sindhudurg",
+          "localities": [
+            "Kudal", "Sawantwadi", "Malvan", "Vengurla",
+            "Oros", "Kankavli", "Vaibhavwadi"
+          ]
+        },
+        {
+          "name": "Raigad",
+          "localities": [
+            "Alibag", "Panvel", "Uran", "Pen",
+            "Roha", "Mahad", "Mangaon", "Khopoli"
+          ]
+        },
+        {
+          "name": "Palghar",
+          "localities": [
+            "Palghar City", "Vasai-Virar", "Dahanu", "Talasari",
+            "Jawhar", "Wada", "Mokhada"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Gujarat",
+      "cities": [
+        {
+          "name": "Ahmedabad",
+          "localities": [
+            "Satellite", "Prahlad Nagar", "Bopal", "South Bopal",
+            "Maninagar", "Naroda", "Vastral", "Chandkheda",
+            "Gota", "Motera", "Thaltej", "Bodakdev", "Vastrapur"
+          ]
+        },
+        {
+          "name": "Surat",
+          "localities": [
+            "Adajan", "Vesu", "Pal", "Katargam",
+            "Udhna", "Varachha", "Althan", "Dumas Road"
+          ]
+        },
+        {
+          "name": "Vadodara",
+          "localities": [
+            "Alkapuri", "Fatehgunj", "Waghodia Road", "Gotri", "Makarpura",
+            "Karelibaug", "Subhanpura", "Manjalpur"
+          ]
+        },
+        {
+          "name": "Rajkot",
+          "localities": [
+            "Kalawad Road", "Gondal Road", "Bhaktinagar", "Mavdi",
+            "University Road", "150 ft Ring Road"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rajasthan",
+      "cities": [
+        {
+          "name": "Jaipur",
+          "localities": [
+            "Malviya Nagar", "Vaishali Nagar", "Mansarovar", "Jagatpura",
+            "Sitapura RIICO", "Tonk Road", "Ajmer Road",
+            "Sanganer", "Sodala", "Raja Park", "Civil Lines"
+          ]
+        },
+        {
+          "name": "Jodhpur",
+          "localities": ["Ratanada", "Paota", "Sardarpura", "Bhagat Ki Kothi", "Shastri Nagar"]
+        },
+        {
+          "name": "Udaipur",
+          "localities": ["Hiran Magri", "Pratap Nagar", "Sector 4", "Shobhagpura", "Sukher"]
+        }
+      ]
+    },
+    {
+      "name": "Madhya Pradesh",
+      "cities": [
+        {
+          "name": "Indore",
+          "localities": [
+            "Vijay Nagar", "Palasia", "Scheme 78", "AB Road",
+            "Bhawarkua", "Lasudia", "Sukhliya", "Rau", "Nipania"
+          ]
+        },
+        {
+          "name": "Bhopal",
+          "localities": [
+            "Arera Colony", "Kolar Road", "Hoshangabad Road",
+            "TT Nagar", "Jahangirabad", "Bagh Mugalia", "Ayodhya Nagar"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Karnataka",
+      "cities": [
+        {
+          "name": "Bengaluru",
+          "localities": [
+            "Whitefield", "Electronic City", "HSR Layout", "Koramangala",
+            "Indiranagar", "Sarjapur Road", "Marathahalli", "Hebbal",
+            "Yelahanka", "Bannerghatta Road", "JP Nagar"
+          ]
+        },
+        {
+          "name": "Mysuru",
+          "localities": ["Vijayanagar", "Kuvempunagar", "Hebbal", "Bogadi", "Nazarbad"]
+        }
+      ]
+    },
+    {
+      "name": "Telangana",
+      "cities": [
+        {
+          "name": "Hyderabad",
+          "localities": [
+            "Gachibowli", "Madhapur", "Kondapur", "Banjara Hills",
+            "Jubilee Hills", "Kukatpally", "Miyapur", "Uppal",
+            "LB Nagar", "Dilsukhnagar"
+          ]
+        }
+      ]
+    }
+  ],
+
+  "categories": [
+    { "value": "na-plot",         "label": "NA Plot" },
+    { "value": "na-plot",         "label": "Collector NA" },
+    { "value": "agriculture",     "label": "Agriculture Land" },
+    { "value": "commercial",      "label": "Commercial Plot" },
+    { "value": "warehouse",       "label": "Warehouse" },
+    { "value": "industrial-shed", "label": "Industrial Shed" },
+    { "value": "residential",     "label": "Residential Plot" },
+    { "value": "commercial",      "label": "Showroom / Shop" },
+    { "value": "na-plot",         "label": "CIDCO Plot" },
+    { "value": "commercial-land", "label": "MIDC Land" },
+    { "value": "agriculture",     "label": "Farmhouse Plot" },
+    { "value": "commercial",      "label": "Investment Plot" }
+  ],
+
+  "areaUnits": [
+    { "value": "sqft",    "label": "Sq. Ft." },
+    { "value": "sqm",     "label": "Sq. Meter" },
+    { "value": "acre",    "label": "Acre" },
+    { "value": "hectare", "label": "Hectare" },
+    { "value": "gunta",   "label": "Guntha" },
+    { "value": "bigha",   "label": "Bigha" },
+    { "value": "marla",   "label": "Marla" },
+    { "value": "kanal",   "label": "Kanal" }
+  ],
+
+  "amenities": [
+    "Road Access", "Water Connection", "Electricity", "24x7 Security",
+    "CCTV Surveillance", "Parking Area", "Borewell", "Fencing",
+    "Power Backup", "Natural Water Source", "Wide Road", "Near Highway",
+    "Near Market", "Near School", "Near Hospital", "Street Lights",
+    "Drainage", "Compound Wall", "Garden Area", "Warehouse Facility"
+  ],
+
+  "highlights": [
+    "NA Converted", "Clear Title", "RERA Approved", "Zero Brokerage",
+    "Ready Possession", "Immediate Handover", "Main Road Frontage",
+    "Corner Plot", "Gated Community", "Hill View", "Lake View",
+    "Garden Facing", "East Facing", "West Facing", "North Facing",
+    "River Nearby", "High ROI", "Upcoming Metro", "Near IT Park",
+    "MIDC Approved Zone", "Collector Approved"
+  ],
+
+  "constructionStatuses": [
+    { "value": "ready",              "label": "Ready to Move" },
+    { "value": "under-construction", "label": "Under Construction" },
+    { "value": "new-launch",         "label": "New Launch" }
+  ],
+
+  "propertyStatuses": [
+    { "value": "available",         "label": "Available" },
+    { "value": "under-negotiation", "label": "Under Negotiation" },
+    { "value": "sold",              "label": "Sold" }
+  ],
+
+  "postedByOptions": [
+    { "value": "owner",   "label": "Owner" },
+    { "value": "dealer",  "label": "Dealer / Agent" },
+    { "value": "builder", "label": "Builder / Developer" }
+  ]
+}

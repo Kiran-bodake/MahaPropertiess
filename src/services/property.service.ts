@@ -1,0 +1,227 @@
+import Property from "@/models/Property";
+import PropertyLocation from "@/models/PropertyLocation";
+import PropertyImage from "@/models/PropertyImage";
+import PropertyUser from "@/models/PropertyUser";
+import PropertyPricing from "@/models/PropertyPricing";
+import PropertyArea from "@/models/PropertyArea";
+import PropertyFlags from "@/models/PropertyFlags";
+import PropertyAmenity from "@/models/PropertyAmenity";
+import PropertyHighlight from "@/models/PropertyHighlight";
+
+export const createProperty = async (
+  body: any
+) => {
+
+  const propertyId =
+    body.propertyId;
+
+  /* Validation */
+  if (!propertyId) {
+    throw new Error(
+      "propertyId is required"
+    );
+  }
+
+  /* Prevent duplicate property */
+  const existingProperty =
+    await Property.findOne({
+      propertyId,
+    });
+
+  if (existingProperty) {
+    throw new Error(
+      `Property already exists with ID: ${propertyId}`
+    );
+  }
+
+  /* 1. Create Main Property */
+  const property =
+    await Property.create({
+      propertyId,
+
+      title:
+        body.title,
+
+      description:
+        body.description ||
+        "",
+
+      category:
+        body.category,
+
+      categoryLabel:
+        body.categoryLabel ||
+        "",
+
+      status:
+        body.status ||
+        "available",
+
+      constructionStatus:
+        body.constructionStatus ||
+        "ready",
+
+      postedBy:
+        body.postedBy,
+
+      agentName:
+        body.agentName,
+
+      agentPhone:
+        body.agentPhone,
+    });
+
+  /* 2. Related Collections */
+  await Promise.all([
+
+    /* USER */
+    PropertyUser.create({
+      propertyId,
+
+      postedBy:
+        body.postedBy,
+
+      name:
+        body.agentName,
+
+      phone:
+        body.agentPhone,
+    }),
+
+    /* LOCATION */
+    PropertyLocation.create({
+      propertyId,
+
+      state:
+        body.state || "",
+
+      city:
+        body.city || "",
+
+      locality:
+        body.locality || "",
+
+      pincode:
+        body.pincode || "",
+
+      address:
+        body.address || "",
+    }),
+
+    /* PRICING */
+    PropertyPricing.create({
+      propertyId,
+
+      price:
+        Number(
+          body.price
+        ) || 0,
+
+      pricePerUnit:
+        Number(
+          body.pricePerUnit
+        ) || 0,
+
+      priceNegotiable:
+        body.priceNegotiable ||
+        false,
+    }),
+
+    /* AREA */
+    PropertyArea.create({
+      propertyId,
+
+      area:
+        Number(
+          body.area
+        ) || 0,
+
+      areaUnit:
+        body.areaUnit ||
+        "sqft",
+
+      convertedSqft:
+        Number(
+          body.convertedSqft
+        ) || 0,
+    }),
+
+    /* FLAGS */
+    PropertyFlags.create({
+      propertyId,
+
+      isRERA:
+        body.isRERA ||
+        false,
+
+      reraNumber:
+        body.reraNumber ||
+        "",
+
+      isZeroBrokerage:
+        body.isZeroBrokerage ||
+        false,
+
+      isFeatured:
+        body.isFeatured ||
+        false,
+
+      isVerified:
+        false,
+
+      isActive:
+        true,
+    }),
+  ]);
+
+  /* 3. Amenities */
+  if (
+    body.amenities?.length
+  ) {
+    await PropertyAmenity.create({
+      propertyId,
+
+      amenities:
+        body.amenities,
+    });
+  }
+
+  /* 4. Highlights */
+  if (
+    body.highlights?.length
+  ) {
+    await PropertyHighlight.create({
+      propertyId,
+
+      highlights:
+        body.highlights,
+    });
+  }
+
+  /* 5. Images */
+  if (
+    body.images?.length
+  ) {
+    await PropertyImage.create({
+      propertyId,
+
+      images:
+        body.images.map(
+          (
+            url: string,
+            index: number
+          ) => ({
+            url,
+
+            isPrimary:
+              index === 0,
+
+            displayOrder:
+              index,
+          })
+        ),
+    });
+  }
+
+  return property;
+};
