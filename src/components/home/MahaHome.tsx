@@ -906,8 +906,9 @@ function Hero() {
     <section
       style={{
         position: "relative",
-        height: "min(560px,95svh)",
-        minHeight: "440px",
+        height: "min(720px,100svh)",
+        minHeight: "620px",
+        paddingBottom: "90px",
         overflow: "hidden",
         marginTop: "20px",
       }}
@@ -946,11 +947,12 @@ function Hero() {
 
       {/* ← → arrows */}
       <button
+        className="hero-arrow"
         onClick={() => go((slide - 1 + SLIDES.length) % SLIDES.length)}
         aria-label="Previous slide"
         style={{
           position: "absolute",
-          top: "50%",
+          top: "42%",
           left: "18px",
           transform: "translateY(-50%)",
           zIndex: 3,
@@ -958,22 +960,24 @@ function Hero() {
           height: "42px",
           borderRadius: "50%",
           background: "rgba(255,255,255,.13)",
-          backdropFilter: "blur(10px)",
+          opacity: 0.9,
+          backdropFilter: "blur(6px)",
           border: "1.5px solid rgba(255,255,255,.26)",
           color: "white",
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          display: "flex",
         }}
       >
         {I.arL}
       </button>
       <button
+        className="hero-arrow"
         onClick={() => go((slide + 1) % SLIDES.length)}
         aria-label="Next slide"
         style={{
           position: "absolute",
-          top: "50%",
+          top: "42%",
           right: "18px",
           transform: "translateY(-50%)",
           zIndex: 3,
@@ -981,12 +985,13 @@ function Hero() {
           height: "42px",
           borderRadius: "50%",
           background: "rgba(255,255,255,.13)",
-          backdropFilter: "blur(10px)",
+          opacity: 0.9,
+          backdropFilter: "blur(6px)",
           border: "1.5px solid rgba(255,255,255,.26)",
           color: "white",
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          display: "flex",
         }}
       >
         {I.arR}
@@ -1001,7 +1006,7 @@ function Hero() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          padding: "0 0 40px",
+          padding: "0 0 110px",
         }}
       >
         <div className="w">
@@ -1089,7 +1094,7 @@ function Hero() {
       <div
         style={{
           position: "absolute",
-          bottom: "16px",
+          bottom: "34px",
           left: "50%",
           transform: "translateX(-50%)",
           display: "flex",
@@ -3047,8 +3052,6 @@ function CTA() {
     </section>
   );
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
    WHATSAPP STICKY  — official green, real WA logo, bouncing
