@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
+import Image from "next/image";
 
 /* ─── Types ───────────────────────────────────────────── */
 type Meta = {
@@ -74,7 +75,7 @@ const lbl = (text: string, required = false) => (
     {text}{required && <span style={{ color: "#ef4444", marginLeft: "3px" }}>*</span>}
   </label>
 );
-const SectionCard = ({ title, subtitle, icon, children }: { title: string; subtitle?: string; icon: string; children: React.ReactNode }) => (
+const SectionCard = ({ title, subtitle, icon, children }: { title: string; subtitle?: string; icon: React.ReactNode; children: React.ReactNode }) => (
   <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #e5e7eb", padding: "24px", marginBottom: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
     <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", paddingBottom: "14px", borderBottom: "1px solid #f3f4f6" }}>
       <span style={{ fontSize: "1.3rem" }}>{icon}</span>
@@ -766,19 +767,79 @@ const handleNext = async () => {
             {step === 0 && (
               <SectionCard title="Who is posting this property?" subtitle="Let us know your role so we can tailor your listing." icon="👤">
                 <Row cols={3}>
-                  {meta.postedByOptions.map(opt => (
-                    <button key={opt.value + opt.label} type="button" onClick={() => set("postedBy", opt.value)} style={{
-                      padding: "14px 10px", borderRadius: "12px", border: "2px solid",
-                      borderColor: form.postedBy === opt.value ? "#16a34a" : "#e5e7eb",
-                      background: form.postedBy === opt.value ? "#f0fdf4" : "#fafafa",
-                      cursor: "pointer", textAlign: "center", transition: "all 0.15s",
-                    }}>
-                      <div style={{ fontSize: "1.5rem", marginBottom: "6px" }}>
-                        {opt.value === "owner" ? "🏠" : opt.value === "dealer" ? "🤝" : "🏗️"}
-                      </div>
-                      <div style={{ fontWeight: 700, fontSize: "0.9rem", color: form.postedBy === opt.value ? "#14532d" : "#374151" }}>{opt.label}</div>
-                    </button>
-                  ))}
+                  {meta.postedByOptions.map((opt) => (
+  <div
+    key={opt.value}
+    onClick={() => setForm(prev => ({ ...prev, postedBy: opt.value }))}
+    style={{
+      flex: 1,
+      minWidth: "180px",
+      cursor: "pointer",
+      border:
+        form.postedBy === opt.value
+          ? "2px solid #16a34a"
+          : "1px solid #d1d5db",
+      borderRadius: "16px",
+      padding: "20px",
+      background:
+        form.postedBy === opt.value
+          ? "#f0fdf4"
+          : "#ffffff",
+
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+
+      transition: "all 0.2s ease"
+    }}
+  >
+    {/* Image Container */}
+    <div
+      style={{
+        width: "64px",
+        height: "64px",
+        marginBottom: "12px",
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+
+        borderRadius: "16px",
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0"
+      }}
+    >
+      <Image
+        src={
+          opt.value === "owner"
+            ? "/images/person.png"
+            : opt.value === "dealer"
+            ? "/images/handshake.png"
+            : "/images/crane.png"
+        }
+        alt={opt.label}
+        width={36}
+        height={36}
+        style={{
+          objectFit: "contain"
+        }}
+      />
+    </div>
+
+    {/* Label */}
+    <span
+      style={{
+        fontSize: "16px",
+        fontWeight: 600,
+        color: "#1e293b",
+        textAlign: "center"
+      }}
+    >
+      {opt.label}
+    </span>
+  </div>
+))}
                 </Row>
                 <Row>
                   <Field>
@@ -841,7 +902,17 @@ const handleNext = async () => {
   <SectionCard
     title="Property Location"
     subtitle="Your property ID will be generated from the location you select."
-    icon="📍"
+    icon={
+      <Image
+        src="/images/map.png"
+        alt="Location"
+        width={22}
+        height={22}
+        style={{
+          objectFit: "contain"
+        }}
+      />
+    }
   >
     <Row cols={3}>
 
@@ -1027,10 +1098,20 @@ const handleNext = async () => {
 )}
 {/* ── STEP 2: Property Details ── */}
 {step === 2 && (
-  <SectionCard
+ <SectionCard
     title="Property Details"
     subtitle="Size, price and other specifics buyers need to evaluate."
-    icon="📐"
+    icon={
+      <Image
+        src="/images/property-paper.png"
+        alt="Property Details"
+        width={22}
+        height={22}
+        style={{
+          objectFit: "contain"
+        }}
+      />
+    }
   >
 
     <Row cols={3}>
@@ -1180,7 +1261,20 @@ const handleNext = async () => {
             {/* ── STEP 3: Features ── */}
             {step === 3 && (
               <>
-                <SectionCard title="Legal & Listing Flags" icon="✅">
+                <SectionCard
+  title="Legal & Listing Flags"
+  icon={
+    <Image
+      src="/images/insurance.png"
+      alt="Legal"
+      width={22}
+      height={22}
+      style={{
+        objectFit: "contain"
+      }}
+    />
+  }
+>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
                     <Toggle checked={form.isRERA} onChange={() => set("isRERA", !form.isRERA)} labelText="RERA Approved" />
                     <Toggle checked={form.isZeroBrokerage} onChange={() => set("isZeroBrokerage", !form.isZeroBrokerage)} labelText="Zero Brokerage" />
@@ -1190,12 +1284,39 @@ const handleNext = async () => {
                     <Field>{lbl("RERA Number")}<input style={inp()} value={form.reraNumber} onChange={e => set("reraNumber", e.target.value)} placeholder="e.g. P51800012345" /></Field>
                   )}
                 </SectionCard>
-                <SectionCard title="Key Highlights" subtitle="Select all that apply." icon="⭐">
+               <SectionCard
+  title="Key Highlights"
+  subtitle="Select all that apply."
+  icon={
+    <Image
+      src="/images/asterisk (1).png"
+      alt="Highlights"
+      width={22}
+      height={22}
+      style={{
+        objectFit: "contain"
+      }}
+    />
+  }
+>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                     {meta.highlights.map(h => <Chip key={h} label={h} active={form.highlights.includes(h)} onClick={() => toggleArr("highlights", h)} />)}
                   </div>
                 </SectionCard>
-                <SectionCard title="Amenities Available" icon="🏗️">
+               <SectionCard
+  title="Amenities Available"
+  icon={
+    <Image
+      src="/images/management (1).png"
+      alt="Amenities"
+      width={22}
+      height={22}
+      style={{
+        objectFit: "contain"
+      }}
+    />
+  }
+>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                     {meta.amenities.map(a => <Chip key={a} label={a} active={form.amenities.includes(a)} onClick={() => toggleArr("amenities", a)} />)}
                   </div>
@@ -1206,7 +1327,20 @@ const handleNext = async () => {
             {/* ── STEP 4: Images & Submit ── */}
             {step === 4 && (
               <>
-                <SectionCard title="Property Description" icon="📝">
+                <SectionCard
+  title="Property Description"
+  icon={
+    <Image
+      src="/images/newspaper (2).png"
+      alt="Description"
+      width={22}
+      height={22}
+      style={{
+        objectFit: "contain"
+      }}
+    />
+  }
+>
                   <textarea
                     value={form.description}
                     onChange={e => set("description", e.target.value)}
@@ -1219,7 +1353,17 @@ const handleNext = async () => {
                 <SectionCard
                   title="Upload Property Images"
                   subtitle={propertyId ? `Images will be stored in /uploads/${propertyId}/` : "Complete location step to get your property ID first."}
-                  icon="🖼️"
+                 icon={
+  <Image
+    src="/images/image (2).png"
+    alt="Upload Images"
+    width={22}
+    height={22}
+    style={{
+      objectFit: "contain"
+    }}
+  />
+}
                 >
                   {/* Property ID reminder */}
                   {propertyId && (

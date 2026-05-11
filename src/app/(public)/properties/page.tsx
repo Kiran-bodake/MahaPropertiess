@@ -147,6 +147,7 @@ function PropertiesContent() {
   const router = useRouter();
   const type = searchParams.get("type");
   const location = searchParams.get("location");
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -165,12 +166,27 @@ function PropertiesContent() {
   const [favorites, setFavorites] = useState<string[]>(() => readFavorites());
   const [toast, setToast] = useState<string>("");
 
-  const [filters, setFilters] = useState<Filters>({
-    q: searchParams.get("q") || "",
-    category: type ? [type] : searchParams.getAll("category") || [],
-    locality: location || searchParams.get("locality") || "",
-    sortBy: (searchParams.get("sortBy") as SortKey) || "newest",
-  });
+ const [filters, setFilters] = useState<Filters>({
+  // Search property by full name from Hero search
+  q: searchParams.get("q") ?? "",
+
+  // Category from navbar / chips / URL
+  category:
+    type
+      ? [type]
+      : searchParams.getAll("category"),
+
+  // Location from Hero or URL
+  locality:
+    location ??
+    searchParams.get("locality") ??
+    "",
+
+  // Sorting
+  sortBy:
+    (searchParams.get("sortBy") as SortKey) ??
+    "newest",
+});
 
   // Adjust filters during render when URL shorthand params change (avoids effect)
   const [prevType, setPrevType] = useState(type);
@@ -296,6 +312,18 @@ function PropertiesContent() {
     });
     return merged.slice(0, 8);
   }, [debouncedFilters.locality, cities, localities]);
+
+  const propertySuggestions = useMemo(() => {
+  const q = norm(filters.q);
+
+  if (!q) return [];
+
+  return allProperties
+    .filter((p) =>
+      norm(p.title || p.t).includes(q)
+    )
+    .slice(0, 8);
+}, [filters.q, allProperties]);
 
   const categorySuggestions = useMemo(() => {
     const q = norm(catInput);
@@ -520,14 +548,50 @@ function PropertiesContent() {
                   <div className="filterGroup">
                     <label htmlFor="f-search">Search Property</label>
                     <div className="inputWrap">
-                      <input
-                        id="f-search"
-                        type="text"
-                        placeholder='Try "NA plots", "warehouse"…'
-                        className="input"
-                        value={filters.q}
-                        onChange={(e) => setF("q", e.target.value)}
-                      />
+                     <div className="inputWrap">
+  <input
+    id="f-search"
+    type="text"
+    placeholder='Try "NA plots", "warehouse"...'
+    className="input"
+    value={filters.q}
+    autoComplete="off"
+    onFocus={() => setShowSearchDropdown(true)}
+    onChange={(e) => {
+      setF("q", e.target.value);
+      setShowSearchDropdown(true);
+    }}
+  />
+
+  {showSearchDropdown &&
+    propertySuggestions.length > 0 && (
+      <div className="dropdown">
+        {propertySuggestions.map(
+          (property: any) => (
+            <button
+              key={property.id || property.slug}
+              type="button"
+              className="dropItem"
+              onClick={() => {
+                setF(
+                  "q",
+                  property.title || property.t
+                );
+
+                setShowSearchDropdown(false);
+              }}
+            >
+              <span className="dropIcon">
+                🔍
+              </span>
+
+              {property.title || property.t}
+            </button>
+          )
+        )}
+      </div>
+    )}
+</div>
                       {filters.q && (
                         <button
                           type="button"

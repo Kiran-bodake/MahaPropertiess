@@ -705,7 +705,7 @@ function Navbar() {
             <div style={{ padding: "16px 24px", borderBottom: `1px solid ${T.line}`, flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "9px", height: "44px", border: `1.5px solid ${T.line}`, borderRadius: T.r12, padding: "0 14px", background: T.bgOff }}>
                 {IC.search}
-                <input placeholder="Search property, locality…" style={{ border: "none", outline: "none", background: "transparent", fontSize: "14px", fontFamily: T.font, width: "100%", color: T.ink }} />
+                <input placeholder="Ssearch property, locality…" style={{ border: "none", outline: "none", background: "transparent", fontSize: "14px", fontFamily: T.font, width: "100%", color: T.ink }} />
               </div>
             </div>
 
