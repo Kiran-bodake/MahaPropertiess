@@ -3,7 +3,7 @@ import Lead from "@/models/Lead";
 
 async function seedLeads() {
   const MONGODB_URI =
-    process.env.MONGO_URI || "mongodb://localhost:27017/mahaproperties";
+    process.env.MONGODB_URI || "mongodb://localhost:27017/mahaproperties";
 
   try {
     await mongoose.connect(MONGODB_URI);
