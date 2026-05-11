@@ -1,120 +1,124 @@
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Instagram,
-  Facebook,
-  Youtube,
-  Twitter,
-} from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
 import { FCOLS } from "@/lib/footerData";
 
 export function Footer() {
   const lk: React.CSSProperties = {
-    fontSize: "12.5px",
-    color: "white",
+    fontSize: "13px",
+    color: "rgba(255,255,255,0.82)",
+    textDecoration: "none",
+    lineHeight: "1.5",
+    transition: "0.2s ease",
   };
+
   return (
-    <footer style={{ background: "#070b0e", color: "white" }}>
+    <footer
+      style={{
+        background: "#070b0e",
+        color: "white",
+        overflow: "hidden",
+        width: "100%",
+      }}
+    >
       <div
-        className="container"
         style={{
-          paddingTop: "52px",
-          paddingBottom: "36px",
-          marginLeft: "50px",
+          width: "100%",
+          maxWidth: "1180px",
+          margin: "0 auto",
+          boxSizing: "border-box",
+          padding: "52px 24px 90px",
         }}
       >
+        {/* TOP GRID */}
         <div
           style={{
+            width: "100%",
             display: "grid",
-            gridTemplateColumns: "1.25fr repeat(4,1fr)",
-            gap: "36px",
-            marginBottom: "36px",
+            gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))",
+            gap: "32px",
+            alignItems: "flex-start",
+            marginBottom: "42px",
           }}
         >
-          <div>
+          {/* COMPANY INFO */}
+          <div
+            style={{
+              gridColumn: "span 2",
+              minWidth: 0,
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                marginBottom: "18px",
+                marginBottom: "20px",
               }}
             >
               <Image
                 src="/maha.png"
                 alt="Maha Properties Logo"
                 width={150}
-                height={50}
+                height={60}
                 style={{
                   objectFit: "contain",
+                  height: "auto",
                 }}
               />
             </div>
+
             <p
               style={{
-                fontSize: "12.5px",
-                lineHeight: 1.72,
-                marginBottom: "16px",
-                maxWidth: "210px",
+                fontSize: "14px",
+                lineHeight: 1.8,
+                marginBottom: "22px",
+                maxWidth: "300px",
+                color: "rgba(255,255,255,0.82)",
               }}
             >
               Nashik&apos;s most comprehensive property portal — NA plots,
               agriculture, commercial & industrial since 2018.
             </p>
+
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "7px" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+              }}
             >
+              {/* PHONE */}
               <a
                 href="tel:+919876543210"
                 style={{
                   ...lk,
                   display: "flex",
                   alignItems: "center",
-                  gap: "6px",
-                  color: "white",
+                  gap: "8px",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "white")}
               >
-                <Phone size={14} color="#2d9455" />
-                <span style={{ fontSize: "12.5px" }}>+91 98765 43210</span>
+                <Phone size={15} color="#22c55e" />
+                <span>+91 98765 43210</span>
               </a>
+
+              {/* EMAIL */}
               <a
                 href="mailto:hello@mahaproperties.in"
                 style={{
                   ...lk,
                   display: "flex",
-                  alignItems: "center", // ✅ center align
-                  gap: "6px",
-                  color: "white",
+                  alignItems: "center",
+                  gap: "8px",
+                  wordBreak: "break-word",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "white")}
               >
-                <span
-                  style={{
-                    color: "#2d9455",
-                    flexShrink: 0,
-                    marginTop: "1px",
-                  }}
-                >
-                  <Mail size={14} color="#2d9455" />
-                </span>
-
-                <span
-                  style={{
-                    fontSize: "12.5px",
-                    lineHeight: "1.4",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  hello@mahaproperties.in
-                </span>
+                <Mail size={15} color="#22c55e" />
+                <span>hello@mahaproperties.in</span>
               </a>
+
+              {/* LOCATION */}
               <div
                 style={{
                   display: "flex",
@@ -123,82 +127,56 @@ export function Footer() {
                 }}
               >
                 <MapPin
-                  size={14}
-                  color="#4ade82"
+                  size={15}
+                  color="#22c55e"
                   style={{
-                    marginTop: "2px",
+                    marginTop: "3px",
                     flexShrink: 0,
                   }}
                 />
 
                 <span
                   style={{
-                    fontSize: "12.5px",
-                    color: "#ffffff",
-                    lineHeight: "1.4",
+                    fontSize: "13px",
+                    color: "rgba(255,255,255,0.82)",
+                    lineHeight: "1.6",
                   }}
                 >
                   Nashik, Maharashtra 422001
                 </span>
               </div>
             </div>
-            {/* <div style={{ display: "flex", gap: "10px", marginTop: "18px" }}>
-              {[Instagram, Facebook, Youtube, Twitter].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "10px",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#9ca3af",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.background =
-                      "rgba(22,163,74,0.2)";
-                    (e.currentTarget as HTMLElement).style.color = "#4ade82";
-                    (e.currentTarget as HTMLElement).style.borderColor =
-                      "rgba(74,222,128,0.3)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.background =
-                      "rgba(255,255,255,0.05)";
-                    (e.currentTarget as HTMLElement).style.color = "#9ca3af";
-                    (e.currentTarget as HTMLElement).style.borderColor =
-                      "rgba(255,255,255,0.08)";
-                  }}
-                >
-                  <Icon size={15} />
-                </a>
-              ))}
-            </div> */}
           </div>
+
+          {/* FOOTER COLUMNS */}
           {FCOLS.map((col) => (
-            <div key={col.t}>
+            <div
+              key={col.t}
+              style={{
+                minWidth: 0,
+              }}
+            >
               <h5
                 style={{
                   fontSize: "11px",
                   fontWeight: 700,
-                  color: "rgba(255,255,255,.48)",
-                  letterSpacing: ".08em",
+                  color: "rgba(255,255,255,.45)",
+                  letterSpacing: ".09em",
                   textTransform: "uppercase",
-                  marginBottom: "14px",
+                  marginBottom: "18px",
                 }}
               >
                 {col.t}
               </h5>
+
               <ul
                 style={{
                   listStyle: "none",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "9px",
+                  gap: "12px",
+                  padding: 0,
+                  margin: 0,
                 }}
               >
                 {col.ll.map(([l, h]) => (
@@ -206,12 +184,12 @@ export function Footer() {
                     <Link
                       href={h}
                       style={lk}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = "#e8ffda")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = "white")
-                      }
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "#ffffff";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "rgba(255,255,255,0.82)";
+                      }}
                     >
                       {l}
                     </Link>
@@ -221,82 +199,59 @@ export function Footer() {
             </div>
           ))}
         </div>
+
+        {/* DIVIDER */}
         <div
           style={{
             height: "1px",
-            background: "rgba(255,255,255,.055)",
-            marginBottom: "18px",
+            background: "rgba(255,255,255,.08)",
+            marginBottom: "20px",
           }}
         />
+
+        {/* BOTTOM SECTION */}
         <div
           style={{
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
+            gap: "12px",
+            flexWrap: "wrap",
             fontSize: "12px",
-            marginTop: "20px",
+            color: "rgba(255,255,255,0.75)",
+            paddingBottom: "10px",
           }}
         >
-          {/* LEFT TEXT */}
-          <span style={{ flex: 1 }}>
+          <span
+            style={{
+              lineHeight: "1.6",
+            }}
+          >
             © 2026 MahaProperties. All rights reserved. Made with ❤️ in Nashik.
           </span>
 
-          {/* GK DIGITAL (aligned with last column area) */}
-          <span
+          <a
+            href="https://betterwork.tech"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              width: "20%", // 👈 adjust this if needed
-              textAlign: "right",
-              marginRight: "70px",
+              color: "rgba(255,255,255,0.9)",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+              transition: "0.2s ease",
+              marginLeft: "auto",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#ffffff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "rgba(255,255,255,0.9)";
             }}
           >
-            <a
-              href="https://betterwork.tech"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "inherit", textDecoration: "none" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.textDecoration = "underline")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.textDecoration = "none")}
-            >
-              Developed By Better Work
-            </a>
-          </span>
+            Developed By Better Work
+          </a>
         </div>
-        {/* <div style={{ marginTop:"16px", textAlign:"center" }}>
-           <span style={{ fontSize:"1.2rem", fontWeight:800, color:"#0a0f14", letterSpacing:"0.03em" }}>Mahaproperties</span>
-         </div> */}
       </div>
     </footer>
   );
 }
-
-/* ═══════════════════════════════════════════════════════════
-    WHATSAPP STICKY  — official green, real WA logo, bouncing
- ═══════════════════════════════════════════════════════════ */
-// function WA() {
-//   return (
-//     <a
-//       href="https://wa.me/919876543210"
-//       target="_blank"
-//       rel="noopener noreferrer"
-//       title="Chat on WhatsApp"
-//       style={{
-//         position: "fixed",
-//         bottom: "24px",
-//         right: "24px",
-//         zIndex: 850,
-//         width: "54px",
-//         height: "54px",
-//         borderRadius: "50%",
-//         background: G.wa,
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center",
-//         boxShadow: "0 5px 20px rgba(37,211,102,.42)",
-//         animation: "_wb 3s ease-in-out infinite",
-//         border: "2px solid rgba(255,255,255,.28)",
-//       }}
-//     >
-//       {I.wa}
-//     </a>
-//   );
-// }
