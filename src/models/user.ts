@@ -2,9 +2,9 @@ import { Schema, model, models } from "mongoose";
 
 const UserSchema = new Schema(
   {
-    phone:           { type: String, required: false, unique: true, sparse: true },
+    phone:           { type: String },
     name:            { type: String, trim: true },
-    email:           { type: String, lowercase: true, unique: true, index: true },
+    email:           { type: String },
     passwordHash:    { type: String },
     role:            { type: String, default: "user", enum: ["user","admin","super-admin"] },
     refreshTokenHash:{ type: String, default: null },

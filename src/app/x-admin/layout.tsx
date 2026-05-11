@@ -7,14 +7,31 @@ export const metadata: Metadata = {
   description: "Admin panel for MahaProperties",
 };
 
-export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
+export default function AdminRootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="x-admin-root min-h-screen bg-slate-50 text-slate-900">
-      <div className="flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 text-slate-900">
+      <div className="flex min-h-screen">
+
+        {/* Sidebar */}
         <AdminSidebar />
-        <div className="flex min-h-screen flex-1 flex-col">
+
+        {/* Main Content */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+
+          {/* Navbar */}
           <AdminNavbar />
-          <main className="flex-1 px-4 pb-10 pt-6 sm:px-6 lg:px-10">{children}</main>
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-y-auto px-6 py-6 lg:px-10">
+            <div className="mx-auto max-w-[1600px]">
+              {children}
+            </div>
+          </main>
+
         </div>
       </div>
     </div>

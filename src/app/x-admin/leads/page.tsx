@@ -1,147 +1,211 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton/Skeleton";
 
-type Lead = {
-  _id: string;
-  name: string;
-  source: string;
-  status: string;
-  createdAt: string;
-  contact?: string;
+type Lead={_id:string;name:string;source:string;status:string;createdAt:string;contact?:string};
+
+const tabs=["New","Contacted","Negotiation","Closed"];
+
+const badge = (s?: string) => {
+  const status = (s || "new").toLowerCase();
+
+  return {
+    new: { bg: "#dbeafe", c: "#2563eb" },
+    contacted: { bg: "#fef3c7", c: "#d97706" },
+    negotiation: { bg: "#ede9fe", c: "#7c3aed" },
+    closed: { bg: "#dcfce7", c: "#16a34a" },
+  }[status] || {
+    bg: "#f1f5f9",
+    c: "#475569",
+  };
 };
 
-export default function LeadsPage() {
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
+export default function LeadsPage(){
+  const [leads,setLeads]=useState<Lead[]>([]),
+        [loading,setLoading]=useState(true),
+        [query,setQuery]=useState("");
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      (async () => {
-        const response = await fetch("/api/admin/leads");
-        const data = await response.json();
-        setLeads(data.leads ?? []);
-        setLoading(false);
-      })();
-    }, 400);
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(()=>{(async()=>{
+    try{
+      const r=await fetch("/api/admin/leads");
+      const d=await r.json();
+      setLeads(d.leads||[]);
+    }finally{setLoading(false)}
+  })()},[]);
 
-  const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    if (!term) return leads;
-    return leads.filter(
-      (lead) =>
-        lead.name.toLowerCase().includes(term) ||
-        lead.source.toLowerCase().includes(term) ||
-        (lead.contact ?? "").toLowerCase().includes(term),
+  const filtered=useMemo(()=>{
+    const q=query.trim().toLowerCase();
+    if(!q) return leads;
+    return leads.filter(x=>
+      x.name?.toLowerCase().includes(q)||
+      x.source?.toLowerCase().includes(q)||
+      (x.contact||"").toLowerCase().includes(q)
     );
-  }, [leads, query]);
+  },[leads,query]);
 
-  return (
-    <section className="space-y-4">
-      <div className="rounded-lg border border-slate-700 bg-slate-900 p-4">
-        <h1 className="text-2xl font-semibold">Leads</h1>
-        <p className="text-sm text-slate-400">
-          Search and move leads through stages with full controls.
-        </p>
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+  return(
+    <div style={{padding:24,background:"#f8fafc",minHeight:"100vh",fontFamily:"Inter,sans-serif"}}>
+
+      {/* Top */}
+      <div style={{background:"#fff",padding:24,borderRadius:24,border:"1px solid #e2e8f0",boxShadow:"0 8px 24px rgba(15,23,42,.05)",marginBottom:20}}>
+        <div style={{fontSize:24,fontWeight:700,color:"#0f172a"}}>Lead Management</div>
+        <div style={{fontSize:13,color:"#64748b",marginTop:4}}>Track, search and manage your sales pipeline</div>
+
+        <div style={{display:"flex",alignItems:"center",gap:12,marginTop:18,flexWrap:"wrap"}}>
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e=>setQuery(e.target.value)}
             placeholder="Search leads..."
-            className="w-full max-w-md rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:border-cyan-400 outline-none"
+            style={{
+              width:320,
+              border:"1px solid #e2e8f0",
+              borderRadius:14,
+              padding:"12px 16px",
+              outline:"none",
+              fontSize:13
+            }}
           />
-          <span className="rounded-lg bg-sky-500/20 px-2 py-1 text-xs text-sky-300">
-            {filtered.length} leads found
-          </span>
+
+          <div style={{
+            background:"#eef2ff",
+            color:"#4338ca",
+            padding:"8px 14px",
+            borderRadius:999,
+            fontSize:12,
+            fontWeight:600
+          }}>
+            {filtered.length} Leads
+          </div>
         </div>
       </div>
 
-      <div className="rounded-lg border border-slate-700 bg-slate-900 p-4">
-        <div className="mb-3 flex gap-2">
-          {["New", "Contacted", "Negotiation", "Closed"].map((status) => (
+      {/* Table */}
+      <div style={{background:"#fff",borderRadius:24,border:"1px solid #e2e8f0",boxShadow:"0 8px 24px rgba(15,23,42,.05)",overflow:"hidden"}}>
+
+        {/* Tabs */}
+        <div style={{padding:20,borderBottom:"1px solid #e2e8f0",display:"flex",gap:10,flexWrap:"wrap"}}>
+          {tabs.map(x=>(
             <button
-              key={status}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1 text-xs text-slate-300 hover:bg-slate-700"
+              key={x}
+              style={{
+                border:"1px solid #e2e8f0",
+                background:"#fff",
+                borderRadius:12,
+                padding:"8px 14px",
+                fontSize:12,
+                fontWeight:600,
+                cursor:"pointer"
+              }}
             >
-              {status}
+              {x}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-10 rounded-lg" />
-            <Skeleton className="h-10 rounded-lg" />
-            <Skeleton className="h-10 rounded-lg" />
-          </div>
+
+          <div style={{padding:30,color:"#64748b"}}>Loading leads...</div>
+
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="border-b-2 border-slate-600 bg-slate-800/50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-100">
-                    Name
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-100">
-                    Contact
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-100">
-                    Source
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-100">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-100">
-                    Created
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((lead) => (
-                  <tr
-                    key={lead._id}
-                    className="border-b border-slate-700 hover:bg-slate-800 transition-colors"
-                  >
-                    <td className="px-4 py-3 text-slate-100 font-medium">
-                      {lead.name}
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">
-                      {lead.contact ?? "-"}
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">
-                      <span className="inline-block px-2 py-1 rounded bg-slate-700/50 text-slate-200">
-                        {lead.source}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                          lead.status === "new"
-                            ? "bg-blue-500/20 text-blue-300"
-                            : lead.status === "contacted"
-                              ? "bg-yellow-500/20 text-yellow-300"
-                              : lead.status === "negotiation"
-                                ? "bg-purple-500/20 text-purple-300"
-                                : "bg-green-500/20 text-green-300"
-                        }`}
-                      >
-                        {lead.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-300">
-                      {new Date(lead.createdAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+          <div style={{overflowX:"auto"}}>
+
+            {/* Header */}
+            <div style={{
+              display:"grid",
+              gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",
+              padding:"16px 24px",
+              background:"#f8fafc",
+              borderBottom:"1px solid #e2e8f0",
+              fontSize:12,
+              fontWeight:700,
+              color:"#475569"
+            }}>
+              <div>Name</div>
+              <div>Contact</div>
+              <div>Source</div>
+              <div>Status</div>
+              <div>Created</div>
+            </div>
+
+            {/* Rows */}
+            {filtered.map(x=>{
+              const s=badge(x.status);
+
+              return(
+                <div
+                  key={x._id}
+                  style={{
+                    display:"grid",
+                    gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",
+                    padding:"20px 24px",
+                    borderBottom:"1px solid #f1f5f9",
+                    alignItems:"center"
+                  }}
+                >
+
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <div style={{
+                      width:42,
+                      height:42,
+                      borderRadius:"50%",
+                      background:"#eef2ff",
+                      color:"#4338ca",
+                      display:"flex",
+                      alignItems:"center",
+                      justifyContent:"center",
+                      fontWeight:700
+                    }}>
+                      {x.name?.charAt(0)}
+                    </div>
+
+                    <div>
+                      <div style={{fontSize:14,fontWeight:600,color:"#0f172a"}}>{x.name}</div>
+                      <div style={{fontSize:12,color:"#64748b"}}>Prospect</div>
+                    </div>
+                  </div>
+
+                  <div style={{fontSize:13,color:"#334155"}}>{x.contact||"-"}</div>
+
+                  <div>
+                    <span style={{
+                      background:"#f1f5f9",
+                      padding:"6px 10px",
+                      borderRadius:10,
+                      fontSize:12,
+                      color:"#475569"
+                    }}>
+                      {x.source}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span style={{
+                      background:s.bg,
+                      color:s.c,
+                      padding:"6px 12px",
+                      borderRadius:999,
+                      fontSize:11,
+                      fontWeight:600
+                    }}>
+                   {x.status || "New"}
+                    </span>
+                  </div>
+
+                  <div style={{fontSize:13,color:"#64748b"}}>
+                    {new Date(x.createdAt).toLocaleDateString()}
+                  </div>
+
+                </div>
+              )
+            })}
+
           </div>
+
         )}
+
       </div>
-    </section>
+
+    </div>
   );
 }
