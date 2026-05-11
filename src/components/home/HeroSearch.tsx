@@ -39,6 +39,8 @@ export default function HeroSearch() {
   const [allProps, setAllProps] = useState<Property[]>([]);
   const [showCatDD, setShowCatDD] = useState(false);
   const [showLocDD, setShowLocDD] = useState(false);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+const [showSuggestions, setShowSuggestions] = useState(false);
 
   const catRef = useRef<HTMLDivElement>(null);
   const locRef = useRef<HTMLDivElement>(null);
@@ -107,7 +109,14 @@ export default function HeroSearch() {
     if (category.trim()) params.append("category", category.trim());
     if (locality.trim()) params.set("locality", locality.trim());
     const qs = params.toString();
-    router.push(qs ? `/properties?${qs}` : "/properties");
+
+setShowSuggestions(false);
+
+router.push(
+  qs
+    ? `/properties?${qs}`
+    : "/properties"
+);
   };
 
   return (
@@ -129,18 +138,92 @@ export default function HeroSearch() {
       className="hero-search"
     >
       {/* SEARCH */}
-      <div style={{ position: "relative" }}>
-        <span style={iconBox}>
-          <Search size={18} color="#1a6b3c" />
-        </span>
-        <input
-          data-testid="hero-search-input"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder='Try "NA plot", "warehouse"...'
-          style={inputStyle}
-        />
-      </div>
+<div style={{ position: "relative" }}>
+  <span style={iconBox}>
+    <Search size={18} color="#1a6b3c" />
+  </span>
+
+  <input
+    data-testid="hero-search-input"
+    value={q}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      setQ(value);
+
+      if (!value.trim()) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      const filtered = allProps
+        .filter(
+          (p: any) =>
+            norm(p.t).includes(norm(value)) ||
+            norm(p.cat).includes(norm(value)) ||
+            norm(p.loc).includes(norm(value))
+        )
+        .slice(0, 6);
+
+      setSuggestions(filtered);
+      setShowSuggestions(true);
+    }}
+    onFocus={() => {
+      if (suggestions.length > 0) {
+        setShowSuggestions(true);
+      }
+    }}
+    placeholder='Try "NA plot", "warehouse"...'
+    style={inputStyle}
+    autoComplete="off"
+  />
+
+  {/* Suggestions Dropdown */}
+  {showSuggestions && suggestions.length > 0 && (
+    <div style={ddStyle}>
+      {suggestions.map((property: any) => (
+        <button
+          key={property.id}
+          type="button"
+          style={ddItem}
+          onClick={() => {
+            setQ(property.t);
+            setShowSuggestions(false);
+
+           router.push(
+  `/properties?q=${encodeURIComponent(
+    property.t
+  )}`
+);
+          }}
+        >
+          <Search size={16} color="#1a6b3c" />
+
+          <div>
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: "14px"
+              }}
+            >
+              {property.t}
+            </div>
+
+            <div
+              style={{
+                fontSize: "12px",
+                color: "#6b7280"
+              }}
+            >
+              {property.loc}
+            </div>
+          </div>
+        </button>
+      ))}
+    </div>
+  )}
+</div>
 
       {/* CATEGORY */}
       <div style={{ position: "relative" }} ref={catRef}>
