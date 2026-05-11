@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import propertiesData from "@/moc-data/properties.json";
 import {
   
   Heart,
@@ -427,6 +429,8 @@ export function Navbar() {
   const [searchFocus, setSearchFocus] =
     useState(false);
 
+    const router = useRouter();
+
 
 
   const menuTimerRef =
@@ -515,16 +519,34 @@ useEffect(() => {
 
 }, []);
   // Autocomplete hook
-  const {
-    query: searchQ,
-    suggestions,
-    isLoading,
-    showSuggestions,
-    handleInputChange,
-    handleSelectSuggestion,
-    handleCloseSuggestions,
-    setShowSuggestions,
-  } = useAutocomplete({ category: "all", minChars: 1 });
+ const {
+  query: searchQ,
+  suggestions,
+  isLoading,
+  showSuggestions,
+  handleInputChange,
+  handleCloseSuggestions,
+  setShowSuggestions,
+} = useAutocomplete({
+  category: "all",
+  minChars: 1,
+});
+
+const handleNavbarPropertySelect = (
+  item: any
+) => {
+  const propertyName =
+   item.name || item.t || item.title ||
+    "";
+
+  setShowSuggestions(false);
+
+  router.push(
+    `/properties?q=${encodeURIComponent(
+      propertyName
+    )}`
+  );
+};
 
   const autocompleteRef = useRef<HTMLDivElement>(null);
 
@@ -905,10 +927,18 @@ useEffect(() => {
                     isLoading={isLoading}
                     isOpen={showSuggestions}
                     query={searchQ}
-                    onSelect={(item) => {
-                      handleSelectSuggestion(item);
-                      handleCloseSuggestions();
-                    }}
+  onSelect={(item) => {
+  const propertyName =
+    item.name || "";
+
+  setShowSuggestions(false);
+
+  router.push(
+    `/properties?q=${encodeURIComponent(
+      propertyName.trim()
+    )}`
+  );
+}}
                     onClose={handleCloseSuggestions}
                     className="shadow-lg"
                   />
