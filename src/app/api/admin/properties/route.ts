@@ -1,10 +1,31 @@
 import { NextResponse } from "next/server";
-
-const properties = [
-  { id: "P-001", title: "NA Plot Nashik", status: "Active" },
-  { id: "P-002", title: "Commercial Space", status: "Booked" },
-];
+import { connectDB } from "@/lib/mongodb";
+import Property from "@/models/Property";
 
 export async function GET() {
-  return NextResponse.json({ properties });
+  try {
+
+    await connectDB();
+
+    const properties = await Property.find({})
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return NextResponse.json({
+      success: true,
+      properties
+    });
+
+  } catch (error) {
+
+    console.error("Property fetch error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        properties: []
+      },
+      { status: 500 }
+    );
+  }
 }
