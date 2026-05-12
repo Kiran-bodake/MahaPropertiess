@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+
 import {
   BarChart3,
   Home,
@@ -27,65 +28,203 @@ export function AdminSidebar() {
   if (pathname === "/x-admin/login") return null;
 
   return (
-    <aside className="hidden h-screen w-[292px] shrink-0 border-r border-slate-200/70 bg-white/80 px-4 py-6 backdrop-blur-xl lg:block">
-      <div className="flex items-center gap-3 px-3">
+    <aside
+      style={{
+        width: 300,
+        height: "100vh",
+        padding: 24,
+        boxSizing: "border-box",
+        background:
+          "linear-gradient(180deg,#0f172a,#1e293b)",
+        borderRight:
+          "1px solid #334155",
+      }}
+    >
+
+      {/* Logo */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
         <Image
-          src="/maha.png" // put your logo in public/logo.png
-          alt="MahaProperties"
-          width={40}
-          height={40}
-          className="rounded-lg object-contain"
+          src="/maha.png"
+          alt="Maha"
+          width={42}
+          height={42}
         />
+
         <div>
-          <p className="text-sm font-semibold text-slate-900">MahaProperties</p>
-          <p className="text-xs text-slate-500">Command Center</p>
+
+          <div
+            style={{
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 700,
+            }}
+          >
+            MahaProperties
+          </div>
+
+          <div
+            style={{
+              color: "#94a3b8",
+              fontSize: 12,
+              marginTop: 4,
+            }}
+          >
+            Command Center
+          </div>
+
         </div>
       </div>
 
-      <div className="mt-10 space-y-2 px-2">
-        <p className="px-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-400">
-          Workspace
-        </p>
-        <nav className="space-y-1.5">
-          {items.map(({ href, label, icon: Icon }) => {
+      {/* Menu */}
+      <div
+        style={{
+          marginTop: 40,
+        }}
+      >
+
+        <div
+          style={{
+            color: "#64748b",
+            fontSize: 11,
+            letterSpacing: 2,
+            fontWeight: 700,
+            marginBottom: 20,
+          }}
+        >
+          WORKSPACE
+        </div>
+
+        {items.map(
+          ({
+            href,
+            label,
+            icon: Icon,
+          }) => {
             const active =
               pathname === href ||
-              (href !== "/x-admin/dashboard" && pathname?.startsWith(href));
+              (href !==
+                "/x-admin/dashboard" &&
+                pathname?.startsWith(
+                  href
+                ));
+
             return (
               <Link
                 key={href}
                 href={href}
-                className={`group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition ${
-                  active
-                    ? "bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-[0_10px_24px_rgba(15,23,42,0.2)]"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-              >
-                <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl ${
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "14px",
+                  marginBottom: 10,
+                  borderRadius: 16,
+                  textDecoration:
+                    "none",
+                  color: "#fff",
+                  background:
                     active
-                      ? "bg-white/15 text-white"
-                      : "bg-slate-100 text-slate-500 group-hover:bg-white"
-                  }`}
+                      ? "linear-gradient(135deg,#4f46e5,#7c3aed)"
+                      : "transparent",
+                  boxShadow:
+                    active
+                      ? "0 12px 24px rgba(79,70,229,0.35)"
+                      : "none",
+                }}
+              >
+
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent:
+                      "center",
+                    background:
+                      "rgba(255,255,255,0.08)",
+                  }}
                 >
-                  <Icon size={18} />
+                  <Icon
+                    size={18}
+                  />
+                </div>
+
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                  }}
+                >
+                  {label}
                 </span>
-                <span>{label}</span>
+
               </Link>
             );
-          })}
-        </nav>
+          }
+        )}
+
       </div>
 
-      <div className="mt-10 rounded-3xl border border-slate-200/70 bg-white/80 p-4 shadow-sm">
-        <p className="text-sm font-semibold text-slate-900">AI Insights</p>
-        <p className="mt-1 text-xs text-slate-500">
-          Auto-generate daily performance briefs.
-        </p>
-        <button className="mt-4 w-full rounded-2xl bg-slate-900 px-3 py-2.5 text-xs font-semibold text-white shadow-[0_10px_20px_rgba(15,23,42,0.25)] transition hover:translate-y-[-1px] hover:bg-slate-800">
+      {/* AI Card */}
+      <div
+        style={{
+          marginTop: 40,
+          padding: 18,
+          borderRadius: 24,
+          background:
+            "rgba(255,255,255,0.05)",
+        }}
+      >
+
+        <div
+          style={{
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: 14,
+          }}
+        >
+          AI Insights
+        </div>
+
+        <div
+          style={{
+            color: "#94a3b8",
+            fontSize: 12,
+            marginTop: 8,
+            lineHeight: 1.6,
+          }}
+        >
+          Auto-generate daily
+          sales reports.
+        </div>
+
+        <button
+          style={{
+            width: "100%",
+            marginTop: 16,
+            padding: 12,
+            borderRadius: 14,
+            border: "none",
+            color: "#fff",
+            cursor: "pointer",
+            fontWeight: 600,
+            background:
+              "linear-gradient(135deg,#4f46e5,#7c3aed)",
+          }}
+        >
           Generate Report
         </button>
+
       </div>
+
     </aside>
   );
 }
