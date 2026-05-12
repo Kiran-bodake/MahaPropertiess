@@ -627,92 +627,92 @@ function PropertyLinks({ properties }: any) {
   );
 }
 
-const LOCS = [
-  {
-    n: "Gangapur Road",
-    tp: "Premium Residential",
-    c: "280+",
-    img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&q=75",
-    hot: true,
-  },
-  {
-    n: "Igatpuri",
-    tp: "Agriculture & Hills",
-    c: "110+",
-    img: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=500&q=75",
-    hot: true,
-  },
-  {
-    n: "Nashik Road",
-    tp: "Industrial Belt",
-    c: "320+",
-    img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Trimbak Road",
-    tp: "Spiritual & Farms",
-    c: "88+",
-    img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Meri Village",
-    tp: "NA Plot Investment",
-    c: "95+",
-    img: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=500&q=75",
-    hot: true,
-  },
-  {
-    n: "Ambad MIDC",
-    tp: "Industrial Hub",
-    c: "145+",
-    img: "https://images.unsplash.com/photo-1565891741441-64926e441838?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Pathardi Phata",
-    tp: "Emerging Zone",
-    c: "78+",
-    img: "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Indira Nagar",
-    tp: "Established Area",
-    c: "145+",
-    img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Panchavati",
-    tp: "Heritage Locality",
-    c: "92+",
-    img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "College Road",
-    tp: "Education Hub",
-    c: "167+",
-    img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Sinnar",
-    tp: "Industrial Corridor",
-    c: "54+",
-    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=75",
-    hot: false,
-  },
-  {
-    n: "Ozar",
-    tp: "Airport Vicinity",
-    c: "41+",
-    img: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=500&q=75",
-    hot: false,
-  },
-];
+// const LOCS = [
+//   {
+//     n: "Gangapur Road",
+//     tp: "Premium Residential",
+//     c: "280+",
+//     img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&q=75",
+//     hot: true,
+//   },
+//   {
+//     n: "Igatpuri",
+//     tp: "Agriculture & Hills",
+//     c: "110+",
+//     img: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=500&q=75",
+//     hot: true,
+//   },
+//   {
+//     n: "Nashik Road",
+//     tp: "Industrial Belt",
+//     c: "320+",
+//     img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Trimbak Road",
+//     tp: "Spiritual & Farms",
+//     c: "88+",
+//     img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Meri Village",
+//     tp: "NA Plot Investment",
+//     c: "95+",
+//     img: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=500&q=75",
+//     hot: true,
+//   },
+//   {
+//     n: "Ambad MIDC",
+//     tp: "Industrial Hub",
+//     c: "145+",
+//     img: "https://images.unsplash.com/photo-1565891741441-64926e441838?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Pathardi Phata",
+//     tp: "Emerging Zone",
+//     c: "78+",
+//     img: "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Indira Nagar",
+//     tp: "Established Area",
+//     c: "145+",
+//     img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Panchavati",
+//     tp: "Heritage Locality",
+//     c: "92+",
+//     img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "College Road",
+//     tp: "Education Hub",
+//     c: "167+",
+//     img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Sinnar",
+//     tp: "Industrial Corridor",
+//     c: "54+",
+//     img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=75",
+//     hot: false,
+//   },
+//   {
+//     n: "Ozar",
+//     tp: "Airport Vicinity",
+//     c: "41+",
+//     img: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=500&q=75",
+//     hot: false,
+//   },
+// ];
 
 const WHY = [
   {
@@ -1865,7 +1865,22 @@ function Stats() {
 ═══════════════════════════════════════════════════════════ */
 function Locs() {
   const [ref, vis] = useInView();
-  const show = LOCS.slice(0, 12); // exactly 3 rows × 4
+  const [locs, setLocs] = useState<any[]>([]);
+  const show = locs.slice(0, 12);
+
+  useEffect(() => {
+    const fetchLocs = async () => {
+      try {
+        const res = await fetch("/api/localities");
+        const data = await res.json();
+        setLocs(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchLocs();
+  }, []);
 
   return (
     <section
@@ -1914,9 +1929,9 @@ function Locs() {
           }}
         >
           {show.map((l, i) => (
-            <a
+            <Link
               key={l.n}
-              href="#"
+              href={`/localities/${l.n.toLowerCase().replace(/\s+/g, "-")}`}
               className="lf zm"
               style={{
                 borderRadius: "11px",
@@ -2009,12 +2024,12 @@ function Locs() {
                   </span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
         <div style={{ textAlign: "center", marginTop: "22px" }}>
           <Link
-            href="/localities"
+            href="/properties"
             className="b bo"
             style={{ padding: "10px 24px", fontSize: "13px" }}
           >

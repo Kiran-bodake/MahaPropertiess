@@ -5,11 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import propertiesData from "@/moc-data/properties.json";
-import {
-  
-  Heart,
-  LogOut
-} from "lucide-react";
+import { Heart, LogOut } from "lucide-react";
 import {
   Menu,
   X,
@@ -146,10 +142,10 @@ const NAV_LINKS: NavLinkDef[] = [
       {
         group: "Top Localities",
         items: [
-          { label: "Gangapur Road", href: "/locality/gangapur-road" },
-          { label: "Nashik Road", href: "/locality/nashik-road" },
-          { label: "Ambad MIDC", href: "/locality/ambad" },
-          { label: "Pathardi Phata", href: "/locality/pathardi-phata" },
+          { label: "Gangapur Road", href: "/localities/gangapur-road" },
+          { label: "Nashik Road", href: "/localities/nashik-road" },
+          { label: "Ambad MIDC", href: "/localities/ambad" },
+          { label: "Pathardi Phata", href: "/localities/pathardi-phata" },
         ],
       },
     ],
@@ -257,22 +253,22 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Gangapur Road",
             sub: "Premium residential zone",
-            href: "/locality/gangapur-road",
+            href: "/localities/gangapur-road",
           },
           {
             label: "College Road",
             sub: "Education & lifestyle hub",
-            href: "/locality/college-road",
+            href: "/localities/college-road",
           },
           {
             label: "Indira Nagar",
             sub: "Established neighbourhood",
-            href: "/locality/indira-nagar",
+            href: "/localities/indira-nagar",
           },
           {
             label: "Panchavati",
             sub: "Heritage locality",
-            href: "/locality/panchavati",
+            href: "/localities/panchavati",
           },
         ],
       },
@@ -282,22 +278,22 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Nashik Road",
             sub: "Industrial & residential",
-            href: "/locality/nashik-road",
+            href: "/localities/nashik-road",
           },
           {
             label: "Ambad MIDC",
             sub: "Industrial powerhouse",
-            href: "/locality/ambad",
+            href: "/localities/ambad",
           },
           {
             label: "Satpur MIDC",
             sub: "Manufacturing hub",
-            href: "/locality/satpur",
+            href: "/localities/satpur",
           },
           {
             label: "Pathardi Phata",
             sub: "Emerging investment zone",
-            href: "/locality/pathardi-phata",
+            href: "/localities/pathardi-phata",
           },
         ],
       },
@@ -307,22 +303,22 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Igatpuri",
             sub: "Hill station & agri land",
-            href: "/locality/igatpuri",
+            href: "/localities/igatpuri",
           },
           {
             label: "Trimbak Road",
             sub: "Spiritual & nature zone",
-            href: "/locality/trimbak-road",
+            href: "/localities/trimbak-road",
           },
           {
             label: "Meri Village",
             sub: "Best value NA plots",
-            href: "/locality/meri",
+            href: "/localities/meri",
           },
           {
             label: "Sinnar",
             sub: "Industrial growth corridor",
-            href: "/locality/sinnar",
+            href: "/localities/sinnar",
           },
         ],
       },
@@ -409,144 +405,84 @@ const TYPES_QUICK = [
 
 /* ─── Component ─────────────────────────────────────────── */
 export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
 
-  const [scrolled, setScrolled] =
-    useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-    const [showProfileMenu,
-  setShowProfileMenu] =
-    useState(false);
+  const [atTop, setAtTop] = useState(true);
 
-  const [atTop, setAtTop] =
-    useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const [menuOpen, setMenuOpen] =
-    useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
-  const [activeMenu, setActiveMenu] =
-    useState<string | null>(null);
+  const [searchFocus, setSearchFocus] = useState(false);
 
-  const [searchFocus, setSearchFocus] =
-    useState(false);
+  const router = useRouter();
 
-    const router = useRouter();
+  const menuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const [user, setUser] = useState<any>(null);
 
-
-  const menuTimerRef =
-    useRef<ReturnType<typeof setTimeout> | null>(null);
-
-const [user, setUser] =
-  useState<any>(null);
-
-/* Logout */
-const logout = () => {
-
-  if (
-    typeof window ===
-    "undefined"
-  ) {
-    return;
-  }
-
-  localStorage.removeItem(
-    "token"
-  );
-
-  localStorage.removeItem(
-    "user"
-  );
-
-  setUser(null);
-
-  window.location.href =
-    "/";
-
-};
-
-/* Load logged in user */
-useEffect(() => {
-
-  if (
-    typeof window ===
-    "undefined"
-  ) {
-    return;
-  }
-
-  try {
-
-    const savedUser =
-      localStorage.getItem(
-        "user"
-      );
-
-    if (
-      !savedUser ||
-      savedUser ===
-        "undefined"
-    ) {
+  /* Logout */
+  const logout = () => {
+    if (typeof window === "undefined") {
       return;
     }
 
-    const parsedUser =
-      JSON.parse(
-        savedUser
-      );
+    localStorage.removeItem("token");
 
-    if (
-      parsedUser
-    ) {
-      setUser(
-        parsedUser
-      );
+    localStorage.removeItem("user");
+
+    setUser(null);
+
+    window.location.href = "/";
+  };
+
+  /* Load logged in user */
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
     }
 
-  } catch (
-    error
-  ) {
+    try {
+      const savedUser = localStorage.getItem("user");
 
-    console.log(
-      "User parse error:",
-      error
-    );
+      if (!savedUser || savedUser === "undefined") {
+        return;
+      }
 
-    localStorage.removeItem(
-      "user"
-    );
+      const parsedUser = JSON.parse(savedUser);
 
-  }
+      if (parsedUser) {
+        setUser(parsedUser);
+      }
+    } catch (error) {
+      console.log("User parse error:", error);
 
-}, []);
+      localStorage.removeItem("user");
+    }
+  }, []);
   // Autocomplete hook
- const {
-  query: searchQ,
-  suggestions,
-  isLoading,
-  showSuggestions,
-  handleInputChange,
-  handleCloseSuggestions,
-  setShowSuggestions,
-} = useAutocomplete({
-  category: "all",
-  minChars: 1,
-});
+  const {
+    query: searchQ,
+    suggestions,
+    isLoading,
+    showSuggestions,
+    handleInputChange,
+    handleCloseSuggestions,
+    setShowSuggestions,
+  } = useAutocomplete({
+    category: "all",
+    minChars: 1,
+  });
 
-const handleNavbarPropertySelect = (
-  item: any
-) => {
-  const propertyName =
-   item.name || item.t || item.title ||
-    "";
+  const handleNavbarPropertySelect = (item: any) => {
+    const propertyName = item.name || item.t || item.title || "";
 
-  setShowSuggestions(false);
+    setShowSuggestions(false);
 
-  router.push(
-    `/properties?q=${encodeURIComponent(
-      propertyName
-    )}`
-  );
-};
+    router.push(`/properties?q=${encodeURIComponent(propertyName)}`);
+  };
 
   const autocompleteRef = useRef<HTMLDivElement>(null);
 
@@ -927,18 +863,17 @@ const handleNavbarPropertySelect = (
                     isLoading={isLoading}
                     isOpen={showSuggestions}
                     query={searchQ}
-  onSelect={(item) => {
-  const propertyName =
-    item.name || "";
+                    onSelect={(item) => {
+                      const propertyName = item.name || "";
 
-  setShowSuggestions(false);
+                      setShowSuggestions(false);
 
-  router.push(
-    `/properties?q=${encodeURIComponent(
-      propertyName.trim()
-    )}`
-  );
-}}
+                      router.push(
+                        `/properties?q=${encodeURIComponent(
+                          propertyName.trim(),
+                        )}`,
+                      );
+                    }}
                     onClose={handleCloseSuggestions}
                     className="shadow-lg"
                   />
@@ -1257,7 +1192,6 @@ const handleNavbarPropertySelect = (
                   marginLeft: "auto",
                 }}
               >
-
                 {/* Search icon button */}
                 <button
                   style={{
@@ -1278,167 +1212,107 @@ const handleNavbarPropertySelect = (
                   <Search size={16} />
                 </button>
 
-                 {/* ✅ ADD HERE — Auth Buttons */}
-  <div style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "6px",
-  }}>
-   {user ? (
+                {/* ✅ ADD HERE — Auth Buttons */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  {user ? (
+                    <div
+                      style={{
+                        position: "relative",
+                      }}
+                    >
+                      {/* Profile Button */}
+                      <button
+                        onClick={() => setShowProfileMenu(!showProfileMenu)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          border: "none",
+                          background: "transparent",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "38px",
+                            height: "38px",
+                            borderRadius: "50%",
+                            background: "#16a34a",
+                            color: "#fff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <User size={18} />
+                        </div>
 
-  <div
-    style={{
-      position:
-        "relative",
-    }}
-  >
+                        <ChevronDown size={16} />
+                      </button>
 
-    {/* Profile Button */}
-    <button
-      onClick={() =>
-        setShowProfileMenu(
-          !showProfileMenu
-        )
-      }
-      style={{
-        display: "flex",
-        alignItems:
-          "center",
-        gap: "6px",
-        border: "none",
-        background:
-          "transparent",
-        cursor:
-          "pointer",
-      }}
-    >
+                      {/* Dropdown */}
+                      {showProfileMenu && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "50px",
+                            right: 0,
+                            width: "220px",
+                            background: "#fff",
+                            border: "1px solid #e5e7eb",
+                            borderRadius: "12px",
+                            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                            padding: "8px",
+                            zIndex: 999,
+                          }}
+                        >
+                          {/* Favorites */}
+                          <Link
+                            href="/favorites"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "10px",
+                              padding: "12px",
+                              borderRadius: "8px",
+                              color: "#111827",
+                            }}
+                          >
+                            <Heart size={16} />
+                            Favorite Properties
+                          </Link>
 
-      <div
-        style={{
-          width: "38px",
-          height: "38px",
-          borderRadius:
-            "50%",
-          background:
-            "#16a34a",
-          color: "#fff",
-          display: "flex",
-          alignItems:
-            "center",
-          justifyContent:
-            "center",
-        }}
-      >
-        <User size={18} />
-      </div>
-
-      <ChevronDown
-        size={16}
-      />
-
-    </button>
-
-    {/* Dropdown */}
-    {showProfileMenu && (
-
-      <div
-        style={{
-          position:
-            "absolute",
-          top:
-            "50px",
-          right: 0,
-          width:
-            "220px",
-          background:
-            "#fff",
-          border:
-            "1px solid #e5e7eb",
-          borderRadius:
-            "12px",
-          boxShadow:
-            "0 10px 30px rgba(0,0,0,0.08)",
-          padding:
-            "8px",
-          zIndex:
-            999,
-        }}
-      >
-
-        {/* Favorites */}
-        <Link
-          href="/favorites"
-          style={{
-            display:
-              "flex",
-            alignItems:
-              "center",
-            gap:
-              "10px",
-            padding:
-              "12px",
-            borderRadius:
-              "8px",
-            color:
-              "#111827",
-          }}
-        >
-          <Heart
-            size={16}
-          />
-          Favorite Properties
-        </Link>
-
-        {/* Logout */}
-        <button
-          onClick={
-            logout
-          }
-          style={{
-            width:
-              "100%",
-            display:
-              "flex",
-            alignItems:
-              "center",
-            gap:
-              "10px",
-            padding:
-              "12px",
-            border:
-              "none",
-            background:
-              "transparent",
-            cursor:
-              "pointer",
-            color:
-              "#dc2626",
-          }}
-        >
-          <LogOut
-            size={16}
-          />
-          Logout
-        </button>
-
-      </div>
-
-    )}
-
-  </div>
-
-) : (
-
-  <Link
-    href="/login"
-  >
-    Login
-  </Link>
-
-)}
-
-    
-  </div>
+                          {/* Logout */}
+                          <button
+                            onClick={logout}
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "10px",
+                              padding: "12px",
+                              border: "none",
+                              background: "transparent",
+                              cursor: "pointer",
+                              color: "#dc2626",
+                            }}
+                          >
+                            <LogOut size={16} />
+                            Logout
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link href="/login">Login</Link>
+                  )}
+                </div>
 
                 {/* Phone */}
                 {/* <a
@@ -1887,7 +1761,7 @@ const handleNavbarPropertySelect = (
                 {LOCALITIES_QUICK.map((l) => (
                   <Link
                     key={l}
-                    href={`/locality/${l.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/localities/${l.toLowerCase().replace(/\s+/g, "-")}`}
                     onClick={() => setMenuOpen(false)}
                     style={{
                       padding: "6px 13px",
