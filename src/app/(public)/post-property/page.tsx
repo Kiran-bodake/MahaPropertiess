@@ -5,6 +5,12 @@ import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const PropertyMap = dynamic(
+  ()=>import("@/components/PropertyMap"),
+  { ssr:false }
+);
 
 /* ─── Types ───────────────────────────────────────────── */
 type Meta = {
@@ -32,6 +38,8 @@ type FormData = {
   locality: string;
   pincode: string;
   address: string;
+  latitude: string;
+  longitude: string;
   area: string;
   areaUnit: string;
   convertedSqft: string;
@@ -45,18 +53,59 @@ type FormData = {
   description: string;
   highlights: string[];
   amenities: string[];
+  houseNo:string;
+  street:string;
+  landmark:string;
+
 };
 
 type FileEntry = { file: File; preview: string; name: string; size: string };
 
 const INITIAL: FormData = {
-  postedBy: "", agentName: "", agentPhone: "",
-  title: "", category: "", categoryLabel: "", status: "available", constructionStatus: "ready",
-  state: "", city: "", locality: "", pincode: "", address: "",
-  area: "", areaUnit: "sqft", price: "", pricePerUnit: "",convertedSqft: "", priceNegotiable: false,
-  isRERA: false, reraNumber: "", isZeroBrokerage: false, isFeatured: false,
-  description: "", highlights: [], amenities: [],
+  postedBy: "",
+  agentName: "",
+  agentPhone: "",
+
+  title: "",
+  category: "",
+  categoryLabel: "",
+  status: "available",
+  constructionStatus: "ready",
+
+  state: "",
+  city: "",
+  locality: "",
+  pincode: "",
+
+  houseNo: "",
+  street: "",
+  landmark: "",
+
+  address: "",
+
+  latitude: "",
+  longitude: "",
+
+  area: "",
+  areaUnit: "sqft",
+  price: "",
+  pricePerUnit: "",
+  convertedSqft: "",
+
+  priceNegotiable: false,
+
+  isRERA: false,
+  reraNumber: "",
+
+  isZeroBrokerage: false,
+  isFeatured: false,
+
+  description: "",
+  highlights: [],
+  amenities: []
 };
+
+
 
 /* ─── Shared Styles ───────────────────────────────────── */
 const inp = (extra?: React.CSSProperties): React.CSSProperties => ({
@@ -445,35 +494,52 @@ export default function PostPropertyPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
+ const [coords,setCoords]=useState({
+    lat:null,
+    lng:null
+  });
+   const [otpSent, setOtpSent] = useState(false);
+  const [enteredOtp, setEnteredOtp] = useState("");
+  const [phoneVerified, setPhoneVerified] = useState(false);
+
+  const TEMP_OTP = "123";
   const [errors, setErrors] = useState<Record<string, string>>({});
   const handlePincodeChange = async (
   e: React.ChangeEvent<HTMLInputElement>
 ) => {
 
-  const pin = e.target.value;
+  const pin = e.target.value.replace(/\D/g,"");
 
   set("pincode", pin);
 
-  if (pin.length !== 6) return;
+  if(pin.length !== 6) return;
 
-  try {
+  try{
 
+    // India Post API
     const res = await fetch(
-      `/api/pincode?pin=${pin}`
+      `https://api.postalpincode.in/pincode/${pin}`
     );
 
     const data = await res.json();
 
-    if (data.success) {
+    if(
+      data?.[0]?.Status === "Success" &&
+      data?.[0]?.PostOffice?.length
+    ){
 
-      set("state", data.state);
-      set("city", data.city);
-      set("locality", data.locality);
+      const office = data[0].PostOffice[0];
+
+      set("state", office.State || "");
+      set("city", office.District || "");
+      set("locality", office.Name || "");
 
     }
 
-  } catch (err) {
-    console.error(err);
+  }catch(error){
+
+    console.error("Pincode lookup failed:", error);
+
   }
 };
 
@@ -856,12 +922,166 @@ const handleNext = async () => {
     </p>
   )}
 </Field>
-                  <Field>{lbl("Phone Number", true)}<input style={inp()} value={form.agentPhone} onChange={e => set("agentPhone", e.target.value)} placeholder="+91 XXXXX XXXXX" type="tel" required />
-                  {errors.agentPhone && (
-  <p style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-    {errors.agentPhone}
-  </p>
-)}</Field>
+
+<Field>
+
+  {lbl("Phone Number", true)}
+
+  <input
+    style={{
+      ...inp(),
+      border: phoneVerified
+        ? "1px solid #16a34a"
+        : inp().border,
+    }}
+    value={form.agentPhone}
+    type="tel"
+    inputMode="numeric"
+    maxLength={10}
+    placeholder="Enter 10 digit mobile number"
+    onChange={(e) => {
+
+      const value = e.target.value.replace(/\D/g, "");
+
+      if (value.length <= 10) {
+        set("agentPhone", value);
+      }
+
+      // Reset verification if number changes
+      setOtpSent(false);
+      setEnteredOtp("");
+      setPhoneVerified(false);
+
+      if (value && !/^[6-9]/.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          agentPhone: "Mobile number must start with 6, 7, 8 or 9",
+        }));
+      }
+      else if (value.length > 0 && value.length < 10) {
+        setErrors((prev) => ({
+          ...prev,
+          agentPhone: "Enter a valid 10 digit mobile number",
+        }));
+      }
+      else {
+        setErrors((prev) => ({
+          ...prev,
+          agentPhone: "",
+        }));
+      }
+
+    }}
+  />
+
+  {/* Error Message */}
+  {errors.agentPhone && (
+    <p
+      style={{
+        color: "#dc2626",
+        fontSize: "12px",
+        marginTop: "4px",
+        fontWeight: 500
+      }}
+    >
+      {errors.agentPhone}
+    </p>
+  )}
+
+  {/* Send OTP Button */}
+  {form.agentPhone.length === 10 &&
+    !errors.agentPhone &&
+    !otpSent &&
+    !phoneVerified && (
+      <button
+        type="button"
+        style={{
+          marginTop: "8px",
+          padding: "8px 14px",
+          border: "none",
+          borderRadius: "8px",
+          background: "#2563eb",
+          color: "#fff",
+          cursor: "pointer",
+          fontWeight: 500
+        }}
+        onClick={() => {
+          alert(`Demo OTP is ${TEMP_OTP}`);
+          setOtpSent(true);
+        }}
+      >
+        Send OTP
+      </button>
+    )}
+
+  {/* OTP Input */}
+  {otpSent && !phoneVerified && (
+    <div style={{ marginTop: "12px" }}>
+
+      <input
+        style={inp()}
+        type="text"
+        inputMode="numeric"
+        maxLength={3}
+        placeholder="Enter OTP"
+        value={enteredOtp}
+        onChange={(e) =>
+          setEnteredOtp(
+            e.target.value.replace(/\D/g, "")
+          )
+        }
+      />
+
+      <button
+        type="button"
+        style={{
+          marginTop: "8px",
+          padding: "8px 14px",
+          border: "none",
+          borderRadius: "8px",
+          background: "#16a34a",
+          color: "#fff",
+          cursor: "pointer",
+          fontWeight: 500
+        }}
+        onClick={() => {
+
+          if (enteredOtp === TEMP_OTP) {
+
+            setPhoneVerified(true);
+            setOtpSent(false);
+
+            alert("Phone number verified successfully!");
+
+          } else {
+
+            alert("Invalid OTP");
+
+          }
+
+        }}
+      >
+        Verify OTP
+      </button>
+
+    </div>
+  )}
+
+  {/* Verified Message */}
+  {phoneVerified && (
+    <p
+      style={{
+        color: "#16a34a",
+        marginTop: "8px",
+        fontSize: "13px",
+        fontWeight: 600
+      }}
+    >
+      ✓ Phone number verified
+    </p>
+  )}
+
+</Field>
                 </Row>
                 <div style={{ marginBottom: "14px" }}>
                   {lbl("Property Title", true)}
@@ -897,204 +1117,407 @@ const handleNext = async () => {
               </SectionCard>
             )}
 
-   {/* ── STEP 1: Location ── */}
-{step === 1 && (
-  <SectionCard
-    title="Property Location"
-    subtitle="Your property ID will be generated from the location you select."
-    icon={
-      <Image
-        src="/images/map.png"
-        alt="Location"
-        width={22}
-        height={22}
-        style={{
-          objectFit: "contain"
-        }}
+{/* ── STEP 1: Location ── */}
+{step===1&&(
+
+<SectionCard
+  title="Property Location"
+  subtitle="Enter pincode first to auto-fill location details."
+  icon={
+    <Image
+      src="/images/map.png"
+      alt="Location"
+      width={22}
+      height={22}
+      style={{objectFit:"contain"}}
+    />
+  }
+>
+
+  {/* PINCODE FIRST */}
+  <Row cols={1}>
+
+    <Field>
+
+      {lbl("Pincode",true)}
+
+      <input
+        style={inp()}
+        value={form.pincode}
+        onChange={handlePincodeChange}
+        placeholder="e.g. 422001"
+        maxLength={6}
       />
-    }
-  >
-    <Row cols={3}>
 
-      {/* STATE */}
-      <Field>
-        {lbl("State", true)}
-
-        <select
-          style={sel()}
-          value={form.state}
-          onChange={e => {
-            set("state", e.target.value);
-            set("city", "");
-            set("locality", "");
-            setPropertyId("");
-          }}
-        >
-          <option value="">Select state</option>
-
-          {meta.states.map(s => (
-            <option
-              key={s.name}
-              value={s.name}
-            >
-              {s.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.state && (
-          <p style={{
-            color: "#dc2626",
-            fontSize: "12px",
-            marginTop: "4px"
-          }}>
-            {errors.state}
-          </p>
-        )}
-      </Field>
-
-      {/* CITY */}
-      <Field>
-        {lbl("City", true)}
-
-        <select
-          style={sel()}
-          value={form.city}
-          onChange={e => {
-            set("city", e.target.value);
-            set("locality", "");
-            setPropertyId("");
-          }}
-          disabled={!form.state}
-        >
-          <option value="">Select city</option>
-
-          {cities.map(c => (
-            <option
-              key={c.name}
-              value={c.name}
-            >
-              {c.name}
-            </option>
-          ))}
-        </select>
-
-        {errors.city && (
-          <p style={{
-            color: "#dc2626",
-            fontSize: "12px",
-            marginTop: "4px"
-          }}>
-            {errors.city}
-          </p>
-        )}
-      </Field>
-
-      {/* LOCALITY */}
-      <Field>
-        {lbl("Locality / Area", true)}
-
-        {localities.length > 0 ? (
-          <select
-            style={sel()}
-            value={form.locality}
-            onChange={e => {
-              set("locality", e.target.value);
-              setPropertyId("");
-            }}
-            disabled={!form.city}
-          >
-            <option value="">Select locality</option>
-
-            {localities.map(l => (
-              <option
-                key={l}
-                value={l}
-              >
-                {l}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            style={inp()}
-            value={form.locality}
-            onChange={e => {
-              set("locality", e.target.value);
-              setPropertyId("");
-            }}
-            placeholder="Enter locality"
-          />
-        )}
-
-        {errors.locality && (
-          <p style={{
-            color: "#dc2626",
-            fontSize: "12px",
-            marginTop: "4px"
-          }}>
-            {errors.locality}
-          </p>
-        )}
-      </Field>
-
-    </Row>
-
-    <Row>
-      <Field>
-        {lbl("Pincode")}
-        <input
-          style={inp()}
-          value={form.pincode}
-          onChange={handlePincodeChange}
-          placeholder="e.g. 422001"
-          maxLength={6}
-        />
-      </Field>
-
-      <Field>
-        {lbl("Full Address")}
-        <input
-          style={inp()}
-          value={form.address}
-          onChange={e =>
-            set("address", e.target.value)
-          }
-          placeholder="Plot no, street, landmark..."
-        />
-      </Field>
-    </Row>
-
-    {form.state &&
-      form.city &&
-      form.locality && (
-        <div style={{
-          padding: "10px 14px",
-          background: "#f0fdf4",
-          borderRadius: "9px",
-          border: "1px solid #bbf7d0",
-          fontSize: "0.85rem",
-          color: "#166534"
+      {errors.pincode&&(
+        <p style={{
+          color:"#dc2626",
+          fontSize:"12px",
+          marginTop:"4px"
         }}>
-          📍
-          <strong>
-            {
-              [
-                form.locality,
-                form.city,
-                form.state
-              ]
-                .filter(Boolean)
-                .join(", ")
-            }
-          </strong>
-
-          {form.pincode &&
-            ` — ${form.pincode}`}
-        </div>
+          {errors.pincode}
+        </p>
       )}
 
-  </SectionCard>
+    </Field>
+
+  </Row>
+
+
+  {/* LOCATION AUTO FILLED */}
+  <Row cols={3}>
+
+    {/* STATE */}
+    <Field>
+
+      {lbl("State",true)}
+
+      <select
+        style={sel()}
+        value={form.state}
+        onChange={e=>{
+          set("state",e.target.value);
+          set("city","");
+          set("locality","");
+          setPropertyId("");
+        }}
+      >
+        <option value="">Select state</option>
+
+        {meta.states.map(s=>(
+          <option
+            key={s.name}
+            value={s.name}
+          >
+            {s.name}
+          </option>
+        ))}
+
+      </select>
+
+    </Field>
+
+
+    {/* CITY */}
+    <Field>
+
+      {lbl("City",true)}
+
+      <select
+        style={sel()}
+        value={form.city}
+        disabled={!form.state}
+        onChange={e=>{
+          set("city",e.target.value);
+          set("locality","");
+          setPropertyId("");
+        }}
+      >
+        <option value="">Select city</option>
+
+        {cities.map(c=>(
+          <option
+            key={c.name}
+            value={c.name}
+          >
+            {c.name}
+          </option>
+        ))}
+
+      </select>
+
+    </Field>
+
+
+    {/* LOCALITY */}
+    <Field>
+
+      {lbl("Locality / Area",true)}
+
+      {localities.length>0?(
+        <select
+          style={sel()}
+          value={form.locality}
+          disabled={!form.city}
+          onChange={e=>{
+            set("locality",e.target.value);
+            setPropertyId("");
+          }}
+        >
+          <option value="">Select locality</option>
+
+          {localities.map(l=>(
+            <option
+              key={l}
+              value={l}
+            >
+              {l}
+            </option>
+          ))}
+
+        </select>
+
+      ):(
+        <input
+          style={inp()}
+          value={form.locality}
+          onChange={e=>{
+            set("locality",e.target.value);
+            setPropertyId("");
+          }}
+          placeholder="Enter locality"
+        />
+      )}
+
+    </Field>
+
+  </Row>
+
+
+  {/* DETAILED ADDRESS */}
+<Row cols={3}>
+
+  <Field>
+    {lbl("House / Flat No",true)}
+
+    <input
+      style={inp()}
+      value={form.houseNo}
+      onChange={e=>
+        set("houseNo",e.target.value)
+      }
+      placeholder="Flat / House No"
+    />
+  </Field>
+
+
+  <Field>
+    {lbl("Street / Road",true)}
+
+    <input
+      style={inp()}
+      value={form.street}
+      onChange={e=>
+        set("street",e.target.value)
+      }
+      placeholder="Street / Road"
+    />
+  </Field>
+
+
+  <Field>
+    {lbl("Landmark")}
+
+    <input
+      style={inp()}
+      value={form.landmark}
+      onChange={e=>
+        set("landmark",e.target.value)
+      }
+      placeholder="Nearby Landmark"
+    />
+  </Field>
+
+</Row>
+
+
+{/* MAP LOCATION */}
+<div
+  style={{
+    marginTop:"24px",
+    border:"1px solid #e2e8f0",
+    borderRadius:"16px",
+    padding:"18px",
+    background:"#ffffff",
+    boxShadow:"0 4px 12px rgba(0,0,0,0.04)"
+  }}
+>
+
+  {/* Header */}
+  <div
+    style={{
+      display:"flex",
+      alignItems:"center",
+      justifyContent:"space-between",
+      marginBottom:"14px"
+    }}
+  >
+
+    <div>
+
+      <h4
+        style={{
+          margin:0,
+          fontSize:"15px",
+          fontWeight:700,
+          color:"#0f172a"
+        }}
+      >
+        Select Exact Property Location
+      </h4>
+
+      <p
+        style={{
+          margin:"4px 0 0",
+          fontSize:"12px",
+          color:"#64748b"
+        }}
+      >
+        Click on the map to mark the exact property location
+      </p>
+
+    </div>
+
+    {coords?.lat&&coords?.lng&&(
+
+      <div
+        style={{
+          padding:"6px 10px",
+          background:"#ecfdf5",
+          border:"1px solid #bbf7d0",
+          borderRadius:"8px",
+          fontSize:"11px",
+          color:"#166534",
+          fontWeight:600
+        }}
+      >
+        Location Selected ✓
+      </div>
+
+    )}
+
+  </div>
+
+
+  {/* MAP */}
+ <PropertyMap
+  onSelect={async (location:any) => {
+
+    // Save map coordinates
+    setCoords(location);
+set("latitude", String(location.lat));
+set("longitude", String(location.lng));
+    try {
+
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`
+      );
+
+      const data = await res.json();
+
+      const address = data.address || {};
+
+      // Auto fill fields
+      set("state", address.state || "");
+
+      set(
+        "city",
+        address.city ||
+        address.town ||
+        address.village ||
+        ""
+      );
+
+      set(
+        "locality",
+        address.suburb ||
+        address.neighbourhood ||
+        ""
+      );
+
+      set(
+        "street",
+        address.road || ""
+      );
+
+      // Create full address
+      const fullAddress = [
+        address.road,
+        address.suburb || address.neighbourhood,
+        address.city || address.town || address.village,
+        address.state,
+        address.postcode
+      ]
+      .filter(Boolean)
+      .join(", ");
+
+      set("address", fullAddress);
+     
+
+    } catch (error) {
+
+      console.error(
+        "Address fetch failed:",
+        error
+      );
+
+    }
+
+  }}
+/>
+
+
+  {/* COORDINATES */}
+  {coords?.lat&&coords?.lng&&(
+
+    <div
+      style={{
+        marginTop:"14px",
+        padding:"10px 14px",
+        background:"#f8fafc",
+        borderRadius:"10px",
+        border:"1px solid #e2e8f0",
+        fontSize:"12px",
+        color:"#475569"
+      }}
+    >
+
+   Number(coords.lat).toFixed(6)
+Number(coords.lng).toFixed(6)
+
+    </div>
+
+  )}
+
+</div>
+
+
+{/* LOCATION PREVIEW */}
+{form.state&&form.city&&form.locality&&(
+
+  <div
+    style={{
+      marginTop:"18px",
+      padding:"12px 16px",
+      background:"#f0fdf4",
+      border:"1px solid #bbf7d0",
+      borderRadius:"10px",
+      color:"#166534",
+      fontSize:"14px"
+    }}
+  >
+
+    📍 <strong>
+      [
+        form.houseNo,
+        form.street,
+        form.locality,
+        form.city,
+        form.state
+      ]
+      .filter(Boolean)
+      .join(", ")
+
+    </strong>
+
+    {form.pincode&&` — ${form.pincode}`}
+
+  </div>
+
+)}
+
+</SectionCard>
+
 )}
 {/* ── STEP 2: Property Details ── */}
 {step === 2 && (

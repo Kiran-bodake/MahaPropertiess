@@ -15,14 +15,12 @@ export const createProperty = async (
   const propertyId =
     body.propertyId;
 
-  /* Validation */
   if (!propertyId) {
     throw new Error(
       "propertyId is required"
     );
   }
 
-  /* Prevent duplicate property */
   const existingProperty =
     await Property.findOne({
       propertyId,
@@ -34,32 +32,29 @@ export const createProperty = async (
     );
   }
 
-  /* 1. Create Main Property */
+  /* MAIN PROPERTY */
   const property =
     await Property.create({
+
       propertyId,
 
       title:
         body.title,
 
       description:
-        body.description ||
-        "",
+        body.description || "",
 
       category:
         body.category,
 
       categoryLabel:
-        body.categoryLabel ||
-        "",
+        body.categoryLabel || "",
 
       status:
-        body.status ||
-        "available",
+        body.status || "available",
 
       constructionStatus:
-        body.constructionStatus ||
-        "ready",
+        body.constructionStatus || "ready",
 
       postedBy:
         body.postedBy,
@@ -68,14 +63,16 @@ export const createProperty = async (
         body.agentName,
 
       agentPhone:
-        body.agentPhone,
+        body.agentPhone
+
     });
 
-  /* 2. Related Collections */
+  /* RELATED COLLECTIONS */
   await Promise.all([
 
     /* USER */
     PropertyUser.create({
+
       propertyId,
 
       postedBy:
@@ -85,11 +82,13 @@ export const createProperty = async (
         body.agentName,
 
       phone:
-        body.agentPhone,
+        body.agentPhone
+
     }),
 
     /* LOCATION */
     PropertyLocation.create({
+
       propertyId,
 
       state:
@@ -104,105 +103,118 @@ export const createProperty = async (
       pincode:
         body.pincode || "",
 
+      houseNo:
+        body.houseNo || "",
+
+      street:
+        body.street || "",
+
+      landmark:
+        body.landmark || "",
+
       address:
         body.address || "",
+
+      latitude:
+        body.latitude || "",
+
+      longitude:
+        body.longitude || ""
+
     }),
 
     /* PRICING */
     PropertyPricing.create({
+
       propertyId,
 
       price:
-        Number(
-          body.price
-        ) || 0,
+        Number(body.price) || 0,
 
       pricePerUnit:
-        Number(
-          body.pricePerUnit
-        ) || 0,
+        Number(body.pricePerUnit) || 0,
 
       priceNegotiable:
-        body.priceNegotiable ||
-        false,
+        body.priceNegotiable || false
+
     }),
 
     /* AREA */
     PropertyArea.create({
+
       propertyId,
 
       area:
-        Number(
-          body.area
-        ) || 0,
+        Number(body.area) || 0,
 
       areaUnit:
-        body.areaUnit ||
-        "sqft",
+        body.areaUnit || "sqft",
 
       convertedSqft:
-        Number(
-          body.convertedSqft
-        ) || 0,
+        Number(body.convertedSqft) || 0
+
     }),
 
     /* FLAGS */
     PropertyFlags.create({
+
       propertyId,
 
       isRERA:
-        body.isRERA ||
-        false,
+        body.isRERA || false,
 
       reraNumber:
-        body.reraNumber ||
-        "",
+        body.reraNumber || "",
 
       isZeroBrokerage:
-        body.isZeroBrokerage ||
-        false,
+        body.isZeroBrokerage || false,
 
       isFeatured:
-        body.isFeatured ||
-        false,
+        body.isFeatured || false,
 
       isVerified:
         false,
 
       isActive:
-        true,
-    }),
+        true
+
+    })
+
   ]);
 
-  /* 3. Amenities */
-  if (
-    body.amenities?.length
-  ) {
+  /* AMENITIES */
+  if (body.amenities?.length) {
+
     await PropertyAmenity.create({
+
       propertyId,
 
       amenities:
-        body.amenities,
+        body.amenities
+
     });
+
   }
 
-  /* 4. Highlights */
-  if (
-    body.highlights?.length
-  ) {
+  /* HIGHLIGHTS */
+  if (body.highlights?.length) {
+
     await PropertyHighlight.create({
+
       propertyId,
 
       highlights:
-        body.highlights,
+        body.highlights
+
     });
+
   }
 
-  /* 5. Images */
-  if (
-    body.images?.length
-  ) {
+  /* IMAGES */
+  if (body.images?.length) {
+
     await PropertyImage.create({
+
       propertyId,
 
       images:
@@ -212,16 +224,17 @@ export const createProperty = async (
             index: number
           ) => ({
             url,
-
             isPrimary:
               index === 0,
-
             displayOrder:
-              index,
+              index
           })
-        ),
+        )
+
     });
+
   }
 
   return property;
+
 };

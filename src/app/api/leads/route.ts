@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     await connectDB();
 
     const body = await req.json();
+    console.log("Backend body:", body);
 
     const lead = await Lead.create({
       propertyId: body.propertyId || "unknown-property-id",
