@@ -11,419 +11,714 @@ type Lead = {
   contact?: string;
 };
 
-const tabs = ["New", "Contacted", "Negotiation", "Closed"];
-
 const badge = (s?: string) => {
   const status = (s || "new").toLowerCase();
 
   return {
-    new: { bg: "#dbeafe", c: "#2563eb" },
-    contacted: { bg: "#fef3c7", c: "#d97706" },
-    negotiation: { bg: "#ede9fe", c: "#7c3aed" },
-    closed: { bg: "#dcfce7", c: "#16a34a" },
+    new: { bg: "#eff6ff", c: "#2563eb" },
+    contacted: { bg: "#fff7ed", c: "#ea580c" },
+    negotiation: { bg: "#f5f3ff", c: "#7c3aed" },
+    closed: { bg: "#f0fdf4", c: "#16a34a" }
   }[status] || {
-    bg: "#f1f5f9",
-    c: "#475569",
+    bg: "#f8fafc",
+    c: "#475569"
   };
 };
 
 export default function LeadsPage() {
+
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
+
+  const [dateFilter, setDateFilter] =
+    useState("7");
+
+  const [fromDate, setFromDate] =
+    useState("");
+
+  const [toDate, setToDate] =
+    useState("");
+
+  const [selected, setSelected] =
+    useState<string[]>([]);
 
   useEffect(() => {
+
     (async () => {
+
       try {
-        const r = await fetch("/api/admin/leads");
-        const d = await r.json();
-        setLeads(d.leads || []);
+
+        const r =
+          await fetch(
+            "/api/admin/leads"
+          );
+
+        const d =
+          await r.json();
+
+        setLeads(
+          d.leads || []
+        );
+
       } finally {
+
         setLoading(false);
+
       }
+
     })();
+
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+  const filtered =
+    useMemo(() => {
 
-    if (!q) return leads;
+      const q =
+        query
+          .trim()
+          .toLowerCase();
 
-    return leads.filter(
-      (x) =>
-        x.name?.toLowerCase().includes(q) ||
-        x.source?.toLowerCase().includes(q) ||
-        (x.contact || "").toLowerCase().includes(q)
-    );
-  }, [leads, query]);
+      const now =
+        new Date();
 
-  /* ------------------------------
-     CHECKBOX FUNCTIONS
-  ------------------------------ */
+      return leads.filter(
+        (x) => {
 
-  const toggleSelect = (id: string) => {
-    setSelected((prev) =>
-      prev.includes(id)
-        ? prev.filter((x) => x !== id)
-        : [...prev, id]
-    );
-  };
+          const searchMatch =
+            !q ||
 
-  const toggleSelectAll = () => {
-    if (selected.length === filtered.length) {
-      setSelected([]);
-    } else {
-      setSelected(filtered.map((x) => x._id));
-    }
-  };
+            x.name
+              ?.toLowerCase()
+              .includes(q) ||
 
-  const deleteSelected = async () => {
-    if (selected.length === 0) return;
+            x.source
+              ?.toLowerCase()
+              .includes(q) ||
 
-    const confirmDelete = confirm(
-      `Delete ${selected.length} selected lead(s)?`
-    );
+            (
+              x.contact ||
+              ""
+            )
+              .toLowerCase()
+              .includes(q);
 
-    if (!confirmDelete) return;
+          const leadDate =
+            new Date(
+              x.createdAt
+            );
 
-    try {
-      // API delete call
+          let dateMatch =
+            true;
+
+          if (
+            dateFilter ===
+            "7"
+          ) {
+
+            const d =
+              new Date();
+
+            d.setDate(
+              now.getDate() -
+                7
+            );
+
+            dateMatch =
+              leadDate >= d;
+
+          }
+
+          else if (
+            dateFilter ===
+            "15"
+          ) {
+
+            const d =
+              new Date();
+
+            d.setDate(
+              now.getDate() -
+                15
+            );
+
+            dateMatch =
+              leadDate >= d;
+
+          }
+
+          else if (
+            dateFilter ===
+            "30"
+          ) {
+
+            const d =
+              new Date();
+
+            d.setDate(
+              now.getDate() -
+                30
+            );
+
+            dateMatch =
+              leadDate >= d;
+
+          }
+
+          else if (
+            dateFilter ===
+            "custom"
+          ) {
+
+            const fromMatch =
+              !fromDate ||
+
+              leadDate >=
+                new Date(
+                  fromDate
+                );
+
+            const toMatch =
+              !toDate ||
+
+              leadDate <=
+                new Date(
+                  `${toDate}T23:59:59`
+                );
+
+            dateMatch =
+              fromMatch &&
+              toMatch;
+
+          }
+
+          return (
+            searchMatch &&
+            dateMatch
+          );
+
+        }
+      );
+
+    }, [
+      leads,
+      query,
+      dateFilter,
+      fromDate,
+      toDate
+    ]);
+
+  const toggleSelect =
+    (id: string) => {
+
+      setSelected(
+        (prev) =>
+
+          prev.includes(id)
+
+            ? prev.filter(
+                (x) =>
+                  x !== id
+              )
+
+            : [
+                ...prev,
+                id
+              ]
+
+      );
+
+    };
+
+  const toggleSelectAll =
+    () => {
+
+      if (
+        selected.length ===
+        filtered.length
+      ) {
+
+        setSelected([]);
+
+      }
+
+      else {
+
+        setSelected(
+          filtered.map(
+            (x) =>
+              x._id
+          )
+        );
+
+      }
+
+    };
+
+  const deleteSelected =
+    async () => {
+
+      if (
+        selected.length === 0
+      ) return;
+
+      const ok =
+        confirm(
+          `Delete ${selected.length} leads?`
+        );
+
+      if (!ok) return;
+
       await Promise.all(
-        selected.map((id) =>
-          fetch(`/api/admin/leads/${id}`, {
-            method: "DELETE",
-          })
+
+        selected.map(
+          (id) =>
+
+            fetch(
+              `/api/admin/leads/${id}`,
+              {
+                method:
+                  "DELETE"
+              }
+            )
+
         )
+
       );
 
-      // remove from UI
-      setLeads((prev) =>
-        prev.filter((x) => !selected.includes(x._id))
+      setLeads(
+        (prev) =>
+
+          prev.filter(
+            (x) =>
+
+              !selected.includes(
+                x._id
+              )
+
+          )
+
       );
 
       setSelected([]);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete leads");
-    }
-  };
+
+    };
 
   return (
+
     <div
       style={{
-        padding: 24,
-        background: "#f8fafc",
-        minHeight: "100vh",
-        fontFamily: "Inter,sans-serif",
+        padding: 28,
+        background:
+          "#f8fafc",
+        minHeight:
+          "100vh",
+        fontFamily:
+          "Inter,sans-serif"
       }}
     >
-      {/* Top */}
+
+      {/* TOP */}
       <div
         style={{
-          background: "#fff",
-          padding: 24,
+          background:
+            "#fff",
           borderRadius: 24,
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 8px 24px rgba(15,23,42,.05)",
-          marginBottom: 20,
+          border:
+            "1px solid #e2e8f0",
+          padding: 24,
+          marginBottom: 24
         }}
       >
+
         <div
           style={{
-            fontSize: 24,
+            fontSize: 28,
             fontWeight: 700,
-            color: "#0f172a",
+            color:
+              "#0f172a"
           }}
         >
-          Lead Management
+          Lead Dashboard
         </div>
 
         <div
           style={{
-            fontSize: 13,
-            color: "#64748b",
-            marginTop: 4,
+            color:
+              "#64748b",
+            marginTop: 4
           }}
         >
-          Track, search and manage your sales pipeline
+          Track and manage your sales leads
         </div>
 
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
+            display:
+              "flex",
             gap: 12,
-            marginTop: 18,
-            flexWrap: "wrap",
+            marginTop: 20,
+            alignItems:
+              "center",
+            flexWrap:
+              "wrap"
           }}
         >
+
+          {/* SEARCH */}
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e)=>
+              setQuery(
+                e.target.value
+              )
+            }
             placeholder="Search leads..."
             style={{
-              width: 320,
-              border: "1px solid #e2e8f0",
-              borderRadius: 14,
-              padding: "12px 16px",
-              outline: "none",
-              fontSize: 13,
+              width: 280,
+              padding:
+                "12px 16px",
+              border:
+                "1px solid #e2e8f0",
+              borderRadius: 12
             }}
           />
 
+          {/* COUNT */}
           <div
             style={{
-              background: "#eef2ff",
-              color: "#4338ca",
-              padding: "8px 14px",
-              borderRadius: 999,
-              fontSize: 12,
-              fontWeight: 600,
+              background:
+                "#eef2ff",
+              color:
+                "#4338ca",
+              padding:
+                "12px 18px",
+              borderRadius: 12,
+              fontWeight: 600
             }}
           >
-            {filtered.length} Leads
+            {
+              filtered.length
+            } Leads
           </div>
 
-          {/* Delete Button */}
-          {selected.length > 0 && (
-            <button
-              onClick={deleteSelected}
-              style={{
-                background: "#dc2626",
-                color: "#fff",
-                border: "none",
-                padding: "10px 16px",
-                borderRadius: 12,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Delete Selected ({selected.length})
-            </button>
-          )}
-        </div>
-      </div>
+          {/* DATE FILTER */}
+          <div
+            style={{
+              marginLeft:
+                "auto",
+              display:
+                "flex",
+              gap: 12,
+              alignItems:
+                "center",
+              flexWrap:
+                "wrap"
+            }}
+          >
 
-      {/* Table */}
-      <div
-        style={{
-          background: "#fff",
-          borderRadius: 24,
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 8px 24px rgba(15,23,42,.05)",
-          overflow: "hidden",
-        }}
-      >
-        {/* Tabs */}
-        <div
-          style={{
-            padding: 20,
-            borderBottom: "1px solid #e2e8f0",
-            display: "flex",
-            gap: 10,
-            flexWrap: "wrap",
-          }}
-        >
-          {tabs.map((x) => (
-            <button
-              key={x}
+            <select
+              value={
+                dateFilter
+              }
+              onChange={(e)=>
+                setDateFilter(
+                  e.target.value
+                )
+              }
               style={{
-                border: "1px solid #e2e8f0",
-                background: "#fff",
-                borderRadius: 12,
-                padding: "8px 14px",
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: "pointer",
+                padding:
+                  "12px 16px",
+                border:
+                  "1px solid #e2e8f0",
+                borderRadius: 12
               }}
             >
-              {x}
-            </button>
-          ))}
-        </div>
 
-        {loading ? (
-          <div style={{ padding: 30, color: "#64748b" }}>
-            Loading leads...
-          </div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            {/* Header */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "60px 2fr 1fr 1fr 1fr 1fr",
-                padding: "16px 24px",
-                background: "#f8fafc",
-                borderBottom: "1px solid #e2e8f0",
-                fontSize: 12,
-                fontWeight: 700,
-                color: "#475569",
-                alignItems: "center",
-              }}
-            >
-              {/* Select All */}
-              <div>
+              <option value="7">
+                Last 7 Days
+              </option>
+
+              <option value="15">
+                Last 15 Days
+              </option>
+
+              <option value="30">
+                Last Month
+              </option>
+
+              <option value="custom">
+                Custom
+              </option>
+
+            </select>
+
+            {dateFilter ===
+              "custom" && (
+
+              <>
+
                 <input
-                  type="checkbox"
-                  checked={
-                    filtered.length > 0 &&
-                    selected.length === filtered.length
+                  type="date"
+                  value={
+                    fromDate
                   }
-                  onChange={toggleSelectAll}
+                  onChange={(e)=>
+                    setFromDate(
+                      e.target.value
+                    )
+                  }
                   style={{
-                    width: 16,
-                    height: 16,
-                    cursor: "pointer",
+                    padding:
+                      "12px 16px",
+                    border:
+                      "1px solid #e2e8f0",
+                    borderRadius: 12
                   }}
                 />
+
+                <input
+                  type="date"
+                  value={
+                    toDate
+                  }
+                  onChange={(e)=>
+                    setToDate(
+                      e.target.value
+                    )
+                  }
+                  style={{
+                    padding:
+                      "12px 16px",
+                    border:
+                      "1px solid #e2e8f0",
+                    borderRadius: 12
+                  }}
+                />
+
+              </>
+
+            )}
+
+          </div>
+
+          {/* DELETE */}
+          {selected.length >
+            0 && (
+
+            <button
+              onClick={
+                deleteSelected
+              }
+              style={{
+                background:
+                  "#dc2626",
+                color:
+                  "#fff",
+                border:
+                  "none",
+                borderRadius: 12,
+                padding:
+                  "12px 16px",
+                cursor:
+                  "pointer"
+              }}
+            >
+              Delete (
+              {
+                selected.length
+              }
+              )
+            </button>
+
+          )}
+
+        </div>
+
+      </div>
+
+      {/* TABLE */}
+      <div
+        style={{
+          background:
+            "#fff",
+          borderRadius: 24,
+          overflow:
+            "hidden",
+          border:
+            "1px solid #e2e8f0"
+        }}
+      >
+
+        {loading ? (
+
+          <div
+            style={{
+              padding: 30
+            }}
+          >
+            Loading...
+          </div>
+
+        ) : (
+
+          <>
+
+            {/* HEADER */}
+            <div
+              style={{
+                display:
+                  "grid",
+                gridTemplateColumns:
+                  "60px 2fr 1fr 1fr 1fr 1fr",
+                padding:
+                  "18px 24px",
+                background:
+                  "#f8fafc",
+                fontWeight: 700
+              }}
+            >
+
+              <input
+                type="checkbox"
+                checked={
+                  selected.length ===
+                    filtered.length &&
+                  filtered.length >
+                    0
+                }
+                onChange={
+                  toggleSelectAll
+                }
+              />
+
+              <div>
+                Name
               </div>
 
-              <div>Name</div>
-              <div>Contact</div>
-              <div>Source</div>
-              <div>Status</div>
-              <div>Created</div>
+              <div>
+                Contact
+              </div>
+
+              <div>
+                Source
+              </div>
+
+              <div>
+                Status
+              </div>
+
+              <div>
+                Created
+              </div>
+
             </div>
 
-            {/* Rows */}
-            {filtered.map((x) => {
-              const s = badge(x.status);
+            {/* ROWS */}
+            {filtered.map(
+              (x) => {
 
-              return (
-                <div
-                  key={x._id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "60px 2fr 1fr 1fr 1fr 1fr",
-                    padding: "20px 24px",
-                    borderBottom: "1px solid #f1f5f9",
-                    alignItems: "center",
-                    background: selected.includes(x._id)
-                      ? "#f8fafc"
-                      : "#fff",
-                  }}
-                >
-                  {/* Checkbox */}
-                  <div>
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(x._id)}
-                      onChange={() => toggleSelect(x._id)}
-                      style={{
-                        width: 16,
-                        height: 16,
-                        cursor: "pointer",
-                      }}
-                    />
-                  </div>
+                const s =
+                  badge(
+                    x.status
+                  );
 
-                  {/* Name */}
+                return (
+
                   <div
+                    key={
+                      x._id
+                    }
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
+                      display:
+                        "grid",
+                      gridTemplateColumns:
+                        "60px 2fr 1fr 1fr 1fr 1fr",
+                      padding:
+                        "18px 24px",
+                      borderTop:
+                        "1px solid #f1f5f9",
+                      alignItems:
+                        "center"
                     }}
                   >
-                    <div
-                      style={{
-                        width: 42,
-                        height: 42,
-                        borderRadius: "50%",
-                        background: "#eef2ff",
-                        color: "#4338ca",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {x.name?.charAt(0)}
+
+                    <input
+                      type="checkbox"
+                      checked={
+                        selected.includes(
+                          x._id
+                        )
+                      }
+                      onChange={()=>
+                        toggleSelect(
+                          x._id
+                        )
+                      }
+                    />
+
+                    <div>
+                      {
+                        x.name
+                      }
                     </div>
 
                     <div>
-                      <div
-                        style={{
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: "#0f172a",
-                        }}
-                      >
-                        {x.name}
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: "#64748b",
-                        }}
-                      >
-                        Prospect
-                      </div>
+                      {
+                        x.contact ||
+                        "-"
+                      }
                     </div>
+
+                    <div>
+                      {
+                        x.source
+                      }
+                    </div>
+
+                    <div>
+
+                      <span
+                        style={{
+                          background:
+                            s.bg,
+                          color:
+                            s.c,
+                          padding:
+                            "6px 12px",
+                          borderRadius: 999,
+                          fontSize: 12
+                        }}
+                      >
+                        {
+                          x.status
+                        }
+                      </span>
+
+                    </div>
+
+                    <div>
+                      {new Date(
+                        x.createdAt
+                      ).toLocaleDateString()}
+                    </div>
+
                   </div>
 
-                  {/* Contact */}
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "#334155",
-                    }}
-                  >
-                    {x.contact || "-"}
-                  </div>
+                );
 
-                  {/* Source */}
-                  <div>
-                    <span
-                      style={{
-                        background: "#f1f5f9",
-                        padding: "6px 10px",
-                        borderRadius: 10,
-                        fontSize: 12,
-                        color: "#475569",
-                      }}
-                    >
-                      {x.source}
-                    </span>
-                  </div>
+              }
+            )}
 
-                  {/* Status */}
-                  <div>
-                    <span
-                      style={{
-                        background: s.bg,
-                        color: s.c,
-                        padding: "6px 12px",
-                        borderRadius: 999,
-                        fontSize: 11,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {x.status || "New"}
-                    </span>
-                  </div>
+          </>
 
-                  {/* Date */}
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "#64748b",
-                    }}
-                  >
-                    {new Date(x.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         )}
+
       </div>
+
     </div>
+
   );
+
 }

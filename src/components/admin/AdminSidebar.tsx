@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 const items=[
-  {href:"/x-admin/dashboard",label:"Analytics",icon:BarChart3},
+  {href:"/x-admin/dashboard",label:"Dashbord",icon:BarChart3},
   {href:"/x-admin/leads",label:"Leads",icon:Users},
   {href:"/x-admin/deals",label:"Deals",icon:Layers},
   {href:"/x-admin/tasks",label:"Tasks",icon:ListChecks},

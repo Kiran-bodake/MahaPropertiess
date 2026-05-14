@@ -1,82 +1,168 @@
-// import { NextResponse } from "next/server";
-// import csv from "csvtojson";
-// import path from "path";
-// import fs from "fs";
-
-// export async function GET(req: Request) {
-//   try {
-//     const filePath = path.join(process.cwd(), "data", "properties.csv");
-
-//     // ✅ check file
-//     if (!fs.existsSync(filePath)) {
-//       return NextResponse.json(
-//         { error: "CSV file not found" },
-//         { status: 500 }
-//       );
-//     }
-
-//     // ✅ read csv
-//     const jsonArray = await csv().fromFile(filePath);
-
-//     // ✅ convert for UI cards
-//     const properties = jsonArray.map((item: any) => ({
-//       id: item._id,
-//       slug: item.slug,
-//       title: item.title,
-//       locality: item.locality,
-//       price: `₹${Number(item.price).toLocaleString()}`,
-//       area: `${item.area} ${item.areaUnit}`,
-//       category: item.category,
-//       badge: item.isFeatured === "true" ? "Featured" : null,
-//       rera: item.isRERA === "true",
-//       img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80",
-//       views: Number(item.views) || 0,
-//     }));
-
-//     // ✅ filter
-//     const { searchParams } = new URL(req.url);
-//     const category = searchParams.get("category");
-
-//     const filtered =
-//       !category || category === "All"
-//         ? properties
-//         : properties.filter(
-//             (p) =>
-//               p.category?.toLowerCase() === category.toLowerCase()
-//           );
-
-//     return NextResponse.json(filtered);
-
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json(
-//       { error: "CSV load failed" },
-//       { status: 500 }
-//     );
-//   }
-// }
 import { NextResponse } from "next/server";
-import properties from "@/moc-data/properties.json";
 
-export async function GET(req: Request) {
+import { connectDB } from "@/lib/mongoose";
+
+import Property from "@/models/Property";
+import PropertyLocation from "@/models/PropertyLocation";
+import PropertyPricing from "@/models/PropertyPricing";
+import PropertyArea from "@/models/PropertyArea";
+import PropertyFlags from "@/models/PropertyFlags";
+import PropertyImage from "@/models/PropertyImage";
+
+export async function GET(
+  req: Request
+) {
+
   try {
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category");
 
-    const filtered =
-      !category || category === "All"
-        ? properties
-        : properties.filter(
-            (item: any) => item.cat?.toLowerCase() === category.toLowerCase(),
-          );
+    await connectDB();
 
-    return NextResponse.json(filtered);
-  } catch (error) {
-    console.error(error);
+    const {
+      searchParams
+    } = new URL(
+      req.url
+    );
+
+    const category =
+      searchParams.get(
+        "category"
+      );
+
+    let properties =
+      await Property.find();
+
+    /* Category Filter */
+    if (
+      category &&
+      category !== "All"
+    ) {
+
+      properties =
+        properties.filter(
+          (item: any) =>
+
+            item.category
+              ?.toLowerCase() ===
+            category.toLowerCase()
+
+        );
+
+    }
+
+    /* Merge data from related collections */
+    const finalData =
+      await Promise.all(
+
+        properties.map(
+          async (
+            property: any
+          ) => {
+
+            const propertyId =
+              property.propertyId;
+
+            const location =
+              await PropertyLocation.findOne({
+                propertyId
+              });
+
+            const pricing =
+              await PropertyPricing.findOne({
+                propertyId
+              });
+
+            const area =
+              await PropertyArea.findOne({
+                propertyId
+              });
+
+            const flags =
+              await PropertyFlags.findOne({
+                propertyId
+              });
+
+            const images =
+              await PropertyImage.findOne({
+                propertyId
+              });
+
+            return {
+
+              id:
+                property._id,
+
+              slug:
+                property.propertyId,
+
+              title:
+                property.title,
+
+              locality:
+                location?.locality ||
+                "",
+
+              city:
+                location?.city ||
+                "",
+
+              category:
+                property.category,
+
+              price:
+                `₹${Number(
+                  pricing?.price || 0
+                ).toLocaleString()}`,
+
+              area:
+                `${area?.area || 0} ${area?.areaUnit || "sqft"}`,
+
+              badge:
+                flags?.isFeatured
+                  ? "Featured"
+                  : null,
+
+              rera:
+                flags?.isRERA || false,
+
+              img:
+                images?.images?.[0]?.url ||
+
+                "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80",
+
+              views:
+                property.views || 0
+
+            };
+
+          }
+
+        )
+
+      );
 
     return NextResponse.json(
-      { error: "Failed to load properties" },
-      { status: 500 },
+      finalData
     );
+
   }
+
+  catch (error: any) {
+
+  console.error(
+    "Properties API Error:",
+    error
+  );
+
+  return NextResponse.json(
+    {
+      error:
+        error.message
+    },
+    {
+      status: 500
+    }
+  );
+
+}
+
 }
