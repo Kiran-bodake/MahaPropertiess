@@ -100,7 +100,7 @@ export function Footer() {
                 }}
               >
                 <Phone size={15} color="#22c55e" />
-                <span>+91 98765 43210</span>
+                <span>0253 262 9711</span>
               </a>
 
               {/* EMAIL */}

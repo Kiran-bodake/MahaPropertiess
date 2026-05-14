@@ -19,7 +19,8 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
     flex: 1,
     padding: "10px 12px",
     borderRadius: "8px",
-    border: "1px solid #cbd5e1",
+    border: "1px solid #fcd34d",
+    background: "#fffdf7",
     fontSize: "0.9rem",
     fontFamily: "inherit",
     outline: "none",
@@ -28,10 +29,21 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
 
   if (submitted) {
     return (
-      <div style={{ padding: "14px 18px", background: "#f0fdf4", borderRadius: "10px", textAlign: "center" }}>
+      <div
+        style={{
+          padding: "14px 18px",
+          background: "#fff8dc",
+          borderRadius: "10px",
+          textAlign: "center",
+        }}
+      >
         <div style={{ fontSize: "1.5rem", marginBottom: "6px" }}>✅</div>
-        <p style={{ margin: 0, fontWeight: 700, color: "#166534" }}>We'll call you back shortly!</p>
-        <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "#4b7a5e" }}>Thank you for your interest in {propertyTitle}.</p>
+        <p style={{ margin: 0, fontWeight: 700, color: "#92400e" }}>
+          We'll call you back shortly!
+        </p>
+        <p style={{ margin: "4px 0 0", fontSize: "0.85rem", color: "#a16207" }}>
+          Thank you for your interest in {propertyTitle}.
+        </p>
       </div>
     );
   }
@@ -47,13 +59,29 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
       }}
     >
       <div style={{ marginBottom: "12px" }}>
-        <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#16a34a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>
+        <div
+          style={{
+            fontSize: "0.75rem",
+            fontWeight: 700,
+            color: "#ca8a04",
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            marginBottom: "4px",
+          }}
+        >
           Quick Enquiry
         </div>
-        <p style={{ margin: 0, fontWeight: 700, fontSize: "1rem", color: "#14532d" }}>
+        <p
+          style={{
+            margin: 0,
+            fontWeight: 700,
+            fontSize: "1rem",
+            color: "#78350f",
+          }}
+        >
           Interested in this property?
         </p>
-        <p style={{ margin: "3px 0 0", fontSize: "0.85rem", color: "#4b7a5e" }}>
+        <p style={{ margin: "3px 0 0", fontSize: "0.85rem", color: "#92400e" }}>
           Leave your details — our expert will call you within 30 mins.
         </p>
       </div>
@@ -69,9 +97,16 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
           />
           <input
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+
+              setPhone(value);
+            }}
             placeholder="Phone number"
             type="tel"
+            inputMode="numeric"
+            pattern="[0-9]{10}"
+            maxLength={10}
             required
             style={inp}
           />
@@ -80,9 +115,9 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
             disabled={loading}
             style={{
               padding: "10px 20px",
-              background: "linear-gradient(135deg, #14532d, #16a34a)",
+              background: "linear-gradient(135deg, #ca8a04, #f59e0b)",
+              border: "1px solid #fde68a",
               color: "white",
-              border: "none",
               borderRadius: "8px",
               fontWeight: 700,
               fontSize: "0.9rem",

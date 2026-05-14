@@ -19,7 +19,10 @@ export function RelatedPropertyCard({ rel }: { rel: RelatedProp }) {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Link href={`/properties/${rel.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+    <Link
+      href={`/properties/${rel.slug}`}
+      style={{ textDecoration: "none", color: "inherit" }}
+    >
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -35,7 +38,13 @@ export function RelatedPropertyCard({ rel }: { rel: RelatedProp }) {
         }}
       >
         {/* Image */}
-        <div style={{ position: "relative", height: "170px", background: "#f1f5f9" }}>
+        <div
+          style={{
+            position: "relative",
+            height: "170px",
+            background: "#f1f5f9",
+          }}
+        >
           <Image
             src={rel.images[0]?.url ?? ""}
             alt={rel.title}
@@ -91,12 +100,26 @@ export function RelatedPropertyCard({ rel }: { rel: RelatedProp }) {
           >
             {rel.title}
           </h4>
-          <p style={{ margin: "0 0 10px", fontSize: "0.83rem", color: "#64748b" }}>
+          <p
+            style={{
+              margin: "0 0 10px",
+              fontSize: "0.83rem",
+              color: "#64748b",
+            }}
+          >
             📍 {rel.locality}, {rel.city}
           </p>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontWeight: 800, fontSize: "1rem", color: "#0f766e" }}>
-              ₹{rel.price.toLocaleString()}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{ fontWeight: 800, fontSize: "1rem", color: "#0f766e" }}
+            >
+              {rel.price.toLocaleString()}
             </span>
             <span
               style={{

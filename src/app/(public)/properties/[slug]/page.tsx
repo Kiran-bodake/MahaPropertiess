@@ -6,55 +6,68 @@ import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
 import { RelatedPropertyCard } from "@/components/shared/RelatedPropertyCard";
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
-import { Property } from "@/types/property";
-import rawProperties from "@/moc-data/properties.json";
+import { getPropertyBySlug } from "@/lib/properties";
+import { getNearbyProperties } from "@/utils/property/getNearbyProperties";
+import properties from "@/moc-data/properties.json";
 
-/* ── Map compact JSON shape → Property ─────────────────── */
-type RawProp = {
-  id: number; slug: string; t: string; loc: string; pr: string;
-  cat: string; area: string; views: number; img: string;
-  badge?: string | null; rera?: boolean;
-};
+function formatProperty(property: any) {
+  const parts = property.loc?.split(",") || [];
 
-function rawToProperty(r: RawProp): Property & { priceLabel?: string } {
-  const parts   = r.loc.split(",").map(s => s.trim());
-  const locality = parts[0] ?? r.loc;
-  const city     = parts[1] ?? "Nashik";
   return {
-    _id: String(r.id),
-    title: r.t,
-    slug: r.slug,
-    category: (r.cat.toLowerCase().replace(/\s+/g, "-") as Property["category"]) ?? "commercial",
-    status: "available",
-    constructionStatus: "ready",
-    price: 0,
-    priceLabel: r.pr,
-    area: parseFloat(r.area) || 0,
-    areaUnit: r.area.toLowerCase().includes("acre") ? "acre"
-            : r.area.toLowerCase().includes("sqft") ? "sqft" : "sqft",
-    locality,
-    city,
+    _id: String(property.id),
+
+    id: property.id,
+    slug: property.slug,
+
+    title: property.t,
+
+    locality: parts[0]?.trim() || "",
+
+    city: parts[1]?.trim() || "Nashik",
+
     state: "Maharashtra",
-    description: `${r.t} is located in ${r.loc}. This is a prime ${r.cat.toLowerCase()} property available in the area with excellent connectivity and investment potential.`,
-    images: [{ url: r.img }],
-    highlights: r.rera ? ["RERA Approved", "Clear Title", "Ready Possession"] : ["Clear Title", "Ready Possession"],
-    amenities: ["Road Access", "Electricity", "Water Connection"],
-    isRERA: r.rera ?? false,
-    isFeatured: false,
-    isZeroBrokerage: true,
-    postedBy: "dealer",
+
+    localitySlug: property.localitySlug,
+
+    pincode: property.pincode,
+
+    price: property.pr,
+
+    category: property.cat,
+
+    area: property.area,
+
+    views: property.views,
+
+    badge: property.badge,
+
+    image: property.img,
+
+    images: [
+      {
+        url: property.img,
+      },
+    ],
+
+    isRERA: property.rera,
+
+    status: "available",
+
+    constructionStatus: "ready",
+
+    description: `${property.t} located in ${property.loc}. Excellent investment opportunity in prime location.`,
+
+    highlights: ["Prime Location", "Clear Title", "Investment Opportunity"],
+
+    amenities: ["Road Access", "Water Connection", "Electricity"],
+
     agentName: "MahaProperties",
-    views: r.views,
-    savedCount: 0,
+
+    isZeroBrokerage: true,
+
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   };
 }
-
-/* Build a lookup from all JSON slugs */
-const JSON_DATA: Record<string, Property> = Object.fromEntries(
-  (rawProperties as RawProp[]).map(r => [r.slug, rawToProperty(r)])
-);
 
 // const PROPERTY_DATA: Record<string, Property> = {
 //   "awfis-baner-2": {
@@ -120,434 +133,7 @@ const JSON_DATA: Record<string, Property> = Object.fromEntries(
 //   },
 // };
 
-export async function generateStaticParams() {
-  const allSlugs = new Set([
-    ...Object.keys(PROPERTY_DATA),
-    ...Object.keys(JSON_DATA),
-  ]);
-  return [...allSlugs].map(slug => ({ slug }));
-}
-
 export const dynamicParams = true;
-
-const RELATED_PROPERTIES: Property[] = [
-  {
-    _id: "p-rel-1",
-    title: "Commercial Plot - Near Nashik Road Bus Stand",
-    slug: "commercial-nashik-road-bus",
-    category: "commercial",
-    status: "available",
-    constructionStatus: "ready",
-    price: 21500000,
-    area: 3450,
-    areaUnit: "sqft",
-    locality: "Nashik Road",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "High footfall commercial property with immediate possession.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1549421263-0e4092c5bf60?w=800&q=80",
-      },
-    ],
-    highlights: ["Right next to main boulevard", "6 lane road"],
-    amenities: ["24x7 security"],
-    isRERA: true,
-    isFeatured: false,
-    isZeroBrokerage: false,
-    postedBy: "dealer",
-    agentName: "Shweta Kulkarni",
-    views: 318,
-    savedCount: 84,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    _id: "p-rel-2",
-    title: "Warehouse-enabled Commercial Land - Satpur MIDC",
-    slug: "warehouse-commercial-satpur",
-    category: "warehouse",
-    status: "available",
-    constructionStatus: "ready",
-    price: 41000000,
-    area: 15000,
-    areaUnit: "sqft",
-    locality: "Satpur MIDC",
-    city: "Nashik",
-    state: "Maharashtra",
-    description:
-      "Operational-ready plot for industrial warehousing with RERA option.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80",
-      },
-    ],
-    highlights: ["MIDC approved", "Power & water supply"],
-    amenities: ["Wide approach roads"],
-    isRERA: true,
-    isFeatured: false,
-    isZeroBrokerage: true,
-    postedBy: "builder",
-    agentName: "Nitin Rao",
-    views: 228,
-    savedCount: 56,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    _id: "p-rel-3",
-    title: "NA Plot — Gangapur Road Extension",
-    slug: "na-plot-gangapur-road",
-    category: "na-plot",
-    status: "available",
-    constructionStatus: "ready",
-    price: 5800000,
-    area: 2200,
-    areaUnit: "sqft",
-    locality: "Gangapur Road",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "Premium NA plot with clear title in the most sought-after residential zone of Nashik.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
-      },
-    ],
-    highlights: ["NA converted", "Gated layout", "Close to highway"],
-    amenities: ["Road access", "Water connection", "Electricity"],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "dealer",
-    agentName: "MahaProperties",
-    views: 410,
-    savedCount: 62,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    _id: "p-rel-4",
-    title: "Agriculture Land — Trimbak Road",
-    slug: "collector-na-trimbak-road",
-    category: "agriculture",
-    status: "available",
-    constructionStatus: "ready",
-    price: 6200000,
-    area: 2,
-    areaUnit: "acre",
-    locality: "Trimbak Road",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "Fertile agriculture land near Trimbak Road ideal for organic farming and farmhouse projects.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80",
-      },
-    ],
-    highlights: ["River nearby", "Hill view", "Borewell option"],
-    amenities: ["Fencing", "Road access", "Natural water source"],
-    isRERA: false,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "owner",
-    agentName: "MahaProperties",
-    views: 275,
-    savedCount: 38,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
-const PROPERTY_DATA: Record<string, Property> = {
-  "na-plot-gangapur-road": {
-    _id: "1",
-    title: "Prime NA Plot — Gangapur Road",
-    slug: "na-plot-gangapur-road",
-    category: "na-plot",
-    status: "available",
-    constructionStatus: "ready",
-    price: 4200000,
-    area: 2000,
-    areaUnit: "sqft",
-    locality: "Gangapur Road",
-    city: "Nashik",
-    state: "Maharashtra",
-    description:
-      "Premium NA plot located on Gangapur Road with excellent connectivity. Ideal for residential construction and long-term investment.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&q=80",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1462858555511-64f2af96f9b0?w=1200&q=80",
-      },
-    ],
-    highlights: [
-      "NA converted land",
-      "Prime Gangapur Road location",
-      "Strong resale potential",
-    ],
-    amenities: ["Road touch", "Electricity", "Water line", "Clear title"],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "dealer",
-    agentName: "MahaProperties",
-    views: 234,
-    savedCount: 22,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-
-  "agriculture-land-igatpuri": {
-    _id: "2",
-    title: "Agriculture Land — Igatpuri",
-    slug: "agriculture-land-igatpuri",
-    category: "agriculture",
-    status: "available",
-    constructionStatus: "ready",
-    price: 8500000,
-    area: 3,
-    areaUnit: "acre",
-    locality: "Igatpuri",
-    city: "Nashik",
-    state: "Maharashtra",
-    description:
-      "Scenic agriculture land near Igatpuri suitable for farming, farmhouse development, and weekend investment.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200&q=80",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=1200&q=80",
-      },
-    ],
-    highlights: ["Green surroundings", "Hill view", "Water availability"],
-    amenities: [
-      "Road access",
-      "Fencing",
-      "Borewell option",
-      "Natural surroundings",
-    ],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "owner",
-    agentName: "MahaProperties",
-    views: 189,
-    savedCount: 17,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-
-  "industrial-shed-midc-satpur": {
-    _id: "3",
-    title: "Industrial Shed — MIDC Satpur",
-    slug: "industrial-shed-midc-satpur",
-    category: "warehouse",
-    status: "available",
-    constructionStatus: "ready",
-    price: 12000000,
-    area: 5000,
-    areaUnit: "sqft",
-    locality: "Satpur MIDC",
-    city: "Nashik",
-    state: "Maharashtra",
-    description:
-      "Ready industrial shed in Satpur MIDC with power connection and excellent transport access.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&q=80",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&q=80",
-      },
-    ],
-    highlights: [
-      "MIDC approved zone",
-      "Heavy vehicle access",
-      "Ready possession",
-    ],
-    amenities: ["3-phase power", "Water supply", "Wide road", "Security"],
-    isRERA: false,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "builder",
-    agentName: "MahaProperties",
-    views: 312,
-    savedCount: 28,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-
-  "commercial-plot-nashik-road": {
-    _id: "4",
-    title: "Commercial Plot — Nashik Road",
-    slug: "commercial-plot-nashik-road",
-    category: "commercial",
-    status: "available",
-    constructionStatus: "ready",
-    price: 6800000,
-    area: 1800,
-    areaUnit: "sqft",
-    locality: "Nashik Road",
-    city: "Nashik",
-    state: "Maharashtra",
-    description:
-      "Prime commercial plot in Nashik Road area with strong footfall and future appreciation potential.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80",
-      },
-    ],
-    highlights: ["High traffic zone", "Main road frontage", "Excellent ROI"],
-    amenities: [
-      "Road touch",
-      "Water connection",
-      "Electricity",
-      "Market nearby",
-    ],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "dealer",
-    agentName: "MahaProperties",
-    views: 156,
-    savedCount: 15,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  "investment-plot-meri-village": {
-    _id: "5",
-    title: "Investment Plot — Meri Village",
-    slug: "investment-plot-meri-village",
-    category: "commercial",
-    status: "available",
-    constructionStatus: "ready",
-    price: 1800000,
-    area: 1200,
-    areaUnit: "sqft",
-    locality: "Meri Village",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "Affordable investment plot in fast-growing Meri area.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=1200&q=80",
-      },
-    ],
-    highlights: ["Budget investment", "Growing locality"],
-    amenities: ["Road", "Water"],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "dealer",
-    agentName: "MahaProperties",
-    views: 445,
-    savedCount: 15,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-
-  "warehouse-land-ambad-midc": {
-    _id: "6",
-    title: "Warehouse Land — Ambad MIDC",
-    slug: "warehouse-land-ambad-midc",
-    category: "warehouse",
-    status: "available",
-    constructionStatus: "ready",
-    price: 24000000,
-    area: 12000,
-    areaUnit: "sqft",
-    locality: "Ambad",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "Large warehouse land in Ambad MIDC.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1565891741441-64926e441838?w=1200&q=80",
-      },
-    ],
-    highlights: ["MIDC zone", "Logistics friendly"],
-    amenities: ["Wide road", "Power"],
-    isRERA: false,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "builder",
-    agentName: "MahaProperties",
-    views: 98,
-    savedCount: 8,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-
-  "collector-na-trimbak-road": {
-    _id: "7",
-    title: "Collector NA — Trimbak Road",
-    slug: "collector-na-trimbak-road",
-    category: "na-plot",
-    status: "available",
-    constructionStatus: "ready",
-    price: 5200000,
-    area: 2400,
-    areaUnit: "sqft",
-    locality: "Trimbak Road",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "Collector NA approved plot on Trimbak Road.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80",
-      },
-    ],
-    highlights: ["Collector approved", "Prime road"],
-    amenities: ["Road", "Water"],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "dealer",
-    agentName: "MahaProperties",
-    views: 190,
-    savedCount: 10,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-
-  "na-plot-pathardi-phata": {
-    _id: "8",
-    title: "NA Plot — Pathardi Phata",
-    slug: "na-plot-pathardi-phata",
-    category: "na-plot",
-    status: "available",
-    constructionStatus: "ready",
-    price: 3900000,
-    area: 1800,
-    areaUnit: "sqft",
-    locality: "Pathardi Phata",
-    city: "Nashik",
-    state: "Maharashtra",
-    description: "NA plot in premium Pathardi Phata zone.",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
-      },
-    ],
-    highlights: ["Developed area", "High demand"],
-    amenities: ["Road", "Electricity"],
-    isRERA: true,
-    isFeatured: true,
-    isZeroBrokerage: true,
-    postedBy: "owner",
-    agentName: "MahaProperties",
-    views: 210,
-    savedCount: 14,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-};
 
 export async function generateMetadata({
   params,
@@ -555,20 +141,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const prop = PROPERTY_DATA[slug] ?? JSON_DATA[slug];
-  if (!prop) {
-    return { title: "Property not found" };
+
+  const rawProperty = await getPropertyBySlug(slug);
+
+  if (!rawProperty) {
+    return {
+      title: "Property Not Found",
+    };
   }
+
+  const property = formatProperty(rawProperty);
   return {
-    title: `${prop.title} | MahaProperties`,
-    description: prop.description,
-    keywords: `${prop.title}, Nashik commercial property, MahaProperties`,
-    openGraph: {
-      title: `${prop.title} | MahaProperties`,
-      description: prop.description,
-      type: "article",
-      images: prop.images.map((img) => ({ url: img.url })),
-    },
+    title: `${property.title} | MahaProperties`,
+    description: `${property.title} in ${property.locality}`,
   };
 }
 
@@ -578,10 +163,20 @@ export default async function PropertyDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const property = PROPERTY_DATA[slug] ?? JSON_DATA[slug];
-  if (!property) {
+
+  const rawProperty = await getPropertyBySlug(slug);
+
+  if (!rawProperty) {
     notFound();
   }
+
+  const property = formatProperty(rawProperty);
+
+  const nearbyProperties = rawProperty?.pincode
+    ? getNearbyProperties(rawProperty.pincode, properties, rawProperty.id)
+    : [];
+
+  const formattedNearbyProperties = nearbyProperties.map(formatProperty);
 
   return (
     <>
@@ -728,9 +323,7 @@ export default async function PropertyDetailPage({
                   }}
                 >
                   <div style={{ color: "#0f766e", fontWeight: 700 }}>
-                    {(property as Property & { priceLabel?: string }).priceLabel
-                      ? (property as Property & { priceLabel?: string }).priceLabel
-                      : `₹${property.price.toLocaleString()}`}
+                    {property.price}
                   </div>
                   <div style={{ color: "#64748b", fontSize: "0.82rem" }}>
                     Price
@@ -745,7 +338,7 @@ export default async function PropertyDetailPage({
                   }}
                 >
                   <div style={{ color: "#0f766e", fontWeight: 700 }}>
-                    {property.area} {property.areaUnit}
+                    {property.area}
                   </div>
                   <div style={{ color: "#64748b", fontSize: "0.82rem" }}>
                     Carpet
@@ -960,14 +553,39 @@ export default async function PropertyDetailPage({
           {/* You might be interested in */}
           <div style={{ marginTop: "32px" }}>
             <div style={{ marginBottom: "16px" }}>
-              <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#16a34a", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "4px" }}>
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  color: "#16a34a",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  marginBottom: "4px",
+                }}
+              >
                 Similar Properties
               </div>
-              <h2 style={{ margin: 0, fontSize: "1.3rem", fontWeight: 800, color: "#0f172a" }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "1.3rem",
+                  fontWeight: 800,
+                  color: "#0f172a",
+                }}
+              >
                 You might be interested in
               </h2>
-              <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: "0.9rem" }}>
-                Based on location: <strong>{property.locality}, {property.city}</strong>
+              <p
+                style={{
+                  margin: "4px 0 0",
+                  color: "#64748b",
+                  fontSize: "0.9rem",
+                }}
+              >
+                Based on location:{" "}
+                <strong>
+                  {property.locality}, {property.city}
+                </strong>
               </p>
             </div>
 
@@ -978,7 +596,7 @@ export default async function PropertyDetailPage({
                 gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
               }}
             >
-              {RELATED_PROPERTIES.map((rel) => (
+              {formattedNearbyProperties.map((rel) => (
                 <RelatedPropertyCard key={rel._id} rel={rel} />
               ))}
             </div>

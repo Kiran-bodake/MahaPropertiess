@@ -438,7 +438,7 @@ const SLIDES = [
   {
     img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1600&q=85",
     tag: "Agriculture Land — Clear Title",
-    h: "Invest in Nashik&apos;s\nFertile Farmlands",
+    h: "Invest in Nashik & Fertile Farmlands",
     sub: "Prime agriculture land with RERA compliance and clean title records",
   },
   {

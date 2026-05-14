@@ -4,6 +4,10 @@ import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 import { Building2, BadgeCheck, Users, MapPin, PhoneCall } from "lucide-react";
 
+const BODY_FONT = "'DM Sans', system-ui, sans-serif";
+
+const HEADING_FONT = "'Plus Jakarta Sans', system-ui, sans-serif";
+
 const stats = [
   { value: "500+", label: "Properties Listed" },
   { value: "1200+", label: "Happy Clients" },
@@ -34,14 +38,20 @@ export default function AboutPage() {
     <>
       <MegaNavbar />
 
-      <main style={{ background: "#f9fafb" }}>
+      <main style={{ background: "#f9fafb", fontFamily: BODY_FONT }}>
         {/* HERO */}
         <section
           style={{
-            background:
-              "linear-gradient(135deg,#166534 0%,#15803d 50%,#14532d 100%)",
             position: "relative",
             overflow: "hidden",
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.58), rgba(0,0,0,0.58)), url('/about-banner.png')",
+
+            backgroundSize: "cover",
+
+            backgroundPosition: "center",
+
+            backgroundRepeat: "no-repeat",
           }}
         >
           <div
@@ -91,12 +101,15 @@ export default function AboutPage() {
 
               <h1
                 style={{
-                  fontFamily: "var(--font-syne,Syne,serif)",
-                  fontSize: "clamp(2.5rem,7vw,5rem)",
-                  lineHeight: 1.05,
-                  fontWeight: 900,
+                  fontFamily: HEADING_FONT,
+                  fontSize: "clamp(2.3rem,5vw,4.8rem)",
+                  lineHeight: 0.95,
+                  fontWeight: 700,
+                  letterSpacing: "-0.05em",
                   color: "#fff",
                   marginBottom: "24px",
+                  maxWidth: "820px",
+                  textShadow: "0 6px 30px rgba(0,0,0,0.35)",
                 }}
               >
                 About MahaProperties
@@ -105,7 +118,7 @@ export default function AboutPage() {
               <p
                 style={{
                   color: "rgba(255,255,255,0.88)",
-                  fontSize: "18px",
+                  fontSize: "clamp(1rem,1.5vw,1.15rem)",
                   lineHeight: 1.8,
                   maxWidth: "600px",
                 }}
@@ -124,7 +137,7 @@ export default function AboutPage() {
                 }}
               >
                 <Link
-                  href="/"
+                  href="/properties"
                   style={{
                     background: "#fff",
                     color: "#166534",
@@ -153,43 +166,6 @@ export default function AboutPage() {
                 >
                   Contact Us
                 </Link>
-              </div>
-            </div>
-
-            {/* RIGHT */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <div
-                style={{
-                  background: "#fff",
-                  borderRadius: "30px",
-                  width: "50%",
-                  maxWidth: "360px",
-                  height: "260px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 25px 60px rgba(0,0,0,0.18)",
-                }}
-              >
-                <div
-                  style={{
-                    position: "relative",
-                    width: "220px",
-                    height: "220px",
-                  }}
-                >
-                  <Image
-                    src="/maha.png"
-                    alt="MahaProperties"
-                    fill
-                    style={{ objectFit: "contain" }}
-                  />
-                </div>
               </div>
             </div>
           </div>
@@ -221,8 +197,10 @@ export default function AboutPage() {
               <div key={item.label} style={{ textAlign: "center" }}>
                 <h3
                   style={{
+                    fontFamily: HEADING_FONT,
+                    letterSpacing: "-0.04em",
                     fontSize: "clamp(2rem,4vw,3rem)",
-                    fontWeight: 900,
+                    fontWeight: 700,
                     color: "#166534",
                   }}
                 >
@@ -295,10 +273,11 @@ export default function AboutPage() {
 
               <h2
                 style={{
-                  fontFamily: "var(--font-syne,Syne,serif)",
+                  fontFamily: HEADING_FONT,
+                  letterSpacing: "-0.04em",
                   fontSize: "clamp(2rem,5vw,4rem)",
                   lineHeight: 1.1,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   marginTop: "16px",
                   color: "#111827",
                 }}
@@ -360,7 +339,7 @@ export default function AboutPage() {
                   <div>
                     <h4
                       style={{
-                        fontWeight: 800,
+                        fontWeight: 700,
                         fontSize: "18px",
                         color: "#111827",
                       }}
@@ -460,10 +439,11 @@ export default function AboutPage() {
 
               <h2
                 style={{
-                  fontFamily: "var(--font-syne,Syne,serif)",
+                  fontFamily: HEADING_FONT,
+                  letterSpacing: "-0.04em",
                   fontSize: "clamp(2rem,5vw,4rem)",
                   lineHeight: 1.1,
-                  fontWeight: 900,
+                  fontWeight: 700,
                   marginTop: "16px",
                   color: "#111827",
                 }}
@@ -523,6 +503,8 @@ export default function AboutPage() {
 
                     <h3
                       style={{
+                        fontFamily: HEADING_FONT,
+                        letterSpacing: "-0.03em",
                         marginTop: "24px",
                         fontSize: "22px",
                         fontWeight: 800,

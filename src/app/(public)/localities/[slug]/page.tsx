@@ -1,6 +1,7 @@
 import properties from "@/moc-data/properties.json";
 import Link from "next/link";
 import Image from "next/image";
+import { getNearbyProperties } from "@/utils/property/getNearbyProperties";
 
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
@@ -19,9 +20,17 @@ export default async function LocalityPage({ params }: Props) {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 
-  const filtered = properties.filter((p) =>
-    p.loc.toLowerCase().includes(localityName.toLowerCase()),
-  );
+  const filtered = properties.filter((p) => p.localitySlug === slug);
+
+  const currentProperty = filtered[0];
+
+  const nearbyProperties = currentProperty?.pincode
+    ? getNearbyProperties(
+        currentProperty.pincode,
+        properties,
+        currentProperty.id,
+      )
+    : [];
 
   return (
     <>
@@ -92,18 +101,6 @@ export default async function LocalityPage({ params }: Props) {
                 {localityName}, Nashik.
               </p>
             </div>
-
-            {/* <div className="heroStats">
-              <div className="statCard">
-                <div className="statValue">{filtered.length}+</div>
-                <div className="statLabel">Properties</div>
-              </div>
-
-              <div className="statCard">
-                <div className="statValue">Nashik</div>
-                <div className="statLabel">Maharashtra</div>
-              </div>
-            </div> */}
           </section>
 
           {/* TOPBAR */}
@@ -208,328 +205,495 @@ export default async function LocalityPage({ params }: Props) {
               <p>No listings available for this locality.</p>
             </div>
           )}
+
+          {/* Nearby Properties */}
+          {nearbyProperties.length > 0 && (
+            <section style={{ marginTop: "32px" }}>
+              {/* Header */}
+              <div style={{ marginBottom: "16px" }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    color: "#16a34a",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {/* Similar Properties */}
+                </div>
+
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: "1.3rem",
+                    fontWeight: 800,
+                    color: "#0f172a",
+                  }}
+                >
+                  Nearby Properties
+                </h2>
+
+                <p
+                  style={{
+                    margin: "4px 0 0",
+                    color: "#64748b",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  Based on location:
+                  <strong> {currentProperty.loc}</strong>
+                </p>
+              </div>
+
+              {/* Grid */}
+              <div className="relatedGrid">
+                {nearbyProperties.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/properties/${p.slug}`}
+                    style={{
+                      textDecoration: "none",
+                    }}
+                  >
+                    <article className="relatedCard">
+                      {/* Image */}
+                      <div className="relatedImageWrap">
+                        <Image
+                          src={p.img}
+                          alt={p.t}
+                          fill
+                          className="relatedImage"
+                        />
+
+                        {/* Category Badge */}
+                        <div className="relatedBadge">{p.cat}</div>
+
+                        {/* Zero Brokerage */}
+                        <div className="relatedZero">Zero Brokerage</div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="relatedContent">
+                        <h3>{p.t}</h3>
+
+                        <p>📍 {p.loc}</p>
+
+                        <div className="relatedBottom">
+                          <span>{p.pr}</span>
+
+                          <button type="button">View Details →</button>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         {/* STYLES */}
+        {/* STYLES */}
         <style>{`
-          .hero {
-            background: linear-gradient(135deg, #052e16, #166534, #22c55e);
-            border-radius: 24px;
-            padding: 32px;
-            color: white;
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            gap: 24px;
-            flex-wrap: wrap;
-          }
+  .hero {
+    background: linear-gradient(135deg, #052e16, #166534, #22c55e);
+    border-radius: 24px;
+    padding: 32px;
+    color: white;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
 
-          .heroBadge {
-            display: inline-flex;
-            background: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 14px;
-          }
+  .heroBadge {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
 
-          .hero h1 {
-            margin: 0;
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 900;
-            line-height: 1.1;
-            color: white;
-          }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: white;
+  }
 
-          .hero p {
-            margin-top: 14px;
-            max-width: 720px;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.7;
-          }
+  .hero p {
+    margin-top: 14px;
+    max-width: 720px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+  }
 
-          .heroStats {
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-            flex-wrap: wrap;
-          }
+  .topbar {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 
-          .statCard {
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(10px);
-            border-radius: 18px;
-            padding: 18px 22px;
-            min-width: 140px;
-          }
+  .topLabel {
+    color: #16a34a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+  }
 
-          .statValue {
-            font-size: 1.6rem;
-            font-weight: 900;
-          }
+  .topbar h2 {
+    margin: 6px 0 0;
+    color: #111827;
+  }
 
-          .statLabel {
-            margin-top: 4px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-          }
+  .topbar p {
+    color: #64748b;
+    font-size: 14px;
+  }
 
-          .topbar {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            flex-wrap: wrap;
-            gap: 10px;
-          }
+  .propertyCard {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    transition: 0.25s ease;
+  }
 
-          .topLabel {
-            color: #16a34a;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.6px;
-          }
+  .propertyCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
+  }
 
-          .topbar h2 {
-            margin: 6px 0 0;
-            color: #111827;
-          }
+  .imageWrap {
+    position: relative;
+    min-height: 220px;
+  }
 
-          .topbar p {
-            color: #64748b;
-            font-size: 14px;
-          }
+  .verified,
+  .badge,
+  .photoCount {
+    position: absolute;
+    z-index: 10;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    color: white;
+    font-weight: 700;
+  }
 
-          .propertyCard {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid #e5e7eb;
-            transition: 0.25s ease;
-          }
+  .verified {
+    top: 12px;
+    left: 12px;
+    background: #16a34a;
+  }
 
-          .propertyCard:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
-          }
+  .badge {
+    bottom: 12px;
+    left: 12px;
+    background: black;
+  }
 
-          .imageWrap {
-            position: relative;
-            min-height: 220px;
-          }
+  .photoCount {
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.7);
+  }
 
-          .verified,
-          .badge,
-          .photoCount {
-            position: absolute;
-            z-index: 10;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 10px;
-            color: white;
-            font-weight: 700;
-          }
+  .favBtn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    cursor: pointer;
+    font-size: 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
 
-          .verified {
-            top: 12px;
-            left: 12px;
-            background: #16a34a;
-          }
+  .cardContent {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 
-          .badge {
-            bottom: 12px;
-            left: 12px;
-            background: black;
-          }
+  .category {
+    display: inline-flex;
+    width: fit-content;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
 
-          .photoCount {
-            bottom: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.7);
-          }
+  .title {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #111827;
+  }
 
-          .favBtn {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.95);
-            cursor: pointer;
-            font-size: 22px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-          }
+  .location {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 15px;
+  }
 
-          .cardContent {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-          }
+  .features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
 
-          .category {
-            display: inline-flex;
-            width: fit-content;
-            padding: 7px 12px;
-            border-radius: 999px;
-            background: #ecfdf5;
-            color: #166534;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 12px;
-          }
+  .feature,
+  .rera {
+    padding: 9px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
 
-          .title {
-            margin: 0;
-            font-size: 1.45rem;
-            font-weight: 800;
-            color: #111827;
-          }
+  .feature {
+    background: #f1f5f9;
+    color: #334155;
+  }
 
-          .location {
-            margin-top: 8px;
-            color: #64748b;
-            font-size: 15px;
-          }
+  .rera {
+    background: #fee2e2;
+    color: #b91c1c;
+    font-weight: 700;
+  }
 
-          .features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 14px;
-          }
+  .footerRow {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-          .feature,
-          .rera {
-            padding: 9px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-          }
+  .price {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #166534;
+  }
 
-          .feature {
-            background: #f1f5f9;
-            color: #334155;
-          }
+  .neg {
+    font-size: 13px;
+    color: #64748b;
+  }
 
-          .rera {
-            background: #fee2e2;
-            color: #b91c1c;
-            font-weight: 700;
-          }
+  .btns {
+    display: flex;
+    gap: 10px;
+  }
 
-          .footerRow {
-            margin-top: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
+  .primaryBtn,
+  .secondaryBtn {
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
 
-          .price {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #166534;
-          }
+  .primaryBtn {
+    border: none;
+    background: #16a34a;
+    color: white;
+  }
 
-          .neg {
-            font-size: 13px;
-            color: #64748b;
-          }
+  .secondaryBtn {
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #111827;
+  }
 
-          .btns {
-            display: flex;
-            gap: 10px;
-          }
+  .empty {
+    background: white;
+    padding: 50px;
+    border-radius: 22px;
+    text-align: center;
+    margin-top: 20px;
+  }
 
-          .primaryBtn,
-          .secondaryBtn {
-            height: 44px;
-            padding: 0 18px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s ease;
-          }
+  .emptyIcon {
+    font-size: 46px;
+  }
 
-          .primaryBtn {
-            border: none;
-            background: #16a34a;
-            color: white;
-          }
+  .empty h3 {
+    margin-top: 12px;
+    color: #111827;
+  }
 
-          .secondaryBtn {
-            border: 1px solid #d1d5db;
-            background: white;
-            color: #111827;
-          }
+  .empty p {
+    color: #64748b;
+  }
 
-          .primaryBtn:hover,
-          .secondaryBtn:hover {
-            transform: translateY(-1px);
-          }
+  /* RELATED PROPERTIES */
 
-          .empty {
-            background: white;
-            padding: 50px;
-            border-radius: 22px;
-            text-align: center;
-            margin-top: 20px;
-          }
+  .relatedGrid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(240px, 1fr)
+    );
+    gap: 16px;
+  }
 
-          .emptyIcon {
-            font-size: 46px;
-          }
+  .relatedCard {
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    transition: 0.22s ease;
+  }
 
-          .empty h3 {
-            margin-top: 12px;
-            color: #111827;
-          }
+  .relatedCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
 
-          .empty p {
-            color: #64748b;
-          }
+  .relatedImageWrap {
+    position: relative;
+    height: 165px;
+  }
 
-          @media (max-width: 768px) {
-            .hero {
-              padding: 24px;
-            }
+  .relatedImage {
+    object-fit: cover;
+  }
 
-            .propertyCard {
-              grid-template-columns: 1fr;
-            }
+  .relatedBadge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #16a34a;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
 
-            .footerRow {
-              flex-direction: column;
-              align-items: stretch;
-              gap: 14px;
-            }
+  .relatedZero {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
 
-            .btns {
-              width: 100%;
-            }
+  .relatedContent {
+    padding: 14px;
+  }
 
-            .primaryBtn,
-            .secondaryBtn {
-              width: 100%;
-            }
+  .relatedContent h3 {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    font-weight: 800;
+    color: #0f172a;
+  }
 
-            .topbar {
-              flex-direction: column;
-              align-items: flex-start;
-            }
-          }
-        `}</style>
+  .relatedContent p {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 0.86rem;
+  }
+
+  .relatedBottom {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .relatedBottom span {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #0f766e;
+  }
+
+  .relatedBottom button {
+    height: 34px;
+    padding: 0 13px;
+    border: none;
+    border-radius: 10px;
+    background: #dcfce7;
+    color: #16a34a;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 24px;
+    }
+
+    .propertyCard {
+      grid-template-columns: 1fr;
+    }
+
+    .footerRow {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+
+    .btns {
+      width: 100%;
+    }
+
+    .primaryBtn,
+    .secondaryBtn {
+      width: 100%;
+    }
+
+    .topbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .relatedBottom {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .relatedBottom button {
+      width: 100%;
+    }
+  }
+`}</style>
       </main>
 
       <Footer />
