@@ -449,45 +449,6 @@ const SLIDES = [
   },
 ];
 
-// const CATS = [
-//   {
-//     e: "🏞️",
-//     l: "NA Plots",
-//     c: "480+",
-//     img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80",
-//   },
-//   {
-//     e: "📋",
-//     l: "Collector NA",
-//     c: "95+",
-//     img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&q=80",
-//   },
-//   {
-//     e: "🌾",
-//     l: "Agriculture Land",
-//     c: "120+",
-//     img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&q=80",
-//   },
-//   {
-//     e: "🏭",
-//     l: "Warehouse",
-//     c: "45+",
-//     img: "https://images.unsplash.com/photo-1565891741441-64926e441838?w=500&q=80",
-//   },
-//   {
-//     e: "🏢",
-//     l: "Commercial",
-//     c: "70+",
-//     img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&q=80",
-//   },
-//   {
-//     e: "📈",
-//     l: "Investment Plots",
-//     c: "200+",
-//     img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=80",
-//   },
-// ];
-
 const ICONS: any = {
   "NA Plot": "🏞️",
   "Agriculture Land": "🌾",
@@ -559,19 +520,6 @@ const PIMGS: Record<string, string[]> = {
   ],
 };
 
-// const PROPS = [
-//   { id:"1", slug:"na-plot-gangapur-road", t:"Prime NA Plot — Gangapur Road",     loc:"Gangapur Road",  cat:"NA Plot",         pr:"₹42 L",   ar:"2,000 sq.ft", rera:true,  badge:"Featured"  },
-//   { id:"2", slug:"agri-land-igatpuri",      t:"Agriculture Land — Igatpuri",       loc:"Igatpuri",       cat:"Agriculture Land",pr:"₹85 L",   ar:"3 Acres",     rera:true,  badge:"Hot Deal"  },
-//   { id:"3", slug:"industrial-shed-satpur",  t:"Industrial Shed — MIDC Satpur",     loc:"Satpur MIDC",    cat:"Industrial Shed", pr:"₹1.2 Cr", ar:"5,000 sq.ft", rera:false, badge:"New"       },
-//   { id:"4", slug:"commercial-plot-nashik-road", t:"Commercial Plot — Nashik Road",     loc:"Nashik Road",    cat:"Commercial",      pr:"₹68 L",   ar:"1,800 sq.ft", rera:true,  badge:null        },
-//   { id:"5", slug:"investment-plot-meri-village",t:"Investment Plot — Meri Village",    loc:"Meri Village",   cat:"Investment Plot", pr:"₹18 L",   ar:"1,200 sq.ft", rera:true,  badge:"Best Buy"  },
-//   { id:"6", slug:"warehouse-land-ambad-midc",  t:"Warehouse Land — Ambad MIDC",       loc:"Ambad",          cat:"Warehouse",       pr:"₹2.4 Cr", ar:"12,000 sq.ft",rera:false, badge:null        },
-//   { id:"7", slug:"collector-na-trimbak-road",  t:"Collector NA — Trimbak Road",       loc:"Trimbak Road",   cat:"Collector NA",    pr:"₹55 L",   ar:"3,500 sq.ft", rera:true,  badge:"Verified"  },
-//   { id:"8", slug:"na-plot-pathardi-phata",     t:"NA Plot — Pathardi Phata",          loc:"Pathardi Phata", cat:"NA Plot",         pr:"₹28 L",   ar:"1,600 sq.ft", rera:true,  badge:null        },
-// ];
-
-// const PROPERTY_LINKS = PROPS.map(p => `/properties/${p.slug}`);
-
 function PropertyLinks({ properties }: any) {
   if (!properties || properties.length === 0) return null;
 
@@ -627,93 +575,6 @@ function PropertyLinks({ properties }: any) {
   );
 }
 
-// const LOCS = [
-//   {
-//     n: "Gangapur Road",
-//     tp: "Premium Residential",
-//     c: "280+",
-//     img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&q=75",
-//     hot: true,
-//   },
-//   {
-//     n: "Igatpuri",
-//     tp: "Agriculture & Hills",
-//     c: "110+",
-//     img: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=500&q=75",
-//     hot: true,
-//   },
-//   {
-//     n: "Nashik Road",
-//     tp: "Industrial Belt",
-//     c: "320+",
-//     img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Trimbak Road",
-//     tp: "Spiritual & Farms",
-//     c: "88+",
-//     img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Meri Village",
-//     tp: "NA Plot Investment",
-//     c: "95+",
-//     img: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=500&q=75",
-//     hot: true,
-//   },
-//   {
-//     n: "Ambad MIDC",
-//     tp: "Industrial Hub",
-//     c: "145+",
-//     img: "https://images.unsplash.com/photo-1565891741441-64926e441838?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Pathardi Phata",
-//     tp: "Emerging Zone",
-//     c: "78+",
-//     img: "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Indira Nagar",
-//     tp: "Established Area",
-//     c: "145+",
-//     img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Panchavati",
-//     tp: "Heritage Locality",
-//     c: "92+",
-//     img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "College Road",
-//     tp: "Education Hub",
-//     c: "167+",
-//     img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Sinnar",
-//     tp: "Industrial Corridor",
-//     c: "54+",
-//     img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=75",
-//     hot: false,
-//   },
-//   {
-//     n: "Ozar",
-//     tp: "Airport Vicinity",
-//     c: "41+",
-//     img: "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=500&q=75",
-//     hot: false,
-//   },
-// ];
-
 const WHY = [
   {
     e: "✈️",
@@ -746,53 +607,6 @@ const WHY = [
     b: "IIM Nashik, world-class hospitals, Phoenix Mall. Quality that rivals Pune & Aurangabad.",
   },
 ];
-
-// const TESTI = [
-//   {
-//     n: "Rahul Deshmukh",
-//     r: "Bought NA Plot",
-//     lc: "Gangapur Road",
-//     av: "R",
-//     col: "#1a6b3c",
-//     pImg: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=75",
-//     txt: "Found the perfect NA plot within budget. Zero surprises at registration. I'd searched 8 months before finding MahaProperties — closed in 2 weeks.",
-//   },
-//   {
-//     n: "Sunita Patil",
-//     r: "Agriculture Land",
-//     lc: "Igatpuri",
-//     av: "S",
-//     col: "#0891b2",
-//     pImg: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&q=75",
-//     txt: "Six months of searching ended in one week. Three verified options, clear titles. RERA compliance gave me full confidence.",
-//   },
-//   {
-//     n: "Vikram Joshi",
-//     r: "Industrial Shed",
-//     lc: "MIDC Satpur",
-//     av: "V",
-//     col: "#7c3aed",
-//     pImg: "https://images.unsplash.com/photo-1565891741441-64926e441838?w=400&q=75",
-//     txt: "Needed a shed near MIDC Satpur urgently. Five verified listings in 24 hours, deal closed in 2 weeks. Outstanding.",
-//   },
-//   {
-//     n: "Priya Kulkarni",
-//     r: "Investment Plots",
-//     lc: "Meri Village",
-//     av: "P",
-//     col: "#c8973a",
-//     pImg: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=75",
-//     txt: "Invested in two plots. Already 35% appreciation in 18 months. Their knowledge of Nashik&apos;s micro-markets is unmatched.",
-//   },
-// ];
-
-// const BLOGS = [
-//   { s:"na-plot-guide",      t:"Complete Guide to Buying NA Plots in Nashik 2025",    cat:"Buying Guide", d:"Jan 15", r:"8 min", img:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=75", feat:true  },
-//   { s:"agriculture-invest", t:"Why Nashik Agriculture Land Is Maharashtra's Best Bet",cat:"Investment",   d:"Jan 22", r:"6 min", img:"https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=500&q=75", feat:false },
-//   { s:"midc-industrial",    t:"MIDC Nashik: Industrial Opportunities 2025",           cat:"Commercial",   d:"Feb 1",  r:"7 min", img:"https://images.unsplash.com/photo-1565891741441-64926e441838?w=500&q=75", feat:false },
-//   { s:"rera-guide",         t:"RERA for Property Buyers: Plain-English Guide",        cat:"Legal",        d:"Feb 10", r:"5 min", img:"https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&q=75", feat:false },
-//   { s:"villa-plots-nashik", t:"Best Villa Plots in Nashik for Smart Investment 2025", cat:"Residential",  d:"Feb 18", r:"6 min", img:"https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&q=75",    feat:false }
-// ];
 
 const TABS_P = [
   "All",
@@ -1267,325 +1081,371 @@ function CatGrid() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PROP CARD  — multi-image gallery
+   PROP CARD  — fully clickable card
 ═══════════════════════════════════════════════════════════ */
 function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
   const imgs = p.img ? [p.img] : [];
   const [ii, setIi] = useState(0);
   const [sv, setSv] = useState(false);
+
   return (
-    <div
-      className="lf"
+    <Link
+      href={`/properties/${p.slug}`}
       style={{
-        background: "white",
-        borderRadius: "13px",
-        overflow: "hidden",
-        border: `1px solid ${G.li}`,
-        boxShadow: "0 2px 8px rgba(0,0,0,.05)",
-        opacity: vis ? 1 : 0,
-        transform: vis ? "none" : "translateY(14px)",
-        transition: `opacity .45s ${E} ${d}s,transform .45s ${E} ${d}s,box-shadow .26s ${E},transform .26s ${E}`,
+        textDecoration: "none",
+        color: "inherit",
+        display: "block",
+        height: "100%",
       }}
     >
-      {/* Gallery */}
       <div
+        className="lf"
         style={{
-          position: "relative",
-          height: "170px",
+          background: "white",
+          borderRadius: "13px",
           overflow: "hidden",
-          background: G.off,
-          flexShrink: 0,
+          border: `1px solid ${G.li}`,
+          boxShadow: "0 2px 8px rgba(0,0,0,.05)",
+          opacity: vis ? 1 : 0,
+          transform: vis ? "none" : "translateY(14px)",
+          transition: `opacity .45s ${E} ${d}s,transform .45s ${E} ${d}s,box-shadow .26s ${E},transform .26s ${E}`,
+          cursor: "pointer",
+          height: "100%",
         }}
       >
-        <div style={{ position: "relative", width: "100%", height: "100%" }}>
-          {imgs.length > 0 && (
-            <Image
-              src={imgs[ii]}
-              alt={p.t}
-              fill
-              style={{ objectFit: "cover" }}
-            />
-          )}
-        </div>
+        {/* Gallery */}
         <div
           style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(to top,rgba(0,0,0,.32) 0%,transparent 50%)",
+            position: "relative",
+            height: "170px",
+            overflow: "hidden",
+            background: G.off,
+            flexShrink: 0,
           }}
-        />
-        {/* Image prev/next */}
-        {imgs.length > 1 && (
-          <>
-            <button
-              onClick={() => setIi((n) => (n - 1 + imgs.length) % imgs.length)}
+        >
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            {imgs.length > 0 && (
+              <Image
+                src={imgs[ii]}
+                alt={p.t}
+                fill
+                style={{ objectFit: "cover" }}
+              />
+            )}
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(to top,rgba(0,0,0,.32) 0%,transparent 50%)",
+            }}
+          />
+
+          {/* Image prev/next */}
+          {imgs.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIi((n) => (n - 1 + imgs.length) % imgs.length);
+                }}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "7px",
+                  transform: "translateY(-50%)",
+                  width: "26px",
+                  height: "26px",
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,.8)",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: G.ink,
+                  zIndex: 2,
+                  cursor: "pointer",
+                }}
+              >
+                {I.arL}
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIi((n) => (n + 1) % imgs.length);
+                }}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: "7px",
+                  transform: "translateY(-50%)",
+                  width: "26px",
+                  height: "26px",
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,.8)",
+                  border: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: G.ink,
+                  zIndex: 2,
+                  cursor: "pointer",
+                }}
+              >
+                {I.arR}
+              </button>
+
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "7px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  display: "flex",
+                  gap: "4px",
+                  zIndex: 2,
+                }}
+              >
+                {imgs.map((_: any, j: number) => (
+                  <button
+                    key={j}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIi(j);
+                    }}
+                    style={{
+                      width: ii === j ? "16px" : "5px",
+                      height: "5px",
+                      borderRadius: "99px",
+                      border: "none",
+                      background: ii === j ? "white" : "rgba(255,255,255,.5)",
+                      transition: `all .22s ${E}`,
+                      cursor: "pointer",
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Badges */}
+          <div
+            style={{
+              position: "absolute",
+              top: "9px",
+              left: "9px",
+              display: "flex",
+              gap: "5px",
+              zIndex: 3,
+            }}
+          >
+            {p.rera && (
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "3px",
+                  background: "rgba(26,107,60,.88)",
+                  color: "white",
+                  fontSize: "9px",
+                  fontWeight: 700,
+                  padding: "3px 7px",
+                  borderRadius: "5px",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                {I.chk} RERA
+              </span>
+            )}
+
+            {p.badge && (
+              <span
+                style={{
+                  background: "rgba(200,151,58,.9)",
+                  color: "white",
+                  fontSize: "9px",
+                  fontWeight: 700,
+                  padding: "3px 7px",
+                  borderRadius: "5px",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                {p.badge}
+              </span>
+            )}
+          </div>
+
+          {/* Wishlist */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setSv((s) => !s);
+            }}
+            style={{
+              position: "absolute",
+              top: "9px",
+              right: "9px",
+              width: "30px",
+              height: "30px",
+              borderRadius: "50%",
+              background: "rgba(255,255,255,.9)",
+              backdropFilter: "blur(8px)",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 3,
+              cursor: "pointer",
+            }}
+          >
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill={sv ? "#ef4444" : "none"}
+              stroke={sv ? "#ef4444" : "#9ca3af"}
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+            </svg>
+          </button>
+
+          <span
+            style={{
+              position: "absolute",
+              bottom: "17px",
+              left: "9px",
+              background: "rgba(0,0,0,.58)",
+              color: "white",
+              fontSize: "9.5px",
+              fontWeight: 600,
+              padding: "3px 8px",
+              borderRadius: "5px",
+              backdropFilter: "blur(8px)",
+              zIndex: 2,
+            }}
+          >
+            {p.cat || p.category}
+          </span>
+        </div>
+
+        {/* Info */}
+        <div style={{ padding: "13px 14px" }}>
+          <h3
+            style={{
+              fontWeight: 700,
+              fontSize: "13.5px",
+              color: G.ink,
+              marginBottom: "5px",
+              lineHeight: 1.3,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {p.t || p.title}
+          </h3>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              color: G.mu,
+              fontSize: "11.5px",
+              marginBottom: "9px",
+            }}
+          >
+            <span style={{ color: G.g }}>{I.pin}</span>
+            {p.loc || p.location}, Nashik
+          </div>
+
+          <div
+            style={{
+              fontSize: "1.2rem",
+              fontWeight: 900,
+              color: G.g,
+              letterSpacing: "-0.025em",
+              marginBottom: "9px",
+              fontFamily: FONT,
+            }}
+          >
+            {p.pr || p.price}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              padding: "7px 0",
+              borderTop: `1px solid ${G.li}`,
+              borderBottom: `1px solid ${G.li}`,
+              marginBottom: "11px",
+            }}
+          >
+            <span
               style={{
-                position: "absolute",
-                top: "50%",
-                left: "7px",
-                transform: "translateY(-50%)",
-                width: "26px",
-                height: "26px",
-                borderRadius: "50%",
-                background: "rgba(255,255,255,.8)",
-                border: "none",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                color: G.ink,
-                zIndex: 2,
-              }}
-            >
-              {I.arL}
-            </button>
-            <button
-              onClick={() => setIi((n) => (n + 1) % imgs.length)}
-              style={{
-                position: "absolute",
-                top: "50%",
-                right: "7px",
-                transform: "translateY(-50%)",
-                width: "26px",
-                height: "26px",
-                borderRadius: "50%",
-                background: "rgba(255,255,255,.8)",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: G.ink,
-                zIndex: 2,
-              }}
-            >
-              {I.arR}
-            </button>
-            <div
-              style={{
-                position: "absolute",
-                bottom: "7px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                display: "flex",
                 gap: "4px",
-                zIndex: 2,
+                fontSize: "11px",
+                color: G.mu,
               }}
             >
-              {imgs.map((_, j) => (
-                <button
-                  key={j}
-                  onClick={() => setIi(j)}
-                  style={{
-                    width: ii === j ? "16px" : "5px",
-                    height: "5px",
-                    borderRadius: "99px",
-                    border: "none",
-                    background: ii === j ? "white" : "rgba(255,255,255,.5)",
-                    transition: `all .22s ${E}`,
-                  }}
-                />
-              ))}
-            </div>
-          </>
-        )}
-        {/* Badges */}
-        <div
-          style={{
-            position: "absolute",
-            top: "9px",
-            left: "9px",
-            display: "flex",
-            gap: "5px",
-            zIndex: 3,
-          }}
-        >
-          {p.rera && (
+              {I.rul} {p.area}
+            </span>
+
             <span
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "3px",
-                background: "rgba(26,107,60,.88)",
-                color: "white",
-                fontSize: "9px",
-                fontWeight: 700,
-                padding: "3px 7px",
-                borderRadius: "5px",
-                backdropFilter: "blur(8px)",
+                gap: "4px",
+                fontSize: "11px",
+                color: G.mu,
+                marginLeft: "auto",
               }}
             >
-              {I.chk} RERA
+              {I.eye} {p.views} views
             </span>
-          )}
-          {p.badge && (
-            <span
+          </div>
+
+          {/* Bottom Buttons */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "7px",
+            }}
+          >
+            <div
+              className="b bo"
               style={{
-                background: "rgba(200,151,58,.9)",
-                color: "white",
-                fontSize: "9px",
-                fontWeight: 700,
-                padding: "3px 7px",
-                borderRadius: "5px",
-                backdropFilter: "blur(8px)",
+                fontSize: "12px",
+                padding: "8px 10px",
+                borderRadius: "7px",
+                textAlign: "center",
               }}
             >
-              {p.badge}
-            </span>
-          )}
-        </div>
-        <button
-          onClick={() => setSv((s) => !s)}
-          style={{
-            position: "absolute",
-            top: "9px",
-            right: "9px",
-            width: "30px",
-            height: "30px",
-            borderRadius: "50%",
-            background: "rgba(255,255,255,.9)",
-            backdropFilter: "blur(8px)",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 3,
-          }}
-        >
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill={sv ? "#ef4444" : "none"}
-            stroke={sv ? "#ef4444" : "#9ca3af"}
-            strokeWidth="2.2"
-            strokeLinecap="round"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-          </svg>
-        </button>
-        <span
-          style={{
-            position: "absolute",
-            bottom: "17px",
-            left: "9px",
-            background: "rgba(0,0,0,.58)",
-            color: "white",
-            fontSize: "9.5px",
-            fontWeight: 600,
-            padding: "3px 8px",
-            borderRadius: "5px",
-            backdropFilter: "blur(8px)",
-            zIndex: 2,
-          }}
-        >
-          {p.cat || p.category}
-        </span>
-      </div>
-      {/* Info */}
-      <div style={{ padding: "13px 14px" }}>
-        <h3
-          style={{
-            fontWeight: 700,
-            fontSize: "13.5px",
-            color: G.ink,
-            marginBottom: "5px",
-            lineHeight: 1.3,
-            letterSpacing: "-0.01em",
-          }}
-        >
-          {p.t || p.title}
-        </h3>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            color: G.mu,
-            fontSize: "11.5px",
-            marginBottom: "9px",
-          }}
-        >
-          <span style={{ color: G.g }}>{I.pin}</span>
-          {p.loc || p.location}, Nashik
-        </div>
-        <div
-          style={{
-            fontSize: "1.2rem",
-            fontWeight: 900,
-            color: G.g,
-            letterSpacing: "-0.025em",
-            marginBottom: "9px",
-            fontFamily: FONT,
-          }}
-        >
-          {p.pr || p.price}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            gap: "12px",
-            padding: "7px 0",
-            borderTop: `1px solid ${G.li}`,
-            borderBottom: `1px solid ${G.li}`,
-            marginBottom: "11px",
-          }}
-        >
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              fontSize: "11px",
-              color: G.mu,
-            }}
-          >
-            {I.rul} {p.area}
-          </span>
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              fontSize: "11px",
-              color: G.mu,
-              marginLeft: "auto",
-            }}
-          >
-            {I.eye} {p.views} views
-          </span>
-        </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "7px",
-          }}
-        >
-          <Link
-            href={`/properties/${p.slug}`}
-            className="b bo"
-            style={{
-              fontSize: "12px",
-              padding: "8px 10px",
-              borderRadius: "7px",
-            }}
-          >
-            Details
-          </Link>
-          <Link
-            href="/enquiry"
-            className="b bg"
-            style={{
-              fontSize: "12px",
-              padding: "8px 10px",
-              borderRadius: "7px",
-            }}
-          >
-            {I.ph} Contact
-          </Link>
+              Details
+            </div>
+
+            <div
+              className="b bg"
+              style={{
+                fontSize: "12px",
+                padding: "8px 10px",
+                borderRadius: "7px",
+                textAlign: "center",
+              }}
+            >
+              {I.ph} Contact
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -1914,7 +1774,7 @@ function Locs() {
             </h2>
           </div>
           <Link
-            href="/localities"
+            href="/properties"
             className="b bo"
             style={{ padding: "8px 16px", fontSize: "12.5px" }}
           >

@@ -1,7 +1,14 @@
 "use client";
 // src/app/(public)/properties/page.tsx
 
-import { useEffect, useState, useRef, useMemo, useCallback, Suspense } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  Suspense,
+} from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -136,7 +143,9 @@ async function fetchAllProperties(signal?: AbortSignal): Promise<Property[]> {
 /* ================================================================== */
 export default function PropertiesPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: "100vh", background: "#f0f4f8" }} />}>
+    <Suspense
+      fallback={<div style={{ minHeight: "100vh", background: "#f0f4f8" }} />}
+    >
       <PropertiesContent />
     </Suspense>
   );
@@ -145,7 +154,7 @@ export default function PropertiesPage() {
 function PropertiesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const type = searchParams.get("type");
+  const type = searchParams.get("type") || searchParams.get("cat") || "";
   const location = searchParams.get("location");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
@@ -166,27 +175,19 @@ function PropertiesContent() {
   const [favorites, setFavorites] = useState<string[]>(() => readFavorites());
   const [toast, setToast] = useState<string>("");
 
- const [filters, setFilters] = useState<Filters>({
-  // Search property by full name from Hero search
-  q: searchParams.get("q") ?? "",
+  const [filters, setFilters] = useState<Filters>({
+    // Search property by full name from Hero search
+    q: searchParams.get("q") ?? "",
 
-  // Category from navbar / chips / URL
-  category:
-    type
-      ? [type]
-      : searchParams.getAll("category"),
+    // Category from navbar / chips / URL
+    category: type ? [type] : searchParams.getAll("category"),
 
-  // Location from Hero or URL
-  locality:
-    location ??
-    searchParams.get("locality") ??
-    "",
+    // Location from Hero or URL
+    locality: location ?? searchParams.get("locality") ?? "",
 
-  // Sorting
-  sortBy:
-    (searchParams.get("sortBy") as SortKey) ??
-    "newest",
-});
+    // Sorting
+    sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
+  });
 
   // Adjust filters during render when URL shorthand params change (avoids effect)
   const [prevType, setPrevType] = useState(type);
@@ -314,16 +315,14 @@ function PropertiesContent() {
   }, [debouncedFilters.locality, cities, localities]);
 
   const propertySuggestions = useMemo(() => {
-  const q = norm(filters.q);
+    const q = norm(filters.q);
 
-  if (!q) return [];
+    if (!q) return [];
 
-  return allProperties
-    .filter((p) =>
-      norm(p.title || p.t).includes(q)
-    )
-    .slice(0, 8);
-}, [filters.q, allProperties]);
+    return allProperties
+      .filter((p) => norm(p.title || p.t).includes(q))
+      .slice(0, 8);
+  }, [filters.q, allProperties]);
 
   const categorySuggestions = useMemo(() => {
     const q = norm(catInput);
@@ -548,50 +547,43 @@ function PropertiesContent() {
                   <div className="filterGroup">
                     <label htmlFor="f-search">Search Property</label>
                     <div className="inputWrap">
-                     <div className="inputWrap">
-  <input
-    id="f-search"
-    type="text"
-    placeholder='Try "NA plots", "warehouse"...'
-    className="input"
-    value={filters.q}
-    autoComplete="off"
-    onFocus={() => setShowSearchDropdown(true)}
-    onChange={(e) => {
-      setF("q", e.target.value);
-      setShowSearchDropdown(true);
-    }}
-  />
+                      <div className="inputWrap">
+                        <input
+                          id="f-search"
+                          type="text"
+                          placeholder='Try "NA plots", "warehouse"...'
+                          className="input"
+                          value={filters.q}
+                          autoComplete="off"
+                          onFocus={() => setShowSearchDropdown(true)}
+                          onChange={(e) => {
+                            setF("q", e.target.value);
+                            setShowSearchDropdown(true);
+                          }}
+                        />
 
-  {showSearchDropdown &&
-    propertySuggestions.length > 0 && (
-      <div className="dropdown">
-        {propertySuggestions.map(
-          (property: any) => (
-            <button
-              key={property.id || property.slug}
-              type="button"
-              className="dropItem"
-              onClick={() => {
-                setF(
-                  "q",
-                  property.title || property.t
-                );
+                        {showSearchDropdown &&
+                          propertySuggestions.length > 0 && (
+                            <div className="dropdown">
+                              {propertySuggestions.map((property: any) => (
+                                <button
+                                  key={property.id || property.slug}
+                                  type="button"
+                                  className="dropItem"
+                                  onClick={() => {
+                                    setF("q", property.title || property.t);
 
-                setShowSearchDropdown(false);
-              }}
-            >
-              <span className="dropIcon">
-                🔍
-              </span>
+                                    setShowSearchDropdown(false);
+                                  }}
+                                >
+                                  <span className="dropIcon">🔍</span>
 
-              {property.title || property.t}
-            </button>
-          )
-        )}
-      </div>
-    )}
-</div>
+                                  {property.title || property.t}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                      </div>
                       {filters.q && (
                         <button
                           type="button"
