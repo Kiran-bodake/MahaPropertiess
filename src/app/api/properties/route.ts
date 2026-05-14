@@ -9,6 +9,7 @@ import PropertyArea from "@/models/PropertyArea";
 import PropertyFlags from "@/models/PropertyFlags";
 import PropertyImage from "@/models/PropertyImage";
 
+
 export async function GET(
   req: Request
 ) {
@@ -91,8 +92,9 @@ export async function GET(
               id:
                 property._id,
 
-              slug:
-                property.propertyId,
+          slug:
+  property.slug ||
+  property.propertyId,
 
               title:
                 property.title,
@@ -127,7 +129,7 @@ export async function GET(
               img:
                 images?.images?.[0]?.url ||
 
-                "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80",
+                "/maha.png",
 
               views:
                 property.views || 0

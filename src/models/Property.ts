@@ -2,12 +2,19 @@ import { Schema, model, models } from "mongoose";
 
 const PropertySchema = new Schema(
   {
-    propertyId: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true,
-    },
+   propertyId: {
+  type: String,
+  required: true,
+  unique: true,
+  index: true,
+},
+
+slug: {
+  type: String,
+  required: true,
+  unique: true,
+  index: true,
+},
 
     title: {
       type: String,

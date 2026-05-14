@@ -13,36 +13,70 @@ export function PropertyActions({
   const [saved,setSaved] =
     useState(false);
 
-  async function handleShare(){
+  function handleSave(){
 
-    const shareUrl =
-      window.location.href;
+    const key =
+      "savedProperties";
+
+    const old =
+      JSON.parse(
+        localStorage.getItem(
+          key
+        ) || "[]"
+      );
+
+    let updated =
+      old;
 
     if(
-      navigator.share
+      old.includes(
+        propertyId
+      )
     ){
 
-      await navigator.share({
-        title:
-          propertyTitle,
-        url:
-          shareUrl
-      });
+      updated =
+        old.filter(
+          (
+            x:string
+          ) =>
+            x !==
+            propertyId
+        );
+
+      setSaved(false);
 
     }
 
     else{
 
-      await navigator.clipboard
-        .writeText(
-          shareUrl
-        );
+      updated = [
+        ...old,
+        propertyId
+      ];
 
-      alert(
-        "Link copied"
-      );
+      setSaved(true);
 
     }
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(
+        updated
+      )
+    );
+
+  }
+
+  async function handleShare(){
+
+    await navigator.clipboard
+      .writeText(
+        window.location.href
+      );
+
+    alert(
+      "Link copied"
+    );
 
   }
 
@@ -50,7 +84,7 @@ export function PropertyActions({
 
     const reason =
       prompt(
-        "Why are you reporting this property?\n\nExamples:\nFake Listing\nSpam\nWrong Price"
+        "Why are you reporting this property?"
       );
 
     if(!reason)
@@ -85,72 +119,13 @@ export function PropertyActions({
 
   }
 
-  function handleSave(){
-
-    const key =
-      "savedProperties";
-
-    const old =
-      JSON.parse(
-        localStorage.getItem(
-          key
-        ) || "[]"
-      );
-
-    let updated =
-      old;
-
-    if(
-      old.includes(
-        propertyId
-      )
-    ){
-
-      updated =
-        old.filter(
-          (
-            x:string
-          )=>
-            x !==
-            propertyId
-        );
-
-      setSaved(
-        false
-      );
-
-    }
-
-    else{
-
-      updated = [
-        ...old,
-        propertyId
-      ];
-
-      setSaved(
-        true
-      );
-
-    }
-
-    localStorage
-      .setItem(
-        key,
-        JSON.stringify(
-          updated
-        )
-      );
-
-  }
-
   return (
 
     <div
       style={{
         display:"flex",
-        gap:12,
-        marginTop:18
+        flexWrap:"wrap",
+        gap:10
       }}
     >
 
@@ -192,7 +167,7 @@ function ActionBtn({
   danger
 }:any){
 
-  return(
+  return (
 
     <button
       onClick={
@@ -200,12 +175,12 @@ function ActionBtn({
       }
       style={{
         padding:
-          "10px 16px",
+          "8px 14px",
 
         border:"none",
 
         borderRadius:
-          12,
+          10,
 
         cursor:
           "pointer",

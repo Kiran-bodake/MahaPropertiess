@@ -1,126 +1,478 @@
 import Image from "next/image";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
+
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
 import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
+
 import { PropertyActions } from "@/components/property/PropertyActions";
+import { PropertyGallery } from "@/components/property/PropertyGallery";
+
+type PropertyType = {
+  id: any;
+  slug:string;
+  title:string;
+  description:string;
+
+  locality:string;
+  city:string;
+  state?:string;
+
+  price:number;
+  area:number;
+  areaUnit:string;
+
+  postedBy:string;
+  agentName:string;
+  agentPhone:string;
+
+  images:string[];
+
+  amenities?:string[];
+  highlights?:string[];
+
+  rera?:boolean;
+  badge?:string;
+
+  status?:string;
+  constructionStatus?:string;
+};
 
 export const dynamicParams = true;
 
-async function getProperty(slug:string){
-  const res = await fetch(`http://localhost:3000/api/properties/${slug}`,{ cache:"no-store" });
-  if(!res.ok) return null;
+async function getProperty(
+  slug:string
+):Promise<PropertyType | null>{
+
+  const res =
+    await fetch(
+      `http://localhost:3000/api/properties/${slug}`,
+      {
+        cache:"no-store"
+      }
+    );
+
+  if(!res.ok)
+    return null;
+
   return res.json();
+
 }
 
-export async function generateMetadata({ params }:{ params:Promise<{slug:string}> }):Promise<Metadata>{
-  const { slug } = await params;
-  const property = await getProperty(slug);
-  if(!property) return { title:"Property Not Found" };
-  return { title:`${property.title} | MahaProperties`, description:property.description };
+async function getRelatedProperties(
+  city:string
+):Promise<PropertyType[]>{
+
+  const res =
+    await fetch(
+      `http://localhost:3000/api/properties?city=${city}`,
+      {
+        cache:"no-store"
+      }
+    );
+
+  if(!res.ok)
+    return [];
+
+  return res.json();
+
 }
 
-export default async function PropertyDetailPage({ params }:{ params:Promise<{slug:string}> }){
-  const { slug } = await params;
-  const property = await getProperty(slug);
-  if(!property) notFound();
+export async function generateMetadata({
+  params
+}:{
+  params:Promise<{
+    slug:string
+  }>
+}):Promise<Metadata>{
+
+  const {
+    slug
+  } = await params;
+
+  const property =
+    await getProperty(
+      slug
+    );
+
+  if(!property){
+
+    return {
+      title:
+        "Property Not Found"
+    };
+
+  }
+
+  return {
+
+    title:
+      `${property.title} | MahaProperties`,
+
+    description:
+      property.description
+
+  };
+
+}
+
+export default async function PropertyDetailPage({
+  params
+}:{
+  params:Promise<{
+    slug:string
+  }>
+}){
+
+  const {
+    slug
+  } = await params;
+
+  const property =
+    await getProperty(
+      slug
+    );
+
+  if(!property)
+    notFound();
+
+  const relatedProperties =
+    await getRelatedProperties(
+      property.city
+    );
 
   return (
+
     <>
       <Navbar />
 
-      <main style={{ background:"#f8fafc" }}>
-        <section style={{ maxWidth:1280, margin:"0 auto", padding:"24px 16px 64px" }}>
+      <main
+        style={{
+          background:"#f8fafc"
+        }}
+      >
 
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 360px", gap:20 }}>
+        {/* CENTERED CONTAINER */}
+        <section
+          style={{
+            width:"100%",
+
+            maxWidth:1380,
+
+            margin:"0 auto",
+
+            padding:
+              "20px 16px 40px"
+          }}
+        >
+
+          {/* MAIN GRID */}
+          <div
+            style={{
+              display:"grid",
+
+              gridTemplateColumns:
+                "minmax(0,3fr) minmax(340px,1fr)",
+
+              gap:24,
+
+              alignItems:"start"
+            }}
+          >
 
             {/* LEFT */}
-            <article style={{ background:"#fff", borderRadius:20, overflow:"hidden", boxShadow:"0 10px 40px rgba(0,0,0,.05)" }}>
+            <article
+              style={{
+                width:"100%",
+
+                background:"#fff",
+
+                borderRadius:24,
+
+                overflow:"hidden",
+
+                boxShadow:
+                  "0 8px 30px rgba(0,0,0,.05)"
+              }}
+            >
 
               {/* HERO */}
-              {property.images?.length>0 && (
-                <div style={{ position:"relative", height:420 }}>
-                  <Image src={property.images[0]} alt={property.title} fill style={{ objectFit:"cover" }} />
-                  <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,.7),transparent)" }} />
-                  <div style={{ position:"absolute", left:24, bottom:24, color:"#fff" }}>
-                    <div style={{ fontSize:"2rem", fontWeight:800 }}>₹{property.price.toLocaleString()}</div>
-                    <div>{property.area} {property.areaUnit}</div>
-                  </div>
-                </div>
-              )}
+              <div
+                style={{
+                  position:"relative"
+                }}
+              >
 
-              <div style={{ padding:28 }}>
+                <PropertyGallery
+                  images={
+                    property.images
+                  }
+                  title={
+                    property.title
+                  }
+                />
 
-                {/* TITLE */}
-                <h1 style={{ margin:0, fontSize:"2rem", fontWeight:800 }}>{property.title}</h1>
+                {/* PRICE OVERLAY */}
+              <div
+  style={{
+    position:"absolute",
 
-                <div style={{ marginTop:8, color:"#64748b" }}>
-                  📍 {property.locality}, {property.city}, {property.state}
-                </div>
+    left:24,
 
-                <PropertyActions
-  propertyId={
-    property.slug
+    bottom:95,
+
+    zIndex:20,
+
+    color:"#fff",
+
+    fontWeight:800,
+
+    fontSize:"2rem",
+
+    textShadow:
+      "0 2px 10px rgba(0,0,0,.85)",
+
+    padding:
+      "8px 14px",
+
+    borderRadius:14,
+
+    backdropFilter:
+      "blur(8px)",
+
+    background:
+      "rgba(0,0,0,.25)"
+  }}
+>
+  ₹{
+    property.price.toLocaleString()
   }
-  propertyTitle={
-    property.title
-  }
-/>
+</div>
+              </div>
+
+              {/* BODY */}
+              <div
+                style={{
+                  padding:28
+                }}
+              >
+
+                <h1
+                  style={{
+                    margin:0,
+
+                    fontSize:
+                      "clamp(1.5rem,4vw,2.3rem)",
+
+                    fontWeight:800
+                  }}
+                >
+                  {
+                    property.title
+                  }
+                </h1>
+
+                <div
+                  style={{
+                    marginTop:8,
+
+                    color:"#64748b"
+                  }}
+                >
+                  📍 {
+                    property.locality
+                  }, {
+                    property.city
+                  }
+                </div>
+
+                <div
+                  style={{
+                    marginTop:18
+                  }}
+                >
+
+                  <PropertyActions
+                    propertyId={
+                      property.slug
+                    }
+                    propertyTitle={
+                      property.title
+                    }
+                  />
+
+                </div>
 
                 {/* BADGES */}
-                <div style={{ display:"flex", flexWrap:"wrap", gap:10, marginTop:16 }}>
-                  {property.rera && <Badge label="RERA Approved" />}
-                  {property.badge && <Badge label={property.badge} />}
-                  <Badge label={property.status} />
-                  <Badge label={property.constructionStatus} />
+                <div
+                  style={{
+                    display:"flex",
+
+                    flexWrap:"wrap",
+
+                    gap:10,
+
+                    marginTop:18
+                  }}
+                >
+
+                  {property.rera &&
+                    <Badge
+                      label="RERA"
+                    />
+                  }
+
+                  {property.badge &&
+                    <Badge
+                      label={
+                        property.badge
+                      }
+                    />
+                  }
+
+                  {property.status &&
+                    <Badge
+                      label={
+                        property.status
+                      }
+                    />
+                  }
+
                 </div>
 
-                {/* INFO GRID */}
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12, marginTop:24 }}>
-                  <InfoCard label="Category" value={property.category} />
-                  <InfoCard label="Listed By" value={property.postedBy} />
-                  <InfoCard label="Agent" value={property.agentName} />
-                  <InfoCard label="Contact" value={property.agentPhone} />
-                  <InfoCard label="Address" value={property.address} />
-                  <InfoCard label="Listed On" value={new Date(property.createdAt).toLocaleDateString("en-IN")} />
+                {/* OVERVIEW */}
+                <SectionTitle
+                  title="Property Overview"
+                />
+
+                <div
+                  style={{
+                    display:"grid",
+
+                    gridTemplateColumns:
+                      "repeat(auto-fit,minmax(160px,1fr))",
+
+                    gap:12
+                  }}
+                >
+
+                  <InfoCard
+                    label="Area"
+                    value={`${property.area} ${property.areaUnit}`}
+                  />
+
+                  <InfoCard
+                    label="Listed By"
+                    value={
+                      property.postedBy
+                    }
+                  />
+
+                  <InfoCard
+                    label="Agent"
+                    value={
+                      property.agentName
+                    }
+                  />
+
                 </div>
 
                 {/* DESCRIPTION */}
-                <SectionTitle title="Property Description" />
-                <p style={{ color:"#475569", lineHeight:1.8 }}>{property.description}</p>
+                <SectionTitle
+                  title="Description"
+                />
+
+                <p
+                  style={{
+                    color:"#475569",
+
+                    lineHeight:1.8
+                  }}
+                >
+                  {
+                    property.description
+                  }
+                </p>
 
                 {/* AMENITIES */}
-                {property.amenities?.length>0 && (
+                {property.amenities?.length ? (
                   <>
-                    <SectionTitle title="Amenities" />
-                    <ChipList items={property.amenities} icon="✓" />
+                    <SectionTitle
+                      title="Amenities"
+                    />
+
+                    <ChipList
+                      items={
+                        property.amenities
+                      }
+                      icon="✓"
+                    />
                   </>
-                )}
+                ) : null}
 
                 {/* HIGHLIGHTS */}
-                {property.highlights?.length>0 && (
+                {property.highlights?.length ? (
                   <>
-                    <SectionTitle title="Property Highlights" />
-                    <ChipList items={property.highlights} icon="★" />
+                    <SectionTitle
+                      title="Highlights"
+                    />
+
+                    <ChipList
+                      items={
+                        property.highlights
+                      }
+                      icon="★"
+                    />
                   </>
-                )}
+                ) : null}
 
                 {/* MAP */}
-                <SectionTitle title="Location" />
-                <div style={{ borderRadius:14, overflow:"hidden", marginTop:12 }}>
+                <SectionTitle
+                  title="Location"
+                />
+
+                <div
+                  style={{
+                    borderRadius:18,
+
+                    overflow:"hidden"
+                  }}
+                >
+
                   <iframe
                     title="Location"
+
                     width="100%"
-                    height="280"
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(`${property.locality}, ${property.city}`)}&output=embed`}
-                    style={{ border:0 }}
+
+                    height="320"
+
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                      `${property.locality}, ${property.city}`
+                    )}&output=embed`}
+
+                    style={{
+                      border:0
+                    }}
                   />
+
                 </div>
 
-                <div style={{ marginTop:24 }}>
-                  <PropertyLeadForm propertyTitle={property.title} />
+                {/* LEAD */}
+                <div
+                  style={{
+                    marginTop:30
+                  }}
+                >
+
+                  <PropertyLeadForm
+                    propertyTitle={
+                      property.title
+                    }
+                  />
+
                 </div>
 
               </div>
@@ -128,52 +480,375 @@ export default async function PropertyDetailPage({ params }:{ params:Promise<{sl
             </article>
 
             {/* RIGHT */}
-            <aside>
-              <div style={{ background:"#fff", borderRadius:20, padding:24, boxShadow:"0 10px 40px rgba(0,0,0,.05)" }}>
-                <div style={{ fontSize:"1.1rem", fontWeight:700 }}>{property.agentName}</div>
-                <div style={{ color:"#64748b", marginTop:6 }}>{property.agentPhone}</div>
+            <aside
+              style={{
+                width:"100%",
 
-                <div style={{ marginTop:20 }}>
-                  <StickyContactForm title="Book Site Visit" description="Get callback in 30 minutes." />
+                maxWidth:360,
+
+                margin:"0 auto"
+              }}
+            >
+
+              <div
+                style={{
+                  position:"sticky",
+
+                  top:90,
+
+                  background:"#fff",
+
+                  borderRadius:24,
+
+                  padding:24,
+
+                  boxShadow:
+                    "0 10px 30px rgba(0,0,0,.06)"
+                }}
+              >
+
+                <div
+                  style={{
+                    fontWeight:700,
+
+                    fontSize:"1.1rem"
+                  }}
+                >
+                  {
+                    property.agentName
+                  }
                 </div>
+
+                <div
+                  style={{
+                    marginTop:6,
+
+                    color:"#64748b"
+                  }}
+                >
+                  {
+                    property.agentPhone
+                  }
+                </div>
+
+                {/* TRUST */}
+                <div
+                  style={{
+                    marginTop:20,
+
+                    display:"grid",
+
+                    gap:8,
+
+                    color:"#475569",
+
+                    fontSize:".92rem"
+                  }}
+                >
+                  <div>
+                    ✓ Verified Agent
+                  </div>
+
+                  <div>
+                    ⚡ Fast Response
+                  </div>
+
+                  <div>
+                    👁 High Buyer Interest
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    marginTop:20
+                  }}
+                >
+
+                  <StickyContactForm
+                    title="Request Callback"
+                    description="Talk with owner today"
+                  />
+
+                </div>
+
               </div>
+
             </aside>
 
           </div>
 
+          {/* RELATED */}
+          {relatedProperties?.length > 0 && (
+
+            <div
+              style={{
+                marginTop:32
+              }}
+            >
+
+              <SectionTitle
+                title="Similar Properties"
+              />
+
+              <div
+                style={{
+                  display:"grid",
+
+                  gridTemplateColumns:
+                    "repeat(auto-fit,minmax(250px,1fr))",
+
+                  gap:16
+                }}
+              >
+
+                {relatedProperties
+                  .filter(
+                    item =>
+                      item.slug !==
+                      property.slug
+                  )
+                  .slice(0,4)
+                 .map(
+  item => (
+
+    <RelatedCard
+      key={
+        `${item.slug}-${item.id}`
+      }
+      item={
+        item
+      }
+    />
+
+  )
+)}
+
+              </div>
+
+            </div>
+
+          )}
+
         </section>
+
       </main>
 
       <Footer />
+
     </>
+
   );
+
 }
 
-function SectionTitle({ title }:{ title:string }){
-  return <h3 style={{ marginTop:28, marginBottom:12, fontSize:"1.15rem", fontWeight:700 }}>{title}</h3>;
-}
+function SectionTitle({
+  title
+}:{
+  title:string
+}){
 
-function Badge({ label }:{ label:string }){
-  return <div style={{ background:"#eff6ff", color:"#1d4ed8", padding:"8px 14px", borderRadius:999, fontSize:".85rem", fontWeight:600 }}>{label}</div>;
-}
-
-function InfoCard({ label,value }:{ label:string,value:string }){
   return (
-    <div style={{ background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:14, padding:14 }}>
-      <div style={{ fontWeight:700 }}>{value}</div>
-      <div style={{ color:"#64748b", marginTop:4, fontSize:".85rem" }}>{label}</div>
+    <h3
+      style={{
+        marginTop:30,
+        marginBottom:14,
+        fontWeight:700,
+        fontSize:"1.1rem"
+      }}
+    >
+      {title}
+    </h3>
+  );
+
+}
+
+function Badge({
+  label
+}:{
+  label:string
+}){
+
+  return (
+    <div
+      style={{
+        background:"#eff6ff",
+        color:"#2563eb",
+        padding:"8px 14px",
+        borderRadius:999,
+        fontWeight:600
+      }}
+    >
+      {label}
     </div>
   );
+
 }
 
-function ChipList({ items,icon }:{ items:string[],icon:string }){
+function InfoCard({
+  label,
+  value
+}:any){
+
   return (
-    <div style={{ display:"flex", flexWrap:"wrap", gap:10 }}>
-      {items.map((item,index)=>(
-        <div key={index} style={{ padding:"10px 16px", borderRadius:999, background:"#f8fafc", border:"1px solid #dbeafe", fontSize:".9rem", fontWeight:500 }}>
-          {icon} {item}
+    <div
+      style={{
+        background:"#f8fafc",
+        border:"1px solid #e2e8f0",
+        borderRadius:16,
+        padding:14
+      }}
+    >
+      <div
+        style={{
+          fontWeight:700
+        }}
+      >
+        {value}
+      </div>
+
+      <div
+        style={{
+          marginTop:4,
+          color:"#64748b"
+        }}
+      >
+        {label}
+      </div>
+    </div>
+  );
+
+}
+
+function ChipList({
+  items,
+  icon
+}:any){
+
+  return (
+    <div
+      style={{
+        display:"flex",
+        flexWrap:"wrap",
+        gap:8
+      }}
+    >
+      {items.map(
+        (
+          item:string,
+          i:number
+        )=>(
+          <div
+            key={i}
+            style={{
+              padding:"8px 14px",
+              borderRadius:999,
+              background:"#f8fafc",
+              border:"1px solid #dbeafe"
+            }}
+          >
+            {icon} {item}
+          </div>
+        )
+      )}
+    </div>
+  );
+
+}
+
+function RelatedCard({
+  item
+}:any){
+
+  return (
+
+    <a
+      href={`/properties/${item.slug}`}
+      style={{
+        textDecoration:"none",
+        color:"inherit"
+      }}
+    >
+
+      <div
+        style={{
+          background:"#fff",
+          borderRadius:18,
+          overflow:"hidden",
+          border:"1px solid #e2e8f0"
+        }}
+      >
+
+        {item.images?.[0] && (
+
+          <div
+            style={{
+              position:"relative",
+              height:180
+            }}
+          >
+
+            <Image
+              src={
+                item.images[0]
+              }
+              alt={
+                item.title
+              }
+              fill
+              style={{
+                objectFit:"cover"
+              }}
+            />
+
+          </div>
+
+        )}
+
+        <div
+          style={{
+            padding:14
+          }}
+        >
+
+          <div
+            style={{
+              fontWeight:700
+            }}
+          >
+            {
+              item.title
+            }
+          </div>
+
+          <div
+            style={{
+              marginTop:6,
+              color:"#64748b"
+            }}
+          >
+            {
+              item.locality
+            }
+          </div>
+
+          <div
+            style={{
+              marginTop:6,
+              color:"#2563eb",
+              fontWeight:700
+            }}
+          >
+            ₹{
+              item.price.toLocaleString()
+            }
+          </div>
+
         </div>
-      ))}
-    </div>
+
+      </div>
+
+    </a>
+
   );
+
 }

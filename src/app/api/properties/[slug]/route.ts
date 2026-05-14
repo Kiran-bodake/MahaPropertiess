@@ -31,10 +31,22 @@ export async function GET(
     } = await params;
 
     /* Find main property */
-    const property =
-      await Property.findOne({
+  const property =
+  await Property.findOne({
+
+    $or: [
+
+      {
+        slug: slug
+      },
+
+      {
         propertyId: slug
-      });
+      }
+
+    ]
+
+  });
 
     if (!property) {
 
@@ -95,9 +107,10 @@ export async function GET(
       id:
         property._id,
 
-      slug:
-        property.propertyId,
-
+    slug:
+  property.slug ||
+  property.propertyId,
+  
       title:
         property.title,
 

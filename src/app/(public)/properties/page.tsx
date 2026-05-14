@@ -172,7 +172,8 @@ function PropertiesContent() {
   } | null>(null);
 
   // Favorites state
-  const [favorites, setFavorites] = useState<string[]>(() => readFavorites());
+ const [favorites, setFavorites] =
+  useState<string[]>([]);
   const [toast, setToast] = useState<string>("");
 
   const [filters, setFilters] = useState<Filters>({
@@ -217,6 +218,14 @@ function PropertiesContent() {
     const t = setTimeout(() => setSidebarVisible(true), 60);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+
+  setFavorites(
+    readFavorites()
+  );
+
+}, []);
 
   useEffect(() => {
     const sync = () => setFavorites(readFavorites());
@@ -827,8 +836,15 @@ function PropertiesContent() {
 
               <div className="list">
                 {properties.map((p) => {
-                  const images =
-                    p.images && p.images.length > 0 ? p.images : [p.img];
+                  const fallbackImage =
+  "/maha.png";
+
+const images =
+  p.images?.length
+    ? p.images
+    : p.img
+      ? [p.img]
+      : [fallbackImage];
                   const key = getPropKey(p);
                   const isFav =
                     typeof window !== "undefined" &&
@@ -843,14 +859,17 @@ function PropertiesContent() {
                     >
                       <article className="card">
                         <div className="imageWrap">
-                          <PropertyImageSlider
-                            title={p.title || p.t || "Property"}
-                            images={
-                              p.images?.length
-                                ? p.images
-                                : [p.img, p.img, p.img]
-                            }
-                          />
+                        <PropertyImageSlider
+  title={
+    p.title ||
+    p.t ||
+    "Property"
+  }
+
+  images={
+    images
+  }
+/>
                           <div className="verified">VERIFIED</div>
                           {p.badge && <div className="badge">{p.badge}</div>}
                           <div className="photoCount">📸 {images.length}</div>

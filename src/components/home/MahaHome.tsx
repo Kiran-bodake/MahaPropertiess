@@ -1125,12 +1125,16 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
             {imgs.length > 0 && (
-              <Image
-                src={imgs[ii]}
-                alt={p.t}
-                fill
-                style={{ objectFit: "cover" }}
-              />
+             <Image
+  src={imgs[ii]}
+  alt={
+    `${p.title || p.t || "Property"} in ${p.city || "Nashik"}`
+  }
+  fill
+  style={{
+    objectFit:"cover"
+  }}
+/>
             )}
           </div>
 
