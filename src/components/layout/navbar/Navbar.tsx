@@ -1606,10 +1606,6 @@ export function Navbar() {
                     style={{ objectFit: "cover", padding: "1px" }}
                   />
                 </div>
-                {/* <div>
-                <div style={{ fontWeight:800, fontSize:"1rem", color:"#14532d", letterSpacing:"-0.02em" }}>Maha<span style={{ color:"#16a34a" }}>Properties</span></div>
-                  <div style={{ fontSize:"0.6rem", color:"#9ca3af", textTransform:"uppercase", letterSpacing:"0.08em" }}>Nashik Real Estate</div>
-                </div> */}
               </div>
               <button
                 onClick={() => setMenuOpen(false)}
@@ -1852,7 +1848,7 @@ export function Navbar() {
                 { label: "All Properties", href: "/properties" },
                 { label: "About Nashik", href: "/nashik" },
                 { label: "Market Insights", href: "/insights" },
-                { label: "Blog", href: "/blog" },
+                { label: "Blogs", href: "/blogs" },
                 { label: "Post Property", href: "/post-property" },
                 { label: "Contact Us", href: "/contact" },
               ].map((m) => (
