@@ -91,7 +91,7 @@ export function Footer() {
             >
               {/* PHONE */}
               <a
-                href="tel:+919876543210"
+                href="tel:02532629711"
                 style={{
                   ...lk,
                   display: "flex",
