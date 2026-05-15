@@ -7,6 +7,7 @@ import PropertyArea from "@/models/PropertyArea";
 import PropertyFlags from "@/models/PropertyFlags";
 import PropertyAmenity from "@/models/PropertyAmenity";
 import PropertyHighlight from "@/models/PropertyHighlight";
+import slugify from "slugify";
 
 export const createProperty = async (
   body: any
@@ -32,11 +33,29 @@ export const createProperty = async (
     );
   }
 
+
+  const slug =
+
+  slugify(
+
+    body.title,
+
+    {
+
+      lower: true,
+
+      strict: true
+
+    }
+
+  );
   /* MAIN PROPERTY */
   const property =
     await Property.create({
 
       propertyId,
+
+      slug,
 
       title:
         body.title,
