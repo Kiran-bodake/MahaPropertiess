@@ -617,26 +617,6 @@ const TABS_P = [
   "Investment",
   "Collector NA",
 ];
-const TYPES = [
-  "All Types",
-  "NA Plot",
-  "Collector NA",
-  "Agriculture",
-  "Warehouse",
-  "Commercial",
-  "Investment Plot",
-];
-const LOCS_D = [
-  "Any Locality",
-  "Gangapur Road",
-  "Nashik Road",
-  "Meri",
-  "Igatpuri",
-  "Ambad",
-  "Trimbak Road",
-  "Indira Nagar",
-  "Sinnar",
-];
 const CC: Record<string, { bg: string; c: string }> = {
   "Buying Guide": { bg: "#f0fdf4", c: "#166534" },
   Investment: { bg: "#fffbeb", c: "#854d0e" },
@@ -940,8 +920,35 @@ function Hero() {
 /* ═══════════════════════════════════════════════════════════
    CATEGORY GRID  — images on all cards, no white space
 ═══════════════════════════════════════════════════════════ */
-function CatGrid() {
+function CatGrid({ properties }: any) {
   const [ref, v] = useInView();
+
+  if (!properties) return null;
+
+  // ✅ Dynamic category data from DB
+  const categoriesMap: any = {};
+
+  properties.forEach((p: any) => {
+    const category = p.category || p.cat;
+
+    if (!category) return;
+
+    if (!categoriesMap[category]) {
+      categoriesMap[category] = {
+        label: category,
+        count: 0,
+        image:
+          p.img ||
+          "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
+      };
+    }
+
+    categoriesMap[category].count += 1;
+  });
+
+  // ✅ Convert object → array
+  const dynamicCats = Object.values(categoriesMap);
+
   return (
     <section
       className="sec"
@@ -949,6 +956,7 @@ function CatGrid() {
       ref={ref}
     >
       <div className="w">
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -961,6 +969,7 @@ function CatGrid() {
         >
           <div>
             <div className="sl">Browse Properties</div>
+
             <h2
               style={{
                 fontFamily: FONT,
@@ -974,6 +983,7 @@ function CatGrid() {
               What are you looking for?
             </h2>
           </div>
+
           <Link
             href="/properties"
             className="b bo"
@@ -982,17 +992,20 @@ function CatGrid() {
             All Properties {I.arr}
           </Link>
         </div>
+
+        {/* Dynamic Grid */}
         <div
+          className="cg"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(6,1fr)",
             gap: "12px",
           }}
         >
-          {CATS.map((c, i) => (
+          {dynamicCats.map((c: any, i: number) => (
             <Link
-              key={c.l}
-              href={`/properties?category=${encodeURIComponent(c.l)}`}
+              key={c.label}
+              href={`/properties?category=${encodeURIComponent(c.label)}`}
               className={`zm lf ${v ? "fu" : ""}`}
               style={{
                 borderRadius: "12px",
@@ -1006,14 +1019,17 @@ function CatGrid() {
                 flexShrink: 0,
               }}
             >
+              {/* Image */}
               <div style={{ position: "absolute", inset: 0 }}>
                 <Image
-                  src={c.img}
-                  alt={c.l}
+                  src={c.image}
+                  alt={c.label}
                   fill
                   style={{ objectFit: "cover" }}
                 />
               </div>
+
+              {/* Overlay */}
               <div
                 style={{
                   position: "absolute",
@@ -1022,25 +1038,8 @@ function CatGrid() {
                     "linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.22) 55%, transparent 100%)",
                 }}
               />
-              <div
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  left: "10px",
-                  width: "34px",
-                  height: "34px",
-                  borderRadius: "8px",
-                  background: "rgba(255,255,255,.17)",
-                  backdropFilter: "blur(8px)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "1.1rem",
-                  border: "1px solid rgba(255,255,255,.24)",
-                }}
-              >
-                {c.e}
-              </div>
+
+              {/* Content */}
               <div
                 style={{
                   position: "absolute",
@@ -1059,8 +1058,9 @@ function CatGrid() {
                     marginBottom: "2px",
                   }}
                 >
-                  {c.l}
+                  {c.label}
                 </div>
+
                 <div
                   style={{
                     fontSize: "10.5px",
@@ -1068,14 +1068,28 @@ function CatGrid() {
                     fontWeight: 600,
                   }}
                 >
-                  {c.c} listings
+                  {c.count} listings
                 </div>
               </div>
             </Link>
           ))}
         </div>
       </div>
-      <style>{`@media(max-width:1024px){.cg{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:640px){.cg{grid-template-columns:repeat(2,1fr)!important}}`}</style>
+
+      {/* Responsive */}
+      <style>{`
+        @media(max-width:1024px){
+          .cg{
+            grid-template-columns:repeat(3,1fr)!important
+          }
+        }
+
+        @media(max-width:640px){
+          .cg{
+            grid-template-columns:repeat(2,1fr)!important
+          }
+        }
+      `}</style>
     </section>
   );
 }
@@ -1125,16 +1139,14 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
             {imgs.length > 0 && (
-             <Image
-  src={imgs[ii]}
-  alt={
-    `${p.title || p.t || "Property"} in ${p.city || "Nashik"}`
-  }
-  fill
-  style={{
-    objectFit:"cover"
-  }}
-/>
+              <Image
+                src={imgs[ii]}
+                alt={`${p.title || p.t || "Property"} in ${p.city || "Nashik"}`}
+                fill
+                style={{
+                  objectFit: "cover",
+                }}
+              />
             )}
           </div>
 
@@ -1727,24 +1739,50 @@ function Stats() {
 /* ═══════════════════════════════════════════════════════════
    LOCALITIES  — 4/row, 3 rows, CTA instead of pill list
 ═══════════════════════════════════════════════════════════ */
-function Locs() {
+function Locs({ properties }: any) {
   const [ref, vis] = useInView();
-  const [locs, setLocs] = useState<any[]>([]);
+
+  if (!properties) return null;
+
+  // ✅ Create dynamic locality data from DB
+  const localityMap: any = {};
+
+  properties.forEach((p: any) => {
+    const locality = p.location || p.loc || p.locality;
+
+    if (!locality) return;
+
+    if (!localityMap[locality]) {
+      localityMap[locality] = {
+        name: locality,
+        count: 0,
+        image:
+          p.img ||
+          p.images?.[0] ||
+          "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
+        types: new Set(),
+      };
+    }
+
+    localityMap[locality].count += 1;
+
+    // store categories
+    if (p.category || p.cat) {
+      localityMap[locality].types.add(p.category || p.cat);
+    }
+  });
+
+  // ✅ Convert object to array
+  const locs = Object.values(localityMap).map((l: any) => ({
+    ...l,
+    tp: Array.from(l.types).slice(0, 2).join(" • "),
+  }));
+
+  // ✅ Optional sort by most listings
+  locs.sort((a: any, b: any) => b.count - a.count);
+
+  // ✅ Show top 12
   const show = locs.slice(0, 12);
-
-  useEffect(() => {
-    const fetchLocs = async () => {
-      try {
-        const res = await fetch("/api/localities");
-        const data = await res.json();
-        setLocs(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchLocs();
-  }, []);
 
   return (
     <section
@@ -1753,6 +1791,7 @@ function Locs() {
       ref={ref}
     >
       <div className="w">
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -1765,6 +1804,7 @@ function Locs() {
         >
           <div>
             <div className="sl">Explore Nashik</div>
+
             <h2
               style={{
                 fontFamily: FONT,
@@ -1777,6 +1817,7 @@ function Locs() {
               Top Localities
             </h2>
           </div>
+
           <Link
             href="/properties"
             className="b bo"
@@ -1785,17 +1826,20 @@ function Locs() {
             View All Localities {I.arr}
           </Link>
         </div>
+
+        {/* Grid */}
         <div
+          className="lg"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4,1fr)",
             gap: "12px",
           }}
         >
-          {show.map((l, i) => (
+          {show.map((l: any, i: number) => (
             <Link
-              key={l.n}
-              href={`/localities/${l.n.toLowerCase().replace(/\s+/g, "-")}`}
+              key={l.name}
+              href={`/localities/${l.name.toLowerCase().replace(/\s+/g, "-")}`}
               className="lf zm"
               style={{
                 borderRadius: "11px",
@@ -1806,17 +1850,24 @@ function Locs() {
                 boxShadow: "0 2px 8px rgba(0,0,0,.07)",
                 opacity: vis ? 1 : 0,
                 transform: vis ? "none" : "translateY(10px)",
-                transition: `opacity .45s ${E} ${i * 0.04}s,transform .45s ${E} ${i * 0.04}s,box-shadow .26s ${E},transform .26s ${E}`,
+                transition: `opacity .45s ${E} ${
+                  i * 0.04
+                }s,transform .45s ${E} ${
+                  i * 0.04
+                }s,box-shadow .26s ${E},transform .26s ${E}`,
               }}
             >
+              {/* Image */}
               <div style={{ position: "absolute", inset: 0 }}>
                 <Image
-                  src={l.img}
-                  alt={l.n}
+                  src={l.image}
+                  alt={l.name}
                   fill
                   style={{ objectFit: "cover" }}
                 />
               </div>
+
+              {/* Overlay */}
               <div
                 style={{
                   position: "absolute",
@@ -1825,7 +1876,9 @@ function Locs() {
                     "linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.12) 60%,transparent 100%)",
                 }}
               />
-              {l.hot && (
+
+              {/* HOT badge */}
+              {l.count >= 5 && (
                 <span
                   style={{
                     position: "absolute",
@@ -1842,6 +1895,8 @@ function Locs() {
                   🔥 HOT
                 </span>
               )}
+
+              {/* Content */}
               <div
                 style={{
                   position: "absolute",
@@ -1859,8 +1914,9 @@ function Locs() {
                     marginBottom: "2px",
                   }}
                 >
-                  {l.n}
+                  {l.name}
                 </h3>
+
                 <div
                   style={{
                     display: "flex",
@@ -1869,10 +1925,14 @@ function Locs() {
                   }}
                 >
                   <span
-                    style={{ fontSize: "10px", color: "rgba(255,255,255,.68)" }}
+                    style={{
+                      fontSize: "10px",
+                      color: "rgba(255,255,255,.68)",
+                    }}
                   >
-                    {l.tp}
+                    {l.tp || "Properties"}
                   </span>
+
                   <span
                     style={{
                       fontSize: "10px",
@@ -1884,24 +1944,40 @@ function Locs() {
                       backdropFilter: "blur(8px)",
                     }}
                   >
-                    {l.c}
+                    {l.count}+
                   </span>
                 </div>
               </div>
             </Link>
           ))}
         </div>
+
+        {/* CTA */}
         <div style={{ textAlign: "center", marginTop: "22px" }}>
           <Link
             href="/properties"
             className="b bo"
             style={{ padding: "10px 24px", fontSize: "13px" }}
           >
-            Explore All 40+ Nashik Localities {I.arr}
+            Explore All Nashik Localities {I.arr}
           </Link>
         </div>
       </div>
-      <style>{`@media(max-width:900px){.lg{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:640px){.lg{grid-template-columns:repeat(2,1fr)!important}}`}</style>
+
+      {/* Responsive */}
+      <style>{`
+        @media(max-width:900px){
+          .lg{
+            grid-template-columns:repeat(3,1fr)!important
+          }
+        }
+
+        @media(max-width:640px){
+          .lg{
+            grid-template-columns:repeat(2,1fr)!important
+          }
+        }
+      `}</style>
     </section>
   );
 }
@@ -2999,10 +3075,10 @@ export default function MahaHome() {
       <Nav />
       <main style={{ paddingBottom: "10px" }}>
         <Hero />
-        <CatGrid />
+        <CatGrid properties={properties} />
         <Featured properties={properties} />
         <Stats />
-        <Locs />
+        <Locs properties={properties} />
         <WhyNashik />
         <Testi testimonials={testimonials} />
         <Blogs blogs={blogs} />

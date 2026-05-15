@@ -1,8 +1,5 @@
-import properties from "@/moc-data/properties.json";
 import Link from "next/link";
 import Image from "next/image";
-import { getNearbyProperties } from "@/utils/property/getNearbyProperties";
-
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 
@@ -12,6 +9,12 @@ type Props = {
   }>;
 };
 
+const res = await fetch("http://localhost:3000/api/properties", {
+  cache: "no-store",
+});
+
+const properties = await res.json();
+
 export default async function LocalityPage({ params }: Props) {
   const { slug } = await params;
 
@@ -20,16 +23,22 @@ export default async function LocalityPage({ params }: Props) {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 
-  const filtered = properties.filter((p) => p.localitySlug === slug);
+  const filtered = properties.filter((p: any) => {
+    const locality = p.locality || p.location || "";
+
+    return locality.toLowerCase().replace(/\s+/g, "-") === slug;
+  });
 
   const currentProperty = filtered[0];
 
-  const nearbyProperties = currentProperty?.pincode
-    ? getNearbyProperties(
-        currentProperty.pincode,
-        properties,
-        currentProperty.id,
-      )
+  const nearbyProperties = currentProperty
+    ? properties
+        .filter((p: any) => {
+          return (
+            p.city === currentProperty.city && p.slug !== currentProperty.slug
+          );
+        })
+        .slice(0, 4)
     : [];
 
   return (
@@ -122,7 +131,7 @@ export default async function LocalityPage({ params }: Props) {
               gap: "18px",
             }}
           >
-            {filtered.map((p) => (
+            {filtered.map((p: any) => (
               <Link
                 key={p.id}
                 href={`/properties/${p.slug}`}
@@ -137,7 +146,7 @@ export default async function LocalityPage({ params }: Props) {
                     <Image
                       fill
                       src={p.img}
-                      alt={p.t}
+                      alt={p.title}
                       style={{
                         objectFit: "cover",
                       }}
@@ -157,11 +166,11 @@ export default async function LocalityPage({ params }: Props) {
                   {/* CONTENT */}
                   <div className="cardContent">
                     <div>
-                      <div className="category">{p.cat}</div>
+                      <div className="category">{p.category}</div>
 
-                      <h3 className="title">{p.t}</h3>
+                      <h3 className="title">{p.title}</h3>
 
-                      <p className="location">📍 {p.loc}</p>
+                      <p className="location">📍 {p.locality}</p>
 
                       <div className="features">
                         <div className="feature">📐 {p.area}</div>
@@ -174,7 +183,7 @@ export default async function LocalityPage({ params }: Props) {
 
                     <div className="footerRow">
                       <div>
-                        <div className="price">{p.pr}</div>
+                        <div className="price">{p.price}</div>
 
                         <span className="neg">Negotiable</span>
                       </div>
@@ -243,13 +252,13 @@ export default async function LocalityPage({ params }: Props) {
                   }}
                 >
                   Based on location:
-                  <strong> {currentProperty.loc}</strong>
+                  <strong> {currentProperty.locality}</strong>
                 </p>
               </div>
 
               {/* Grid */}
               <div className="relatedGrid">
-                {nearbyProperties.map((p) => (
+                {nearbyProperties.map((p: any) => (
                   <Link
                     key={p.id}
                     href={`/properties/${p.slug}`}
@@ -262,13 +271,13 @@ export default async function LocalityPage({ params }: Props) {
                       <div className="relatedImageWrap">
                         <Image
                           src={p.img}
-                          alt={p.t}
+                          alt={p.title}
                           fill
                           className="relatedImage"
                         />
 
                         {/* Category Badge */}
-                        <div className="relatedBadge">{p.cat}</div>
+                        <div className="relatedBadge">{p.category}</div>
 
                         {/* Zero Brokerage */}
                         <div className="relatedZero">Zero Brokerage</div>
@@ -276,12 +285,12 @@ export default async function LocalityPage({ params }: Props) {
 
                       {/* Content */}
                       <div className="relatedContent">
-                        <h3>{p.t}</h3>
+                        <h3>{p.title}</h3>
 
-                        <p>📍 {p.loc}</p>
+                        <p>📍 {p.locality}</p>
 
                         <div className="relatedBottom">
-                          <span>{p.pr}</span>
+                          <span> {p.price}</span>
 
                           <button type="button">View Details →</button>
                         </div>
@@ -556,13 +565,14 @@ export default async function LocalityPage({ params }: Props) {
   /* RELATED PROPERTIES */
 
   .relatedGrid {
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fit,
-      minmax(240px, 1fr)
-    );
-    gap: 16px;
-  }
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(240px, 280px)
+  );
+  gap: 14px;
+   justify-content: start;
+}
 
   .relatedCard {
     background: white;

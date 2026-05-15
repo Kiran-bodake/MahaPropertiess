@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -13,694 +14,491 @@ import { PropertyGallery } from "@/components/property/PropertyGallery";
 
 type PropertyType = {
   id: any;
-  slug:string;
-  title:string;
-  description:string;
+  slug: string;
+  title: string;
+  description: string;
 
-  locality:string;
-  city:string;
-  state?:string;
+  locality: string;
+  city: string;
+  state?: string;
 
-  price:number;
-  area:number;
-  areaUnit:string;
+  price: number;
+  area: number;
+  areaUnit: string;
 
-  postedBy:string;
-  agentName:string;
-  agentPhone:string;
+  postedBy: string;
+  agentName: string;
+  agentPhone: string;
 
-  images:string[];
+  images: string[];
 
-  amenities?:string[];
-  highlights?:string[];
+  amenities?: string[];
+  highlights?: string[];
 
-  rera?:boolean;
-  badge?:string;
+  rera?: boolean;
+  badge?: string;
 
-  status?:string;
-  constructionStatus?:string;
+  status?: string;
+  constructionStatus?: string;
 };
 
 export const dynamicParams = true;
 
-async function getProperty(
-  slug:string
-):Promise<PropertyType | null>{
+async function getProperty(slug: string): Promise<PropertyType | null> {
+  const res = await fetch(`http://localhost:3000/api/properties/${slug}`, {
+    cache: "no-store",
+  });
 
-  const res =
-    await fetch(
-      `http://localhost:3000/api/properties/${slug}`,
-      {
-        cache:"no-store"
-      }
-    );
-
-  if(!res.ok)
-    return null;
+  if (!res.ok) return null;
 
   return res.json();
-
 }
 
-async function getRelatedProperties(
-  city:string
-):Promise<PropertyType[]>{
+async function getRelatedProperties(city: string): Promise<PropertyType[]> {
+  const res = await fetch(`http://localhost:3000/api/properties?city=${city}`, {
+    cache: "no-store",
+  });
 
-  const res =
-    await fetch(
-      `http://localhost:3000/api/properties?city=${city}`,
-      {
-        cache:"no-store"
-      }
-    );
-
-  if(!res.ok)
-    return [];
+  if (!res.ok) return [];
 
   return res.json();
-
 }
 
 export async function generateMetadata({
-  params
-}:{
-  params:Promise<{
-    slug:string
-  }>
-}):Promise<Metadata>{
+  params,
+}: {
+  params: Promise<{
+    slug: string;
+  }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
 
-  const {
-    slug
-  } = await params;
+  const property = await getProperty(slug);
 
-  const property =
-    await getProperty(
-      slug
-    );
-
-  if(!property){
-
+  if (!property) {
     return {
-      title:
-        "Property Not Found"
+      title: "Property Not Found",
     };
-
   }
 
   return {
+    title: `${property.title} | MahaProperties`,
 
-    title:
-      `${property.title} | MahaProperties`,
-
-    description:
-      property.description
-
+    description: property.description,
   };
-
 }
 
 export default async function PropertyDetailPage({
-  params
-}:{
-  params:Promise<{
-    slug:string
-  }>
-}){
+  params,
+}: {
+  params: Promise<{
+    slug: string;
+  }>;
+}) {
+  const { slug } = await params;
 
-  const {
-    slug
-  } = await params;
+  const property = await getProperty(slug);
 
-  const property =
-    await getProperty(
-      slug
-    );
+  if (!property) notFound();
 
-  if(!property)
-    notFound();
-
-  const relatedProperties =
-    await getRelatedProperties(
-      property.city
-    );
+  const relatedProperties = await getRelatedProperties(property.city);
 
   return (
-
     <>
       <Navbar />
 
       <main
         style={{
-          background:"#f8fafc"
+          background: "#f8fafc",
         }}
       >
-
         {/* CENTERED CONTAINER */}
         <section
           style={{
-            width:"100%",
+            width: "100%",
 
-            maxWidth:1380,
+            maxWidth: 1380,
 
-            margin:"0 auto",
+            margin: "0 auto",
 
-            padding:
-              "20px 16px 40px"
+            padding: "20px 16px 40px",
           }}
         >
-
           {/* MAIN GRID */}
           <div
             style={{
-              display:"grid",
+              display: "grid",
 
-              gridTemplateColumns:
-                "minmax(0,3fr) minmax(340px,1fr)",
+              gridTemplateColumns: "minmax(0,3fr) minmax(340px,1fr)",
 
-              gap:24,
+              gap: 24,
 
-              alignItems:"start"
+              alignItems: "start",
             }}
           >
-
             {/* LEFT */}
             <article
               style={{
-                width:"100%",
+                width: "100%",
 
-                background:"#fff",
+                background: "#fff",
 
-                borderRadius:24,
+                borderRadius: 24,
 
-                overflow:"hidden",
+                overflow: "hidden",
 
-                boxShadow:
-                  "0 8px 30px rgba(0,0,0,.05)"
+                boxShadow: "0 8px 30px rgba(0,0,0,.05)",
               }}
             >
-
               {/* HERO */}
               <div
                 style={{
-                  position:"relative"
+                  position: "relative",
                 }}
               >
-
                 <PropertyGallery
-                  images={
-                    property.images
-                  }
-                  title={
-                    property.title
-                  }
+                  images={property.images}
+                  title={property.title}
                 />
 
                 {/* PRICE OVERLAY */}
-              <div
-  style={{
-    position:"absolute",
+                <div
+                  style={{
+                    position: "absolute",
 
-    left:24,
+                    left: 24,
 
-    bottom:95,
+                    bottom: 95,
 
-    zIndex:20,
+                    zIndex: 20,
 
-    color:"#fff",
+                    color: "#fff",
 
-    fontWeight:800,
+                    fontWeight: 800,
 
-    fontSize:"2rem",
+                    fontSize: "2rem",
 
-    textShadow:
-      "0 2px 10px rgba(0,0,0,.85)",
+                    textShadow: "0 2px 10px rgba(0,0,0,.85)",
 
-    padding:
-      "8px 14px",
+                    padding: "8px 14px",
 
-    borderRadius:14,
+                    borderRadius: 14,
 
-    backdropFilter:
-      "blur(8px)",
+                    backdropFilter: "blur(8px)",
 
-    background:
-      "rgba(0,0,0,.25)"
-  }}
->
-  ₹{
-    property.price.toLocaleString()
-  }
-</div>
+                    background: "rgba(0,0,0,.25)",
+                  }}
+                >
+                  ₹{property.price.toLocaleString()}
+                </div>
               </div>
 
               {/* BODY */}
               <div
                 style={{
-                  padding:28
+                  padding: 28,
                 }}
               >
-
                 <h1
                   style={{
-                    margin:0,
+                    margin: 0,
 
-                    fontSize:
-                      "clamp(1.5rem,4vw,2.3rem)",
+                    fontSize: "clamp(1.5rem,4vw,2.3rem)",
 
-                    fontWeight:800
+                    fontWeight: 800,
                   }}
                 >
-                  {
-                    property.title
-                  }
+                  {property.title}
                 </h1>
 
                 <div
                   style={{
-                    marginTop:8,
+                    marginTop: 8,
 
-                    color:"#64748b"
+                    color: "#64748b",
                   }}
                 >
-                  📍 {
-                    property.locality
-                  }, {
-                    property.city
-                  }
+                  📍 {property.locality}, {property.city}
                 </div>
 
                 <div
                   style={{
-                    marginTop:18
+                    marginTop: 18,
                   }}
                 >
-
                   <PropertyActions
-                    propertyId={
-                      property.slug
-                    }
-                    propertyTitle={
-                      property.title
-                    }
+                    propertyId={property.slug}
+                    propertyTitle={property.title}
                   />
-
                 </div>
 
                 {/* BADGES */}
                 <div
                   style={{
-                    display:"flex",
+                    display: "flex",
 
-                    flexWrap:"wrap",
+                    flexWrap: "wrap",
 
-                    gap:10,
+                    gap: 10,
 
-                    marginTop:18
+                    marginTop: 18,
                   }}
                 >
+                  {property.rera && <Badge label="RERA" />}
 
-                  {property.rera &&
-                    <Badge
-                      label="RERA"
-                    />
-                  }
+                  {property.badge && <Badge label={property.badge} />}
 
-                  {property.badge &&
-                    <Badge
-                      label={
-                        property.badge
-                      }
-                    />
-                  }
-
-                  {property.status &&
-                    <Badge
-                      label={
-                        property.status
-                      }
-                    />
-                  }
-
+                  {property.status && <Badge label={property.status} />}
                 </div>
 
                 {/* OVERVIEW */}
-                <SectionTitle
-                  title="Property Overview"
-                />
+                <SectionTitle title="Property Overview" />
 
                 <div
                   style={{
-                    display:"grid",
+                    display: "grid",
 
-                    gridTemplateColumns:
-                      "repeat(auto-fit,minmax(160px,1fr))",
+                    gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
 
-                    gap:12
+                    gap: 12,
                   }}
                 >
-
                   <InfoCard
                     label="Area"
                     value={`${property.area} ${property.areaUnit}`}
                   />
 
-                  <InfoCard
-                    label="Listed By"
-                    value={
-                      property.postedBy
-                    }
-                  />
+                  <InfoCard label="Listed By" value={property.postedBy} />
 
-                  <InfoCard
-                    label="Agent"
-                    value={
-                      property.agentName
-                    }
-                  />
-
+                  <InfoCard label="Agent" value={property.agentName} />
                 </div>
 
                 {/* DESCRIPTION */}
-                <SectionTitle
-                  title="Description"
-                />
+                <SectionTitle title="Description" />
 
                 <p
                   style={{
-                    color:"#475569",
+                    color: "#475569",
 
-                    lineHeight:1.8
+                    lineHeight: 1.8,
                   }}
                 >
-                  {
-                    property.description
-                  }
+                  {property.description}
                 </p>
 
                 {/* AMENITIES */}
                 {property.amenities?.length ? (
                   <>
-                    <SectionTitle
-                      title="Amenities"
-                    />
+                    <SectionTitle title="Amenities" />
 
-                    <ChipList
-                      items={
-                        property.amenities
-                      }
-                      icon="✓"
-                    />
+                    <ChipList items={property.amenities} icon="✓" />
                   </>
                 ) : null}
 
                 {/* HIGHLIGHTS */}
                 {property.highlights?.length ? (
                   <>
-                    <SectionTitle
-                      title="Highlights"
-                    />
+                    <SectionTitle title="Highlights" />
 
-                    <ChipList
-                      items={
-                        property.highlights
-                      }
-                      icon="★"
-                    />
+                    <ChipList items={property.highlights} icon="★" />
                   </>
                 ) : null}
 
                 {/* MAP */}
-                <SectionTitle
-                  title="Location"
-                />
+                <SectionTitle title="Location" />
 
                 <div
                   style={{
-                    borderRadius:18,
+                    borderRadius: 18,
 
-                    overflow:"hidden"
+                    overflow: "hidden",
                   }}
                 >
-
                   <iframe
                     title="Location"
-
                     width="100%"
-
                     height="320"
-
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                      `${property.locality}, ${property.city}`
+                      `${property.locality}, ${property.city}`,
                     )}&output=embed`}
-
                     style={{
-                      border:0
+                      border: 0,
                     }}
                   />
-
                 </div>
 
                 {/* LEAD */}
                 <div
                   style={{
-                    marginTop:30
+                    marginTop: 30,
                   }}
                 >
-
-                  <PropertyLeadForm
-                    propertyTitle={
-                      property.title
-                    }
-                  />
-
+                  <PropertyLeadForm propertyTitle={property.title} />
                 </div>
-
               </div>
-
             </article>
 
             {/* RIGHT */}
             <aside
               style={{
-                width:"100%",
+                width: "100%",
 
-                maxWidth:360,
+                maxWidth: 360,
 
-                margin:"0 auto"
+                margin: "0 auto",
               }}
             >
-
               <div
                 style={{
-                  position:"sticky",
+                  position: "sticky",
 
-                  top:90,
+                  top: 90,
 
-                  background:"#fff",
+                  background: "#fff",
 
-                  borderRadius:24,
+                  borderRadius: 24,
 
-                  padding:24,
+                  padding: 24,
 
-                  boxShadow:
-                    "0 10px 30px rgba(0,0,0,.06)"
+                  boxShadow: "0 10px 30px rgba(0,0,0,.06)",
                 }}
               >
-
                 <div
                   style={{
-                    fontWeight:700,
+                    fontWeight: 700,
 
-                    fontSize:"1.1rem"
+                    fontSize: "1.1rem",
                   }}
                 >
-                  {
-                    property.agentName
-                  }
+                  {property.agentName}
                 </div>
 
                 <div
                   style={{
-                    marginTop:6,
+                    marginTop: 6,
 
-                    color:"#64748b"
+                    color: "#64748b",
                   }}
                 >
-                  {
-                    property.agentPhone
-                  }
+                  {property.agentPhone}
                 </div>
 
                 {/* TRUST */}
                 <div
                   style={{
-                    marginTop:20,
+                    marginTop: 20,
 
-                    display:"grid",
+                    display: "grid",
 
-                    gap:8,
+                    gap: 8,
 
-                    color:"#475569",
+                    color: "#475569",
 
-                    fontSize:".92rem"
+                    fontSize: ".92rem",
                   }}
                 >
-                  <div>
-                    ✓ Verified Agent
-                  </div>
+                  <div>✓ Verified Agent</div>
 
-                  <div>
-                    ⚡ Fast Response
-                  </div>
+                  <div>⚡ Fast Response</div>
 
-                  <div>
-                    👁 High Buyer Interest
-                  </div>
+                  <div>👁 High Buyer Interest</div>
                 </div>
 
                 <div
                   style={{
-                    marginTop:20
+                    marginTop: 20,
                   }}
                 >
-
                   <StickyContactForm
                     title="Request Callback"
                     description="Talk with owner today"
                   />
-
                 </div>
-
               </div>
-
             </aside>
-
           </div>
 
           {/* RELATED */}
           {relatedProperties?.length > 0 && (
-
             <div
               style={{
-                marginTop:32
+                marginTop: 32,
               }}
             >
-
-              <SectionTitle
-                title="Similar Properties"
-              />
+              <SectionTitle title="Similar Properties" />
 
               <div
                 style={{
-                  display:"grid",
+                  display: "grid",
 
-                  gridTemplateColumns:
-                    "repeat(auto-fit,minmax(250px,1fr))",
+                  gridTemplateColumns: "repeat(auto-fit,minmax(240px,280px))",
 
-                  gap:16
+                  justifyContent: "start",
+
+                  gap: 16,
                 }}
               >
-
                 {relatedProperties
-                  .filter(
-                    item =>
-                      item.slug !==
-                      property.slug
-                  )
-                  .slice(0,4)
-                 .map(
-  item => (
-
-    <RelatedCard
-      key={
-        `${item.slug}-${item.id}`
-      }
-      item={
-        item
-      }
-    />
-
-  )
-)}
-
+                  .filter((item) => item.slug !== property.slug)
+                  .slice(0, 4)
+                  .map((item) => (
+                    <RelatedCard key={`${item.slug}-${item.id}`} item={item} />
+                  ))}
               </div>
-
             </div>
-
           )}
-
         </section>
-
       </main>
 
       <Footer />
-
     </>
-
   );
-
 }
 
-function SectionTitle({
-  title
-}:{
-  title:string
-}){
-
+function SectionTitle({ title }: { title: string }) {
   return (
     <h3
       style={{
-        marginTop:30,
-        marginBottom:14,
-        fontWeight:700,
-        fontSize:"1.1rem"
+        marginTop: 30,
+        marginBottom: 14,
+        fontWeight: 700,
+        fontSize: "1.1rem",
       }}
     >
       {title}
     </h3>
   );
-
 }
 
-function Badge({
-  label
-}:{
-  label:string
-}){
-
+function Badge({ label }: { label: string }) {
   return (
     <div
       style={{
-        background:"#eff6ff",
-        color:"#2563eb",
-        padding:"8px 14px",
-        borderRadius:999,
-        fontWeight:600
+        background: "#eff6ff",
+        color: "#2563eb",
+        padding: "8px 14px",
+        borderRadius: 999,
+        fontWeight: 600,
       }}
     >
       {label}
     </div>
   );
-
 }
 
-function InfoCard({
-  label,
-  value
-}:any){
-
+function InfoCard({ label, value }: any) {
   return (
     <div
       style={{
-        background:"#f8fafc",
-        border:"1px solid #e2e8f0",
-        borderRadius:16,
-        padding:14
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0",
+        borderRadius: 16,
+        padding: 14,
       }}
     >
       <div
         style={{
-          fontWeight:700
+          fontWeight: 700,
         }}
       >
         {value}
@@ -708,147 +506,179 @@ function InfoCard({
 
       <div
         style={{
-          marginTop:4,
-          color:"#64748b"
+          marginTop: 4,
+          color: "#64748b",
         }}
       >
         {label}
       </div>
     </div>
   );
-
 }
 
-function ChipList({
-  items,
-  icon
-}:any){
-
+function ChipList({ items, icon }: any) {
   return (
     <div
       style={{
-        display:"flex",
-        flexWrap:"wrap",
-        gap:8
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 8,
       }}
     >
-      {items.map(
-        (
-          item:string,
-          i:number
-        )=>(
-          <div
-            key={i}
-            style={{
-              padding:"8px 14px",
-              borderRadius:999,
-              background:"#f8fafc",
-              border:"1px solid #dbeafe"
-            }}
-          >
-            {icon} {item}
-          </div>
-        )
-      )}
-    </div>
-  );
-
-}
-
-function RelatedCard({
-  item
-}:any){
-
-  return (
-
-    <a
-      href={`/properties/${item.slug}`}
-      style={{
-        textDecoration:"none",
-        color:"inherit"
-      }}
-    >
-
-      <div
-        style={{
-          background:"#fff",
-          borderRadius:18,
-          overflow:"hidden",
-          border:"1px solid #e2e8f0"
-        }}
-      >
-
-        {item.images?.[0] && (
-
-          <div
-            style={{
-              position:"relative",
-              height:180
-            }}
-          >
-
-            <Image
-              src={
-                item.images[0]
-              }
-              alt={
-                item.title
-              }
-              fill
-              style={{
-                objectFit:"cover"
-              }}
-            />
-
-          </div>
-
-        )}
-
+      {items.map((item: string, i: number) => (
         <div
+          key={i}
           style={{
-            padding:14
+            padding: "8px 14px",
+            borderRadius: 999,
+            background: "#f8fafc",
+            border: "1px solid #dbeafe",
           }}
         >
+          {icon} {item}
+        </div>
+      ))}
+    </div>
+  );
+}
 
+function RelatedCard({ item }: any) {
+  const image = item.images?.[0] || item.img || "/maha.png";
+
+  return (
+    <Link
+      href={`/properties/${item.slug}`}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <article
+        style={{
+          background: "#fff",
+          borderRadius: 18,
+          overflow: "hidden",
+          border: "1px solid #e2e8f0",
+          transition: "0.22s ease",
+        }}
+      >
+        {/* IMAGE */}
+        <div
+          style={{
+            position: "relative",
+            height: 150,
+          }}
+        >
+          <Image
+            src={image}
+            alt={item.title}
+            fill
+            style={{
+              objectFit: "cover",
+            }}
+          />
+
+          {/* CATEGORY */}
           <div
             style={{
-              fontWeight:700
+              position: "absolute",
+              top: 10,
+              left: 10,
+              background: "#16a34a",
+              color: "white",
+              fontSize: 10,
+              fontWeight: 700,
+              padding: "6px 10px",
+              borderRadius: 999,
+              textTransform: "uppercase",
             }}
           >
-            {
-              item.title
-            }
+            {item.category || "Property"}
           </div>
 
+          {/* BADGE */}
           <div
             style={{
-              marginTop:6,
-              color:"#64748b"
+              position: "absolute",
+              top: 10,
+              right: 10,
+              background: "#dcfce7",
+              color: "#166534",
+              fontSize: 10,
+              fontWeight: 700,
+              padding: "6px 10px",
+              borderRadius: 999,
             }}
           >
-            {
-              item.locality
-            }
+            Verified
           </div>
-
-          <div
-            style={{
-              marginTop:6,
-              color:"#2563eb",
-              fontWeight:700
-            }}
-          >
-            ₹{
-              item.price.toLocaleString()
-            }
-          </div>
-
         </div>
 
-      </div>
+        {/* CONTENT */}
+        <div
+          style={{
+            padding: 14,
+          }}
+        >
+          <h3
+            style={{
+              margin: 0,
+              fontSize: "0.95rem",
+              lineHeight: 1.4,
+              fontWeight: 800,
+              color: "#0f172a",
+            }}
+          >
+            {item.title}
+          </h3>
 
-    </a>
+          <p
+            style={{
+              marginTop: 8,
+              color: "#64748b",
+              fontSize: "0.86rem",
+            }}
+          >
+            📍 {item.locality}
+          </p>
 
+          <div
+            style={{
+              marginTop: 14,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "1rem",
+                fontWeight: 900,
+                color: "#0f766e",
+              }}
+            >
+              {item.price}
+            </span>
+
+            <button
+              type="button"
+              style={{
+                height: 32,
+                padding: "0 12px",
+                border: "none",
+                borderRadius: 10,
+                background: "#dcfce7",
+                color: "#16a34a",
+                fontWeight: 700,
+                fontSize: "0.8rem",
+                cursor: "pointer",
+              }}
+            >
+              View →
+            </button>
+          </div>
+        </div>
+      </article>
+    </Link>
   );
-
 }

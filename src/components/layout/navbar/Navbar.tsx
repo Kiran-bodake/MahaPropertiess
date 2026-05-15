@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import propertiesData from "@/moc-data/properties.json";
 import { Heart, LogOut } from "lucide-react";
 import {
   Menu,
@@ -378,31 +377,6 @@ const NAV_LINKS: NavLinkDef[] = [
   },
 ];
 
-const LOCALITIES_QUICK = [
-  "Gangapur Road",
-  "Nashik Road",
-  "Meri",
-  "Igatpuri",
-  "Ambad",
-  "Pathardi Phata",
-  "Trimbak Road",
-  "Indira Nagar",
-  "Sinnar",
-  "Panchavati",
-  "College Road",
-  "Varavandi",
-];
-const TYPES_QUICK = [
-  "NA Plot",
-  "Collector NA",
-  "Agriculture",
-  "Warehouse",
-  "Commercial",
-  "Investment Plot",
-  "Farmhouse",
-  "Industrial Shed",
-];
-
 /* ─── Component ─────────────────────────────────────────── */
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -416,6 +390,9 @@ export function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const [searchFocus, setSearchFocus] = useState(false);
+
+  const [properties, setProperties] = useState<any[]>([]);
+  const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
 
   const router = useRouter();
 
@@ -461,6 +438,53 @@ export function Navbar() {
 
       localStorage.removeItem("user");
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const res = await fetch("/api/properties");
+        const data = await res.json();
+
+        setProperties(data);
+
+        // ✅ Categories
+        const defaultCats = [
+          "NA Plot",
+          "Collector NA",
+          "Agriculture",
+          "Commercial",
+          "Warehouse",
+          "Investment",
+        ];
+
+        const dbCats = data
+          .map((p: any) => {
+            const cat = p.category || p.cat || "";
+
+            const formatted = cat
+              .replace(/-/g, " ")
+              .replace(/\b\w/g, (l: string) => l.toUpperCase());
+
+            if (formatted === "Na Plot") return "NA Plot";
+
+            if (formatted === "Collector Na") return "Collector NA";
+
+            return formatted;
+          })
+          .filter(Boolean);
+
+        const cats: string[] = [
+          ...new Set<string>([...defaultCats, ...dbCats]),
+        ];
+
+        setDynamicCategories(cats);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchProperties();
   }, []);
   // Autocomplete hook
   const {
@@ -1411,7 +1435,7 @@ export function Navbar() {
                 alignItems: "center",
                 justifyContent: "space-between",
                 gap: "8px",
-                paddingLeft: "30px",
+                paddingLeft: "50px",
                 overflowX: "auto",
                 minHeight: "38px",
               }}
@@ -1420,24 +1444,21 @@ export function Navbar() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "4px",
+                  gap: "10px",
                   overflowX: "auto",
                   scrollbarWidth: "none",
                 }}
               >
-                {[
-                  "All Properties",
-                  "NA Plots",
-                  "Collector NA",
-                  "Agriculture Land",
-                  "Warehouse",
-                  "Commercial",
-                  "Investment Plots",
-                  "Farmhouses",
-                ].map((t) => (
+                {["All", ...dynamicCategories].map((t) => (
                   <Link
                     key={t}
-                    href={`/properties?cat=${t.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={
+                      t === "All"
+                        ? "/properties"
+                        : `/properties?cat=${encodeURIComponent(
+                            t.toLowerCase().replace(/\s+/g, "-"),
+                          )}`
+                    }
                     style={{
                       whiteSpace: "nowrap",
                       padding: "6px 16px",
@@ -1758,7 +1779,20 @@ export function Navbar() {
                 Popular Localities
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>
-                {LOCALITIES_QUICK.map((l) => (
+                {[
+                  "Gangapur Road",
+                  "College Road",
+                  "Indira Nagar",
+                  "Panchavati",
+                  "Nashik Road",
+                  "Ambad MIDC",
+                  "Satpur MIDC",
+                  "Pathardi Phata",
+                  "Igatpuri",
+                  "Trimbak Road",
+                  "Meri Village",
+                  "Sinnar",
+                ].map((l) => (
                   <Link
                     key={l}
                     href={`/localities/${l.toLowerCase().replace(/\s+/g, "-")}`}
