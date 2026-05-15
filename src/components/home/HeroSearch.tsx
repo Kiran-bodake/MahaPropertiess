@@ -5,12 +5,18 @@ import { useRouter } from "next/navigation";
 import { Search, Tag, MapPin } from "lucide-react";
 
 type Property = {
+
+  id?: string;
+
+  title?: string;
+
   category?: string;
-  cat?: string;
+
   locality?: string;
-  loc?: string;
+
   city?: string;
-};
+
+}
 
 const G = {
   g: "#1a6b3c",
@@ -72,7 +78,7 @@ const [showSuggestions, setShowSuggestions] = useState(false);
   const categories = useMemo(() => {
     const s = new Set<string>();
     allProps.forEach((p) => {
-      const c = (p.category || p.cat || "").trim();
+      const c = (p.category ||   "").trim();
       if (c) s.add(c);
     });
     return [...s].sort();
@@ -81,7 +87,7 @@ const [showSuggestions, setShowSuggestions] = useState(false);
   const locations = useMemo(() => {
     const s = new Set<string>();
     allProps.forEach((p) => {
-      const raw = (p.locality || p.loc || "").trim();
+      const raw = (p.locality ||  "").trim();
       const city = (p.city || "").trim();
       if (city) s.add(city);
       if (raw) s.add(raw);
@@ -157,14 +163,15 @@ router.push(
         return;
       }
 
-      const filtered = allProps
-        .filter(
-          (p: any) =>
-            norm(p.t).includes(norm(value)) ||
-            norm(p.cat).includes(norm(value)) ||
-            norm(p.loc).includes(norm(value))
-        )
-        .slice(0, 6);
+     const filtered = allProps
+  .filter(
+    (p: any) =>
+      norm(p.title).includes(norm(value)) ||
+      norm(p.category).includes(norm(value)) ||
+      norm(p.locality).includes(norm(value)) ||
+      norm(p.city).includes(norm(value))
+  )
+  .slice(0, 6);
 
       setSuggestions(filtered);
       setShowSuggestions(true);
@@ -188,12 +195,12 @@ router.push(
           type="button"
           style={ddItem}
           onClick={() => {
-            setQ(property.t);
+           setQ(property.title);
             setShowSuggestions(false);
 
            router.push(
   `/properties?q=${encodeURIComponent(
-    property.t
+   property.title
   )}`
 );
           }}
@@ -207,7 +214,7 @@ router.push(
                 fontSize: "14px"
               }}
             >
-              {property.t}
+              {property.title}
             </div>
 
             <div
@@ -216,7 +223,7 @@ router.push(
                 color: "#6b7280"
               }}
             >
-              {property.loc}
+            {property.locality || property.city}
             </div>
           </div>
         </button>

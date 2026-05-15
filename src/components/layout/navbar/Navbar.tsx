@@ -501,7 +501,19 @@ export function Navbar() {
   });
 
   const handleNavbarPropertySelect = (item: any) => {
-    const propertyName = item.name || item.t || item.title || "";
+   const propertyName =
+
+  item.title ||
+
+  item.name ||
+
+  item.locality ||
+
+  item.city ||
+
+  item.category ||
+
+  "";
 
     setShowSuggestions(false);
 
@@ -882,25 +894,38 @@ export function Navbar() {
                   }}
                   ref={autocompleteRef}
                 >
-                  <AutocompleteDropdown
-                    suggestions={suggestions}
-                    isLoading={isLoading}
-                    isOpen={showSuggestions}
-                    query={searchQ}
-                    onSelect={(item) => {
-                      const propertyName = item.name || "";
+                 <AutocompleteDropdown
+  suggestions={suggestions}
+  isLoading={isLoading}
+  isOpen={showSuggestions}
+  query={searchQ}
+  onClose={handleCloseSuggestions}
+  onSelect={(item: any) => {
 
-                      setShowSuggestions(false);
+    const propertyName =
 
-                      router.push(
-                        `/properties?q=${encodeURIComponent(
-                          propertyName.trim(),
-                        )}`,
-                      );
-                    }}
-                    onClose={handleCloseSuggestions}
-                    className="shadow-lg"
-                  />
+      item.title ||
+
+      item.name ||
+
+      item.locality ||
+
+      item.city ||
+
+      item.category ||
+
+      "";
+
+    setShowSuggestions(false);
+
+    router.push(
+      `/properties?q=${encodeURIComponent(
+        propertyName.trim()
+      )}`
+    );
+
+  }}
+/>
                 </div>
               </div>
 

@@ -872,8 +872,29 @@ function Hero() {
 
   // ✅ API state
   const [allProps, setAllProps] = useState<ApiProp[]>([]);
-  const [suggestions, setSuggestions] = useState<ApiProp[]>([]);
+  const [propertySuggestions, setPropertySuggestions] =
+  useState<ApiProp[]>([]);
+
+const [typeSuggestions, setTypeSuggestions] =
+  useState<string[]>([]);
+
+const [locationSuggestions, setLocationSuggestions] =
+  useState<string[]>([]);
   const [showSuggest, setShowSuggest] = useState(false);
+
+  function handleSuggestionSearch(
+  value: string
+){
+
+  setSrchQ(value);
+
+  setShowSuggest(false);
+
+  router.push(
+    `/properties?q=${encodeURIComponent(value)}`
+  );
+
+}
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -905,26 +926,75 @@ function Hero() {
 
   /* ── Live suggestions — same logic as /properties page ── */
   useEffect(() => {
-    const q = norm(srchQ);
-    if (!q) {
-      setSuggestions([]);
-      return;
-    }
-    const matches = allProps
-      .filter((p) => {
-        const title    = norm(p.title || p.t || "");
-        const category = norm(p.category || p.cat || "");
-        const locality = norm(p.locality || p.loc || "");
-        const city     = norm(p.city || "");
-        const area     = norm(p.area || "");
 
-        // ✅ one searchable string (identical to properties page)
-        const searchText = `${title} ${category} ${locality} ${city} ${area}`;
-        return searchText.includes(q);
-      })
+  const q = norm(srchQ);
+
+  if (!q) {
+
+    setPropertySuggestions([]);
+    setTypeSuggestions([]);
+    setLocationSuggestions([]);
+
+    return;
+
+  }
+
+  /* Property Type Suggestions */
+  const matchedTypes =
+    apiCategories
+      .filter(
+        item =>
+          norm(item).includes(q)
+      )
+      .slice(0, 4);
+
+  /* Location Suggestions */
+  const matchedLocations =
+    apiLocalities
+      .filter(
+        item =>
+          norm(item).includes(q)
+      )
+      .slice(0, 4);
+
+  /* Property Suggestions */
+  const matchedProperties =
+    allProps
+      .filter(
+        item => {
+
+          const searchText =
+            `${item.title || ""}
+             ${item.category || ""}
+             ${item.locality || ""}
+             ${item.city || ""}`;
+
+          return norm(
+            searchText
+          ).includes(q);
+
+        }
+      )
       .slice(0, 6);
-    setSuggestions(matches);
-  }, [srchQ, allProps]);
+
+  setTypeSuggestions(
+    matchedTypes
+  );
+
+  setLocationSuggestions(
+    matchedLocations
+  );
+
+  setPropertySuggestions(
+    matchedProperties
+  );
+
+}, [
+  srchQ,
+  allProps,
+  apiCategories,
+  apiLocalities
+]);
 
   /* ── Slider timer ── */
   const startTimer = useCallback(() => {
@@ -1037,59 +1107,127 @@ function Hero() {
                 />
               </div>
 
-              {/* Suggestions dropdown */}
-              {showSuggest && suggestions.length > 0 && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    right: 0,
-                    marginTop: "8px",
-                    background: "white",
-                    border: `1px solid ${T.line}`,
-                    borderRadius: "12px",
-                    boxShadow: "0 12px 40px rgba(0,0,0,0.15)",
-                    overflow: "hidden",
-                    zIndex: 50,
-                    maxHeight: "320px",
-                    overflowY: "auto",
-                  }}
-                >
-                  {suggestions.map((p) => (
-                    <button
-                      key={p.id || p._id || p.slug}
-                      type="button"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => handleSuggestionClick(p)}
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        padding: "10px 14px",
-                        background: "white",
-                        border: "none",
-                        cursor: "pointer",
-                        textAlign: "left",
-                        borderBottom: `1px solid ${T.bgOff}`,
-                      }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = T.greenXL)}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "white")}
-                    >
-                      <span style={{ fontSize: "13.5px", fontWeight: 600, color: T.ink }}>
-                        {p.title || p.t}
-                      </span>
-                      <span style={{ fontSize: "11.5px", color: T.muted, marginTop: "2px" }}>
-                        {(p.category || p.cat) && <>🏷 {p.category || p.cat} · </>}
-                        📍 {p.locality || p.loc}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+             {showSuggest && srchQ && (
 
+  <div
+    style={{
+      position:"absolute",
+      top:"100%",
+      left:0,
+      right:0,
+      background:"#fff",
+      borderRadius:"14px",
+      boxShadow:
+        "0 15px 40px rgba(0,0,0,.12)",
+      zIndex:99,
+      marginTop:8,
+      overflow:"hidden"
+    }}
+  >
+
+    {/* TYPES */}
+    {typeSuggestions.length > 0 && (
+
+      <>
+        <div
+          style={{
+            padding:"10px 14px",
+            fontSize:12,
+            fontWeight:700,
+            color:"#64748b"
+          }}
+        >
+          PROPERTY TYPES
+        </div>
+
+        {typeSuggestions.map(
+          item => (
+
+            <button
+              key={item}
+              onClick={() =>
+                handleSuggestionSearch(item)
+              }
+              style={{
+                width:"100%",
+                textAlign:"left",
+                padding:"10px 14px"
+              }}
+            >
+              🏷 {item}
+            </button>
+
+          )
+        )}
+      </>
+
+    )}
+
+    {/* LOCATIONS */}
+    {locationSuggestions.length > 0 && (
+
+      <>
+        <div
+          style={{
+            padding:"10px 14px",
+            fontSize:12,
+            fontWeight:700,
+            color:"#64748b"
+          }}
+        >
+          LOCATIONS
+        </div>
+
+        {locationSuggestions.map(
+          item => (
+
+            <button
+              key={item}
+              onClick={() =>
+                handleSuggestionSearch(item)
+              }
+              style={{
+                width:"100%",
+                textAlign:"left",
+                padding:"10px 14px"
+              }}
+            >
+              📍 {item}
+            </button>
+
+          )
+        )}
+      </>
+
+    )}
+
+    {/* PROPERTIES */}
+    {propertySuggestions.map(
+      item => (
+
+        <button
+          key={item.slug}
+          onClick={() =>
+            handleSuggestionSearch(
+              item.title || ""
+            )
+          }
+          style={{
+            width:"100%",
+            textAlign:"left",
+            padding:"10px 14px"
+          }}
+        >
+          🏠 {item.title}
+        </button>
+
+      )
+    )}
+
+  </div>
+
+)}
+            </div>
             {/* Type — from API */}
             <div style={{ padding: "4px 12px", borderLeft: `1px solid ${T.line}` }}>
               <div style={{ fontSize: "11px", fontWeight: 700, color: T.muted, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "2px" }}>

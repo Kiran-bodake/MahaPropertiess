@@ -1,56 +1,183 @@
-import { NextRequest, NextResponse } from "next/server";
-import { MOCK_LOCALITIES, MOCK_PROPERTIES, MOCK_KEYWORDS, SuggestionItem } from "@/lib/mock-data";
+import {
+  NextRequest,
+  NextResponse
+} from "next/server";
 
-export async function GET(request: NextRequest) {
-  try {
-    const query = request.nextUrl.searchParams.get("q")?.toLowerCase() || "";
-    const category = request.nextUrl.searchParams.get("category") || "all";
+import { connectDB }
+  from "@/lib/mongoose";
 
-    if (!query || query.length < 1) {
+import Property
+  from "@/models/Property";
+
+import PropertyLocation
+  from "@/models/PropertyLocation";
+
+export async function GET(
+  request: NextRequest
+){
+
+  try{
+
+    await connectDB();
+
+    const query =
+
+      request.nextUrl
+        .searchParams
+        .get("q")
+
+        ?.trim()
+
+        || "";
+
+    if(
+      !query
+    ){
+
       return NextResponse.json({
-        suggestions: [],
-        message: "Query too short"
+
+        success: true,
+
+        suggestions: []
+
       });
+
     }
 
-    // Filter based on category
-    let results: SuggestionItem[] = [];
+    /* Search Property Titles + Category */
+    const properties =
 
-    if (category === "all" || category === "locality") {
-      const localities = MOCK_LOCALITIES.filter(l =>
-        l.name.toLowerCase().includes(query)
-      );
-      results = [...results, ...localities];
-    }
+      await Property.find({
 
-    if (category === "all" || category === "property") {
-      const properties = MOCK_PROPERTIES.filter(p =>
-        p.name.toLowerCase().includes(query)
-      );
-      results = [...results, ...properties];
-    }
+        $or: [
 
-    if (category === "all" || category === "keyword") {
-      const keywords = MOCK_KEYWORDS.filter(k =>
-        k.name.toLowerCase().includes(query)
-      );
-      results = [...results, ...keywords];
-    }
+          {
+            title: {
+              $regex: query,
+              $options: "i"
+            }
+          },
 
-    // Limit results
-    const suggestions = results.slice(0, 10);
+          {
+            category: {
+              $regex: query,
+              $options: "i"
+            }
+          }
+
+        ]
+
+      }).limit(5);
+
+    /* Search Locations */
+    const locations =
+
+      await PropertyLocation.find({
+
+        $or: [
+
+          {
+            locality: {
+              $regex: query,
+              $options: "i"
+            }
+          },
+
+          {
+            city: {
+              $regex: query,
+              $options: "i"
+            }
+          }
+
+        ]
+
+      }).limit(5);
+
+    /* Merge results */
+    const suggestions = [
+
+      ...properties.map(
+        (
+          p:any
+        ) => ({
+
+          id:
+            p._id,
+
+          title:
+            p.title,
+
+          category:
+            p.category
+
+        })
+      ),
+
+      ...locations.map(
+        (
+          l:any
+        ) => ({
+
+          id:
+            l._id,
+
+          locality:
+            l.locality,
+
+          city:
+            l.city
+
+        })
+      )
+
+    ];
 
     return NextResponse.json({
+
       success: true,
+
       query,
+
       suggestions,
-      total: suggestions.length,
+
+      total:
+        suggestions.length
+
     });
-  } catch (error) {
-    console.error("Search autocomplete error:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch suggestions", success: false },
-      { status: 500 }
-    );
+
   }
+
+  catch(
+    error
+  ){
+
+    console.error(
+
+      "Autocomplete Error:",
+
+      error
+
+    );
+
+    return NextResponse.json(
+
+      {
+
+        success: false,
+
+        suggestions: []
+
+      },
+
+      {
+
+        status: 500
+
+      }
+
+    );
+
+  }
+
 }
