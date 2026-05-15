@@ -126,6 +126,7 @@ export default async function PropertyDetailPage({
         >
           {/* MAIN GRID */}
           <div
+            className="mainGrid"
             style={{
               display: "grid",
 
@@ -340,6 +341,7 @@ export default async function PropertyDetailPage({
 
             {/* RIGHT */}
             <aside
+              className="sidebar"
               style={{
                 width: "100%",
 
@@ -448,6 +450,46 @@ export default async function PropertyDetailPage({
             </div>
           )}
         </section>
+
+        <style>{`
+  @media (max-width: 1024px) {
+
+    .mainGrid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .sidebar {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    .sidebar > div {
+      position: static !important;
+    }
+
+  }
+
+  @media (max-width: 768px) {
+
+    .propertyCard {
+      grid-template-columns: 1fr !important;
+    }
+
+    .relatedGrid {
+      grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr)) !important;
+    }
+
+  }
+
+  @media (max-width: 540px) {
+
+    .relatedGrid {
+      grid-template-columns: 1fr !important;
+    }
+
+  }
+`}</style>
       </main>
 
       <Footer />
