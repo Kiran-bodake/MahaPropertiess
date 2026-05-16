@@ -24,9 +24,11 @@ export default async function LocalityPage({ params }: Props) {
     .join(" ");
 
   const filtered = properties.filter((p: any) => {
-    const locality = p.locality || p.location || "";
+    const locality = (p.locality || p.location || "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
 
-    return locality.toLowerCase().replace(/\s+/g, "-") === slug;
+    return locality.includes(slug.toLowerCase());
   });
 
   const currentProperty = filtered[0];

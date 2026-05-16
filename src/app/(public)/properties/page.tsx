@@ -64,6 +64,20 @@ const SORT_LABELS: Record<SortKey, string> = {
   popular: "Most Popular",
 };
 
+function formatPropertyType(type: string) {
+  const map: Record<string, string> = {
+    "na-plot": "NA Plots",
+    "collector-na": "Collector NA Plots",
+    agriculture: "Agricultural Properties",
+    commercial: "Commercial Properties",
+    industrial: "Industrial Properties",
+    warehouse: "Warehouses",
+    farmhouse: "Farmhouses",
+  };
+
+  return map[type.toLowerCase()] || type;
+}
+
 function useDebounced<T>(value: T, delay = 250): T {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -155,7 +169,9 @@ function PropertiesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const type = searchParams.get("type") || searchParams.get("cat") || "";
-  const location = searchParams.get("location");
+  const location =
+    searchParams.get("location") || searchParams.get("locality") || null;
+  const formattedType = type ? formatPropertyType(type) : "";
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
@@ -183,24 +199,21 @@ function PropertiesContent() {
     category: type ? [type] : searchParams.getAll("category"),
 
     // Location from Hero or URL
-    locality: location ?? searchParams.get("locality") ?? "",
+    locality: location || "",
 
     // Sorting
     sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
   });
 
   // Adjust filters during render when URL shorthand params change (avoids effect)
-  const [prevType, setPrevType] = useState(type);
-  const [prevLocation, setPrevLocation] = useState(location);
-  if (prevType !== type || prevLocation !== location) {
-    setPrevType(type);
-    setPrevLocation(location);
-    setFilters((prev) => ({
-      ...prev,
-      category: type ? [type] : prev.category,
-      locality: location || prev.locality,
-    }));
-  }
+  useEffect(() => {
+    setFilters({
+      q: "",
+      category: type ? [type] : [],
+      locality: location || "",
+      sortBy: "newest",
+    });
+  }, [type, location]);
 
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
@@ -248,17 +261,29 @@ function PropertiesContent() {
 
   useEffect(() => {
     const qs = new URLSearchParams();
-    if (debouncedFilters.q) qs.append("q", debouncedFilters.q);
-    debouncedFilters.category.forEach((cat) => qs.append("category", cat));
-    if (debouncedFilters.locality)
-      qs.append("locality", debouncedFilters.locality);
-    if (debouncedFilters.sortBy !== "newest")
-      qs.append("sortBy", debouncedFilters.sortBy);
-    if (type) qs.set("type", type);
-    if (location) qs.set("location", location);
+
+    if (debouncedFilters.q) {
+      qs.set("q", debouncedFilters.q);
+    }
+
+    if (debouncedFilters.category.length > 0) {
+      qs.set("cat", debouncedFilters.category[0]);
+    }
+
+    if (debouncedFilters.locality) {
+      qs.set("locality", debouncedFilters.locality);
+    }
+
+    if (debouncedFilters.sortBy !== "newest") {
+      qs.set("sortBy", debouncedFilters.sortBy);
+    }
+
     const next = qs.toString();
-    router.replace(next ? `?${next}` : "?", { scroll: false });
-  }, [debouncedFilters, router, type, location]);
+
+    router.replace(next ? `/properties?${next}` : "/properties", {
+      scroll: false,
+    });
+  }, [debouncedFilters, router]);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -378,6 +403,46 @@ function PropertiesContent() {
     }
     return list;
   }, [allProperties, debouncedFilters]);
+
+  const similarProperties = useMemo(() => {
+    // CASE 1: No results found
+    if (properties.length === 0) {
+      const q = norm(filters.q);
+      const loc = norm(filters.locality);
+
+      let nearby = allProperties.filter((p) => {
+        const title = norm(p.title || p.t || "");
+        const locality = norm(p.locality || p.loc || "");
+        const category = norm(p.category || p.cat || "");
+
+        return (
+          (q && (title.includes(q) || category.includes(q))) ||
+          (loc && locality.includes(loc))
+        );
+      });
+
+      // fallback if nothing matched
+      if (nearby.length === 0) {
+        nearby = [...allProperties].sort(
+          (a, b) => (b.views || 0) - (a.views || 0),
+        );
+      }
+
+      return nearby.slice(0, 4);
+    }
+
+    // CASE 2: Normal similar properties
+    return allProperties
+      .filter((p) => {
+        const propertyId = p.id || p._id || p.slug;
+
+        return !properties.some(
+          (existing) =>
+            (existing.id || existing._id || existing.slug) === propertyId,
+        );
+      })
+      .slice(0, 4);
+  }, [properties, allProperties, filters.q, filters.locality]);
 
   const setF = useCallback(<K extends keyof Filters>(k: K, v: Filters[K]) => {
     setFilters((prev) => ({ ...prev, [k]: v }));
@@ -513,10 +578,24 @@ function PropertiesContent() {
         <div className="container">
           {/* HERO */}
           <section className="hero">
-            <h1>Find Premium Properties in Nashik</h1>
+            <h1>
+              {formattedType && location
+                ? `Find ${formattedType} in ${location}, Nashik`
+                : formattedType
+                  ? `Find ${formattedType} in Nashik`
+                  : location
+                    ? `Find Premium in ${location}, Nashik`
+                    : "Find Premium in Nashik"}
+            </h1>
+
             <p>
-              Explore verified NA plots, commercial properties, warehouses and
-              investment opportunities in prime locations.
+              {formattedType && location
+                ? `Explore verified ${formattedType.toLowerCase()} in ${location}, Nashik with premium investment opportunities.`
+                : formattedType
+                  ? `Explore verified ${formattedType.toLowerCase()} across Nashik with premium investment opportunities.`
+                  : location
+                    ? `Explore verified NA plots, commercial properties, warehouses and investment opportunities in ${location}, Nashik.`
+                    : "Explore verified NA plots, commercial properties, warehouses and investment opportunities in prime locations."}
             </p>
 
             <Link href="/favorites" className="favLink">
@@ -949,6 +1028,70 @@ function PropertiesContent() {
                     Clear all filters
                   </button>
                 </div>
+              )}
+              {/* SIMILAR PROPERTIES */}
+              {similarProperties.length > 0 && (
+                <section className="similarSection">
+                  <div className="similarHeader">
+                    <div>
+                      <span className="similarTag">Recommended</span>
+                      <h2>
+                        {properties.length === 0
+                          ? "Nearby Properties"
+                          : "Similar Properties"}
+                      </h2>
+
+                      <p>
+                        {properties.length === 0
+                          ? "No exact matches found. Explore nearby recommended properties."
+                          : "Based on your current search preferences"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="relatedGrid">
+                    {similarProperties.map((p) => {
+                      const images = p.images?.length
+                        ? p.images
+                        : p.img
+                          ? [p.img]
+                          : ["/maha.png"];
+
+                      return (
+                        <Link
+                          key={p.id || p._id || p.slug}
+                          href={`/properties/${p.slug}`}
+                          className="relatedLink"
+                        >
+                          <article className="relatedCard">
+                            <div className="relatedImageWrap">
+                              <PropertyImageSlider
+                                title={p.title || p.t || "Property"}
+                                images={images}
+                              />
+
+                              <div className="relatedBadge">
+                                {p.category || p.cat}
+                              </div>
+                            </div>
+
+                            <div className="relatedContent">
+                              <h3>{p.title || p.t}</h3>
+
+                              <p>📍 {p.locality || p.loc}</p>
+
+                              <div className="relatedBottom">
+                                <span>{p.price || p.pr}</span>
+
+                                <button type="button">View Details →</button>
+                              </div>
+                            </div>
+                          </article>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </section>
               )}
             </div>
           </section>
@@ -1795,28 +1938,157 @@ function PropertiesContent() {
               margin-top: 14px;
             }
           }
+          /* ================= SIMILAR PROPERTIES ================= */
+
+          .similarSection {
+            margin-top: 34px;
+          }
+
+          .similarHeader {
+            margin-bottom: 18px;
+          }
+
+          .similarTag {
+            display: inline-flex;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+          }
+
+          .similarHeader h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #0f172a;
+          }
+
+          .similarHeader p {
+            margin-top: 6px;
+            color: #64748b;
+          }
+
+          .relatedGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+          }
+
+          .relatedLink {
+            text-decoration: none;
+          }
+
+          .relatedCard {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            transition: 0.22s ease;
+            height: 100%;
+          }
+
+          .relatedCard:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+          }
+
+          .relatedImageWrap {
+            position: relative;
+            height: 170px;
+          }
+
+          .relatedBadge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #16a34a;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            z-index: 10;
+          }
+
+          .relatedContent {
+            padding: 14px;
+          }
+
+          .relatedContent h3 {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #111827;
+          }
+
+          .relatedContent p {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 0.9rem;
+          }
+
+          .relatedBottom {
+            margin-top: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .relatedBottom span {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #166534;
+          }
+
+          .relatedBottom button {
+            height: 34px;
+            padding: 0 12px;
+            border: none;
+            border-radius: 10px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+          }
+
+          /* ================= MOBILE ================= */
+
           @media (max-width: 768px) {
             .card {
               grid-template-columns: 1fr;
             }
+
             .footer {
               flex-direction: column;
               align-items: stretch;
               gap: 12px;
             }
+
             .btns {
               width: 100%;
             }
+
             .primaryBtn,
             .secondaryBtn {
               width: 100%;
             }
+
             .appliedBar {
               flex-direction: column;
               align-items: stretch;
             }
+
             .clearAllBtn {
               align-self: flex-end;
+            }
+
+            .relatedGrid {
+              grid-template-columns: 1fr;
             }
           }
         `}</style>
