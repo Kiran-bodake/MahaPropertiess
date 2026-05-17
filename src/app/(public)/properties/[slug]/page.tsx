@@ -11,6 +11,28 @@ import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
 
 import { PropertyActions } from "@/components/property/PropertyActions";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
+import {
+  ShieldCheck,
+  FileCheck,
+  Landmark,
+  Building2,
+  Trees,
+  Waves,
+  Mountain,
+  Train,
+  Warehouse,
+  BadgeIndianRupee,
+  MapPinned,
+  Fence,
+  ParkingCircle,
+  Camera,
+  Zap,
+  Droplets,
+  School,
+  Hospital,
+  Store,
+  Shield,
+} from "lucide-react";
 
 type PropertyType = {
   id: any;
@@ -40,6 +62,53 @@ type PropertyType = {
 
   status?: string;
   constructionStatus?: string;
+};
+
+const highlightIcons: Record<string, React.ReactNode> = {
+  "NA Converted": <FileCheck size={14} />,
+  "Clear Title": <ShieldCheck size={14} />,
+  "RERA Approved": <BadgeIndianRupee size={14} />,
+  "Zero Brokerage": <BadgeIndianRupee size={14} />,
+  "Ready Possession": <Building2 size={14} />,
+  "Immediate Handover": <Building2 size={14} />,
+  "Main Road Frontage": <MapPinned size={14} />,
+  "Corner Plot": <Landmark size={14} />,
+  "Gated Community": <Fence size={14} />,
+  "Hill View": <Mountain size={14} />,
+  "Lake View": <Waves size={14} />,
+  "Garden Facing": <Trees size={14} />,
+  "East Facing": <MapPinned size={14} />,
+  "West Facing": <MapPinned size={14} />,
+  "North Facing": <MapPinned size={14} />,
+  "River Nearby": <Waves size={14} />,
+  "High ROI": <BadgeIndianRupee size={14} />,
+  "Upcoming Metro": <Train size={14} />,
+  "Near IT Park": <Building2 size={14} />,
+  "MIDC Approved Zone": <Warehouse size={14} />,
+  "Collector Approved": <ShieldCheck size={14} />,
+};
+
+const amenityIcons: Record<string, React.ReactNode> = {
+  "Road Access": <MapPinned size={14} />,
+  "Water Connection": <Droplets size={14} />,
+  Electricity: <Zap size={14} />,
+  "24x7 Security": <Shield size={14} />,
+  "CCTV Surveillance": <Camera size={14} />,
+  "Parking Area": <ParkingCircle size={14} />,
+  Borewell: <Droplets size={14} />,
+  Fencing: <Fence size={14} />,
+  "Power Backup": <Zap size={14} />,
+  "Natural Water Source": <Droplets size={14} />,
+  "Wide Road": <MapPinned size={14} />,
+  "Near Highway": <MapPinned size={14} />,
+  "Near Market": <Store size={14} />,
+  "Near School": <School size={14} />,
+  "Near Hospital": <Hospital size={14} />,
+  "Street Lights": <Zap size={14} />,
+  Drainage: <Droplets size={14} />,
+  "Compound Wall": <Fence size={14} />,
+  "Garden Area": <Trees size={14} />,
+  "Warehouse Facility": <Warehouse size={14} />,
 };
 
 export const dynamicParams = true;
@@ -292,7 +361,7 @@ export default async function PropertyDetailPage({
                   <>
                     <SectionTitle title="Amenities" />
 
-                    <ChipList items={property.amenities} icon="✓" />
+                    <ChipList items={property.amenities} type="amenities" />
                   </>
                 ) : null}
 
@@ -301,7 +370,7 @@ export default async function PropertyDetailPage({
                   <>
                     <SectionTitle title="Highlights" />
 
-                    <ChipList items={property.highlights} icon="★" />
+                    <ChipList items={property.highlights} type="highlights" />
                   </>
                 ) : null}
 
@@ -558,28 +627,64 @@ function InfoCard({ label, value }: any) {
   );
 }
 
-function ChipList({ items, icon }: any) {
+function ChipList({
+  items,
+  type,
+}: {
+  items: string[];
+  type: "amenities" | "highlights";
+}) {
   return (
     <div
       style={{
         display: "flex",
         flexWrap: "wrap",
-        gap: 8,
+        gap: 10,
       }}
     >
-      {items.map((item: string, i: number) => (
-        <div
-          key={i}
-          style={{
-            padding: "8px 14px",
-            borderRadius: 999,
-            background: "#f8fafc",
-            border: "1px solid #dbeafe",
-          }}
-        >
-          {icon} {item}
-        </div>
-      ))}
+      {items.map((item, i) => {
+        const icon =
+          type === "amenities" ? amenityIcons[item] : highlightIcons[item];
+
+        return (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+
+              padding: "10px 16px",
+
+              borderRadius: 999,
+
+              background: "#ffffff",
+
+              border: "1px solid #dbeafe",
+
+              color: "#334155",
+
+              fontWeight: 600,
+
+              fontSize: ".86rem",
+
+              boxShadow: "0 2px 10px rgba(0,0,0,.04)",
+            }}
+          >
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                color: "#16a34a",
+              }}
+            >
+              {icon}
+            </span>
+
+            {item}
+          </div>
+        );
+      })}
     </div>
   );
 }
