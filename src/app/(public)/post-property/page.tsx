@@ -183,11 +183,15 @@ const SectionCard = ({
   onNext?: () => void;
 }) => (
   <div
+    className="sectionCard"
     style={{
       background: "#fff",
       borderRadius: "16px",
       border: "1px solid #e5e7eb",
-      padding: "24px",
+      padding:
+        typeof window !== "undefined" && window.innerWidth < 768
+          ? "16px"
+          : "24px",
       marginBottom: "20px",
       boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
     }}
@@ -303,6 +307,7 @@ const Row = ({
   cols?: number;
 }) => (
   <div
+    className={cols === 3 ? "responsiveRow3" : "responsiveRow2"}
     style={{
       display: "grid",
       gridTemplateColumns: `repeat(${cols}, 1fr)`,
@@ -898,6 +903,13 @@ export default function PostPropertyPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
+  const [helpName, setHelpName] = useState("");
+  const [helpPhone, setHelpPhone] = useState("");
+  const [helpIssue, setHelpIssue] = useState("");
+  const [descPurpose, setDescPurpose] = useState("");
+  const [descFeature, setDescFeature] = useState("");
+  const [descLandmark, setDescLandmark] = useState("");
+  const [descSuitable, setDescSuitable] = useState("");
   const [coords, setCoords] = useState({
     lat: null,
     lng: null,
@@ -1095,6 +1107,71 @@ export default function PostPropertyPage() {
       setLoading(false);
     }
   };
+  const generateDescription = () => {
+    const category = form.category || "property";
+
+    let template = "";
+
+    // AGRICULTURE
+    if (category.toLowerCase().includes("agriculture")) {
+      template = `
+Fertile agricultural land located in ${form.locality || form.city}, ideal for farming, farmhouse development and long-term investment.
+
+This property offers ${descFeature || "excellent land quality"} with peaceful surroundings and strong future appreciation potential.
+
+Nearby landmarks include ${descLandmark || "major connecting roads and local facilities"}.
+
+Suitable for ${descSuitable || "farming, farmhouse and investment buyers"}.
+`;
+    }
+
+    // COMMERCIAL
+    else if (
+      category.toLowerCase().includes("commercial") ||
+      category.toLowerCase().includes("shop")
+    ) {
+      template = `
+Prime commercial property located in ${form.locality || form.city} with excellent connectivity and business potential.
+
+This property features ${descFeature || "high visibility and road access"} making it ideal for commercial use and investment opportunities.
+
+Nearby landmarks include ${descLandmark || "main roads, markets and business hubs"}.
+
+Perfect for ${descSuitable || "showrooms, offices and retail businesses"}.
+`;
+    }
+
+    // WAREHOUSE
+    else if (
+      category.toLowerCase().includes("warehouse") ||
+      category.toLowerCase().includes("industrial")
+    ) {
+      template = `
+Strategically located warehouse property in ${form.locality || form.city} with excellent transportation access.
+
+The property includes ${descFeature || "wide road connectivity and industrial access"} suitable for logistics and storage operations.
+
+Nearby landmarks include ${descLandmark || "MIDC zones and highways"}.
+
+Ideal for ${descSuitable || "warehouse operations, logistics and industrial use"}.
+`;
+    }
+
+    // RESIDENTIAL / DEFAULT
+    else {
+      template = `
+Premium ${category} property located in ${form.locality || form.city}.
+
+This property offers ${descFeature || "excellent location benefits"} and is ideal for buyers looking for quality investment opportunities.
+
+Nearby landmarks include ${descLandmark || "schools, hospitals and major roads"}.
+
+Perfect for ${descSuitable || "residential and investment purposes"}.
+`;
+    }
+
+    set("description", template.trim());
+  };
 
   /* Success screen */
   if (submitted) {
@@ -1131,7 +1208,7 @@ export default function PostPropertyPage() {
                 fontWeight: 800,
               }}
             >
-              Property Submitted!
+              Property Submitted Succesfully!
             </h2>
             <div
               style={{
@@ -1154,20 +1231,18 @@ export default function PostPropertyPage() {
                 {propertyId}
               </span>
             </div>
-            <p style={{ color: "#4b7a5e", margin: "0 0 8px" }}>
-              <strong>{form.title || "Your property"}</strong> has been
-              received.
-            </p>
+
             <p
               style={{
                 color: "#6b7280",
-                fontSize: "0.88rem",
-                margin: "0 0 24px",
+                fontSize: "0.92rem",
+                lineHeight: 1.7,
+                margin: "0 0 14px",
               }}
             >
-              {files.length > 0
-                ? `${files.length} image(s) saved to /uploads/${propertyId}/`
-                : "Our team will review and publish it within 24 hours."}
+              Your property listing has been submitted successfully. Our admin
+              team will review your property details and publish it shortly
+              after verification.
             </p>
             <div
               style={{ display: "flex", gap: "10px", justifyContent: "center" }}
@@ -1228,6 +1303,17 @@ export default function PostPropertyPage() {
           }}
         >
           <div style={{ color: "#6b7280" }}>Loading form…</div>
+          <style jsx>{`
+            @media (max-width: 1100px) {
+              form > div {
+                grid-template-columns: 1fr !important;
+              }
+
+              aside {
+                position: static !important;
+              }
+            }
+          `}</style>
         </main>
         <Footer />
       </>
@@ -1253,6 +1339,7 @@ export default function PostPropertyPage() {
       >
         {/* Hero Banner */}
         <div
+          className="heroSection"
           style={{
             background: "linear-gradient(135deg,#052e16,#166534,#16a34a)",
             padding: "36px 24px 32px",
@@ -1296,1225 +1383,1610 @@ export default function PostPropertyPage() {
 
         {/* Step Indicator */}
         <div
+          className="stepScroller"
           style={{
             background: "#fff",
             borderBottom: "1px solid #e5e7eb",
-            padding: "0 24px",
+            padding: "0 18px",
             overflowX: "auto",
+            WebkitOverflowScrolling: "touch",
           }}
         >
-          <div style={{ maxWidth: "900px", margin: "0 auto", display: "flex" }}>
-            {steps.map((s, i) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setStep(i)}
-                style={{
-                  padding: "14px 16px",
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                  fontSize: "0.8rem",
-                  fontWeight: 700,
-                  whiteSpace: "nowrap",
-                  color: i === step ? "#16a34a" : "#9ca3af",
-                  borderBottom:
-                    i === step
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "1400px",
+              margin: "0 auto",
+
+              display: "flex",
+              alignItems: "stretch",
+
+              gap: "0px",
+            }}
+          >
+            {steps.map((s, i) => {
+              const active = i === step;
+              const completed = i < step;
+
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setStep(i)}
+                  style={{
+                    flex: 1,
+                    minWidth: "140px",
+                    padding: "16px 8px",
+
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+
+                    borderBottom: active
                       ? "2.5px solid #16a34a"
                       : "2.5px solid transparent",
-                }}
-              >
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "20px",
-                    height: "20px",
-                    borderRadius: "50%",
-                    background: i <= step ? "#16a34a" : "#e5e7eb",
-                    color: "#fff",
-                    fontSize: "0.72rem",
-                    lineHeight: "20px",
-                    textAlign: "center",
-                    marginRight: "6px",
+
+                    transition: "all .2s ease",
                   }}
                 >
-                  {i + 1}
-                </span>
-                {s}
-              </button>
-            ))}
+                  {/* STEP NUMBER */}
+                  <span
+                    style={{
+                      width: "22px",
+                      height: "22px",
+                      borderRadius: "999px",
+
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+
+                      fontSize: "0.72rem",
+                      fontWeight: 800,
+
+                      background: active || completed ? "#16a34a" : "#e5e7eb",
+
+                      color: active || completed ? "#fff" : "#94a3b8",
+
+                      flexShrink: 0,
+                    }}
+                  >
+                    {completed ? "✓" : i + 1}
+                  </span>
+
+                  {/* LABEL */}
+                  <span
+                    style={{
+                      fontSize: "0.82rem",
+                      fontWeight: active ? 800 : 700,
+
+                      color: active
+                        ? "#16a34a"
+                        : completed
+                          ? "#475569"
+                          : "#9ca3af",
+
+                      whiteSpace: "normal",
+                      textAlign: "center",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {s}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div
           style={{
-            maxWidth: "900px",
+            maxWidth: "1400px",
             margin: "0 auto",
-            padding: "28px 16px 0",
+            padding:
+              typeof window !== "undefined" && window.innerWidth < 768
+                ? "18px 12px 0"
+                : "28px 24px 0",
           }}
         >
           {/* Property ID Badge (shown once generated) */}
           <PropertyIdBadge id={propertyId} generating={idGenerating} />
 
           <form onSubmit={handleSubmit}>
-            {/* ── STEP 0: Who's Posting ── */}
-            {step === 0 && (
-              <SectionCard
-                title="Who is posting this property?"
-                subtitle="Let us know your role so we can tailor your listing."
-                icon="👤"
-                step={step}
-                totalSteps={steps.length}
-                onPrev={() => setStep((s) => Math.max(0, s - 1))}
-                onNext={handleNext}
-              >
-                <Row cols={3}>
-                  {meta.postedByOptions.map((opt) => (
-                    <div
-                      key={opt.value}
-                      onClick={() =>
-                        setForm((prev) => ({ ...prev, postedBy: opt.value }))
-                      }
-                      style={{
-                        flex: 1,
-                        minWidth: "180px",
-                        cursor: "pointer",
-                        border:
-                          form.postedBy === opt.value
-                            ? "2px solid #16a34a"
-                            : "1px solid #d1d5db",
-                        borderRadius: "16px",
-                        padding: "20px",
-                        background:
-                          form.postedBy === opt.value ? "#f0fdf4" : "#ffffff",
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0,1fr) 320px",
+                gap: "24px",
+                alignItems: "start",
+              }}
+            >
+              <div>
+                {/* ── STEP 0: Who's Posting ── */}
+                {step === 0 && (
+                  <SectionCard
+                    title="Who is posting this property?"
+                    subtitle="Let us know your role so we can tailor your listing."
+                    icon="👤"
+                    step={step}
+                    totalSteps={steps.length}
+                    onPrev={() => setStep((s) => Math.max(0, s - 1))}
+                    onNext={handleNext}
+                  >
+                    <Row cols={3}>
+                      {meta.postedByOptions.map((opt) => (
+                        <div
+                          key={opt.value}
+                          onClick={() =>
+                            setForm((prev) => ({
+                              ...prev,
+                              postedBy: opt.value,
+                            }))
+                          }
+                          style={{
+                            flex: 1,
+                            minWidth: "180px",
+                            cursor: "pointer",
+                            border:
+                              form.postedBy === opt.value
+                                ? "2px solid #16a34a"
+                                : "1px solid #d1d5db",
+                            borderRadius: "16px",
+                            padding: "20px",
+                            background:
+                              form.postedBy === opt.value
+                                ? "#f0fdf4"
+                                : "#ffffff",
 
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
 
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      {/* Image Container */}
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          {/* Image Container */}
+                          <div
+                            style={{
+                              width: "64px",
+                              height: "64px",
+                              marginBottom: "12px",
+
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+
+                              borderRadius: "16px",
+                              background: "#f8fafc",
+                              border: "1px solid #e2e8f0",
+                            }}
+                          >
+                            <Image
+                              src={
+                                opt.value === "owner"
+                                  ? "/images/person.png"
+                                  : opt.value === "dealer"
+                                    ? "/images/handshake.png"
+                                    : "/images/crane.png"
+                              }
+                              alt={opt.label}
+                              width={36}
+                              height={36}
+                              style={{
+                                objectFit: "contain",
+                              }}
+                            />
+                          </div>
+
+                          {/* Label */}
+                          <span
+                            style={{
+                              fontSize: "16px",
+                              fontWeight: 600,
+                              color: "#1e293b",
+                              textAlign: "center",
+                            }}
+                          >
+                            {opt.label}
+                          </span>
+                        </div>
+                      ))}
+                    </Row>
+                    <Row>
+                      <Field>
+                        {lbl("Your Name", true)}
+                        <input
+                          style={inp()}
+                          value={form.agentName}
+                          onChange={(e) => set("agentName", e.target.value)}
+                          placeholder="Full name"
+                        />
+                        {errors.agentName && (
+                          <p
+                            style={{
+                              color: "red",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                            }}
+                          >
+                            {errors.agentName}
+                          </p>
+                        )}
+                      </Field>
+
+                      <Field>
+                        {lbl("Phone Number", true)}
+
+                        <input
+                          style={{
+                            ...inp(),
+                            border: phoneVerified
+                              ? "1px solid #16a34a"
+                              : inp().border,
+                          }}
+                          value={form.agentPhone}
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
+                          placeholder="Enter 10 digit mobile number"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+
+                            if (value.length <= 10) {
+                              set("agentPhone", value);
+                            }
+
+                            // Reset verification if number changes
+                            setOtpSent(false);
+                            setEnteredOtp("");
+                            setPhoneVerified(false);
+
+                            if (value && !/^[6-9]/.test(value)) {
+                              setErrors((prev) => ({
+                                ...prev,
+                                agentPhone:
+                                  "Mobile number must start with 6, 7, 8 or 9",
+                              }));
+                            } else if (value.length > 0 && value.length < 10) {
+                              setErrors((prev) => ({
+                                ...prev,
+                                agentPhone:
+                                  "Enter a valid 10 digit mobile number",
+                              }));
+                            } else {
+                              setErrors((prev) => ({
+                                ...prev,
+                                agentPhone: "",
+                              }));
+                            }
+                          }}
+                        />
+
+                        {/* Error Message */}
+                        {errors.agentPhone && (
+                          <p
+                            style={{
+                              color: "#dc2626",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                              fontWeight: 500,
+                            }}
+                          >
+                            {errors.agentPhone}
+                          </p>
+                        )}
+
+                        {/* Send OTP Button */}
+                        {form.agentPhone.length === 10 &&
+                          !errors.agentPhone &&
+                          !otpSent &&
+                          !phoneVerified && (
+                            <button
+                              type="button"
+                              style={{
+                                marginTop: "8px",
+                                padding: "8px 14px",
+                                border: "none",
+                                borderRadius: "8px",
+                                background: "#2563eb",
+                                color: "#fff",
+                                cursor: "pointer",
+                                fontWeight: 500,
+                              }}
+                              onClick={() => {
+                                alert(`Demo OTP is ${TEMP_OTP}`);
+                                setOtpSent(true);
+                              }}
+                            >
+                              Send OTP
+                            </button>
+                          )}
+
+                        {/* OTP Input */}
+                        {otpSent && !phoneVerified && (
+                          <div style={{ marginTop: "12px" }}>
+                            <input
+                              style={inp()}
+                              type="text"
+                              inputMode="numeric"
+                              maxLength={3}
+                              placeholder="Enter OTP"
+                              value={enteredOtp}
+                              onChange={(e) =>
+                                setEnteredOtp(e.target.value.replace(/\D/g, ""))
+                              }
+                            />
+
+                            <button
+                              type="button"
+                              style={{
+                                marginTop: "8px",
+                                padding: "8px 14px",
+                                border: "none",
+                                borderRadius: "8px",
+                                background: "#16a34a",
+                                color: "#fff",
+                                cursor: "pointer",
+                                fontWeight: 500,
+                              }}
+                              onClick={() => {
+                                if (enteredOtp === TEMP_OTP) {
+                                  setPhoneVerified(true);
+                                  setOtpSent(false);
+
+                                  alert("Phone number verified successfully!");
+                                } else {
+                                  alert("Invalid OTP");
+                                }
+                              }}
+                            >
+                              Verify OTP
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Verified Message */}
+                        {phoneVerified && (
+                          <p
+                            style={{
+                              color: "#16a34a",
+                              marginTop: "8px",
+                              fontSize: "13px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            ✓ Phone number verified
+                          </p>
+                        )}
+                      </Field>
+                    </Row>
+                    <div style={{ marginBottom: "14px" }}>
+                      {lbl("Property Title", true)}
+                      <input
+                        style={inp()}
+                        value={form.title}
+                        onChange={(e) => set("title", e.target.value)}
+                        placeholder='e.g. "Prime NA Plot — Gangapur Road, Nashik"'
+                        required
+                      />
+                    </div>
+                    <Row>
+                      <Field>
+                        {lbl("Property Category", true)}
+                        <select
+                          style={sel()}
+                          value={form.categoryLabel}
+                          onChange={(e) => {
+                            const found = meta.categories.find(
+                              (c) => c.label === e.target.value,
+                            );
+                            set("categoryLabel", e.target.value);
+                            set("category", found?.value ?? "");
+                          }}
+                          required
+                        >
+                          <option value="">Select category</option>
+                          {meta.categories.map((c) => (
+                            <option key={c.label} value={c.label}>
+                              {c.label}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                      <Field>
+                        {lbl("Property Status")}
+                        <select
+                          style={sel()}
+                          value={form.status}
+                          onChange={(e) => set("status", e.target.value)}
+                        >
+                          {meta.propertyStatuses.map((s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                    </Row>
+                    <Field>
+                      {lbl("Construction Status")}
                       <div
                         style={{
-                          width: "64px",
-                          height: "64px",
-                          marginBottom: "12px",
-
                           display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-
-                          borderRadius: "16px",
-                          background: "#f8fafc",
-                          border: "1px solid #e2e8f0",
+                          gap: "10px",
+                          flexWrap: "wrap",
                         }}
                       >
-                        <Image
-                          src={
-                            opt.value === "owner"
-                              ? "/images/person.png"
-                              : opt.value === "dealer"
-                                ? "/images/handshake.png"
-                                : "/images/crane.png"
+                        {meta.constructionStatuses.map((s) => (
+                          <Chip
+                            key={s.value}
+                            label={s.label}
+                            active={form.constructionStatus === s.value}
+                            onClick={() => set("constructionStatus", s.value)}
+                          />
+                        ))}
+                      </div>
+                    </Field>
+                  </SectionCard>
+                )}
+
+                {/* ── STEP 1: Location ── */}
+                {step === 1 && (
+                  <SectionCard
+                    title="Property Location"
+                    subtitle="Enter pincode first to auto-fill location details."
+                    icon={
+                      <Image
+                        src="/images/map.png"
+                        alt="Location"
+                        width={22}
+                        height={22}
+                        style={{ objectFit: "contain" }}
+                      />
+                    }
+                    step={step}
+                    totalSteps={steps.length}
+                    onPrev={() => setStep((s) => Math.max(0, s - 1))}
+                    onNext={handleNext}
+                  >
+                    {/* PINCODE FIRST */}
+                    <Row cols={1}>
+                      <Field>
+                        {lbl("Pincode", true)}
+
+                        <input
+                          style={inp()}
+                          value={form.pincode}
+                          onChange={handlePincodeChange}
+                          placeholder="e.g. 422001"
+                          maxLength={6}
+                        />
+
+                        {errors.pincode && (
+                          <p
+                            style={{
+                              color: "#dc2626",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                            }}
+                          >
+                            {errors.pincode}
+                          </p>
+                        )}
+                      </Field>
+                    </Row>
+
+                    {/* LOCATION AUTO FILLED */}
+                    <Row cols={3}>
+                      {/* STATE */}
+                      <Field>
+                        {lbl("State", true)}
+
+                        <select
+                          style={sel()}
+                          value={form.state}
+                          onChange={(e) => {
+                            set("state", e.target.value);
+                            set("city", "");
+                            set("locality", "");
+                            setPropertyId("");
+                          }}
+                        >
+                          <option value="">Select state</option>
+
+                          {meta.states.map((s) => (
+                            <option key={s.name} value={s.name}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+
+                      {/* CITY */}
+                      <Field>
+                        {lbl("City", true)}
+
+                        <select
+                          style={sel()}
+                          value={form.city}
+                          disabled={!form.state}
+                          onChange={(e) => {
+                            set("city", e.target.value);
+                            set("locality", "");
+                            setPropertyId("");
+                          }}
+                        >
+                          <option value="">Select city</option>
+
+                          {cities.map((c) => (
+                            <option key={c.name} value={c.name}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+
+                      {/* LOCALITY */}
+                      <Field>
+                        {lbl("Locality / Area", true)}
+
+                        {localities.length > 0 ? (
+                          <select
+                            style={sel()}
+                            value={form.locality}
+                            disabled={!form.city}
+                            onChange={(e) => {
+                              set("locality", e.target.value);
+                              setPropertyId("");
+                            }}
+                          >
+                            <option value="">Select locality</option>
+
+                            {localities.map((l) => (
+                              <option key={l} value={l}>
+                                {l}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            style={inp()}
+                            value={form.locality}
+                            onChange={(e) => {
+                              set("locality", e.target.value);
+                              setPropertyId("");
+                            }}
+                            placeholder="Enter locality"
+                          />
+                        )}
+                      </Field>
+                    </Row>
+
+                    {/* DETAILED ADDRESS */}
+                    <Row cols={3}>
+                      <Field>
+                        {lbl(getPropertyNumberLabel(form.categoryLabel), true)}
+
+                        <input
+                          style={inp()}
+                          value={form.houseNo}
+                          onChange={(e) => set("houseNo", e.target.value)}
+                          placeholder={getPropertyNumberLabel(
+                            form.categoryLabel,
+                          )}
+                        />
+                      </Field>
+
+                      <Field>
+                        {lbl("Street / Road", true)}
+
+                        <input
+                          style={inp()}
+                          value={form.street}
+                          onChange={(e) => set("street", e.target.value)}
+                          placeholder="Street / Road"
+                        />
+                      </Field>
+
+                      <Field>
+                        {lbl("Landmark")}
+
+                        <input
+                          style={inp()}
+                          value={form.landmark}
+                          onChange={(e) => set("landmark", e.target.value)}
+                          placeholder="Nearby Landmark"
+                        />
+                      </Field>
+                    </Row>
+
+                    {/* MAP LOCATION */}
+                    <div
+                      style={{
+                        marginTop: "24px",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: "16px",
+                        padding: "18px",
+                        background: "#ffffff",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+                      }}
+                    >
+                      {/* Header */}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          marginBottom: "14px",
+                        }}
+                      >
+                        <div>
+                          <h4
+                            style={{
+                              margin: 0,
+                              fontSize: "15px",
+                              fontWeight: 700,
+                              color: "#0f172a",
+                            }}
+                          >
+                            Select Exact Property Location
+                          </h4>
+
+                          <p
+                            style={{
+                              margin: "4px 0 0",
+                              fontSize: "12px",
+                              color: "#64748b",
+                            }}
+                          >
+                            Click on the map to mark the exact property location
+                          </p>
+                        </div>
+
+                        {coords?.lat && coords?.lng && (
+                          <div
+                            style={{
+                              padding: "6px 10px",
+                              background: "#ecfdf5",
+                              border: "1px solid #bbf7d0",
+                              borderRadius: "8px",
+                              fontSize: "11px",
+                              color: "#166534",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Location Selected ✓
+                          </div>
+                        )}
+                      </div>
+
+                      {/* MAP */}
+                      <PropertyMap
+                        onSelect={async (location: any) => {
+                          // Save map coordinates
+                          setCoords(location);
+                          set("latitude", String(location.lat));
+                          set("longitude", String(location.lng));
+                          try {
+                            const res = await fetch(
+                              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`,
+                            );
+
+                            const data = await res.json();
+
+                            const address = data.address || {};
+
+                            // Auto fill fields
+                            set("state", address.state || "");
+
+                            set(
+                              "city",
+                              address.city ||
+                                address.town ||
+                                address.village ||
+                                "",
+                            );
+
+                            set(
+                              "locality",
+                              address.suburb || address.neighbourhood || "",
+                            );
+
+                            set("street", address.road || "");
+
+                            // Create full address
+                            const fullAddress = [
+                              address.road,
+                              address.suburb || address.neighbourhood,
+                              address.city || address.town || address.village,
+                              address.state,
+                              address.postcode,
+                            ]
+                              .filter(Boolean)
+                              .join(", ");
+
+                            set("address", fullAddress);
+                          } catch (error) {
+                            console.error("Address fetch failed:", error);
                           }
-                          alt={opt.label}
-                          width={36}
-                          height={36}
+                        }}
+                      />
+
+                      {/* COORDINATES */}
+                      {coords?.lat && coords?.lng && (
+                        <div
+                          style={{
+                            marginTop: "14px",
+                            padding: "10px 14px",
+                            background: "#f8fafc",
+                            borderRadius: "10px",
+                            border: "1px solid #e2e8f0",
+                            fontSize: "12px",
+                            color: "#475569",
+                          }}
+                        >
+                          Number(coords.lat).toFixed(6)
+                          Number(coords.lng).toFixed(6)
+                        </div>
+                      )}
+                    </div>
+
+                    {/* LOCATION PREVIEW */}
+                    {form.state && form.city && form.locality && (
+                      <div
+                        style={{
+                          marginTop: "18px",
+                          padding: "12px 16px",
+                          background: "#f0fdf4",
+                          border: "1px solid #bbf7d0",
+                          borderRadius: "10px",
+                          color: "#166534",
+                          fontSize: "14px",
+                        }}
+                      >
+                        📍{" "}
+                        <strong>
+                          [ form.houseNo, form.street, form.locality, form.city,
+                          form.state ] .filter(Boolean) .join(", ")
+                        </strong>
+                        {form.pincode && ` — ${form.pincode}`}
+                      </div>
+                    )}
+                  </SectionCard>
+                )}
+                {/* ── STEP 2: Property Details ── */}
+                {step === 2 && (
+                  <SectionCard
+                    title="Property Details"
+                    subtitle="Size, price and other specifics buyers need to evaluate."
+                    icon={
+                      <Image
+                        src="/images/property-paper.png"
+                        alt="Property Details"
+                        width={22}
+                        height={22}
+                        style={{
+                          objectFit: "contain",
+                        }}
+                      />
+                    }
+                    step={step}
+                    totalSteps={steps.length}
+                    onPrev={() => setStep((s) => Math.max(0, s - 1))}
+                    onNext={handleNext}
+                  >
+                    <Row cols={3}>
+                      {/* AREA */}
+                      <Field>
+                        {lbl("Area / Size", true)}
+
+                        <input
+                          style={inp()}
+                          value={form.area}
+                          onChange={(e) =>
+                            handleAreaCalculation(e.target.value, form.areaUnit)
+                          }
+                          placeholder="e.g. 2000"
+                          type="number"
+                          min="0"
+                        />
+
+                        {errors.area && (
+                          <p
+                            style={{
+                              color: "#dc2626",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                            }}
+                          >
+                            {errors.area}
+                          </p>
+                        )}
+                      </Field>
+
+                      {/* AREA UNIT */}
+                      <Field>
+                        {lbl("Area Unit", true)}
+
+                        <select
+                          style={sel()}
+                          value={form.areaUnit}
+                          onChange={(e) =>
+                            handleAreaCalculation(form.area, e.target.value)
+                          }
+                        >
+                          {meta.areaUnits.map((u) => (
+                            <option key={u.value} value={u.value}>
+                              {u.label}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+
+                      {/* PRICE */}
+                      <Field>
+                        {lbl("Price (₹)", true)}
+
+                        <input
+                          style={inp()}
+                          value={form.price}
+                          onChange={(e) => handlePriceChange(e.target.value)}
+                          placeholder="e.g. 4500000"
+                          type="number"
+                          min="0"
+                        />
+
+                        {errors.price && (
+                          <p
+                            style={{
+                              color: "#dc2626",
+                              fontSize: "12px",
+                              marginTop: "4px",
+                            }}
+                          >
+                            {errors.price}
+                          </p>
+                        )}
+
+                        {form.price && (
+                          <div
+                            style={{
+                              marginTop: "4px",
+                              fontSize: "0.78rem",
+                              color: "#16a34a",
+                              fontWeight: 600,
+                            }}
+                          >
+                            ≈ ₹{Number(form.price).toLocaleString("en-IN")}
+                          </div>
+                        )}
+                      </Field>
+                    </Row>
+
+                    <Row>
+                      <Field>
+                        {lbl("Total Area in Sqft")}
+
+                        <input
+                          style={inp({
+                            background: "#f0fdf4",
+                          })}
+                          value={form.convertedSqft}
+                          readOnly
+                        />
+                      </Field>
+
+                      <Field>
+                        {lbl("Price Per Sqft")}
+
+                        <input
+                          style={inp({
+                            background: "#f0fdf4",
+                          })}
+                          value={form.pricePerUnit}
+                          readOnly
+                        />
+                      </Field>
+                    </Row>
+
+                    <div style={{ marginTop: "20px" }}>
+                      <Toggle
+                        checked={form.priceNegotiable}
+                        onChange={() =>
+                          set("priceNegotiable", !form.priceNegotiable)
+                        }
+                        labelText="Price is Negotiable"
+                      />
+                    </div>
+                  </SectionCard>
+                )}
+
+                {/* ── STEP 3: Features ── */}
+                {step === 3 && (
+                  <>
+                    <SectionCard
+                      title="Legal & Listing Flags"
+                      icon={
+                        <Image
+                          src="/images/insurance.png"
+                          alt="Legal"
+                          width={22}
+                          height={22}
                           style={{
                             objectFit: "contain",
                           }}
                         />
+                      }
+                      step={step}
+                      totalSteps={steps.length}
+                      onPrev={() => setStep((s) => Math.max(0, s - 1))}
+                      onNext={handleNext}
+                    >
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: "16px",
+                          marginBottom: "16px",
+                        }}
+                      >
+                        <Toggle
+                          checked={form.isRERA}
+                          onChange={() => set("isRERA", !form.isRERA)}
+                          labelText="RERA Approved"
+                        />
+                        <Toggle
+                          checked={form.isZeroBrokerage}
+                          onChange={() =>
+                            set("isZeroBrokerage", !form.isZeroBrokerage)
+                          }
+                          labelText="Zero Brokerage"
+                        />
+                        <Toggle
+                          checked={form.isFeatured}
+                          onChange={() => set("isFeatured", !form.isFeatured)}
+                          labelText="Mark as Featured"
+                        />
                       </div>
-
-                      {/* Label */}
-                      <span
+                      {form.isRERA && (
+                        <Field>
+                          {lbl("RERA Number")}
+                          <input
+                            style={inp()}
+                            value={form.reraNumber}
+                            onChange={(e) => set("reraNumber", e.target.value)}
+                            placeholder="e.g. P51800012345"
+                          />
+                        </Field>
+                      )}
+                    </SectionCard>
+                    <SectionCard
+                      title="Key Highlights"
+                      subtitle="Select all that apply."
+                      icon={
+                        <Image
+                          src="/images/asterisk (1).png"
+                          alt="Highlights"
+                          width={22}
+                          height={22}
+                          style={{
+                            objectFit: "contain",
+                          }}
+                        />
+                      }
+                    >
+                      <div
                         style={{
-                          fontSize: "16px",
-                          fontWeight: 600,
-                          color: "#1e293b",
-                          textAlign: "center",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "8px",
                         }}
                       >
-                        {opt.label}
-                      </span>
-                    </div>
-                  ))}
-                </Row>
-                <Row>
-                  <Field>
-                    {lbl("Your Name", true)}
-                    <input
-                      style={inp()}
-                      value={form.agentName}
-                      onChange={(e) => set("agentName", e.target.value)}
-                      placeholder="Full name"
-                    />
-                    {errors.agentName && (
-                      <p
+                        {meta.highlights.map((h) => (
+                          <Chip
+                            key={h}
+                            label={h}
+                            icon={highlightIcons[h]}
+                            active={form.highlights.includes(h)}
+                            onClick={() => toggleArr("highlights", h)}
+                          />
+                        ))}
+                      </div>
+                    </SectionCard>
+                    <SectionCard
+                      title="Amenities Available"
+                      icon={
+                        <Image
+                          src="/images/management (1).png"
+                          alt="Amenities"
+                          width={22}
+                          height={22}
+                          style={{
+                            objectFit: "contain",
+                          }}
+                        />
+                      }
+                    >
+                      <div
                         style={{
-                          color: "red",
-                          fontSize: "12px",
-                          marginTop: "4px",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "8px",
                         }}
                       >
-                        {errors.agentName}
-                      </p>
-                    )}
-                  </Field>
+                        {meta.amenities.map((a) => (
+                          <Chip
+                            key={a}
+                            label={a}
+                            icon={amenityIcons[a]}
+                            active={form.amenities.includes(a)}
+                            onClick={() => toggleArr("amenities", a)}
+                          />
+                        ))}
+                      </div>
+                    </SectionCard>
+                  </>
+                )}
 
-                  <Field>
-                    {lbl("Phone Number", true)}
+                {/* ── STEP 4: Images & Submit ── */}
+                {step === 4 && (
+                  <>
+                    <SectionCard
+                      title="Property Description"
+                      icon={
+                        <Image
+                          src="/images/newspaper (2).png"
+                          alt="Description"
+                          width={22}
+                          height={22}
+                          style={{
+                            objectFit: "contain",
+                          }}
+                        />
+                      }
+                      step={step}
+                      totalSteps={steps.length}
+                      onPrev={() => setStep((s) => Math.max(0, s - 1))}
+                      onNext={handleNext}
+                    >
+                      <Row cols={2}>
+                        <Field>
+                          {lbl("Why should buyers choose this property?")}
+                          <input
+                            style={inp()}
+                            placeholder="e.g. High ROI, Prime location"
+                            value={descPurpose}
+                            onChange={(e) => setDescPurpose(e.target.value)}
+                          />
+                        </Field>
 
-                    <input
-                      style={{
-                        ...inp(),
-                        border: phoneVerified
-                          ? "1px solid #16a34a"
-                          : inp().border,
-                      }}
-                      value={form.agentPhone}
-                      type="tel"
-                      inputMode="numeric"
-                      maxLength={10}
-                      placeholder="Enter 10 digit mobile number"
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, "");
+                        <Field>
+                          {lbl("Special Features")}
+                          <input
+                            style={inp()}
+                            placeholder="e.g. Corner plot, Clear title"
+                            value={descFeature}
+                            onChange={(e) => setDescFeature(e.target.value)}
+                          />
+                        </Field>
+                      </Row>
 
-                        if (value.length <= 10) {
-                          set("agentPhone", value);
-                        }
+                      <Row cols={2}>
+                        <Field>
+                          {lbl("Nearby Landmarks")}
+                          <input
+                            style={inp()}
+                            placeholder="e.g. Near highway, MIDC"
+                            value={descLandmark}
+                            onChange={(e) => setDescLandmark(e.target.value)}
+                          />
+                        </Field>
 
-                        // Reset verification if number changes
-                        setOtpSent(false);
-                        setEnteredOtp("");
-                        setPhoneVerified(false);
+                        <Field>
+                          {lbl("Best Suitable For")}
+                          <input
+                            style={inp()}
+                            placeholder="e.g. Investment, Farming"
+                            value={descSuitable}
+                            onChange={(e) => setDescSuitable(e.target.value)}
+                          />
+                        </Field>
+                      </Row>
 
-                        if (value && !/^[6-9]/.test(value)) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            agentPhone:
-                              "Mobile number must start with 6, 7, 8 or 9",
-                          }));
-                        } else if (value.length > 0 && value.length < 10) {
-                          setErrors((prev) => ({
-                            ...prev,
-                            agentPhone: "Enter a valid 10 digit mobile number",
-                          }));
-                        } else {
-                          setErrors((prev) => ({
-                            ...prev,
-                            agentPhone: "",
-                          }));
-                        }
-                      }}
-                    />
-
-                    {/* Error Message */}
-                    {errors.agentPhone && (
-                      <p
+                      <div
                         style={{
-                          color: "#dc2626",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          fontWeight: 500,
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          marginBottom: "16px",
                         }}
                       >
-                        {errors.agentPhone}
-                      </p>
-                    )}
-
-                    {/* Send OTP Button */}
-                    {form.agentPhone.length === 10 &&
-                      !errors.agentPhone &&
-                      !otpSent &&
-                      !phoneVerified && (
                         <button
                           type="button"
+                          onClick={generateDescription}
                           style={{
-                            marginTop: "8px",
-                            padding: "8px 14px",
                             border: "none",
-                            borderRadius: "8px",
-                            background: "#2563eb",
+                            background:
+                              "linear-gradient(135deg,#16a34a,#22c55e)",
                             color: "#fff",
+                            padding: "12px 18px",
+                            borderRadius: "12px",
+                            fontWeight: 700,
                             cursor: "pointer",
-                            fontWeight: 500,
-                          }}
-                          onClick={() => {
-                            alert(`Demo OTP is ${TEMP_OTP}`);
-                            setOtpSent(true);
+                            boxShadow: "0 10px 20px rgba(34,197,94,.15)",
                           }}
                         >
-                          Send OTP
+                          Generate Description ✨
                         </button>
+                      </div>
+                      <textarea
+                        value={form.description}
+                        onChange={(e) => set("description", e.target.value)}
+                        placeholder="Describe the property — location benefits, size, surroundings, investment potential, legal status…"
+                        required
+                        style={{
+                          ...inp(),
+                          minHeight: "130px",
+                          resize: "vertical",
+                          lineHeight: 1.6,
+                        }}
+                      />
+                    </SectionCard>
+
+                    <SectionCard
+                      title="Upload Property Images"
+                      subtitle={
+                        propertyId
+                          ? `Images will be stored in /uploads/${propertyId}/`
+                          : "Complete location step to get your property ID first."
+                      }
+                      icon={
+                        <Image
+                          src="/images/image (2).png"
+                          alt="Upload Images"
+                          width={22}
+                          height={22}
+                          style={{
+                            objectFit: "contain",
+                          }}
+                        />
+                      }
+                    >
+                      {/* Property ID reminder */}
+                      {propertyId && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            background: "#f0fdf4",
+                            border: "1px solid #bbf7d0",
+                            borderRadius: "9px",
+                            padding: "8px 12px",
+                            marginBottom: "16px",
+                            fontSize: "0.85rem",
+                          }}
+                        >
+                          <span style={{ color: "#6b7280" }}>
+                            Storage path:
+                          </span>
+                          <code
+                            style={{
+                              fontWeight: 700,
+                              color: "#14532d",
+                              background: "#dcfce7",
+                              padding: "2px 8px",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            /public/uploads/{propertyId}/
+                          </code>
+                        </div>
                       )}
 
-                    {/* OTP Input */}
-                    {otpSent && !phoneVerified && (
-                      <div style={{ marginTop: "12px" }}>
-                        <input
-                          style={inp()}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={3}
-                          placeholder="Enter OTP"
-                          value={enteredOtp}
-                          onChange={(e) =>
-                            setEnteredOtp(e.target.value.replace(/\D/g, ""))
-                          }
-                        />
+                      <ImageUploadZone
+                        files={files}
+                        onAdd={(newEntries) =>
+                          setFiles((prev) =>
+                            [...prev, ...newEntries].slice(0, 8),
+                          )
+                        }
+                        onRemove={(i) =>
+                          setFiles((prev) => {
+                            const next = [...prev];
+                            URL.revokeObjectURL(next[i].preview);
+                            next.splice(i, 1);
+                            return next;
+                          })
+                        }
+                        uploading={loading}
+                        uploadedCount={uploadedCount}
+                      />
+                      <p
+                        style={{
+                          margin: "8px 0 0",
+                          fontSize: "0.8rem",
+                          color: "#9ca3af",
+                        }}
+                      >
+                        {files.length}/8 images selected · First image is the
+                        cover photo
+                      </p>
+                    </SectionCard>
 
-                        <button
-                          type="button"
-                          style={{
-                            marginTop: "8px",
-                            padding: "8px 14px",
-                            border: "none",
-                            borderRadius: "8px",
-                            background: "#16a34a",
-                            color: "#fff",
-                            cursor: "pointer",
-                            fontWeight: 500,
-                          }}
-                          onClick={() => {
-                            if (enteredOtp === TEMP_OTP) {
-                              setPhoneVerified(true);
-                              setOtpSent(false);
-
-                              alert("Phone number verified successfully!");
-                            } else {
-                              alert("Invalid OTP");
-                            }
-                          }}
+                    {/* Summary */}
+                    <div
+                      style={{
+                        background: "#f0fdf4",
+                        border: "1px solid #bbf7d0",
+                        borderRadius: "14px",
+                        padding: "18px 20px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <h3
+                        style={{
+                          margin: "0 0 12px",
+                          fontSize: "0.95rem",
+                          fontWeight: 800,
+                          color: "#14532d",
+                        }}
+                      >
+                        📋 Listing Summary
+                      </h3>
+                      {propertyId && (
+                        <div
+                          style={{ marginBottom: "10px", fontSize: "0.85rem" }}
                         >
-                          Verify OTP
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Verified Message */}
-                    {phoneVerified && (
-                      <p
+                          <span style={{ color: "#6b7280" }}>
+                            Property ID:{" "}
+                          </span>
+                          <strong
+                            style={{
+                              fontFamily: "monospace",
+                              color: "#14532d",
+                            }}
+                          >
+                            {propertyId}
+                          </strong>
+                        </div>
+                      )}
+                      <div
                         style={{
-                          color: "#16a34a",
-                          marginTop: "8px",
-                          fontSize: "13px",
-                          fontWeight: 600,
+                          display: "grid",
+                          gridTemplateColumns: "1fr 1fr",
+                          gap: "8px",
+                          fontSize: "0.85rem",
+                          color: "#374151",
                         }}
                       >
-                        ✓ Phone number verified
-                      </p>
-                    )}
-                  </Field>
-                </Row>
-                <div style={{ marginBottom: "14px" }}>
-                  {lbl("Property Title", true)}
-                  <input
-                    style={inp()}
-                    value={form.title}
-                    onChange={(e) => set("title", e.target.value)}
-                    placeholder='e.g. "Prime NA Plot — Gangapur Road, Nashik"'
-                    required
-                  />
-                </div>
-                <Row>
-                  <Field>
-                    {lbl("Property Category", true)}
-                    <select
-                      style={sel()}
-                      value={form.categoryLabel}
-                      onChange={(e) => {
-                        const found = meta.categories.find(
-                          (c) => c.label === e.target.value,
-                        );
-                        set("categoryLabel", e.target.value);
-                        set("category", found?.value ?? "");
-                      }}
-                      required
-                    >
-                      <option value="">Select category</option>
-                      {meta.categories.map((c) => (
-                        <option key={c.label} value={c.label}>
-                          {c.label}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field>
-                    {lbl("Property Status")}
-                    <select
-                      style={sel()}
-                      value={form.status}
-                      onChange={(e) => set("status", e.target.value)}
-                    >
-                      {meta.propertyStatuses.map((s) => (
-                        <option key={s.value} value={s.value}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                </Row>
-                <Field>
-                  {lbl("Construction Status")}
-                  <div
-                    style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
-                  >
-                    {meta.constructionStatuses.map((s) => (
-                      <Chip
-                        key={s.value}
-                        label={s.label}
-                        active={form.constructionStatus === s.value}
-                        onClick={() => set("constructionStatus", s.value)}
-                      />
-                    ))}
-                  </div>
-                </Field>
-              </SectionCard>
-            )}
-
-            {/* ── STEP 1: Location ── */}
-            {step === 1 && (
-              <SectionCard
-                title="Property Location"
-                subtitle="Enter pincode first to auto-fill location details."
-                icon={
-                  <Image
-                    src="/images/map.png"
-                    alt="Location"
-                    width={22}
-                    height={22}
-                    style={{ objectFit: "contain" }}
-                  />
-                }
-                step={step}
-                totalSteps={steps.length}
-                onPrev={() => setStep((s) => Math.max(0, s - 1))}
-                onNext={handleNext}
-              >
-                {/* PINCODE FIRST */}
-                <Row cols={1}>
-                  <Field>
-                    {lbl("Pincode", true)}
-
-                    <input
-                      style={inp()}
-                      value={form.pincode}
-                      onChange={handlePincodeChange}
-                      placeholder="e.g. 422001"
-                      maxLength={6}
-                    />
-
-                    {errors.pincode && (
-                      <p
-                        style={{
-                          color: "#dc2626",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {errors.pincode}
-                      </p>
-                    )}
-                  </Field>
-                </Row>
-
-                {/* LOCATION AUTO FILLED */}
-                <Row cols={3}>
-                  {/* STATE */}
-                  <Field>
-                    {lbl("State", true)}
-
-                    <select
-                      style={sel()}
-                      value={form.state}
-                      onChange={(e) => {
-                        set("state", e.target.value);
-                        set("city", "");
-                        set("locality", "");
-                        setPropertyId("");
-                      }}
-                    >
-                      <option value="">Select state</option>
-
-                      {meta.states.map((s) => (
-                        <option key={s.name} value={s.name}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-
-                  {/* CITY */}
-                  <Field>
-                    {lbl("City", true)}
-
-                    <select
-                      style={sel()}
-                      value={form.city}
-                      disabled={!form.state}
-                      onChange={(e) => {
-                        set("city", e.target.value);
-                        set("locality", "");
-                        setPropertyId("");
-                      }}
-                    >
-                      <option value="">Select city</option>
-
-                      {cities.map((c) => (
-                        <option key={c.name} value={c.name}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-
-                  {/* LOCALITY */}
-                  <Field>
-                    {lbl("Locality / Area", true)}
-
-                    {localities.length > 0 ? (
-                      <select
-                        style={sel()}
-                        value={form.locality}
-                        disabled={!form.city}
-                        onChange={(e) => {
-                          set("locality", e.target.value);
-                          setPropertyId("");
-                        }}
-                      >
-                        <option value="">Select locality</option>
-
-                        {localities.map((l) => (
-                          <option key={l} value={l}>
-                            {l}
-                          </option>
+                        {[
+                          ["Title", form.title || "—"],
+                          ["Category", form.categoryLabel || "—"],
+                          [
+                            "Location",
+                            [form.locality, form.city, form.state]
+                              .filter(Boolean)
+                              .join(", ") || "—",
+                          ],
+                          [
+                            "Area",
+                            form.area
+                              ? `${form.area} ${meta.areaUnits.find((u) => u.value === form.areaUnit)?.label}`
+                              : "—",
+                          ],
+                          [
+                            "Price",
+                            form.price
+                              ? `₹${Number(form.price).toLocaleString("en-IN")}`
+                              : "—",
+                          ],
+                          ["Images", `${files.length} selected`],
+                        ].map(([k, v]) => (
+                          <div key={k}>
+                            <span style={{ color: "#6b7280" }}>{k}: </span>
+                            <strong>{v}</strong>
+                          </div>
                         ))}
-                      </select>
-                    ) : (
-                      <input
-                        style={inp()}
-                        value={form.locality}
-                        onChange={(e) => {
-                          set("locality", e.target.value);
-                          setPropertyId("");
-                        }}
-                        placeholder="Enter locality"
-                      />
-                    )}
-                  </Field>
-                </Row>
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                {/* DETAILED ADDRESS */}
-                <Row cols={3}>
-                  <Field>
-                    {lbl(getPropertyNumberLabel(form.categoryLabel), true)}
-
-                    <input
-                      style={inp()}
-                      value={form.houseNo}
-                      onChange={(e) => set("houseNo", e.target.value)}
-                      placeholder={getPropertyNumberLabel(form.categoryLabel)}
-                    />
-                  </Field>
-
-                  <Field>
-                    {lbl("Street / Road", true)}
-
-                    <input
-                      style={inp()}
-                      value={form.street}
-                      onChange={(e) => set("street", e.target.value)}
-                      placeholder="Street / Road"
-                    />
-                  </Field>
-
-                  <Field>
-                    {lbl("Landmark")}
-
-                    <input
-                      style={inp()}
-                      value={form.landmark}
-                      onChange={(e) => set("landmark", e.target.value)}
-                      placeholder="Nearby Landmark"
-                    />
-                  </Field>
-                </Row>
-
-                {/* MAP LOCATION */}
+                {/* ── Nav Buttons ── */}
                 <div
                   style={{
-                    marginTop: "24px",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "16px",
-                    padding: "18px",
-                    background: "#ffffff",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "4px 0 32px",
                   }}
                 >
-                  {/* Header */}
+                  <button
+                    type="button"
+                    onClick={() => setStep((s) => Math.max(0, s - 1))}
+                    disabled={step === 0}
+                    style={{
+                      padding: "11px 26px",
+                      borderRadius: "10px",
+                      border: "1.5px solid #d1d5db",
+                      background: step === 0 ? "#f9fafb" : "#fff",
+                      color: step === 0 ? "#9ca3af" : "#374151",
+                      fontWeight: 700,
+                      cursor: step === 0 ? "default" : "pointer",
+                    }}
+                  >
+                    ← Previous
+                  </button>
+
+                  {step < steps.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      disabled={idGenerating}
+                      style={{
+                        padding: "11px 28px",
+                        borderRadius: "10px",
+                        border: "none",
+                        background: idGenerating
+                          ? "#86efac"
+                          : "linear-gradient(135deg,#14532d,#16a34a)",
+                        color: "#fff",
+                        fontWeight: 700,
+                        cursor: idGenerating ? "not-allowed" : "pointer",
+                        boxShadow: "0 4px 12px rgba(22,163,74,0.3)",
+                      }}
+                    >
+                      {idGenerating ? "Generating ID…" : "Next →"}
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      style={{
+                        padding: "11px 32px",
+                        borderRadius: "10px",
+                        border: "none",
+                        background: loading
+                          ? "#86efac"
+                          : "linear-gradient(135deg,#14532d,#16a34a)",
+                        color: "#fff",
+                        fontWeight: 800,
+                        cursor: loading ? "not-allowed" : "pointer",
+                        boxShadow: "0 4px 12px rgba(22,163,74,0.3)",
+                      }}
+                    >
+                      {loading
+                        ? "Uploading & Submitting…"
+                        : "🚀 Submit Listing"}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* RIGHT STICKY SIDEBAR */}
+              <aside
+                style={{
+                  position: "sticky",
+                  top: "90px",
+                  alignSelf: "start",
+                }}
+              >
+                <div
+                  style={{
+                    background: "#fff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "20px",
+                    padding:
+                      typeof window !== "undefined" && window.innerWidth < 768
+                        ? "16px"
+                        : "22px",
+                    boxShadow: "0 8px 24px rgba(0,0,0,.05)",
+                  }}
+                >
+                  {/* HEADER */}
                   <div
                     style={{
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "14px",
+                      alignItems: "flex-start",
+                      gap: "12px",
+                      marginBottom: "18px",
                     }}
                   >
+                    <div
+                      style={{
+                        width: "46px",
+                        height: "46px",
+                        borderRadius: "14px",
+                        background: "#dcfce7",
+                        display: "grid",
+                        placeItems: "center",
+                        fontSize: "22px",
+                        flexShrink: 0,
+                      }}
+                    >
+                      💬
+                    </div>
+
                     <div>
-                      <h4
+                      <h3
                         style={{
                           margin: 0,
-                          fontSize: "15px",
-                          fontWeight: 700,
-                          color: "#0f172a",
+                          fontSize: "1rem",
+                          fontWeight: 800,
+                          color: "#14532d",
                         }}
                       >
-                        Select Exact Property Location
-                      </h4>
+                        Need Help Posting?
+                      </h3>
 
                       <p
                         style={{
-                          margin: "4px 0 0",
-                          fontSize: "12px",
+                          margin: "5px 0 0",
+                          fontSize: ".84rem",
                           color: "#64748b",
+                          lineHeight: 1.5,
                         }}
                       >
-                        Click on the map to mark the exact property location
+                        Our experts can help you complete your listing
+                        instantly.
                       </p>
                     </div>
-
-                    {coords?.lat && coords?.lng && (
-                      <div
-                        style={{
-                          padding: "6px 10px",
-                          background: "#ecfdf5",
-                          border: "1px solid #bbf7d0",
-                          borderRadius: "8px",
-                          fontSize: "11px",
-                          color: "#166534",
-                          fontWeight: 600,
-                        }}
-                      >
-                        Location Selected ✓
-                      </div>
-                    )}
                   </div>
 
-                  {/* MAP */}
-                  <PropertyMap
-                    onSelect={async (location: any) => {
-                      // Save map coordinates
-                      setCoords(location);
-                      set("latitude", String(location.lat));
-                      set("longitude", String(location.lng));
-                      try {
-                        const res = await fetch(
-                          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`,
-                        );
-
-                        const data = await res.json();
-
-                        const address = data.address || {};
-
-                        // Auto fill fields
-                        set("state", address.state || "");
-
-                        set(
-                          "city",
-                          address.city || address.town || address.village || "",
-                        );
-
-                        set(
-                          "locality",
-                          address.suburb || address.neighbourhood || "",
-                        );
-
-                        set("street", address.road || "");
-
-                        // Create full address
-                        const fullAddress = [
-                          address.road,
-                          address.suburb || address.neighbourhood,
-                          address.city || address.town || address.village,
-                          address.state,
-                          address.postcode,
-                        ]
-                          .filter(Boolean)
-                          .join(", ");
-
-                        set("address", fullAddress);
-                      } catch (error) {
-                        console.error("Address fetch failed:", error);
-                      }
+                  {/* FORM */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gap: "14px",
                     }}
-                  />
+                  >
+                    <input
+                      style={inp()}
+                      placeholder="Your Name"
+                      value={helpName}
+                      onChange={(e) => setHelpName(e.target.value)}
+                    />
 
-                  {/* COORDINATES */}
-                  {coords?.lat && coords?.lng && (
-                    <div
+                    <input
+                      style={inp()}
+                      placeholder="WhatsApp Number"
+                      value={helpPhone}
+                      maxLength={10}
+                      inputMode="numeric"
+                      onChange={(e) =>
+                        setHelpPhone(e.target.value.replace(/\D/g, ""))
+                      }
+                    />
+
+                    <textarea
+                      value={helpIssue}
+                      onChange={(e) => setHelpIssue(e.target.value)}
                       style={{
-                        marginTop: "14px",
-                        padding: "10px 14px",
-                        background: "#f8fafc",
-                        borderRadius: "10px",
-                        border: "1px solid #e2e8f0",
-                        fontSize: "12px",
-                        color: "#475569",
+                        ...inp(),
+                        minHeight: "100px",
+                        resize: "vertical",
+                      }}
+                      placeholder="Describe your issue..."
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!helpName.trim()) {
+                          alert("Please enter your name");
+                          return;
+                        }
+
+                        if (!/^[6-9]\d{9}$/.test(helpPhone)) {
+                          alert("Please enter valid 10-digit mobile number");
+                          return;
+                        }
+
+                        const message = `Hello MahaHome Team,I need help posting property.Name: ${helpName}Phone: ${helpPhone}Issue: ${helpIssue}`;
+
+                        const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(
+                          message,
+                        )}`;
+
+                        window.open(whatsappUrl, "_blank");
+                      }}
+                      style={{
+                        height: "50px",
+                        borderRadius: "14px",
+                        border: "none",
+                        background: "linear-gradient(135deg,#16a34a,#22c55e)",
+
+                        color: "#fff",
+                        fontWeight: 800,
+                        cursor: "pointer",
+
+                        boxShadow: "0 10px 20px rgba(34,197,94,.18)",
                       }}
                     >
-                      Number(coords.lat).toFixed(6)
-                      Number(coords.lng).toFixed(6)
-                    </div>
-                  )}
-                </div>
+                      Connect on WhatsApp
+                    </button>
+                  </div>
 
-                {/* LOCATION PREVIEW */}
-                {form.state && form.city && form.locality && (
+                  {/* TRUST POINTS */}
                   <div
                     style={{
                       marginTop: "18px",
-                      padding: "12px 16px",
-                      background: "#f0fdf4",
-                      border: "1px solid #bbf7d0",
-                      borderRadius: "10px",
-                      color: "#166534",
-                      fontSize: "14px",
-                    }}
-                  >
-                    📍{" "}
-                    <strong>
-                      [ form.houseNo, form.street, form.locality, form.city,
-                      form.state ] .filter(Boolean) .join(", ")
-                    </strong>
-                    {form.pincode && ` — ${form.pincode}`}
-                  </div>
-                )}
-              </SectionCard>
-            )}
-            {/* ── STEP 2: Property Details ── */}
-            {step === 2 && (
-              <SectionCard
-                title="Property Details"
-                subtitle="Size, price and other specifics buyers need to evaluate."
-                icon={
-                  <Image
-                    src="/images/property-paper.png"
-                    alt="Property Details"
-                    width={22}
-                    height={22}
-                    style={{
-                      objectFit: "contain",
-                    }}
-                  />
-                }
-                step={step}
-                totalSteps={steps.length}
-                onPrev={() => setStep((s) => Math.max(0, s - 1))}
-                onNext={handleNext}
-              >
-                <Row cols={3}>
-                  {/* AREA */}
-                  <Field>
-                    {lbl("Area / Size", true)}
-
-                    <input
-                      style={inp()}
-                      value={form.area}
-                      onChange={(e) =>
-                        handleAreaCalculation(e.target.value, form.areaUnit)
-                      }
-                      placeholder="e.g. 2000"
-                      type="number"
-                      min="0"
-                    />
-
-                    {errors.area && (
-                      <p
-                        style={{
-                          color: "#dc2626",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {errors.area}
-                      </p>
-                    )}
-                  </Field>
-
-                  {/* AREA UNIT */}
-                  <Field>
-                    {lbl("Area Unit", true)}
-
-                    <select
-                      style={sel()}
-                      value={form.areaUnit}
-                      onChange={(e) =>
-                        handleAreaCalculation(form.area, e.target.value)
-                      }
-                    >
-                      {meta.areaUnits.map((u) => (
-                        <option key={u.value} value={u.value}>
-                          {u.label}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-
-                  {/* PRICE */}
-                  <Field>
-                    {lbl("Price (₹)", true)}
-
-                    <input
-                      style={inp()}
-                      value={form.price}
-                      onChange={(e) => handlePriceChange(e.target.value)}
-                      placeholder="e.g. 4500000"
-                      type="number"
-                      min="0"
-                    />
-
-                    {errors.price && (
-                      <p
-                        style={{
-                          color: "#dc2626",
-                          fontSize: "12px",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {errors.price}
-                      </p>
-                    )}
-
-                    {form.price && (
-                      <div
-                        style={{
-                          marginTop: "4px",
-                          fontSize: "0.78rem",
-                          color: "#16a34a",
-                          fontWeight: 600,
-                        }}
-                      >
-                        ≈ ₹{Number(form.price).toLocaleString("en-IN")}
-                      </div>
-                    )}
-                  </Field>
-                </Row>
-
-                <Row>
-                  <Field>
-                    {lbl("Total Area in Sqft")}
-
-                    <input
-                      style={inp({
-                        background: "#f0fdf4",
-                      })}
-                      value={form.convertedSqft}
-                      readOnly
-                    />
-                  </Field>
-
-                  <Field>
-                    {lbl("Price Per Sqft")}
-
-                    <input
-                      style={inp({
-                        background: "#f0fdf4",
-                      })}
-                      value={form.pricePerUnit}
-                      readOnly
-                    />
-                  </Field>
-                </Row>
-
-                <div style={{ marginTop: "20px" }}>
-                  <Toggle
-                    checked={form.priceNegotiable}
-                    onChange={() =>
-                      set("priceNegotiable", !form.priceNegotiable)
-                    }
-                    labelText="Price is Negotiable"
-                  />
-                </div>
-              </SectionCard>
-            )}
-
-            {/* ── STEP 3: Features ── */}
-            {step === 3 && (
-              <>
-                <SectionCard
-                  title="Legal & Listing Flags"
-                  icon={
-                    <Image
-                      src="/images/insurance.png"
-                      alt="Legal"
-                      width={22}
-                      height={22}
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  }
-                  step={step}
-                  totalSteps={steps.length}
-                  onPrev={() => setStep((s) => Math.max(0, s - 1))}
-                  onNext={handleNext}
-                >
-                  <div
-                    style={{
                       display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "16px",
-                      marginBottom: "16px",
+                      gap: "10px",
+                      fontSize: ".82rem",
+                      color: "#475569",
                     }}
                   >
-                    <Toggle
-                      checked={form.isRERA}
-                      onChange={() => set("isRERA", !form.isRERA)}
-                      labelText="RERA Approved"
-                    />
-                    <Toggle
-                      checked={form.isZeroBrokerage}
-                      onChange={() =>
-                        set("isZeroBrokerage", !form.isZeroBrokerage)
-                      }
-                      labelText="Zero Brokerage"
-                    />
-                    <Toggle
-                      checked={form.isFeatured}
-                      onChange={() => set("isFeatured", !form.isFeatured)}
-                      labelText="Mark as Featured"
-                    />
-                  </div>
-                  {form.isRERA && (
-                    <Field>
-                      {lbl("RERA Number")}
-                      <input
-                        style={inp()}
-                        value={form.reraNumber}
-                        onChange={(e) => set("reraNumber", e.target.value)}
-                        placeholder="e.g. P51800012345"
-                      />
-                    </Field>
-                  )}
-                </SectionCard>
-                <SectionCard
-                  title="Key Highlights"
-                  subtitle="Select all that apply."
-                  icon={
-                    <Image
-                      src="/images/asterisk (1).png"
-                      alt="Highlights"
-                      width={22}
-                      height={22}
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  }
-                >
-                  <div
-                    style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}
-                  >
-                    {meta.highlights.map((h) => (
-                      <Chip
-                        key={h}
-                        label={h}
-                        icon={highlightIcons[h]}
-                        active={form.highlights.includes(h)}
-                        onClick={() => toggleArr("highlights", h)}
-                      />
-                    ))}
-                  </div>
-                </SectionCard>
-                <SectionCard
-                  title="Amenities Available"
-                  icon={
-                    <Image
-                      src="/images/management (1).png"
-                      alt="Amenities"
-                      width={22}
-                      height={22}
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  }
-                >
-                  <div
-                    style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}
-                  >
-                    {meta.amenities.map((a) => (
-                      <Chip
-                        key={a}
-                        label={a}
-                        icon={amenityIcons[a]}
-                        active={form.amenities.includes(a)}
-                        onClick={() => toggleArr("amenities", a)}
-                      />
-                    ))}
-                  </div>
-                </SectionCard>
-              </>
-            )}
-
-            {/* ── STEP 4: Images & Submit ── */}
-            {step === 4 && (
-              <>
-                <SectionCard
-                  title="Property Description"
-                  icon={
-                    <Image
-                      src="/images/newspaper (2).png"
-                      alt="Description"
-                      width={22}
-                      height={22}
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  }
-                  step={step}
-                  totalSteps={steps.length}
-                  onPrev={() => setStep((s) => Math.max(0, s - 1))}
-                  onNext={handleNext}
-                >
-                  <textarea
-                    value={form.description}
-                    onChange={(e) => set("description", e.target.value)}
-                    placeholder="Describe the property — location benefits, size, surroundings, investment potential, legal status…"
-                    required
-                    style={{
-                      ...inp(),
-                      minHeight: "130px",
-                      resize: "vertical",
-                      lineHeight: 1.6,
-                    }}
-                  />
-                </SectionCard>
-
-                <SectionCard
-                  title="Upload Property Images"
-                  subtitle={
-                    propertyId
-                      ? `Images will be stored in /uploads/${propertyId}/`
-                      : "Complete location step to get your property ID first."
-                  }
-                  icon={
-                    <Image
-                      src="/images/image (2).png"
-                      alt="Upload Images"
-                      width={22}
-                      height={22}
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  }
-                >
-                  {/* Property ID reminder */}
-                  {propertyId && (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        background: "#f0fdf4",
-                        border: "1px solid #bbf7d0",
-                        borderRadius: "9px",
-                        padding: "8px 12px",
-                        marginBottom: "16px",
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      <span style={{ color: "#6b7280" }}>Storage path:</span>
-                      <code
-                        style={{
-                          fontWeight: 700,
-                          color: "#14532d",
-                          background: "#dcfce7",
-                          padding: "2px 8px",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        /public/uploads/{propertyId}/
-                      </code>
-                    </div>
-                  )}
-
-                  <ImageUploadZone
-                    files={files}
-                    onAdd={(newEntries) =>
-                      setFiles((prev) => [...prev, ...newEntries].slice(0, 8))
-                    }
-                    onRemove={(i) =>
-                      setFiles((prev) => {
-                        const next = [...prev];
-                        URL.revokeObjectURL(next[i].preview);
-                        next.splice(i, 1);
-                        return next;
-                      })
-                    }
-                    uploading={loading}
-                    uploadedCount={uploadedCount}
-                  />
-                  <p
-                    style={{
-                      margin: "8px 0 0",
-                      fontSize: "0.8rem",
-                      color: "#9ca3af",
-                    }}
-                  >
-                    {files.length}/8 images selected · First image is the cover
-                    photo
-                  </p>
-                </SectionCard>
-
-                {/* Summary */}
-                <div
-                  style={{
-                    background: "#f0fdf4",
-                    border: "1px solid #bbf7d0",
-                    borderRadius: "14px",
-                    padding: "18px 20px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: "0 0 12px",
-                      fontSize: "0.95rem",
-                      fontWeight: 800,
-                      color: "#14532d",
-                    }}
-                  >
-                    📋 Listing Summary
-                  </h3>
-                  {propertyId && (
-                    <div style={{ marginBottom: "10px", fontSize: "0.85rem" }}>
-                      <span style={{ color: "#6b7280" }}>Property ID: </span>
-                      <strong
-                        style={{ fontFamily: "monospace", color: "#14532d" }}
-                      >
-                        {propertyId}
-                      </strong>
-                    </div>
-                  )}
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "8px",
-                      fontSize: "0.85rem",
-                      color: "#374151",
-                    }}
-                  >
-                    {[
-                      ["Title", form.title || "—"],
-                      ["Category", form.categoryLabel || "—"],
-                      [
-                        "Location",
-                        [form.locality, form.city, form.state]
-                          .filter(Boolean)
-                          .join(", ") || "—",
-                      ],
-                      [
-                        "Area",
-                        form.area
-                          ? `${form.area} ${meta.areaUnits.find((u) => u.value === form.areaUnit)?.label}`
-                          : "—",
-                      ],
-                      [
-                        "Price",
-                        form.price
-                          ? `₹${Number(form.price).toLocaleString("en-IN")}`
-                          : "—",
-                      ],
-                      ["Images", `${files.length} selected`],
-                    ].map(([k, v]) => (
-                      <div key={k}>
-                        <span style={{ color: "#6b7280" }}>{k}: </span>
-                        <strong>{v}</strong>
-                      </div>
-                    ))}
+                    <div>✓ Free listing assistance</div>
+                    <div>✓ Instant support response</div>
+                    <div>✓ Property verification help</div>
+                    <div>✓ Expert onboarding guidance</div>
                   </div>
                 </div>
-              </>
-            )}
-
-            {/* ── Nav Buttons ── */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "4px 0 32px",
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setStep((s) => Math.max(0, s - 1))}
-                disabled={step === 0}
-                style={{
-                  padding: "11px 26px",
-                  borderRadius: "10px",
-                  border: "1.5px solid #d1d5db",
-                  background: step === 0 ? "#f9fafb" : "#fff",
-                  color: step === 0 ? "#9ca3af" : "#374151",
-                  fontWeight: 700,
-                  cursor: step === 0 ? "default" : "pointer",
-                }}
-              >
-                ← Previous
-              </button>
-
-              {step < steps.length - 1 ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={idGenerating}
-                  style={{
-                    padding: "11px 28px",
-                    borderRadius: "10px",
-                    border: "none",
-                    background: idGenerating
-                      ? "#86efac"
-                      : "linear-gradient(135deg,#14532d,#16a34a)",
-                    color: "#fff",
-                    fontWeight: 700,
-                    cursor: idGenerating ? "not-allowed" : "pointer",
-                    boxShadow: "0 4px 12px rgba(22,163,74,0.3)",
-                  }}
-                >
-                  {idGenerating ? "Generating ID…" : "Next →"}
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    padding: "11px 32px",
-                    borderRadius: "10px",
-                    border: "none",
-                    background: loading
-                      ? "#86efac"
-                      : "linear-gradient(135deg,#14532d,#16a34a)",
-                    color: "#fff",
-                    fontWeight: 800,
-                    cursor: loading ? "not-allowed" : "pointer",
-                    boxShadow: "0 4px 12px rgba(22,163,74,0.3)",
-                  }}
-                >
-                  {loading ? "Uploading & Submitting…" : "🚀 Submit Listing"}
-                </button>
-              )}
+              </aside>
             </div>
           </form>
         </div>
       </main>
+      <style jsx>{`
+        @media (max-width: 1100px) {
+          /* MAIN LAYOUT */
+          form > div {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* SIDEBAR */
+          aside {
+            position: static !important;
+            top: unset !important;
+            width: 100%;
+          }
+
+          /* STEP INDICATOR */
+          .stepScroller {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          /* 3 COLUMN ROWS */
+          .responsiveRow3 {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* 2 COLUMN ROWS */
+          .responsiveRow2 {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          /* SECTION CARD */
+          .sectionCard {
+            padding: 18px !important;
+            border-radius: 14px !important;
+          }
+
+          /* HERO */
+          .heroSection {
+            padding: 28px 16px !important;
+          }
+
+          /* STEP LABEL */
+          .stepLabel {
+            font-size: 0.74rem !important;
+          }
+
+          /* BUTTONS */
+          .mobileBtn {
+            width: 100%;
+          }
+        }
+      `}</style>
       <Footer />
     </>
   );

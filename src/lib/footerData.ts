@@ -3,17 +3,17 @@ export const FCOLS = [
     t: "NA Plots",
     ll: [
       [
-        "NA Plots On Gangapur Road",
+        "NA Plots In Gangapur Road",
         "/properties?cat=na-plot&locality=gangapur-road",
       ],
       [
-        "NA Plots On Nashik Road",
+        "NA Plots In Nashik Road",
         "/properties?cat=na-plot&locality=nashik-road",
       ],
       ["NA Plots In Meri", "/properties?cat=na-plot&locality=meri"],
       ["NA Plots In Igatpuri", "/properties?cat=na-plot&locality=igatpuri"],
       [
-        "NA Plots On Trimbak Road",
+        "NA Plots In Trimbak Road",
         "/properties?cat=na-plot&locality=trimbak-road",
       ],
       ["Collector NA Plot", "/properties?cat=collector-na"],

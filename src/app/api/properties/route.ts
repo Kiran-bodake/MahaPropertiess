@@ -9,168 +9,89 @@ import PropertyArea from "@/models/PropertyArea";
 import PropertyFlags from "@/models/PropertyFlags";
 import PropertyImage from "@/models/PropertyImage";
 
-
-export async function GET(
-  req: Request
-) {
-
+export async function GET(req: Request) {
   try {
-
     await connectDB();
 
-    const {
-      searchParams
-    } = new URL(
-      req.url
-    );
+    const { searchParams } = new URL(req.url);
 
-    const category =
-      searchParams.get(
-        "category"
-      );
+    const category = searchParams.get("category");
 
-    let properties =
-
-  await Property.find({
-
-    approvalStatus:
-      "approved"
-
-  });
+    let properties = await Property.find({
+      approvalStatus: "approved",
+    });
 
     /* Category Filter */
-    if (
-      category &&
-      category !== "All"
-    ) {
-
-      properties =
-        properties.filter(
-          (item: any) =>
-
-            item.category
-              ?.toLowerCase() ===
-            category.toLowerCase()
-
-        );
-
+    if (category && category !== "All") {
+      properties = properties.filter(
+        (item: any) => item.category?.toLowerCase() === category.toLowerCase(),
+      );
     }
 
     /* Merge data from related collections */
-    const finalData =
-      await Promise.all(
+    const finalData = await Promise.all(
+      properties.map(async (property: any) => {
+        const propertyId = property.propertyId;
 
-        properties.map(
-          async (
-            property: any
-          ) => {
+        const location = await PropertyLocation.findOne({
+          propertyId,
+        });
 
-            const propertyId =
-              property.propertyId;
+        const pricing = await PropertyPricing.findOne({
+          propertyId,
+        });
 
-            const location =
-              await PropertyLocation.findOne({
-                propertyId
-              });
+        const area = await PropertyArea.findOne({
+          propertyId,
+        });
 
-            const pricing =
-              await PropertyPricing.findOne({
-                propertyId
-              });
+        const flags = await PropertyFlags.findOne({
+          propertyId,
+        });
 
-            const area =
-              await PropertyArea.findOne({
-                propertyId
-              });
+        const images = await PropertyImage.findOne({
+          propertyId,
+        });
 
-            const flags =
-              await PropertyFlags.findOne({
-                propertyId
-              });
+        return {
+          id: property._id,
 
-            const images =
-              await PropertyImage.findOne({
-                propertyId
-              });
+          slug: property.slug || property.propertyId,
 
-            return {
+          title: property.title,
 
-              id:
-                property._id,
+          locality: location?.locality || "",
 
-          slug:
-  property.slug ||
-  property.propertyId,
+          city: location?.city || "",
 
-              title:
-                property.title,
+          category: property.category,
 
-              locality:
-                location?.locality ||
-                "",
+          price: `₹${Number(pricing?.price || 0).toLocaleString()}`,
 
-              city:
-                location?.city ||
-                "",
+          area: `${area?.area || 0} ${area?.areaUnit || "sqft"}`,
 
-              category:
-                property.category,
+          badge: flags?.isFeatured ? "Featured" : null,
 
-              price:
-                `₹${Number(
-                  pricing?.price || 0
-                ).toLocaleString()}`,
+          rera: flags?.isRERA || false,
 
-              area:
-                `${area?.area || 0} ${area?.areaUnit || "sqft"}`,
+          img: images?.images?.[0]?.url || "/maha.png",
 
-              badge:
-                flags?.isFeatured
-                  ? "Featured"
-                  : null,
-
-              rera:
-                flags?.isRERA || false,
-
-              img:
-                images?.images?.[0]?.url ||
-
-                "/maha.png",
-
-              views:
-                property.views || 0
-
-            };
-
-          }
-
-        )
-
-      );
-
-    return NextResponse.json(
-      finalData
+          views: property.views || 0,
+        };
+      }),
     );
 
+    return NextResponse.json(finalData);
+  } catch (error: any) {
+    console.error("Properties API Error:", error);
+
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      {
+        status: 500,
+      },
+    );
   }
-
-  catch (error: any) {
-
-  console.error(
-    "Properties API Error:",
-    error
-  );
-
-  return NextResponse.json(
-    {
-      error:
-        error.message
-    },
-    {
-      status: 500
-    }
-  );
-
-}
-
 }
