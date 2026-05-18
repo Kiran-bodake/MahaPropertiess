@@ -30,7 +30,13 @@ export async function GET(
       );
 
     let properties =
-      await Property.find();
+
+  await Property.find({
+
+    approvalStatus:
+      "approved"
+
+  });
 
     /* Category Filter */
     if (

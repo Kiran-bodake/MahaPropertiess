@@ -35,8 +35,10 @@ export function AdminNavbar(){
         router=useRouter();
 
   const [query,setQuery]=useState(""),
-        [open,setOpen]=useState(false),
-        [mobile,setMobile]=useState(false);
+      [open,setOpen]=useState(false),
+      [mobile,setMobile]=useState(false),
+      [showNotifications,setShowNotifications]=useState(false),
+      [notifications,setNotifications]=useState<any[]>([]);
 
   const breadcrumb=useMemo(
     ()=>crumbs[path as keyof typeof crumbs]||["Dashboard"],
@@ -50,6 +52,30 @@ export function AdminNavbar(){
     window.addEventListener("resize",check);
     return()=>window.removeEventListener("resize",check);
   },[]);
+
+  useEffect(()=>{
+
+  const fetchNotifications =
+    async()=>{
+
+      const res =
+        await fetch(
+          "/api/admin/notifications"
+        );
+
+      const data =
+        await res.json();
+
+      setNotifications(
+        data.notifications || []
+      );
+
+    };
+
+  fetchNotifications();
+
+},[]);
+
 
   // Auth check
   useEffect(()=>{
@@ -190,23 +216,212 @@ export function AdminNavbar(){
           )}
 
           {/* Notifications */}
-          <button style={{
-            ...btn,
-            position:"relative",
-            padding:10
-          }}>
-            <Bell size={18}/>
+         <div
+  style={{
+    position:"relative"
+  }}
+>
 
-            <span style={{
-              position:"absolute",
-              top:8,
-              right:8,
-              width:8,
-              height:8,
-              borderRadius:"50%",
-              background:"#ef4444"
-            }}/>
-          </button>
+  <button
+    onClick={()=>
+      setShowNotifications(
+        !showNotifications
+      )
+    }
+    style={{
+      ...btn,
+      position:"relative",
+      padding:10
+    }}
+  >
+
+    <Bell size={18}/>
+
+    {
+      notifications.length > 0 && (
+
+        <span
+          style={{
+            position:"absolute",
+            top:5,
+            right:5,
+            minWidth:18,
+            height:18,
+            borderRadius:"50%",
+            background:"#ef4444",
+            color:"#fff",
+            fontSize:10,
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            fontWeight:700
+          }}
+        >
+
+          {
+            notifications.length
+          }
+
+        </span>
+
+      )
+    }
+
+  </button>
+  {
+  showNotifications && (
+
+    <div
+      style={{
+        position:"absolute",
+        top:55,
+        right:0,
+        width:320,
+        background:"#fff",
+        border:"1px solid #e2e8f0",
+        borderRadius:16,
+        padding:12,
+        boxShadow:
+          "0 20px 40px rgba(0,0,0,.08)",
+        zIndex:999
+      }}
+    >
+
+      {
+
+        notifications.length ?
+
+          notifications.map(
+
+            (item,index)=>(
+
+              <div
+                key={index}
+                style={{
+                  padding:"12px 0",
+                  borderBottom:
+                    "1px solid #f1f5f9"
+                }}
+              >
+
+                <div
+                  style={{
+                    fontWeight:700,
+                    fontSize:13
+                  }}
+                >
+                  {
+                    item.title
+                  }
+                </div>
+
+                <div
+                  style={{
+                    fontSize:12,
+                    color:"#64748b"
+                  }}
+                >
+                  {
+                    item.message
+                  }
+                </div>
+
+              </div>
+
+            )
+
+          )
+
+        :
+
+          <div>
+            No notifications
+          </div>
+
+      }
+
+    </div>
+
+  )  
+}     
+
+{
+  showNotifications && (
+
+    <div
+      style={{
+        position:"absolute",
+        top:55,
+        right:0,
+        width:320,
+        background:"#fff",
+        border:"1px solid #e2e8f0",
+        borderRadius:16,
+        padding:12,
+        boxShadow:
+          "0 20px 40px rgba(0,0,0,.08)",
+        zIndex:999
+      }}
+    >
+
+      {
+
+        notifications.length ?
+
+          notifications.map(
+
+            (item,index)=>(
+
+              <div
+                key={index}
+                style={{
+                  padding:"12px 0",
+                  borderBottom:
+                    "1px solid #f1f5f9"
+                }}
+              >
+
+                <div
+                  style={{
+                    fontWeight:700,
+                    fontSize:13
+                  }}
+                >
+                  {
+                    item.title
+                  }
+                </div>
+
+                <div
+                  style={{
+                    fontSize:12,
+                    color:"#64748b"
+                  }}
+                >
+                  {
+                    item.message
+                  }
+                </div>
+
+              </div>
+
+            )
+
+          )
+
+        :
+
+          <div>
+            No notifications
+          </div>
+
+      }
+
+    </div>
+
+  )
+}
+</div>
 
           {/* Profile */}
           <div style={{position:"relative"}}>

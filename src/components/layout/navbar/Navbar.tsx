@@ -1336,6 +1336,21 @@ export function Navbar() {
                             <Heart size={16} />
                             Favorite Properties
                           </Link>
+                          <Link
+  href="/my-properties"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    padding: "12px",
+    borderRadius: "8px",
+    color: "#111827",
+  }}
+>
+
+  📋 My Property Status
+
+</Link>
 
                           {/* Logout */}
                           <button

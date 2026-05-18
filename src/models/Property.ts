@@ -37,6 +37,24 @@ slug: {
       default: "available",
     },
 
+  approvalStatus: {
+
+     type: String,
+
+       enum: [
+
+       "pending",
+
+       "approved",
+
+        "rejected"
+
+               ],
+
+  default: "pending"
+
+},
+
     constructionStatus: {
       type: String,
       default: "ready",

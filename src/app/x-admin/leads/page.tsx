@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  Eye,
+  EyeOff
+} from "lucide-react";
+
 type Lead = {
   _id: string;
   name: string;
@@ -43,6 +48,28 @@ export default function LeadsPage() {
 
   const [selected, setSelected] =
     useState<string[]>([]);
+    const maskPhone =
+  (phone?: string) => {
+
+    if (!phone)
+      return "-";
+
+    return (
+      "xxxxxx" +
+      phone.slice(-4)
+    );
+
+};
+
+  const [
+
+  visibleContacts,
+
+  setVisibleContacts
+
+] = useState<
+  Record<string, boolean>
+>({});
 
   useEffect(() => {
 
@@ -664,12 +691,69 @@ export default function LeadsPage() {
                       }
                     </div>
 
-                    <div>
-                      {
-                        x.contact ||
-                        "-"
-                      }
-                    </div>
+                   <div
+  style={{
+    display:"flex",
+    alignItems:"center",
+    gap:8
+  }}
+>
+
+  <span>
+
+    {
+      visibleContacts[
+        x._id
+      ]
+
+        ? x.contact
+
+        : maskPhone(
+            x.contact
+          )
+    }
+
+  </span>
+
+
+  <button
+    onClick={()=>
+
+      setVisibleContacts(
+        (prev)=>({
+
+          ...prev,
+
+          [x._id]:
+            !prev[
+              x._id
+            ]
+
+        })
+
+      )
+
+    }
+    style={{
+      border:"none",
+      background:"none",
+      cursor:"pointer"
+    }}
+  >
+
+    {
+      visibleContacts[
+        x._id
+      ]
+
+        ? <EyeOff size={16}/>
+
+        : <Eye size={16}/>
+    }
+
+  </button>
+
+</div>
 
                     <div>
                       {

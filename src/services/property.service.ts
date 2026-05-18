@@ -22,6 +22,8 @@ export const createProperty = async (
     );
   }
 
+  
+
   const existingProperty =
     await Property.findOne({
       propertyId,
@@ -34,21 +36,19 @@ export const createProperty = async (
   }
 
 
-  const slug =
+ const slug =
+  `${slugify(body.title, {
+    lower: true,
+    strict: true
+  })}-${body.propertyId.toLowerCase()}`;
 
-  slugify(
-
-    body.title,
-
-    {
-
-      lower: true,
-
-      strict: true
-
-    }
-
-  );
+  function generateSlug(title: string) {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
   /* MAIN PROPERTY */
   const property =
     await Property.create({
@@ -65,6 +65,9 @@ export const createProperty = async (
 
       category:
         body.category,
+
+      approvalStatus:
+             "pending",
 
       categoryLabel:
         body.categoryLabel || "",
@@ -83,6 +86,7 @@ export const createProperty = async (
 
       agentPhone:
         body.agentPhone
+        
 
     });
 
@@ -95,7 +99,7 @@ export const createProperty = async (
       propertyId,
 
       postedBy:
-        body.postedBy,
+    body.postedBy ||"owner",
 
       name:
         body.agentName,

@@ -43,22 +43,58 @@ export function AdminSidebar(){
   const renderMenu=()=>(
     <>
       {/* Logo */}
-      <div style={{display:"flex",alignItems:"center",gap:12}}>
-        <Image src="/maha.png" alt="Maha" width={42} height={42}/>
+      {/* Logo */}
+<div
+  style={{
+    display:"flex",
+    flexDirection:"column",
+    alignItems:"center",
+    justifyContent:"center",
+    textAlign:"center",
+    paddingBottom:"22px",
+    borderBottom:"1px solid rgba(255,255,255,.08)"
+  }}
+>
 
-        <div>
-          <div style={{color:"#fff",fontSize:14,fontWeight:700}}>
-            MahaProperties
-          </div>
+  {/* Logo Image */}
+  <Image
+    src="/maha.png"
+    alt="Maha"
+    width={110}
+    height={110}
+    style={{
+      objectFit:"contain",
+      borderRadius:"12px"
+    }}
+  />
 
-          <div style={{color:"#94a3b8",fontSize:12,marginTop:4}}>
-            Command Center
-          </div>
-        </div>
-      </div>
+  {/* Brand Name */}
+  <div
+    style={{
+      color:"#fff",
+      fontSize:"20px",
+      fontWeight:700,
+      marginTop:"12px"
+    }}
+  >
+    MahaProperties
+  </div>
+
+  {/* Subtitle */}
+  <div
+    style={{
+      color:"#94a3b8",
+      fontSize:"12px",
+      marginTop:"4px"
+    }}
+  >
+  
+  </div>
+
+</div>
 
       {/* Menu */}
-      <div style={{marginTop:36}}>
+      <div style={{marginTop:0}}>
 
         <div style={{
           color:"#64748b",
@@ -91,7 +127,7 @@ export function AdminSidebar(){
                 textDecoration:"none",
                 color:"#fff",
                 background:active
-                  ? "linear-gradient(135deg,#4f46e5,#7c3aed)"
+                  ? "linear-gradient(180deg,#312e81,#6d28d9)"
                   : "transparent",
                 boxShadow:active
                   ? "0 12px 24px rgba(79,70,229,.35)"
@@ -207,7 +243,7 @@ export function AdminSidebar(){
           zIndex:999,
           transition:".3s",
           boxSizing:"border-box",
-          background:"linear-gradient(180deg,#0f172a,#1e293b)"
+          background:   "linear-gradient(180deg,#064e3b,#047857)"
         }}>
 
           <button
@@ -218,7 +254,7 @@ export function AdminSidebar(){
               top:18,
               border:"none",
               background:"none",
-              color:"#fff",
+              color:"#861d1d",
               cursor:"pointer"
             }}
           >
@@ -239,7 +275,7 @@ export function AdminSidebar(){
       height:"100vh",
       padding:24,
       boxSizing:"border-box",
-      background:"linear-gradient(180deg,#0f172a,#1e293b)",
+      background:"linear-gradient(180deg,#064e3b,#047857)",
       borderRight:"1px solid #334155"
     }}>
       {renderMenu()}

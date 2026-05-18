@@ -247,8 +247,14 @@ export default function LoginPage() {
 );
 
 localStorage.setItem(
+
   "user",
+
   JSON.stringify({
+
+    _id:
+      data.user?._id,
+
     name:
       data.user?.name ||
       "User",
@@ -256,7 +262,9 @@ localStorage.setItem(
     phone:
       data.user?.phone ||
       mobile,
+
   })
+
 );
 
 window.location.href =
