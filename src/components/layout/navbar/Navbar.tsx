@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useAutocomplete } from "@/hooks/useAutocomplete";
 import { AutocompleteDropdown } from "@/components/shared/AutocompleteDropdown";
+import AuthModal from "@/components/auth/AuthModal";
 
 /* ─── Nav data types ─────────────────────────────────────── */
 type NavSubLink = {
@@ -399,6 +400,7 @@ export function Navbar() {
   const menuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [user, setUser] = useState<any>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   /* Logout */
   const logout = () => {
@@ -501,19 +503,13 @@ export function Navbar() {
   });
 
   const handleNavbarPropertySelect = (item: any) => {
-   const propertyName =
-
-  item.title ||
-
-  item.name ||
-
-  item.locality ||
-
-  item.city ||
-
-  item.category ||
-
-  "";
+    const propertyName =
+      item.title ||
+      item.name ||
+      item.locality ||
+      item.city ||
+      item.category ||
+      "";
 
     setShowSuggestions(false);
 
@@ -894,38 +890,30 @@ export function Navbar() {
                   }}
                   ref={autocompleteRef}
                 >
-                 <AutocompleteDropdown
-  suggestions={suggestions}
-  isLoading={isLoading}
-  isOpen={showSuggestions}
-  query={searchQ}
-  onClose={handleCloseSuggestions}
-  onSelect={(item: any) => {
+                  <AutocompleteDropdown
+                    suggestions={suggestions}
+                    isLoading={isLoading}
+                    isOpen={showSuggestions}
+                    query={searchQ}
+                    onClose={handleCloseSuggestions}
+                    onSelect={(item: any) => {
+                      const propertyName =
+                        item.title ||
+                        item.name ||
+                        item.locality ||
+                        item.city ||
+                        item.category ||
+                        "";
 
-    const propertyName =
+                      setShowSuggestions(false);
 
-      item.title ||
-
-      item.name ||
-
-      item.locality ||
-
-      item.city ||
-
-      item.category ||
-
-      "";
-
-    setShowSuggestions(false);
-
-    router.push(
-      `/properties?q=${encodeURIComponent(
-        propertyName.trim()
-      )}`
-    );
-
-  }}
-/>
+                      router.push(
+                        `/properties?q=${encodeURIComponent(
+                          propertyName.trim(),
+                        )}`,
+                      );
+                    }}
+                  />
                 </div>
               </div>
 
@@ -1261,6 +1249,62 @@ export function Navbar() {
                   <Search size={16} />
                 </button>
 
+                {/* Phone */}
+                {/* <a
+                  href="tel:+919876543210"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "7px",
+                    padding: "8px 14px",
+                    borderRadius: "9px",
+                    border: onDark
+                      ? "1.5px solid rgba(255,255,255,0.22)"
+                      : "1.5px solid #e5e7eb",
+                    background: onDark ? "rgba(255,255,255,0.1)" : "white",
+                    color: onDark ? "white" : "#374151",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    transition: "all 0.18s",
+                  }}
+                  className="hide-sm"
+                >
+                  <Phone size={14} /> +91 98765 43210
+                </a> */}
+
+                {/* Post CTA */}
+                <Link
+                  href="/post-property"
+                  style={{
+                    padding: "9px 18px",
+                    borderRadius: "9px",
+                    background: "linear-gradient(135deg,#16a34a,#22c55e)",
+                    color: "white",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    boxShadow: "0 4px 12px rgba(22,163,74,0.35)",
+                    whiteSpace: "nowrap",
+                  }}
+                  className="hide-xs"
+                >
+                  List your property
+                  <span
+                    style={{
+                      background: "#d1fae5",
+                      color: "#065f46",
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      borderRadius: "999px",
+                      padding: "1px 7px",
+                    }}
+                  >
+                    FREE
+                  </span>
+                </Link>
+
                 {/* ✅ ADD HERE — Auth Buttons */}
                 <div
                   style={{
@@ -1374,65 +1418,34 @@ export function Navbar() {
                       )}
                     </div>
                   ) : (
-                    <Link href="/login">Login</Link>
+                    <button
+                      onClick={() => setShowAuthModal(true)}
+                      style={{
+                        height: "40px",
+
+                        padding: "0 18px",
+
+                        borderRadius: "10px",
+
+                        border: "1.5px solid #e5e7eb",
+
+                        background: "#ffffff",
+
+                        color: "#111827",
+
+                        fontWeight: 700,
+
+                        fontSize: "14px",
+
+                        cursor: "pointer",
+
+                        transition: "all .2s ease",
+                      }}
+                    >
+                      Login
+                    </button>
                   )}
                 </div>
-
-                {/* Phone */}
-                {/* <a
-                  href="tel:+919876543210"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    padding: "8px 14px",
-                    borderRadius: "9px",
-                    border: onDark
-                      ? "1.5px solid rgba(255,255,255,0.22)"
-                      : "1.5px solid #e5e7eb",
-                    background: onDark ? "rgba(255,255,255,0.1)" : "white",
-                    color: onDark ? "white" : "#374151",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    transition: "all 0.18s",
-                  }}
-                  className="hide-sm"
-                >
-                  <Phone size={14} /> +91 98765 43210
-                </a> */}
-
-                {/* Post CTA */}
-                <Link
-                  href="/post-property"
-                  style={{
-                    padding: "9px 18px",
-                    borderRadius: "9px",
-                    background: "linear-gradient(135deg,#16a34a,#22c55e)",
-                    color: "white",
-                    fontSize: "13px",
-                    fontWeight: 700,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    boxShadow: "0 4px 12px rgba(22,163,74,0.35)",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="hide-xs"
-                >
-                  List your property
-                  <span
-                    style={{
-                      background: "#d1fae5",
-                      color: "#065f46",
-                      fontSize: "10px",
-                      fontWeight: 700,
-                      borderRadius: "999px",
-                      padding: "1px 7px",
-                    }}
-                  >
-                    FREE
-                  </span>
-                </Link>
 
                 {/* Burger (always visible) */}
                 <button
@@ -1455,6 +1468,16 @@ export function Navbar() {
                   <Menu size={18} />
                 </button>
               </div>
+              {showAuthModal && (
+                <AuthModal
+                  onClose={() => setShowAuthModal(false)}
+                  onLoginSuccess={(userData) => {
+                    setUser(userData);
+
+                    setShowAuthModal(false);
+                  }}
+                />
+              )}
             </>
           )}
         </div>
