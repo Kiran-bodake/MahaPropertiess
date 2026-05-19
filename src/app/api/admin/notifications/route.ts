@@ -1,139 +1,76 @@
-import { connectDB }
-  from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 
-import Notification
-  from "@/models/Notification";
-
+import Notification from "@/models/Notification";
 
 // GET notifications
 export async function GET() {
-
-  try{
-
+  try {
     await connectDB();
 
-   const notifications =
-
-  await Notification.find({
-
-    isRead:false
-
-  })
-
-    .sort({
-
-      createdAt:-1
-
+    const notifications = await Notification.find({
+      isRead: false,
     })
 
-    .limit(20);
+      .sort({
+        createdAt: -1,
+      })
+
+      .limit(20);
 
     return Response.json({
+      success: true,
 
-      success:true,
-
-      notifications
-
+      notifications,
     });
-
-  }
-
-  catch(error){
-
-    console.error(
-      error
-    );
+  } catch (error) {
+    console.error(error);
 
     return Response.json(
-
       {
+        success: false,
 
-        success:false,
-
-        notifications:[]
-
+        notifications: [],
       },
 
       {
-
-        status:500
-
-      }
-
+        status: 500,
+      },
     );
-
   }
-
 }
 
-
-
 // Mark notification as read
-export async function POST(
-
-  req: Request
-
-){
-
-  try{
-
+export async function POST(req: Request) {
+  try {
     await connectDB();
 
-    const {
-
-      referenceId
-
-    } = await req.json();
-
+    const { referenceId } = await req.json();
 
     await Notification.updateMany(
-
       {
-
-        referenceId
-
+        referenceId,
       },
 
       {
-
-        isRead:true
-
-      }
-
+        isRead: true,
+      },
     );
-
 
     // IMPORTANT
     return Response.json({
-
-      success:true
-
+      success: true,
     });
-
-  }
-
-  catch(error){
-
-    console.error(
-      error
-    );
+  } catch (error) {
+    console.error(error);
 
     return Response.json(
-
       {
-
-        success:false
-
+        success: false,
       },
 
       {
-
-        status:500
-
-      }
-
+        status: 500,
+      },
     );
-
   }
-
 }

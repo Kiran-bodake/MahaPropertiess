@@ -197,9 +197,7 @@ export default async function PropertyDetailPage({
           <div
             className="mainGrid"
             style={{
-              display: "grid",
-
-              gridTemplateColumns: "minmax(0,3fr) minmax(340px,1fr)",
+              display: "flex",
 
               gap: 24,
 
@@ -209,13 +207,15 @@ export default async function PropertyDetailPage({
             {/* LEFT */}
             <article
               style={{
+                flex: 1,
+                minWidth: 0,
                 width: "100%",
 
                 background: "#fff",
 
                 borderRadius: 24,
 
-                overflow: "hidden",
+                overflow: "visible",
 
                 boxShadow: "0 8px 30px rgba(0,0,0,.05)",
               }}
@@ -224,82 +224,99 @@ export default async function PropertyDetailPage({
               <div
                 style={{
                   position: "relative",
+                  overflow: "hidden",
+                  borderRadius: "24px 24px 0 0",
+                  minHeight: 520,
                 }}
               >
                 <PropertyGallery
                   images={property.images}
                   title={property.title}
+                  price={property.price}
                 />
-
-                {/* PRICE OVERLAY */}
                 <div
                   style={{
                     position: "absolute",
-
-                    left: 24,
-
-                    bottom: 95,
-
-                    zIndex: 20,
-
-                    color: "#fff",
-
-                    fontWeight: 800,
-
-                    fontSize: "2rem",
-
-                    textShadow: "0 2px 10px rgba(0,0,0,.85)",
-
-                    padding: "8px 14px",
-
-                    borderRadius: 14,
-
-                    backdropFilter: "blur(8px)",
-
-                    background: "rgba(0,0,0,.25)",
+                    left: 0,
+                    right: 0,
+                    bottom: 82,
+                    height: 90,
+                    background:
+                      "linear-gradient(to top, rgba(0,0,0,.38), transparent)",
+                    pointerEvents: "none",
+                    zIndex: 2,
                   }}
-                >
-                  ₹{property.price.toLocaleString()}
-                </div>
+                />
               </div>
 
               {/* BODY */}
               <div
+                className="propertyBody"
                 style={{
-                  padding: 28,
+                  padding: 36,
                 }}
               >
-                <h1
-                  style={{
-                    margin: 0,
-
-                    fontSize: "clamp(1.5rem,4vw,2.3rem)",
-
-                    fontWeight: 800,
-                  }}
-                >
-                  {property.title}
-                </h1>
-
                 <div
+                  className="titleRow"
                   style={{
-                    marginTop: 8,
-
-                    color: "#64748b",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: 16,
+                    marginBottom: 24,
+                    flexWrap: "wrap",
                   }}
                 >
-                  📍 {property.locality}, {property.city}
-                </div>
+                  {/* LEFT */}
+                  <div
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    <h1
+                      style={{
+                        margin: 0,
+                        fontSize: "clamp(1.6rem,4vw,2.5rem)",
+                        fontWeight: 900,
+                        lineHeight: 1.15,
+                        color: "#0f172a",
+                        letterSpacing: "-0.04em",
+                      }}
+                    >
+                      {property.title}
+                    </h1>
 
-                <div
-                  style={{
-                    marginTop: 18,
-                  }}
-                >
-                  <PropertyActions
-                    propertyId={property.slug}
-                    propertyTitle={property.title}
-                  />
+                    <div
+                      style={{
+                        marginTop: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        color: "#64748b",
+                        fontSize: ".96rem",
+                        fontWeight: 500,
+                      }}
+                    >
+                      <span>📍</span>
+
+                      <span>
+                        {property.locality}, {property.city}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* RIGHT */}
+                  <div
+                    style={{
+                      flexShrink: 0,
+                    }}
+                  >
+                    <PropertyActions
+                      propertyId={property.slug}
+                      propertyTitle={property.title}
+                    />
+                  </div>
                 </div>
 
                 {/* BADGES */}
@@ -334,27 +351,46 @@ export default async function PropertyDetailPage({
                   }}
                 >
                   <InfoCard
+                    icon="📐"
                     label="Area"
                     value={`${property.area} ${property.areaUnit}`}
                   />
 
-                  <InfoCard label="Listed By" value={property.postedBy} />
+                  <InfoCard
+                    icon="🏢"
+                    label="Listed By"
+                    value={property.postedBy}
+                  />
 
-                  <InfoCard label="Agent" value={property.agentName} />
+                  <InfoCard
+                    icon="👤"
+                    label="Agent"
+                    value={property.agentName}
+                  />
                 </div>
 
                 {/* DESCRIPTION */}
                 <SectionTitle title="Description" />
 
-                <p
+                <div
                   style={{
-                    color: "#475569",
-
-                    lineHeight: 1.8,
+                    background: "#f8fafc",
+                    padding: 24,
+                    borderRadius: 20,
+                    border: "1px solid #e2e8f0",
                   }}
                 >
-                  {property.description}
-                </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#475569",
+                      lineHeight: 1.9,
+                      fontSize: ".98rem",
+                    }}
+                  >
+                    {property.description}
+                  </p>
+                </div>
 
                 {/* AMENITIES */}
                 {property.amenities?.length ? (
@@ -412,78 +448,81 @@ export default async function PropertyDetailPage({
             <aside
               className="sidebar"
               style={{
-                width: "100%",
-
-                maxWidth: 360,
-
-                margin: "0 auto",
+                width: 340,
+                flexShrink: 0,
+                alignSelf: "flex-start",
               }}
             >
               <div
                 style={{
                   position: "sticky",
-
-                  top: 90,
-
-                  background: "#fff",
-
-                  borderRadius: 24,
-
-                  padding: 24,
-
-                  boxShadow: "0 10px 30px rgba(0,0,0,.06)",
+                  top: 100,
                 }}
               >
                 <div
                   style={{
-                    fontWeight: 700,
-
-                    fontSize: "1.1rem",
+                    background: "#fff",
+                    borderRadius: 24,
+                    padding: 24,
+                    boxShadow: "0 10px 30px rgba(0,0,0,.06)",
                   }}
                 >
-                  {property.agentName}
-                </div>
+                  {/* content */}
+                  <div
+                    style={{
+                      paddingBottom: 18,
+                      borderBottom: "1px solid #e2e8f0",
+                      marginBottom: 18,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "1.2rem",
+                        fontWeight: 800,
+                        color: "#0f172a",
+                      }}
+                    >
+                      Interested in this property?
+                    </div>
 
-                <div
-                  style={{
-                    marginTop: 6,
+                    <div
+                      style={{
+                        marginTop: 6,
+                        color: "#64748b",
+                        fontSize: ".92rem",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Get complete details, site visit assistance and best
+                      price.
+                    </div>
+                  </div>
 
-                    color: "#64748b",
-                  }}
-                >
-                  {property.agentPhone}
-                </div>
+                  {/* TRUST */}
+                  <div
+                    style={{
+                      marginTop: 20,
+                      display: "grid",
+                      gap: 8,
+                      color: "#475569",
+                      fontSize: ".92rem",
+                    }}
+                  >
+                    <div>✓ Verified Agent</div>
+                    <div>⚡ Fast Response</div>
+                    <div>👁 High Buyer Interest</div>
+                  </div>
 
-                {/* TRUST */}
-                <div
-                  style={{
-                    marginTop: 20,
-
-                    display: "grid",
-
-                    gap: 8,
-
-                    color: "#475569",
-
-                    fontSize: ".92rem",
-                  }}
-                >
-                  <div>✓ Verified Agent</div>
-
-                  <div>⚡ Fast Response</div>
-
-                  <div>👁 High Buyer Interest</div>
-                </div>
-
-                <div
-                  style={{
-                    marginTop: 20,
-                  }}
-                >
-                  <StickyContactForm
-                    title="Request Callback"
-                    description="Talk with owner today"
-                  />
+                  <div
+                    style={{
+                      marginTop: 20,
+                    }}
+                  >
+                    <StickyContactForm
+                      title="Request Callback"
+                      description="Talk with owner today"
+                    />
+                  </div>
                 </div>
               </div>
             </aside>
@@ -499,6 +538,7 @@ export default async function PropertyDetailPage({
               <SectionTitle title="Similar Properties" />
 
               <div
+                className="relatedGrid"
                 style={{
                   display: "grid",
 
@@ -521,27 +561,35 @@ export default async function PropertyDetailPage({
         </section>
 
         <style>{`
+
   @media (max-width: 1024px) {
 
     .mainGrid {
-      grid-template-columns: 1fr !important;
-    }
+  flex-direction: column !important;
+}
 
     .sidebar {
-      max-width: 100% !important;
       width: 100% !important;
+      max-width: 100% !important;
     }
 
-    .sidebar > div {
-      position: static !important;
-    }
-
+     .sidebar > div {
+    position: static !important;
+    width: 100% !important;
+  }
   }
 
   @media (max-width: 768px) {
 
-    .propertyCard {
-      grid-template-columns: 1fr !important;
+    .propertyBody {
+      padding: 18px !important;
+    }
+
+    .priceOverlay {
+      left: 14px !important;
+      bottom: 80px !important;
+      font-size: 1.25rem !important;
+      padding: 6px 12px !important;
     }
 
     .relatedGrid {
@@ -549,6 +597,17 @@ export default async function PropertyDetailPage({
         repeat(auto-fit,minmax(220px,1fr)) !important;
     }
 
+    .titleRow{
+  flex-direction: column !important;
+}
+
+.titleRow > div:last-child{
+  width: 100%;
+}
+
+.titleRow button{
+  flex: 1;
+}
   }
 
   @media (max-width: 540px) {
@@ -558,6 +617,7 @@ export default async function PropertyDetailPage({
     }
 
   }
+
 `}</style>
       </main>
 
@@ -597,14 +657,21 @@ function Badge({ label }: { label: string }) {
   );
 }
 
-function InfoCard({ label, value }: any) {
+function InfoCard({ label, value, icon }: any) {
   return (
     <div
       style={{
-        background: "#f8fafc",
+        background: "linear-gradient(to bottom,#fff,#f8fafc)",
+
         border: "1px solid #e2e8f0",
-        borderRadius: 16,
-        padding: 14,
+
+        borderRadius: 20,
+
+        padding: 18,
+
+        boxShadow: "0 4px 20px rgba(15,23,42,.04)",
+
+        transition: ".2s ease",
       }}
     >
       <div
@@ -612,6 +679,7 @@ function InfoCard({ label, value }: any) {
           fontWeight: 700,
         }}
       >
+        {icon}
         {value}
       </div>
 

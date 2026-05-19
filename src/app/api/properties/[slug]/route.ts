@@ -14,197 +14,134 @@ import PropertyHighlight from "@/models/PropertyHighlight";
 export async function GET(
   req: Request,
   {
-    params
+    params,
   }: {
     params: Promise<{
-      slug: string
-    }>
-  }
+      slug: string;
+    }>;
+  },
 ) {
-
   try {
-
     await connectDB();
 
-    const {
-      slug
-    } = await params;
+    const { slug } = await params;
 
     /* Find main property */
-  const property =
-  await Property.findOne({
+    const property = await Property.findOne({
+      $or: [
+        {
+          slug: slug,
+        },
 
-    $or: [
-
-      {
-        slug: slug
-      },
-
-      {
-        propertyId: slug
-      }
-
-    ]
-
-  });
+        {
+          propertyId: slug,
+        },
+      ],
+    });
 
     if (!property) {
-
       return NextResponse.json(
         {
-          error:
-            "Property not found"
+          error: "Property not found",
         },
         {
-          status: 404
-        }
+          status: 404,
+        },
       );
-
     }
 
-    const propertyId =
-      property.propertyId;
+    const propertyId = property.propertyId;
 
     /* Related collections */
-    const location =
-      await PropertyLocation.findOne({
-        propertyId
-      });
+    const location = await PropertyLocation.findOne({
+      propertyId,
+    });
 
-    const pricing =
-      await PropertyPricing.findOne({
-        propertyId
-      });
+    const pricing = await PropertyPricing.findOne({
+      propertyId,
+    });
 
-    const area =
-      await PropertyArea.findOne({
-        propertyId
-      });
+    const area = await PropertyArea.findOne({
+      propertyId,
+    });
 
-    const flags =
-      await PropertyFlags.findOne({
-        propertyId
-      });
+    const flags = await PropertyFlags.findOne({
+      propertyId,
+    });
 
-    const images =
-      await PropertyImage.findOne({
-        propertyId
-      });
+    const images = await PropertyImage.findOne({
+      propertyId,
+    });
 
-      const amenities =
-  await PropertyAmenity.findOne({
-    propertyId
-  });
-  
- const highlights =
-  await PropertyHighlight.findOne({
-    propertyId
-  });
+    const amenities = await PropertyAmenity.findOne({
+      propertyId,
+    });
+
+    const highlights = await PropertyHighlight.findOne({
+      propertyId,
+    });
 
     /* Final UI response */
     const result = {
+      id: property._id,
 
-      id:
-        property._id,
+      slug: property.slug || property.propertyId,
 
-    slug:
-  property.slug ||
-  property.propertyId,
-  
-      title:
-        property.title,
+      title: property.title,
 
-      description:
-        property.description,
+      description: property.description,
 
-      category:
-        property.category,
+      category: property.category,
 
-      locality:
-        location?.locality || "",
-        postedBy:
-  property.postedBy || "",
+      locality: location?.locality || "",
+      postedBy: property.postedBy || "",
 
-agentName:
-  property.agentName || "",
+      agentName: property.agentName || "",
 
-agentPhone:
-  property.agentPhone || "",
+      agentPhone: property.agentPhone || "",
 
-status:
-  property.status || "",
+      status: property.status || "",
 
-constructionStatus:
-  property.constructionStatus || "",
+      constructionStatus: property.constructionStatus || "",
 
-createdAt:
-  property.createdAt || "",
+      createdAt: property.createdAt || "",
 
-updatedAt:
-  property.updatedAt || "",
+      updatedAt: property.updatedAt || "",
 
-      city:
-        location?.city || "",
+      city: location?.city || "",
 
-      state:
-        location?.state || "",
+      state: location?.state || "",
 
-      address:
-        location?.address || "",
+      address: location?.address || "",
 
-      price:
-        pricing?.price || 0,
+      price: pricing?.price || 0,
 
-      area:
-        area?.area || 0,
+      area: area?.area || 0,
 
-      areaUnit:
-        area?.areaUnit || "sqft",
+      areaUnit: area?.areaUnit || "sqft",
 
-      rera:
-        flags?.isRERA || false,
+      rera: flags?.isRERA || false,
 
-      badge:
-        flags?.isFeatured
-          ? "Featured"
-          : null,
+      badge: flags?.isFeatured ? "Featured" : null,
 
-      images:
-        images?.images?.map(
-          (x:any) =>
-            x.url
-        ) || [],
+      images: images?.images?.map((x: any) => x.url) || [],
 
-        amenities:
-  amenities?.amenities || [],
+      amenities: amenities?.amenities || [],
 
-  highlights:
-  highlights?.highlights || []
-
+      highlights: highlights?.highlights || [],
     };
 
-    return NextResponse.json(
-      result
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      error
-    );
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error(error);
 
     return NextResponse.json(
       {
-        error:
-          "Failed to load property"
+        error: "Failed to load property",
       },
       {
-        status: 500
-      }
+        status: 500,
+      },
     );
-
   }
-
 }

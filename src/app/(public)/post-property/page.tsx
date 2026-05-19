@@ -510,13 +510,14 @@ function getPropertyNumberLabel(category: string) {
     return "Farmhouse Number";
   }
 
-  // NA / RESIDENTIAL
-  if (
-    cat.includes("na") ||
-    cat.includes("residential") ||
-    cat.includes("cidco")
-  ) {
+  // NA
+  if (cat.includes("na") || cat.includes("cidco")) {
     return "Plot / House Number";
+  }
+
+  // RESIDENTIAL
+  if (cat.includes("residential")) {
+    return "Flat / House Number";
   }
 
   // MIDC
