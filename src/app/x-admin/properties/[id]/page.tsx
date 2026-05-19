@@ -1,40 +1,40 @@
 "use client";
 
-import {
-  use,
-  useEffect,
-  useState
-} from "react";
-
+import { use, useEffect, useState } from "react";
 
 type Property = any;
 
-export default function AdminPropertyDetails({
+export default function AdminPropertyDetails({ params }: any) {
 
-  params
+  const resolvedParams =
+    use(
+      params as Promise<{
+        id: string
+      }>
+    );
 
-}: any){
-
- const resolvedParams =
-  use(
-    params as Promise<{ id:string }>
-  );
   const propertyId =
     resolvedParams.id;
 
   const [
-
     property,
-
     setProperty
-
   ] = useState<Property | null>(null);
 
-  const [editing, setEditing] = useState(false);
+  const [
+    formData,
+    setFormData
+  ] = useState<any>(null);
 
-const [formData, setFormData] = useState<any>(null);
+  const [
+    editing,
+    setEditing
+  ] = useState(false);
 
-const [saving, setSaving] = useState(false);
+  const [
+    saving,
+    setSaving
+  ] = useState(false);
 
 
   useEffect(() => {
@@ -42,14 +42,11 @@ const [saving, setSaving] = useState(false);
     const fetchProperty =
       async () => {
 
-        try{
+        try {
 
           const res =
-
             await fetch(
-
               `/api/admin/properties/${propertyId}`
-
             );
 
           const data =
@@ -59,28 +56,21 @@ const [saving, setSaving] = useState(false);
             data.property
           );
 
-
-          setFormData(data.property);
-
-
-
-
+          setFormData(
+            data.property
+          );
 
         }
 
-        catch(error){
+        catch (error) {
 
-          console.error(
-            error
-          );
+          console.error(error);
 
         }
 
       };
 
-    if(
-      propertyId
-    ){
+    if (propertyId) {
 
       fetchProperty();
 
@@ -89,127 +79,121 @@ const [saving, setSaving] = useState(false);
   }, [propertyId]);
 
 
+  const updateField = (
+    field: string,
+    value: any
+  ) => {
+
+    setFormData(
+      (prev: any) => ({
+
+        ...prev,
+
+        [field]: value
+
+      })
+    );
+
+  };
+
+
+  const saveChanges =
+    async () => {
+
+      try {
+
+        setSaving(true);
+
+        const res =
+          await fetch(
+            `/api/admin/properties/${propertyId}`,
+            {
+              method: "PUT",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify(
+                  formData
+                )
+            }
+          );
+
+        const data =
+          await res.json();
+
+        setProperty(
+          data.property
+        );
+
+        setFormData(
+          data.property
+        );
+
+        setEditing(false);
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+      }
+
+      finally {
+
+        setSaving(false);
+
+      }
+
+    };
+
+
   const approveProperty =
     async () => {
 
       await fetch(
-
         "/api/admin/properties/approve",
-
         {
+          method: "POST",
 
-          method:"POST",
-
-          headers:{
-
+          headers: {
             "Content-Type":
               "application/json"
-
           },
 
           body: JSON.stringify({
-
-            id:
-              propertyId
-
+            id: propertyId
           })
-
         }
-
       );
 
       window.location.href =
         "/x-admin/properties";
 
     };
-const updateField = (
-  field: string,
-  value: any
-) => {
-  setFormData((prev: any) => ({
-    ...prev,
-    [field]: value
-  }));
-};
-
-const saveChanges =
-  async () => {
-
-    try {
-
-      const res =
-        await fetch(
-          `/api/admin/properties/${propertyId}`,
-          {
-            method: "PUT",
-
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
-
-            body:
-              JSON.stringify(
-                formData
-              )
-          }
-        );
-
-      const data =
-        await res.json();
-
-      setProperty(
-        data.property
-      );
-
-      setFormData(
-        data.property
-      );
-
-      setEditing(false);
-
-      alert(
-        "Property updated successfully"
-      );
-
-    }
-
-    catch(error){
-
-      console.error(error);
-
-    }
-
-}; 
 
 
   const rejectProperty =
     async () => {
 
       await fetch(
-
         "/api/admin/properties/reject",
-
         {
+          method: "POST",
 
-          method:"POST",
-
-          headers:{
-
+          headers: {
             "Content-Type":
               "application/json"
-
           },
 
           body: JSON.stringify({
-
-            id:
-              propertyId
-
+            id: propertyId
           })
-
         }
-
       );
 
       window.location.href =
@@ -218,21 +202,14 @@ const saveChanges =
     };
 
 
-  if(
-    !property
-  ){
+  if (!property) {
 
     return (
 
       <div
         style={{
-
-          padding:"60px",
-
-          fontSize:"18px",
-
-          textAlign:"center"
-
+          padding: 60,
+          textAlign: "center"
         }}
       >
 
@@ -250,11 +227,11 @@ const saveChanges =
     <section
       style={{
 
-        minHeight:"100vh",
+        minHeight: "100vh",
 
-        background:"#f1f5f9",
+        background: "#f8fafc",
 
-        padding:"30px"
+        padding: "24px"
 
       }}
     >
@@ -262,18 +239,18 @@ const saveChanges =
       <div
         style={{
 
-          maxWidth:"1400px",
+          maxWidth: "980px",
 
-          margin:"0 auto",
+          margin: "0 auto",
 
-          background:"#fff",
+          background: "#fff",
 
-          borderRadius:"24px",
+          borderRadius: 20,
 
-          overflow:"hidden",
+          overflow: "hidden",
 
           boxShadow:
-            "0 12px 40px rgba(0,0,0,.08)"
+            "0 8px 30px rgba(0,0,0,.06)"
 
         }}
       >
@@ -281,11 +258,7 @@ const saveChanges =
         {/* IMAGE */}
         <div
           style={{
-
-            position:"relative",
-
-            height:"460px"
-
+            height: 320
           }}
         >
 
@@ -299,47 +272,17 @@ const saveChanges =
               "/maha.png"
 
             }
-
-            alt={
-              property.title
-            }
-
+            alt={property.title}
             style={{
 
-              width:"100%",
+              width: "100%",
 
-              height:"100%",
+              height: "100%",
 
-              objectFit:"cover"
+              objectFit: "cover"
 
             }}
           />
-
-          <div
-            style={{
-
-              position:"absolute",
-
-              top:"20px",
-
-              left:"20px",
-
-              background:"#f59e0b",
-
-              color:"#fff",
-
-              padding:"8px 16px",
-
-              borderRadius:"999px",
-
-              fontWeight:700
-
-            }}
-          >
-
-            Pending Review
-
-          </div>
 
         </div>
 
@@ -347,81 +290,66 @@ const saveChanges =
         {/* CONTENT */}
         <div
           style={{
-
-            padding:"35px"
-
+            padding: 24
           }}
         >
 
-          {/* TITLE */}
           <h1
             style={{
 
-              margin:0,
+              margin: 0,
 
-              fontSize:"36px",
+              fontSize: 30,
 
-              fontWeight:800,
-
-              color:"#0f172a"
+              fontWeight: 800
 
             }}
           >
 
-            {
-              property.title
-            }
+            {property.title}
 
           </h1>
 
 
-          {/* LOCATION */}
           <p
             style={{
 
-              marginTop:"10px",
+              marginTop: 8,
 
-              color:"#64748b",
-
-              fontSize:"16px"
+              color: "#64748b"
 
             }}
           >
 
-            📍
-            {" "}
+            📍 {
 
-            {
               property.locality || "--"
-            },
 
-            {" "}
+            }, {
 
-            {
               property.city || "--"
-            },
 
-            {" "}
+            }, {
 
-            {
               property.state || "--"
+
             }
 
           </p>
 
 
-          {/* PROPERTY DETAILS */}
+          {/* DETAILS */}
           <div
             style={{
 
-              display:"grid",
+              display: "grid",
 
               gridTemplateColumns:
-                "repeat(auto-fit,minmax(220px,1fr))",
+                "repeat(auto-fit,minmax(180px,1fr))",
 
-              gap:"16px",
+              gap: 14,
 
-              marginTop:"30px"
+              marginTop: 24
 
             }}
           >
@@ -433,196 +361,110 @@ const saveChanges =
               }
             />
 
-           <AdminField
-  label="Category"
-  field="category"
-  value={formData?.category}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Category"
+              field="category"
+              value={
+                formData?.category
+              }
+              editing={editing}
+              onChange={updateField}
+            />
 
-           <AdminField
-  label="Price"
-  field="price"
-  value={formData?.price}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Price"
+              field="price"
+              value={
+                formData?.price
+              }
+              editing={editing}
+              onChange={updateField}
+            />
 
-          <AdminField
-  label="Area"
-  field="area"
-  value={formData?.area}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Area"
+              field="area"
+              value={
+                formData?.area
+              }
+              editing={editing}
+              onChange={updateField}
+            />
 
-           <AdminField
-  label="Posted By"
-  field="postedBy"
-  value={formData?.postedBy}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Posted By"
+              field="postedBy"
+              value={
+                formData?.postedBy
+              }
+              editing={editing}
+              onChange={updateField}
+            />
 
-           <AdminField
-  label="Agent Name"
-  field="agentName"
-  value={formData?.agentName}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Agent Name"
+              field="agentName"
+              value={
+                formData?.agentName
+              }
+              editing={editing}
+              onChange={updateField}
+            />
 
-           <AdminField
-  label="Agent Phone"
-  field="agentPhone"
-  value={formData?.agentPhone}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Agent Phone"
+              field="agentPhone"
+              value={
+                formData?.agentPhone
+              }
+              editing={editing}
+              onChange={updateField}
+            />
 
-           <AdminField
-  label="Status"
-  field="status"
-  value={formData?.status}
-  editing={editing}
-  onChange={updateField}
-/>
+            <AdminField
+              label="Status"
+              field="status"
+              value={
+                formData?.status
+              }
+              editing={editing}
+              onChange={updateField}
+            />
+
+            <InfoCard
+              label="RERA"
+              value={
+                property.isRERA
+                  ? "Yes"
+                  : "No"
+              }
+            />
+
+            <InfoCard
+              label="Featured"
+              value={
+                property.isFeatured
+                  ? "Yes"
+                  : "No"
+              }
+            />
+
+            <InfoCard
+              label="Zero Brokerage"
+              value={
+                property.isZeroBrokerage
+                  ? "Yes"
+                  : "No"
+              }
+            />
 
           </div>
-{/* PROPERTY FEATURES */}
 
-<h2
-  style={{
-
-    marginTop:"40px",
-
-    fontSize:"24px",
-
-    fontWeight:800,
-
-    color:"#0f172a"
-
-  }}
->
-
-  Property Features
-
-</h2>
-
-
-<div
-  style={{
-
-    marginTop:"20px",
-
-    display:"grid",
-
-    gap:"14px"
-
-  }}
->
-
-  <InfoCard
-    label="Full Address"
-    value={
-
-      `${property.houseNo || ""},
-
-       ${property.street || ""},
-
-       ${property.landmark || ""},
-
-       ${property.pincode || ""}`
-
-    }
-  />
-
-  <InfoCard
-    label="Amenities"
-    value={
-
-      property.amenities?.length ?
-
-      property.amenities.join(", ")
-
-      :
-
-      "--"
-
-    }
-  />
-
-  <InfoCard
-    label="Highlights"
-    value={
-
-      property.highlights?.length ?
-
-      property.highlights.join(", ")
-
-      :
-
-      "--"
-
-    }
-  />
-
-  <InfoCard
-    label="RERA"
-    value={
-
-      property.isRERA ?
-
-      "Yes"
-
-      :
-
-      "No"
-
-    }
-  />
-
-  <InfoCard
-    label="Featured"
-    value={
-
-      property.isFeatured ?
-
-      "Yes"
-
-      :
-
-      "No"
-
-    }
-  />
-
-  <InfoCard
-    label="Zero Brokerage"
-    value={
-
-      property.isZeroBrokerage ?
-
-      "Yes"
-
-      :
-
-      "No"
-
-    }
-  />
-
-</div>
 
           {/* DESCRIPTION */}
           <h2
             style={{
-
-              marginTop:"40px",
-
-              fontSize:"24px"
-
+              marginTop: 30
             }}
           >
 
@@ -632,117 +474,118 @@ const saveChanges =
 
           <p
             style={{
-
-              marginTop:"12px",
-
-              color:"#475569",
-
-              lineHeight:1.8,
-
-              fontSize:"15px"
-
+              color: "#475569"
             }}
           >
 
             {
+
               property.description ||
 
-              "No description available."
+              "No description"
+
             }
 
           </p>
 
 
-     {/* BUTTONS */}
-<div
-  style={{
-    display:"flex",
-    gap:"16px",
-    marginTop:"45px",
-    flexWrap:"wrap"
-  }}
->
+          {/* BUTTONS */}
+          <div
+            style={{
 
-  <button
-    onClick={() =>
-      setEditing(!editing)
-    }
-    style={{
-      flex:1,
-      height:"56px",
-      border:"none",
-      borderRadius:"16px",
-      background:"#2563eb",
-      color:"#fff",
-      fontWeight:800,
-      cursor:"pointer"
-    }}
-  >
-    {
-      editing
-        ? "Cancel Edit"
-        : "Edit Property"
-    }
-  </button>
+              display: "flex",
 
+              gap: 12,
 
-  {
-    editing && (
+              marginTop: 30,
 
-      <button
-        onClick={saveChanges}
-        style={{
-          flex:1,
-          height:"56px",
-          border:"none",
-          borderRadius:"16px",
-          background:"#0f766e",
-          color:"#fff",
-          fontWeight:800,
-          cursor:"pointer"
-        }}
-      >
-        Save Changes
-      </button>
+              flexWrap: "wrap"
 
-    )
-  }
+            }}
+          >
+
+            <ActionButton
+              bg="#2563eb"
+              onClick={() =>
+                setEditing(
+                  !editing
+                )
+              }
+            >
+
+              {
+
+                editing
+
+                  ?
+
+                  "Cancel Edit"
+
+                  :
+
+                  "Edit"
+
+              }
+
+            </ActionButton>
 
 
-  <button
-    onClick={approveProperty}
-    style={{
-      flex:1,
-      height:"56px",
-      border:"none",
-      borderRadius:"16px",
-      background:"#16a34a",
-      color:"#fff",
-      fontWeight:800,
-      cursor:"pointer"
-    }}
-  >
-    Approve Property
-  </button>
+            {
+
+              editing && (
+
+                <ActionButton
+                  bg="#0f766e"
+                  onClick={
+                    saveChanges
+                  }
+                >
+
+                  {
+
+                    saving
+
+                      ?
+
+                      "Saving..."
+
+                      :
+
+                      "Save"
+
+                  }
+
+                </ActionButton>
+
+              )
+
+            }
 
 
-  <button
-    onClick={rejectProperty}
-    style={{
-      flex:1,
-      height:"56px",
-      border:"none",
-      borderRadius:"16px",
-      background:"#dc2626",
-      color:"#fff",
-      fontWeight:800,
-      cursor:"pointer"
-    }}
-  >
-    Reject Property
-  </button>
+            <ActionButton
+              bg="#16a34a"
+              onClick={
+                approveProperty
+              }
+            >
 
-</div>
+              Approve
+
+            </ActionButton>
+
+
+            <ActionButton
+              bg="#dc2626"
+              onClick={
+                rejectProperty
+              }
+            >
+
+              Reject
+
+            </ActionButton>
+
+          </div>
 
         </div>
 
@@ -755,46 +598,161 @@ const saveChanges =
 }
 
 
-function AdminField({
-  label,
-  field,
-  value,
-  editing,
-  onChange
-}: any) {
+function ActionButton({
+
+  children,
+
+  bg,
+
+  onClick
+
+}: any){
 
   return (
-    <div>
 
-      <label>
-        {label}
-      </label>
+    <button
+      onClick={onClick}
+      style={{
+
+        flex: 1,
+
+        minWidth: 160,
+
+        height: 48,
+
+        border: "none",
+
+        borderRadius: 14,
+
+        background: bg,
+
+        color: "#fff",
+
+        fontWeight: 700,
+
+        cursor: "pointer"
+
+      }}
+    >
+
+      {children}
+
+    </button>
+
+  );
+
+}
+
+
+function AdminField({
+
+  label,
+
+  field,
+
+  value,
+
+  editing,
+
+  onChange
+
+}: any){
+
+  return (
+
+    <div
+      style={{
+
+        background: "#f8fafc",
+
+        border:
+          "1px solid #e2e8f0",
+
+        borderRadius: 14,
+
+        padding: 14
+
+      }}
+    >
 
       {
-        editing ? (
+
+        editing
+
+          ?
 
           <input
-            value={value || ""}
-            onChange={(e) =>
+            value={
+              value || ""
+            }
+            onChange={(e)=>
+
               onChange(
                 field,
                 e.target.value
               )
+
             }
+            style={{
+
+              width: "100%",
+
+              height: 40,
+
+              border:
+                "1px solid #cbd5e1",
+
+              borderRadius: 10,
+
+              padding:
+                "0 12px"
+
+            }}
           />
 
-        ) : (
+          :
 
-          <div>
-            {value || "--"}
+          <div
+            style={{
+
+              fontWeight: 700,
+
+              fontSize: 16
+
+            }}
+          >
+
+            {
+
+              value || "--"
+
+            }
+
           </div>
 
-        )
       }
 
+      <div
+        style={{
+
+          marginTop: 8,
+
+          fontSize: 13,
+
+          color: "#64748b"
+
+        }}
+      >
+
+        {label}
+
+      </div>
+
     </div>
+
   );
-} 
+
+}
 
 
 function InfoCard({
@@ -810,14 +768,14 @@ function InfoCard({
     <div
       style={{
 
-        background:"#f8fafc",
+        background: "#f8fafc",
 
         border:
           "1px solid #e2e8f0",
 
-        borderRadius:"18px",
+        borderRadius: 14,
 
-        padding:"18px"
+        padding: 14
 
       }}
     >
@@ -825,17 +783,17 @@ function InfoCard({
       <div
         style={{
 
-          fontWeight:800,
+          fontWeight: 700,
 
-          fontSize:"17px",
-
-          color:"#0f172a"
+          fontSize: 16
 
         }}
       >
 
         {
+
           value || "--"
+
         }
 
       </div>
@@ -843,18 +801,16 @@ function InfoCard({
       <div
         style={{
 
-          marginTop:"6px",
+          marginTop: 8,
 
-          color:"#64748b",
+          fontSize: 13,
 
-          fontSize:"14px"
+          color: "#64748b"
 
         }}
       >
 
-        {
-          label
-        }
+        {label}
 
       </div>
 

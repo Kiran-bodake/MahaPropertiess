@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+import {
+  useSearchParams
+} from "next/navigation";
 
 import {
   Eye,
@@ -8,88 +15,194 @@ import {
 } from "lucide-react";
 
 type Lead = {
-  _id: string;
-  name: string;
-  source: string;
-  status: string;
-  createdAt: string;
-  contact?: string;
+  _id:string;
+  name:string;
+  source:string;
+  status:string;
+  createdAt:string;
+  contact?:string;
+   isViewed?:boolean;
 };
 
-const badge = (s?: string) => {
-  const status = (s || "new").toLowerCase();
+const badge = (s?:string) => {
+
+  const status =
+    (s || "new")
+      .toLowerCase();
 
   return {
-    new: { bg: "#eff6ff", c: "#2563eb" },
-    contacted: { bg: "#fff7ed", c: "#ea580c" },
-    negotiation: { bg: "#f5f3ff", c: "#7c3aed" },
-    closed: { bg: "#f0fdf4", c: "#16a34a" }
+
+    new:{
+      bg:"#eff6ff",
+      c:"#2563eb"
+    },
+
+    contacted:{
+      bg:"#fff7ed",
+      c:"#ea580c"
+    },
+
+    negotiation:{
+      bg:"#f5f3ff",
+      c:"#7c3aed"
+    },
+
+    closed:{
+      bg:"#f0fdf4",
+      c:"#16a34a"
+    }
+
   }[status] || {
-    bg: "#f8fafc",
-    c: "#475569"
+
+    bg:"#f8fafc",
+    c:"#475569"
+
   };
-};
-
-export default function LeadsPage() {
-
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const [query, setQuery] = useState("");
-
-  const [dateFilter, setDateFilter] =
-    useState("7");
-
-  const [fromDate, setFromDate] =
-    useState("");
-
-  const [toDate, setToDate] =
-    useState("");
-
-  const [selected, setSelected] =
-    useState<string[]>([]);
-    const maskPhone =
-  (phone?: string) => {
-
-    if (!phone)
-      return "-";
-
-    return (
-      "xxxxxx" +
-      phone.slice(-4)
-    );
 
 };
+
+
+export default function LeadsPage(){
 
   const [
 
-  visibleContacts,
+    leads,
 
-  setVisibleContacts
+    setLeads
 
-] = useState<
-  Record<string, boolean>
->({});
+  ] = useState<Lead[]>([]);
 
-  useEffect(() => {
 
-    (async () => {
+  const searchParams =
+  useSearchParams();
 
-      try {
+const leadId =
+  searchParams.get("id");
 
-        const r =
+
+  const [
+
+    loading,
+
+    setLoading
+
+  ] = useState(true);
+
+
+  const [
+
+    query,
+
+    setQuery
+
+  ] = useState("");
+
+  const [
+
+  dateFilter,
+
+  setDateFilter
+
+] = useState("today");
+
+
+const [
+
+  fromDate,
+
+  setFromDate
+
+] = useState("");
+
+
+const [
+
+  toDate,
+
+  setToDate
+
+] = useState("");
+
+
+  const [
+
+    selected,
+
+    setSelected
+
+  ] = useState<string[]>([]);
+
+  const [
+
+  selectedProperty,
+
+  setSelectedProperty
+
+] = useState<any>(null);
+
+
+
+const [
+
+  activeLead,
+
+  setActiveLead
+
+] = useState<any>(null);
+
+
+  const [
+
+    visibleContacts,
+
+    setVisibleContacts
+
+  ] = useState<
+    Record<string, boolean>
+  >({});
+
+
+  const maskPhone =
+    (phone?:string) => {
+
+      if(!phone)
+        return "-";
+
+      return (
+        "xxxxxx" +
+        phone.slice(-4)
+      );
+
+    };
+
+
+  useEffect(()=>{
+
+    (async()=>{
+
+      try{
+
+        const res =
+
           await fetch(
+
             "/api/admin/leads"
+
           );
 
-        const d =
-          await r.json();
+        const data =
+
+          await res.json();
 
         setLeads(
-          d.leads || []
+
+          data.leads || []
+
         );
 
-      } finally {
+      }
+
+      finally{
 
         setLoading(false);
 
@@ -97,709 +210,1218 @@ export default function LeadsPage() {
 
     })();
 
-  }, []);
+  },[]);
 
-  const filtered =
-    useMemo(() => {
+  useEffect(()=>{
 
-      const q =
-        query
-          .trim()
-          .toLowerCase();
+  if(
+    leadId &&
+    leads.length
+  ){
 
-      const now =
-        new Date();
-
-      return leads.filter(
-        (x) => {
-
-          const searchMatch =
-            !q ||
-
-            x.name
-              ?.toLowerCase()
-              .includes(q) ||
-
-            x.source
-              ?.toLowerCase()
-              .includes(q) ||
-
-            (
-              x.contact ||
-              ""
-            )
-              .toLowerCase()
-              .includes(q);
-
-          const leadDate =
-            new Date(
-              x.createdAt
-            );
-
-          let dateMatch =
-            true;
-
-          if (
-            dateFilter ===
-            "7"
-          ) {
-
-            const d =
-              new Date();
-
-            d.setDate(
-              now.getDate() -
-                7
-            );
-
-            dateMatch =
-              leadDate >= d;
-
-          }
-
-          else if (
-            dateFilter ===
-            "15"
-          ) {
-
-            const d =
-              new Date();
-
-            d.setDate(
-              now.getDate() -
-                15
-            );
-
-            dateMatch =
-              leadDate >= d;
-
-          }
-
-          else if (
-            dateFilter ===
-            "30"
-          ) {
-
-            const d =
-              new Date();
-
-            d.setDate(
-              now.getDate() -
-                30
-            );
-
-            dateMatch =
-              leadDate >= d;
-
-          }
-
-          else if (
-            dateFilter ===
-            "custom"
-          ) {
-
-            const fromMatch =
-              !fromDate ||
-
-              leadDate >=
-                new Date(
-                  fromDate
-                );
-
-            const toMatch =
-              !toDate ||
-
-              leadDate <=
-                new Date(
-                  `${toDate}T23:59:59`
-                );
-
-            dateMatch =
-              fromMatch &&
-              toMatch;
-
-          }
-
-          return (
-            searchMatch &&
-            dateMatch
-          );
-
-        }
+    const found =
+      leads.find(
+        x => x._id === leadId
       );
 
-    }, [
-      leads,
-      query,
-      dateFilter,
-      fromDate,
-      toDate
-    ]);
+    if(found){
+
+      openLead(found);
+
+    }
+
+  }
+
+},[
+  leadId,
+  leads
+]);
+
+
+const filtered =
+  useMemo(()=>{
+
+    const q =
+
+      query
+        .trim()
+        .toLowerCase();
+
+    const now =
+      new Date();
+
+    return leads.filter(
+
+      x => {
+
+        const searchMatch =
+
+          !q ||
+
+          x.name
+            ?.toLowerCase()
+            .includes(q) ||
+
+          x.source
+            ?.toLowerCase()
+            .includes(q);
+
+        const leadDate =
+          new Date(
+            x.createdAt
+          );
+
+        let dateMatch =
+          true;
+
+
+        if(
+          dateFilter === "today"
+        ){
+
+          dateMatch =
+
+            leadDate
+              .toDateString()
+
+            ===
+
+            now
+              .toDateString();
+
+        }
+
+
+        else if(
+          dateFilter === "7"
+        ){
+
+          const d =
+            new Date();
+
+          d.setDate(
+            now.getDate() - 7
+          );
+
+          dateMatch =
+            leadDate >= d;
+
+        }
+
+
+        else if(
+          dateFilter === "15"
+        ){
+
+          const d =
+            new Date();
+
+          d.setDate(
+            now.getDate() - 15
+          );
+
+          dateMatch =
+            leadDate >= d;
+
+        }
+
+
+        else if(
+          dateFilter === "custom"
+        ){
+
+          const fromMatch =
+
+            !fromDate ||
+
+            leadDate >=
+
+            new Date(
+              fromDate
+            );
+
+          const toMatch =
+
+            !toDate ||
+
+            leadDate <=
+
+            new Date(
+              `${toDate}T23:59:59`
+            );
+
+          dateMatch =
+
+            fromMatch &&
+            toMatch;
+
+        }
+
+        return (
+
+          searchMatch &&
+          dateMatch
+
+        );
+
+      }
+
+    );
+
+  },[
+    leads,
+    query,
+    dateFilter,
+    fromDate,
+    toDate
+  ]);
 
   const toggleSelect =
-    (id: string) => {
+    (id:string) => {
 
       setSelected(
-        (prev) =>
+
+        prev =>
 
           prev.includes(id)
 
-            ? prev.filter(
-                (x) =>
-                  x !== id
-              )
+            ?
 
-            : [
-                ...prev,
-                id
-              ]
+            prev.filter(
+
+              x =>
+
+                x !== id
+
+            )
+
+            :
+
+            [
+
+              ...prev,
+
+              id
+
+            ]
 
       );
 
     };
 
+const openLead =
+  async (
+    lead:any
+  ) => {
+
+    try{
+
+      // mark viewed
+      await fetch(
+
+        "/api/admin/leads/view",
+
+        {
+
+          method:"POST",
+
+          headers:{
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body: JSON.stringify({
+
+            id:
+              lead._id
+
+          })
+
+        }
+
+      );
+
+
+      // open drawer
+      setActiveLead(
+        lead
+      );
+
+
+      // fetch property details
+      if(
+
+        lead.propertyId
+
+      ){
+
+        const res =
+
+          await fetch(
+
+            `/api/admin/property/${lead.propertyId}`
+
+          );
+
+
+        const data =
+
+          await res.json();
+
+
+        setSelectedProperty(
+
+          data.property
+
+        );
+
+      }
+
+
+      // update UI
+      setLeads(
+
+        prev =>
+
+          prev.map(
+
+            item =>
+
+              item._id === lead._id
+
+              ?
+
+              {
+
+                ...item,
+
+                isViewed:true
+
+              }
+
+              :
+
+              item
+
+          )
+
+      );
+
+    }
+
+    catch(error){
+
+      console.error(
+        error
+      );
+
+    }
+
+};
+
+
   const toggleSelectAll =
     () => {
 
-      if (
+      if(
+
         selected.length ===
+
         filtered.length
-      ) {
+
+      ){
 
         setSelected([]);
 
       }
 
-      else {
+      else{
 
         setSelected(
+
           filtered.map(
-            (x) =>
+
+            x =>
+
               x._id
+
           )
+
         );
 
       }
 
     };
 
+
   const deleteSelected =
     async () => {
 
-      if (
+      if(
+
         selected.length === 0
+
       ) return;
 
+
       const ok =
+
         confirm(
+
           `Delete ${selected.length} leads?`
+
         );
 
-      if (!ok) return;
+      if(!ok) return;
+
 
       await Promise.all(
 
         selected.map(
-          (id) =>
+
+          id =>
 
             fetch(
+
               `/api/admin/leads/${id}`,
+
               {
-                method:
-                  "DELETE"
+
+                method:"DELETE"
+
               }
+
             )
 
         )
 
       );
 
+
       setLeads(
-        (prev) =>
+
+        prev =>
 
           prev.filter(
-            (x) =>
+
+            x =>
 
               !selected.includes(
+
                 x._id
+
               )
 
           )
 
       );
 
+
       setSelected([]);
 
     };
 
-  return (
+
+  return(
 
     <div
       style={{
-        padding: 28,
-        background:
-          "#f8fafc",
-        minHeight:
-          "100vh",
-        fontFamily:
-          "Inter,sans-serif"
+
+        padding:"20px 24px",
+
+        background:"#f8fafc",
+
+        minHeight:"100vh",
+
+        fontFamily:"Inter,sans-serif"
+
       }}
     >
 
       {/* TOP */}
       <div
         style={{
-          background:
-            "#fff",
-          borderRadius: 24,
-          border:
-            "1px solid #e2e8f0",
-          padding: 24,
-          marginBottom: 24
+
+          background:"#fff",
+
+          borderRadius:20,
+
+          padding:"20px 24px",
+
+          marginBottom:18,
+
+          border:"1px solid #e2e8f0",
+
+          boxShadow:
+
+            "0 6px 24px rgba(15,23,42,.04)"
+
         }}
       >
 
-        <div
+        <h1
           style={{
-            fontSize: 28,
-            fontWeight: 700,
-            color:
-              "#0f172a"
+
+            margin:0,
+
+            fontSize:28,
+
+            fontWeight:800,
+
+            color:"#0f172a"
+
           }}
         >
+
           Lead Dashboard
-        </div>
 
-        <div
+        </h1>
+
+
+        <p
           style={{
-            color:
-              "#64748b",
-            marginTop: 4
+
+            marginTop:6,
+
+            color:"#64748b"
+
           }}
         >
-          Track and manage your sales leads
-        </div>
+
+          Manage all incoming sales leads
+
+        </p>
+
 
         <div
           style={{
-            display:
-              "flex",
-            gap: 12,
-            marginTop: 20,
-            alignItems:
-              "center",
-            flexWrap:
-              "wrap"
+
+           display:"flex",
+gap:12,
+alignItems:"center",
+marginTop:20
+
           }}
         >
 
           {/* SEARCH */}
           <input
+
             value={query}
+
             onChange={(e)=>
+
               setQuery(
+
                 e.target.value
+
               )
+
             }
+
             placeholder="Search leads..."
+
             style={{
-              width: 280,
-              padding:
-                "12px 16px",
-              border:
-                "1px solid #e2e8f0",
-              borderRadius: 12
+
+              width:260,
+
+              height:48,
+
+              border:"1px solid #e2e8f0",
+
+              borderRadius:14,
+
+              padding:"0 16px",
+
+              outline:"none",
+
+              fontSize:14
+
             }}
+
           />
+          <select
+
+  value={dateFilter}
+
+  onChange={(e)=>
+
+    setDateFilter(
+
+      e.target.value
+
+    )
+
+  }
+
+  style={{
+
+    height:48,
+
+    border:
+      "1px solid #e2e8f0",
+
+    borderRadius:14,
+
+    padding:"0 16px"
+
+  }}
+
+>
+
+  <option value="today">
+    Today
+  </option>
+
+  <option value="7">
+    Last 7 Days
+  </option>
+
+  <option value="15">
+    Last 15 Days
+  </option>
+
+  <option value="custom">
+    Custom
+  </option>
+
+</select>
+{
+
+  dateFilter === "custom" && (
+
+    <>
+
+      <input
+        type="date"
+        value={fromDate}
+        onChange={(e)=>
+
+          setFromDate(
+
+            e.target.value
+
+          )
+
+        }
+      />
+
+      <input
+        type="date"
+        value={toDate}
+        onChange={(e)=>
+
+          setToDate(
+
+            e.target.value
+
+          )
+
+        }
+      />
+
+    </>
+
+  )
+
+}
+
+
 
           {/* COUNT */}
           <div
             style={{
-              background:
-                "#eef2ff",
-              color:
-                "#4338ca",
-              padding:
-                "12px 18px",
-              borderRadius: 12,
-              fontWeight: 600
+
+              height:48,
+
+              padding:"0 18px",
+
+              display:"flex",
+
+              alignItems:"center",
+
+              borderRadius:14,
+
+              background:"#eff6ff",
+
+              color:"#1d4ed8",
+
+              fontWeight:700
+
             }}
           >
+
             {
               filtered.length
-            } Leads
-          </div>
-
-          {/* DATE FILTER */}
-          <div
-            style={{
-              marginLeft:
-                "auto",
-              display:
-                "flex",
-              gap: 12,
-              alignItems:
-                "center",
-              flexWrap:
-                "wrap"
-            }}
-          >
-
-            <select
-              value={
-                dateFilter
-              }
-              onChange={(e)=>
-                setDateFilter(
-                  e.target.value
-                )
-              }
-              style={{
-                padding:
-                  "12px 16px",
-                border:
-                  "1px solid #e2e8f0",
-                borderRadius: 12
-              }}
-            >
-
-              <option value="7">
-                Last 7 Days
-              </option>
-
-              <option value="15">
-                Last 15 Days
-              </option>
-
-              <option value="30">
-                Last Month
-              </option>
-
-              <option value="custom">
-                Custom
-              </option>
-
-            </select>
-
-            {dateFilter ===
-              "custom" && (
-
-              <>
-
-                <input
-                  type="date"
-                  value={
-                    fromDate
-                  }
-                  onChange={(e)=>
-                    setFromDate(
-                      e.target.value
-                    )
-                  }
-                  style={{
-                    padding:
-                      "12px 16px",
-                    border:
-                      "1px solid #e2e8f0",
-                    borderRadius: 12
-                  }}
-                />
-
-                <input
-                  type="date"
-                  value={
-                    toDate
-                  }
-                  onChange={(e)=>
-                    setToDate(
-                      e.target.value
-                    )
-                  }
-                  style={{
-                    padding:
-                      "12px 16px",
-                    border:
-                      "1px solid #e2e8f0",
-                    borderRadius: 12
-                  }}
-                />
-
-              </>
-
-            )}
+            }
+            {" "}
+            Leads
 
           </div>
+
 
           {/* DELETE */}
-          {selected.length >
-            0 && (
+          {
 
-            <button
-              onClick={
-                deleteSelected
-              }
-              style={{
-                background:
-                  "#dc2626",
-                color:
-                  "#fff",
-                border:
-                  "none",
-                borderRadius: 12,
-                padding:
-                  "12px 16px",
-                cursor:
-                  "pointer"
-              }}
-            >
-              Delete (
-              {
-                selected.length
-              }
-              )
-            </button>
+            selected.length > 0 && (
 
-          )}
+              <button
+
+                onClick={
+
+                  deleteSelected
+
+                }
+
+                style={{
+
+                  height:48,
+
+                  border:"none",
+
+                  borderRadius:14,
+
+                  background:"#dc2626",
+
+                  color:"#fff",
+
+                  padding:"0 20px",
+
+                  cursor:"pointer",
+
+                  fontWeight:700
+
+                }}
+
+              >
+
+                Delete (
+                {
+                  selected.length
+                }
+                )
+
+              </button>
+
+            )
+
+          }
 
         </div>
 
       </div>
 
+
       {/* TABLE */}
       <div
         style={{
-          background:
-            "#fff",
-          borderRadius: 24,
-          overflow:
-            "hidden",
-          border:
-            "1px solid #e2e8f0"
+
+          background:"#fff",
+
+          borderRadius:20,
+
+          border:"1px solid #e2e8f0",
+
+          overflow:"hidden",
+
+          boxShadow:
+
+            "0 8px 30px rgba(15,23,42,.04)"
+
         }}
       >
 
-        {loading ? (
+        {
+
+          loading
+
+          ?
 
           <div
             style={{
-              padding: 30
+
+              padding:30
+
             }}
           >
+
             Loading...
+
           </div>
 
-        ) : (
+          :
 
           <>
 
             {/* HEADER */}
             <div
               style={{
-                display:
-                  "grid",
+
+                display:"grid",
+
                 gridTemplateColumns:
+
                   "60px 2fr 1fr 1fr 1fr 1fr",
-                padding:
-                  "18px 24px",
-                background:
-                  "#f8fafc",
-                fontWeight: 700
+
+                padding:"14px 20px",
+
+                background:"#f8fafc",
+
+                fontWeight:700,
+
+                fontSize:13,
+
+                color:"#475569"
+
               }}
             >
 
               <input
                 type="checkbox"
                 checked={
+
                   selected.length ===
-                    filtered.length &&
-                  filtered.length >
-                    0
+
+                  filtered.length &&
+
+                  filtered.length > 0
+
                 }
                 onChange={
                   toggleSelectAll
                 }
               />
 
-              <div>
-                Name
-              </div>
-
-              <div>
-                Contact
-              </div>
-
-              <div>
-                Source
-              </div>
-
-              <div>
-                Status
-              </div>
-
-              <div>
-                Created
-              </div>
+              <div>Name</div>
+              <div>Contact</div>
+              <div>Source</div>
+              <div>Status</div>
+              <div>Created</div>
 
             </div>
 
+
             {/* ROWS */}
-            {filtered.map(
-              (x) => {
+            {
 
-                const s =
-                  badge(
-                    x.status
-                  );
+              filtered.map(
 
-                return (
+                x => {
 
-                  <div
-                    key={
-                      x._id
-                    }
-                    style={{
-                      display:
-                        "grid",
-                      gridTemplateColumns:
-                        "60px 2fr 1fr 1fr 1fr 1fr",
-                      padding:
-                        "18px 24px",
-                      borderTop:
-                        "1px solid #f1f5f9",
-                      alignItems:
-                        "center"
-                    }}
-                  >
+                  const s =
 
-                    <input
-                      type="checkbox"
-                      checked={
-                        selected.includes(
-                          x._id
-                        )
-                      }
-                      onChange={()=>
-                        toggleSelect(
-                          x._id
-                        )
-                      }
-                    />
+                    badge(
 
-                    <div>
-                      {
-                        x.name
-                      }
-                    </div>
+                      x.status
 
-                   <div
+                    );
+
+                  return(
+
+                    <div
+  key={x._id}
+  onClick={()=>
+
+    openLead(x)
+
+  }
   style={{
-    display:"flex",
+
+    display:"grid",
+
+    gridTemplateColumns:
+      "60px 2fr 1fr 1fr 1fr 1fr",
+
+    padding:"14px 20px",
+
+    borderTop:
+      "1px solid #f1f5f9",
+
     alignItems:"center",
-    gap:8
+
+    minHeight:64,
+
+
+    background:
+
+      x.isViewed
+
+      ?
+
+      "#ffffff"
+
+      :
+
+      "#dbeafe"
+
   }}
 >
 
-  <span>
+                      <input
+                        type="checkbox"
+                        checked={
 
-    {
-      visibleContacts[
-        x._id
-      ]
+                          selected.includes(
 
-        ? x.contact
+                            x._id
 
-        : maskPhone(
-            x.contact
-          )
-    }
+                          )
 
-  </span>
+                        }
+                        onChange={()=>
+
+                          toggleSelect(
+
+                            x._id
+
+                          )
+
+                        }
+                      />
 
 
-  <button
-    onClick={()=>
-
-      setVisibleContacts(
-        (prev)=>({
-
-          ...prev,
-
-          [x._id]:
-            !prev[
-              x._id
-            ]
-
-        })
-
-      )
-
-    }
-    style={{
-      border:"none",
-      background:"none",
-      cursor:"pointer"
-    }}
-  >
-
-    {
-      visibleContacts[
-        x._id
-      ]
-
-        ? <EyeOff size={16}/>
-
-        : <Eye size={16}/>
-    }
-
-  </button>
-
-</div>
-
-                    <div>
-                      {
-                        x.source
-                      }
-                    </div>
-
-                    <div>
-
-                      <span
+                      <div
                         style={{
-                          background:
-                            s.bg,
-                          color:
-                            s.c,
-                          padding:
-                            "6px 12px",
-                          borderRadius: 999,
-                          fontSize: 12
+
+                          fontWeight:600
+
                         }}
                       >
+
                         {
-                          x.status
+                          x.name
                         }
-                      </span>
+
+                      </div>
+
+
+                      {/* CONTACT */}
+                      <div
+                        style={{
+
+                          display:"flex",
+
+                          gap:8,
+
+                          alignItems:"center"
+
+                        }}
+                      >
+
+                        <span>
+
+                          {
+
+                            visibleContacts[
+                              x._id
+                            ]
+
+                            ?
+
+                            x.contact
+
+                            :
+
+                            maskPhone(
+                              x.contact
+                            )
+
+                          }
+
+                        </span>
+
+
+                        <button
+                          onClick={()=>
+
+                            setVisibleContacts(
+
+                              prev=>({
+
+                                ...prev,
+
+                                [x._id]:
+
+                                  !prev[
+                                    x._id
+                                  ]
+
+                              })
+
+                            )
+
+                          }
+                          style={{
+
+                            width:32,
+
+                            height:32,
+
+                            borderRadius:10,
+
+                            border:
+
+                              "1px solid #e2e8f0",
+
+                            background:"#fff",
+
+                            cursor:"pointer",
+
+                            display:"flex",
+
+                            alignItems:"center",
+
+                            justifyContent:"center"
+
+                          }}
+                        >
+
+                          {
+
+                            visibleContacts[
+                              x._id
+                            ]
+
+                            ?
+
+                            <EyeOff size={16}/>
+
+                            :
+
+                            <Eye size={16}/>
+
+                          }
+
+                        </button>
+
+                      </div>
+
+
+                      <div>
+                        {
+                          x.source
+                        }
+                      </div>
+
+
+                      <div>
+
+                        <span
+                          style={{
+
+                            background:s.bg,
+
+                            color:s.c,
+
+                            padding:
+
+                              "6px 12px",
+
+                            borderRadius:999,
+
+                            fontSize:12,
+
+                            fontWeight:700
+
+                          }}
+                        >
+
+                          {
+                            x.status
+                          }
+
+                        </span>
+
+                      </div>
+
+
+                      <div>
+
+                        {
+
+                          new Date(
+
+                            x.createdAt
+
+                          )
+                            .toLocaleDateString()
+
+                        }
+
+                      </div>
 
                     </div>
 
-                    <div>
-                      {new Date(
-                        x.createdAt
-                      ).toLocaleDateString()}
-                    </div>
+                  );
 
-                  </div>
+                }
 
-                );
+              )
 
-              }
-            )}
+            }
 
           </>
 
-        )}
+        }
 
       </div>
+{
+
+  activeLead && (
+
+    <div
+      style={{
+
+        position:"fixed",
+
+        top:0,
+
+        right:0,
+
+        width:"420px",
+
+        height:"100vh",
+
+        background:"#fff",
+
+        padding:"24px",
+
+        boxShadow:
+          "-10px 0 30px rgba(0,0,0,.12)",
+
+        zIndex:999
+
+      }}
+    >
+
+      <button
+
+        onClick={() => {
+
+          setActiveLead(
+            null
+          );
+
+          setSelectedProperty(
+            null
+          );
+
+        }}
+
+      >
+
+        Close
+
+      </button>
+
+
+
+      <h2>
+        Customer Info
+      </h2>
+
+      <p>
+        Name:
+        {" "}
+        {
+
+          activeLead.name
+
+        }
+      </p>
+
+      <p>
+        Contact:
+        {" "}
+        {
+
+          activeLead.contact
+
+        }
+      </p>
+
+
+
+      <h2>
+        Property Info
+      </h2>
+
+      <p>
+        Property Name:
+        {" "}
+        {
+
+          selectedProperty?.title ||
+
+          "--"
+
+        }
+      </p>
+
+      <p>
+        Property ID:
+        {" "}
+        {
+
+          selectedProperty?.propertyId ||
+
+          "--"
+
+        }
+      </p>
+
+      <p>
+        Type:
+        {" "}
+        {
+
+          selectedProperty?.propertyType ||
+
+          "--"
+
+        }
+      </p>
+
+      <p>
+        Price:
+        {" "}
+        ₹{
+
+          selectedProperty?.price || 0
+
+        }
+      </p>
+
+      <p>
+        Location:
+        {" "}
+        {
+
+          selectedProperty?.city
+
+        }
+
+      </p>
+
+      <p>
+        Category:
+        {" "}
+        {
+
+          selectedProperty?.category
+
+        }
+
+      </p>
+
+    </div>
+
+  )
+
+}
+
 
     </div>
 

@@ -40,6 +40,11 @@ export function AdminNavbar(){
       [showNotifications,setShowNotifications]=useState(false),
       [notifications,setNotifications]=useState<any[]>([]);
 
+    const unreadNotifications =
+  notifications.filter(
+    x => !x.isRead
+  );
+
   const breadcrumb=useMemo(
     ()=>crumbs[path as keyof typeof crumbs]||["Dashboard"],
     [path]
@@ -106,6 +111,65 @@ export function AdminNavbar(){
     if(!query.trim()) return;
     router.push(`/x-admin/search?q=${encodeURIComponent(query)}`);
   };
+
+const openNotification =
+  async (item:any) => {
+
+    console.log(
+      "Clicked:",
+      item
+    );
+
+
+    const res =
+      await fetch(
+        "/api/admin/notifications",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            referenceId:
+              item.referenceId
+          })
+        }
+      );
+
+    const data =
+      await res.json();
+
+    console.log(
+      "Backend response:",
+      data
+    );
+
+    setNotifications(
+      prev =>
+        prev.map(
+          x =>
+            x.referenceId ===
+            item.referenceId
+
+              ? {
+                  ...x,
+                  isRead:true
+                }
+
+              : x
+        )
+    );
+      setShowNotifications(false);
+      router.push(
+  `/x-admin/leads?id=${item.referenceId}`
+);
+
+  };
+
+
 
   return(
     <div style={{
@@ -238,7 +302,7 @@ export function AdminNavbar(){
     <Bell size={18}/>
 
     {
-      notifications.length > 0 && (
+      unreadNotifications.length > 0 && (
 
         <span
           style={{
@@ -259,7 +323,7 @@ export function AdminNavbar(){
         >
 
           {
-            notifications.length
+            unreadNotifications.length
           }
 
         </span>
@@ -296,13 +360,19 @@ export function AdminNavbar(){
             (item,index)=>(
 
               <div
-                key={index}
-                style={{
-                  padding:"12px 0",
-                  borderBottom:
-                    "1px solid #f1f5f9"
-                }}
-              >
+  key={index}
+
+  onClick={()=>
+    openNotification(item)
+  }
+
+  style={{
+    cursor:"pointer",
+    padding:"12px 0",
+    borderBottom:
+      "1px solid #f1f5f9"
+  }}
+>
 
                 <div
                   style={{
@@ -345,82 +415,7 @@ export function AdminNavbar(){
   )  
 }     
 
-{
-  showNotifications && (
 
-    <div
-      style={{
-        position:"absolute",
-        top:55,
-        right:0,
-        width:320,
-        background:"#fff",
-        border:"1px solid #e2e8f0",
-        borderRadius:16,
-        padding:12,
-        boxShadow:
-          "0 20px 40px rgba(0,0,0,.08)",
-        zIndex:999
-      }}
-    >
-
-      {
-
-        notifications.length ?
-
-          notifications.map(
-
-            (item,index)=>(
-
-              <div
-                key={index}
-                style={{
-                  padding:"12px 0",
-                  borderBottom:
-                    "1px solid #f1f5f9"
-                }}
-              >
-
-                <div
-                  style={{
-                    fontWeight:700,
-                    fontSize:13
-                  }}
-                >
-                  {
-                    item.title
-                  }
-                </div>
-
-                <div
-                  style={{
-                    fontSize:12,
-                    color:"#64748b"
-                  }}
-                >
-                  {
-                    item.message
-                  }
-                </div>
-
-              </div>
-
-            )
-
-          )
-
-        :
-
-          <div>
-            No notifications
-          </div>
-
-      }
-
-    </div>
-
-  )
-}
 </div>
 
           {/* Profile */}

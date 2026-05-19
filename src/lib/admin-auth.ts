@@ -16,6 +16,14 @@ export async function requireAdminUser(req: NextRequest, allowedRoles: string[] 
   }
 
   const user = await User.findById(payload.sub);
+  console.log(
+
+  "USER ROLE:",
+
+  user?.role
+
+);
+  
   if (!user || !allowedRoles.includes(user.role)) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }

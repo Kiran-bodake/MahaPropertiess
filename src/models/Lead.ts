@@ -39,6 +39,35 @@ const LeadSchema = new Schema(
       index: true,
     },
 
+    isViewed:{
+
+  type:Boolean,
+
+  default:false
+
+},
+
+
+assignedTo: {
+
+  type: String,
+
+  default: null,
+
+  index: true
+
+},
+
+notes: {
+
+  type: String,
+
+  default: ""
+
+},
+
+
+
     status: {
       type: String,
       enum: ["new", "contacted", "negotiation", "closed"],

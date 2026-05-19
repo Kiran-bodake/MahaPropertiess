@@ -13,6 +13,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+
+
 const card = {
   background: "#fff",
   border: "1px solid #e2e8f0",
@@ -32,11 +34,27 @@ export default function AdminDashboard() {
     [query, setQuery] = useState(""),
     [page, setPage] = useState(1),
     [mobile, setMobile] = useState(false),
+    
 
     // ✅ selected rows
     [selected, setSelected] = useState<string[]>([]);
 
   const perPage = 10;
+
+  const [
+
+  analytics,
+
+  setAnalytics
+
+] = useState<any>(null);
+const [
+
+  showLeadAnalytics,
+
+  setShowLeadAnalytics
+
+] = useState(false);
 
   /* screen detect */
   useEffect(() => {
@@ -53,13 +71,25 @@ export default function AdminDashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const [s, l] = await Promise.all([
-          fetch("/api/admin/dashboard"),
-          fetch("/api/admin/leads"),
-        ]);
+        const [s, l,a] = await Promise.all([
+
+  fetch(
+    "/api/admin/dashboard"
+  ),
+
+  fetch(
+    "/api/admin/leads"
+  ),
+
+  fetch(
+    "/api/admin/analytics/leads"
+  )
+
+]);
 
         const sd = s.ok ? await s.json() : {};
         const ld = l.ok ? await l.json() : {};
+        const ad= a.ok ? await a.json() : {};
 
         setStats({
           leads: sd.leadsCount || 0,
@@ -68,6 +98,9 @@ export default function AdminDashboard() {
         });
 
         setLeads(ld.leads || []);
+       setAnalytics(
+  ad
+);
       } finally {
         setLoading(false);
       }
@@ -82,12 +115,163 @@ export default function AdminDashboard() {
     ? Math.round((stats.deals / stats.leads) * 100)
     : 0;
 
-  const cards = [
-    { label: "Total Leads", value: stats.leads, delta: "+12%" },
-    { label: "Active Deals", value: stats.deals, delta: "+5%" },
-    { label: "Tasks Due", value: stats.tasks, delta: "-3%" },
-    { label: "Conversion", value: `${conversion}%`, delta: "+2%" },
-  ];
+const cards = [
+
+  {
+
+    label:"Total Leads",
+
+    value:
+      analytics?.totalLeads || 0,
+
+    delta:"+"
+
+  },
+
+  {
+
+    label:"Today's Leads",
+
+    value:
+      analytics?.todayLeads || 0,
+
+    delta:"+"
+
+  },
+
+  {
+
+    label:"New Leads",
+
+    value:
+      analytics?.newLeads || 0,
+
+    delta:"+"
+
+  },
+
+  {
+
+    label:"Unread Leads",
+
+    value:
+      analytics?.unreadLeads || 0,
+
+    delta:"+"
+
+  }
+
+];
+
+const openLead =
+  async (
+    lead:any
+  ) => {
+
+    try{
+
+      const res =
+
+        await fetch(
+
+          "/api/admin/leads/view",
+
+          {
+
+            method:"POST",
+
+            headers:{
+
+              "Content-Type":
+                "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+              id:
+                lead._id
+
+            })
+
+          }
+
+        );
+
+
+      if(!res.ok){
+
+        console.error(
+          "View update failed"
+        );
+
+        return;
+
+      }
+
+
+      // update UI instantly
+      setLeads(
+
+        prev =>
+
+          prev.map(
+
+            item =>
+
+              item._id === lead._id
+
+              ?
+
+              {
+
+                ...item,
+
+                isViewed:true
+
+              }
+
+              :
+
+              item
+
+          )
+
+      );
+
+
+      // update analytics instantly
+      setAnalytics(
+
+        (prev:any) => ({
+
+          ...prev,
+
+          unreadLeads:
+
+            Math.max(
+
+              0,
+
+              prev?.unreadLeads - 1
+
+            )
+
+        })
+
+      );
+
+    }
+
+    catch(error){
+
+      console.error(
+        error
+      );
+
+    }
+
+};
 
   const filtered = leads.filter(
     (x: any) =>
@@ -218,64 +402,171 @@ export default function AdminDashboard() {
             marginBottom: 24,
           }}
         >
-          {cards.map((c) => (
+          {/* Lead Analytics */}
+<div
+  style={{
+    marginBottom: 24,
+  }}
+>
+  {/* Main Analytics Card */}
+  <div
+    onClick={() =>
+      setShowLeadAnalytics(
+        !showLeadAnalytics
+      )
+    }
+    style={{
+      ...card,
+      display: "flex",
+      justifyContent:
+        "space-between",
+      alignItems: "center",
+      cursor: "pointer",
+      border:
+        showLeadAnalytics
+          ? "2px solid #4338ca"
+          : "1px solid #e2e8f0",
+      transition: "0.25s",
+    }}
+  >
+    <div>
+      <div
+        style={{
+          fontSize: 12,
+          color: "#64748b",
+          fontWeight: 600,
+        }}
+      >
+        Lead Analytics
+      </div>
+
+      <div
+        style={{
+          fontSize: mobile
+            ? 28
+            : 38,
+          fontWeight: 800,
+          marginTop: 8,
+          color: "#0f172a",
+        }}
+      >
+        {
+          analytics?.totalLeads || 0
+        }
+      </div>
+
+      <div
+        style={{
+          fontSize: 12,
+          color: "#16a34a",
+          marginTop: 6,
+        }}
+      >
+        Total Registered Leads
+      </div>
+    </div>
+
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+      }}
+    >
+      <div
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 16,
+          background:
+            "#eef2ff",
+          display: "flex",
+          alignItems:
+            "center",
+          justifyContent:
+            "center",
+        }}
+      >
+        <BarChart2
+          size={18}
+          color="#4338ca"
+        />
+      </div>
+
+      <div
+        style={{
+          fontSize: 18,
+          color: "#64748b",
+        }}
+      >
+        {
+          showLeadAnalytics
+            ? "▲"
+            : "▼"
+        }
+      </div>
+    </div>
+  </div>
+
+  {/* Expanded Analytics */}
+  {showLeadAnalytics && (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          mobile
+            ? "1fr"
+            : "repeat(3,1fr)",
+        gap: 18,
+        marginTop: 18,
+      }}
+    >
+      {cards
+        .slice(1)
+        .map((c) => (
+          <div
+            key={c.label}
+            style={card}
+          >
             <div
-              key={c.label}
               style={{
-                ...card,
-                display: "flex",
-                justifyContent: "space-between",
+                fontSize: 12,
+                color:
+                  "#64748b",
+                fontWeight: 600,
               }}
             >
-              <div>
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: "#64748b",
-                    fontWeight: 600,
-                  }}
-                >
-                  {c.label}
-                </div>
-
-                <div
-                  style={{
-                    fontSize: mobile ? 26 : 34,
-                    fontWeight: 700,
-                    marginTop: 8,
-                  }}
-                >
-                  {c.value}
-                </div>
-
-                <div
-                  style={{
-                    fontSize: 12,
-                    marginTop: 8,
-                    color: c.delta.includes("-")
-                      ? "#dc2626"
-                      : "#16a34a",
-                  }}
-                >
-                  {c.delta}
-                </div>
-              </div>
-
-              <div
-                style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: 16,
-                  background: "#eef2ff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <BarChart2 size={16} color="#4338ca" />
-              </div>
+              {c.label}
             </div>
-          ))}
+
+            <div
+              style={{
+                fontSize:
+                  mobile
+                    ? 24
+                    : 30,
+                fontWeight: 800,
+                marginTop: 10,
+              }}
+            >
+              {c.value}
+            </div>
+
+            <div
+              style={{
+                fontSize: 12,
+                marginTop: 8,
+                color:
+                  "#16a34a",
+              }}
+            >
+              {c.delta}
+            </div>
+          </div>
+        ))}
+    </div>
+  )}
+</div>
         </div>
 
         {/* Leads */}
@@ -431,9 +722,27 @@ export default function AdminDashboard() {
                     alignItems: "center",
                     padding: "22px 24px",
                     borderTop: "1px solid #f1f5f9",
-                    background: selected.includes(lead._id)
-                      ? "#f8fafc"
-                      : "#fff",
+                   background:
+
+  !lead.isViewed
+
+  ?
+
+  "#dbeafe"
+
+  :
+
+  selected.includes(
+    lead._id
+  )
+
+  ?
+
+  "#f8fafc"
+
+  :
+
+  "#ffffff"
                   }}
                 >
                   {/* Checkbox */}
@@ -460,8 +769,29 @@ export default function AdminDashboard() {
                         width: 46,
                         height: 46,
                         borderRadius: "50%",
-                        background: "#eef2ff",
-                        color: "#4338ca",
+                      background:
+
+  lead.isViewed
+
+  ?
+
+  "#dcfce7"
+
+  :
+
+  "#eef2ff",
+
+color:
+
+  lead.isViewed
+
+  ?
+
+  "#166534"
+
+  :
+
+  "#4338ca",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -507,7 +837,19 @@ export default function AdminDashboard() {
                         fontWeight: 600,
                       }}
                     >
-                      {lead.status || "New"}
+                    {
+
+  lead.isViewed
+
+  ?
+
+  "Viewed"
+
+  :
+
+  "New"
+
+}
                     </span>
                   </div>
 
@@ -517,15 +859,33 @@ export default function AdminDashboard() {
                       gap: 8,
                     }}
                   >
-                    <button
-                      style={{
-                        border: "none",
-                        background: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Eye size={14} />
-                    </button>
+                   <button
+
+  onClick={()=>
+
+    openLead(
+
+      lead
+
+    )
+
+  }
+
+  style={{
+
+    border:"none",
+
+    background:"none",
+
+    cursor:"pointer"
+
+  }}
+
+>
+
+  <Eye size={14} />
+
+</button>
 
                     <button
                       style={{

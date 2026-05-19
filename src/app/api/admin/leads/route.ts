@@ -18,13 +18,25 @@ export async function GET(req: NextRequest) {
     .lean();
 
   // Transform mobileNumber to contact for frontend compatibility
-  const transformedLeads = leads.map((lead) => ({
+ const transformedLeads =
+  leads.map((lead) => ({
+
     _id: lead._id,
+
     name: lead.name,
+
     contact: lead.mobileNumber,
+
     source: lead.source,
+
     status: lead.status,
+
     createdAt: lead.createdAt,
+
+
+    isViewed:
+      lead.isViewed
+
   }));
 
   return NextResponse.json({ leads: transformedLeads });

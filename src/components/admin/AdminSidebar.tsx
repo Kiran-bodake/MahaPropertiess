@@ -103,7 +103,7 @@ export function AdminSidebar(){
           fontWeight:700,
           marginBottom:18
         }}>
-          WORKSPACE
+      
         </div>
 
         {items.map(({href,label,icon:Icon})=>{
@@ -243,7 +243,7 @@ export function AdminSidebar(){
           zIndex:999,
           transition:".3s",
           boxSizing:"border-box",
-          background:   "linear-gradient(180deg,#064e3b,#047857)"
+   background:"linear-gradient(180deg,#064e3b,#047857)"
         }}>
 
           <button
