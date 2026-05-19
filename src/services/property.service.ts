@@ -8,6 +8,8 @@ import PropertyFlags from "@/models/PropertyFlags";
 import PropertyAmenity from "@/models/PropertyAmenity";
 import PropertyHighlight from "@/models/PropertyHighlight";
 import slugify from "slugify";
+import NotificationModel
+from "@/models/Notification";
 
 export const createProperty = async (
   body: any
@@ -89,6 +91,29 @@ export const createProperty = async (
         
 
     });
+
+
+await NotificationModel.create({
+
+  type:"property",
+
+  title:
+    "New Property Submitted",
+
+  message:
+    `${property.title} waiting for approval`,
+
+  referenceId:
+    property._id,
+
+  isRead:false
+
+});
+
+    
+
+
+
 
   /* RELATED COLLECTIONS */
   await Promise.all([

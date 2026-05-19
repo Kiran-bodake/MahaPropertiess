@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { connectDB } from "@/lib/mongoose";
+import { connectDB } from "@/lib/mongodb";
 
 import Property from "@/models/Property";
 import PropertyLocation from "@/models/PropertyLocation";

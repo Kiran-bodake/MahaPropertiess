@@ -224,7 +224,7 @@ const [
         x => x._id === leadId
       );
 
-    if(found){
+    if(found && !activeLead){
 
       openLead(found);
 
@@ -461,7 +461,7 @@ const openLead =
 
           await fetch(
 
-            `/api/admin/property/${lead.propertyId}`
+            `/api/admin/properties/${lead.propertyId}`
 
           );
 

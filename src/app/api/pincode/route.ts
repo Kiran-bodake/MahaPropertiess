@@ -1,4 +1,4 @@
-import { connectDB } from "@/lib/mongoose";
+import { connectDB } from "@/lib/mongodb";
 import Pincode from "@/models/Pincode";
 
 export async function GET(req: Request) {

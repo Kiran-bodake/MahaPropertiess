@@ -48,6 +48,16 @@ export default function AdminDashboard() {
   setAnalytics
 
 ] = useState<any>(null);
+
+const [
+
+  showPropertyAnalytics,
+
+  setShowPropertyAnalytics
+
+] = useState(false);
+
+
 const [
 
   showLeadAnalytics,
@@ -158,6 +168,75 @@ const cards = [
       analytics?.unreadLeads || 0,
 
     delta:"+"
+
+  }
+
+];
+
+const propertyCards = [
+
+  {
+
+    label:
+      "Pending Properties",
+
+    value:
+      analytics?.pendingProperties || 0,
+
+    delta:
+      "Waiting Approval"
+
+  },
+
+  {
+
+    label:
+      "Approved Properties",
+
+    value:
+      analytics?.approvedProperties || 0,
+
+    delta:
+      "Live Listings"
+
+  },
+
+  {
+
+    label:
+      "Rejected Properties",
+
+    value:
+      analytics?.rejectedProperties || 0,
+
+    delta:
+      "Rejected Listings"
+
+  },
+
+  {
+
+    label:
+      "Premium Properties",
+
+    value:
+      analytics?.premiumProperties || 0,
+
+    delta:
+      "Premium Listings"
+
+  },
+
+  {
+
+    label:
+      "Featured Properties",
+
+    value:
+      analytics?.featuredProperties || 0,
+
+    delta:
+      "Homepage Featured"
 
   }
 
@@ -402,171 +481,64 @@ const openLead =
             marginBottom: 24,
           }}
         >
-          {/* Lead Analytics */}
-<div
-  style={{
-    marginBottom: 24,
-  }}
->
-  {/* Main Analytics Card */}
-  <div
-    onClick={() =>
-      setShowLeadAnalytics(
-        !showLeadAnalytics
-      )
-    }
-    style={{
-      ...card,
-      display: "flex",
-      justifyContent:
-        "space-between",
-      alignItems: "center",
-      cursor: "pointer",
-      border:
-        showLeadAnalytics
-          ? "2px solid #4338ca"
-          : "1px solid #e2e8f0",
-      transition: "0.25s",
-    }}
-  >
-    <div>
-      <div
-        style={{
-          fontSize: 12,
-          color: "#64748b",
-          fontWeight: 600,
-        }}
-      >
-        Lead Analytics
-      </div>
-
-      <div
-        style={{
-          fontSize: mobile
-            ? 28
-            : 38,
-          fontWeight: 800,
-          marginTop: 8,
-          color: "#0f172a",
-        }}
-      >
-        {
-          analytics?.totalLeads || 0
-        }
-      </div>
-
-      <div
-        style={{
-          fontSize: 12,
-          color: "#16a34a",
-          marginTop: 6,
-        }}
-      >
-        Total Registered Leads
-      </div>
-    </div>
-
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-      }}
-    >
-      <div
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: 16,
-          background:
-            "#eef2ff",
-          display: "flex",
-          alignItems:
-            "center",
-          justifyContent:
-            "center",
-        }}
-      >
-        <BarChart2
-          size={18}
-          color="#4338ca"
-        />
-      </div>
-
-      <div
-        style={{
-          fontSize: 18,
-          color: "#64748b",
-        }}
-      >
-        {
-          showLeadAnalytics
-            ? "▲"
-            : "▼"
-        }
-      </div>
-    </div>
-  </div>
-
-  {/* Expanded Analytics */}
-  {showLeadAnalytics && (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns:
-          mobile
-            ? "1fr"
-            : "repeat(3,1fr)",
-        gap: 18,
-        marginTop: 18,
-      }}
-    >
-      {cards
-        .slice(1)
-        .map((c) => (
-          <div
-            key={c.label}
-            style={card}
-          >
+          {cards.map((c) => (
             <div
+              key={c.label}
               style={{
-                fontSize: 12,
-                color:
-                  "#64748b",
-                fontWeight: 600,
+                ...card,
+                display: "flex",
+                justifyContent: "space-between",
               }}
             >
-              {c.label}
-            </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: 12,
+                    color: "#64748b",
+                    fontWeight: 600,
+                  }}
+                >
+                  {c.label}
+                </div>
 
-            <div
-              style={{
-                fontSize:
-                  mobile
-                    ? 24
-                    : 30,
-                fontWeight: 800,
-                marginTop: 10,
-              }}
-            >
-              {c.value}
-            </div>
+                <div
+                  style={{
+                    fontSize: mobile ? 26 : 34,
+                    fontWeight: 700,
+                    marginTop: 8,
+                  }}
+                >
+                  {c.value}
+                </div>
 
-            <div
-              style={{
-                fontSize: 12,
-                marginTop: 8,
-                color:
-                  "#16a34a",
-              }}
-            >
-              {c.delta}
+                <div
+                  style={{
+                    fontSize: 12,
+                    marginTop: 8,
+                    color: c.delta.includes("-")
+                      ? "#dc2626"
+                      : "#16a34a",
+                  }}
+                >
+                  {c.delta}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  width: 46,
+                  height: 46,
+                  borderRadius: 16,
+                  background: "#eef2ff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <BarChart2 size={16} color="#4338ca" />
+              </div>
             </div>
-          </div>
-        ))}
-    </div>
-  )}
-</div>
+          ))}
         </div>
 
         {/* Leads */}
@@ -955,6 +927,7 @@ color:
             </button>
           </div>
         </div>
+        
       </div>
     </div>
   );

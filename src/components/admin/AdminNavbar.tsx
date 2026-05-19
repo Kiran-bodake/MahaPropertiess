@@ -163,9 +163,23 @@ const openNotification =
         )
     );
       setShowNotifications(false);
-      router.push(
-  `/x-admin/leads?id=${item.referenceId}`
-);
+     if(item.type === "lead"){
+
+  router.push(
+    `/x-admin/leads?id=${item.referenceId}`
+  );
+
+}
+
+else if(
+  item.type === "property"
+){
+
+  router.push(
+    `/x-admin/properties/${item.referenceId}`
+  );
+
+}
 
   };
 

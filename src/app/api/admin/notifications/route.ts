@@ -1,5 +1,5 @@
 import { connectDB }
-  from "@/lib/mongoose";
+  from "@/lib/mongodb";
 
 import Notification
   from "@/models/Notification";
