@@ -13,6 +13,26 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import { useRouter }
+from "next/navigation";
+
+import {
+
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+
+} from "recharts";
+
+
 
 
 const card = {
@@ -23,21 +43,44 @@ const card = {
   boxShadow: "0 8px 24px rgba(15,23,42,.05)",
 };
 
+
 export default function AdminDashboard() {
+
+  const router = useRouter();
   const [stats, setStats] = useState({
       leads: 0,
       deals: 0,
       tasks: 0,
     }),
     [leads, setLeads] = useState<any[]>([]),
+    
     [loading, setLoading] = useState(true),
     [query, setQuery] = useState(""),
     [page, setPage] = useState(1),
     [mobile, setMobile] = useState(false),
     
+    
+
+    
 
     // ✅ selected rows
     [selected, setSelected] = useState<string[]>([]);
+
+    const [
+
+  properties,
+
+  setProperties
+
+] = useState<any[]>([]);
+const [
+
+  activity,
+
+  setActivity
+
+] = useState<any[]>([]);
+
 
   const perPage = 10;
 
@@ -81,25 +124,40 @@ const [
   useEffect(() => {
     (async () => {
       try {
-        const [s, l,a] = await Promise.all([
+     const [s, l, a, p, rp ,ac] =
 
-  fetch(
-    "/api/admin/dashboard"
-  ),
+  await Promise.all([
 
-  fetch(
-    "/api/admin/leads"
-  ),
+    fetch(
+      "/api/admin/dashboard"
+    ),
 
-  fetch(
-    "/api/admin/analytics/leads"
-  )
+    fetch(
+      "/api/admin/leads"
+    ),
+
+    fetch(
+      "/api/admin/analytics/leads"
+    ),
+
+    fetch(
+      "/api/admin/analytics/properties"
+    ),
+    fetch(
+  "/api/admin/recent-properties"
+),
+fetch(
+  "/api/admin/activity"
+)
+
 
 ]);
 
         const sd = s.ok ? await s.json() : {};
         const ld = l.ok ? await l.json() : {};
         const ad= a.ok ? await a.json() : {};
+        const pd =
+  p.ok ? await p.json() : {};
 
         setStats({
           leads: sd.leadsCount || 0,
@@ -107,10 +165,33 @@ const [
           tasks: sd.tasksCount || 0,
         });
 
+        
+        const rpd =
+
+  rp.ok
+
+    ? await rp.json()
+
+    : {};
+
         setLeads(ld.leads || []);
-       setAnalytics(
-  ad
+
+        
+        setProperties(
+
+  rpd.properties || []
+
 );
+
+
+
+      setAnalytics({
+
+  ...ad,
+
+  ...pd
+
+});
       } finally {
         setLoading(false);
       }
@@ -352,6 +433,92 @@ const openLead =
 
 };
 
+const updatePropertyStatus = async (
+
+  id:string,
+
+  status:string
+
+) => {
+
+  try{
+
+    const res = await fetch(
+
+      "/api/admin/properties/update-status",
+
+      {
+
+        method:"POST",
+
+        headers:{
+
+          "Content-Type":
+            "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+          id,
+
+          status
+
+        })
+
+      }
+
+    );
+
+    if(!res.ok){
+
+      console.error(
+        "Status update failed"
+      );
+
+      return;
+
+    }
+
+    // update UI instantly
+    setProperties(
+
+      prev =>
+
+        prev.map(
+
+          (p:any)=>
+
+            p._id === id
+
+            ?
+
+            {
+
+              ...p,
+
+              approvalStatus:status
+
+            }
+
+            :
+
+            p
+
+        )
+
+    );
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+  }
+
+};
+
   const filtered = leads.filter(
     (x: any) =>
       !query ||
@@ -424,6 +591,81 @@ const openLead =
       console.error(err);
     }
   };
+
+  const propertyTypeData = [
+
+  {
+    name:"Plots",
+    value:45
+  },
+
+  {
+    name:"Flats",
+    value:30
+  },
+
+  {
+    name:"Villas",
+    value:15
+  },
+
+  {
+    name:"Commercial",
+    value:10
+  }
+
+];
+
+const trendData = [
+
+  {
+    day:"Mon",
+    properties:12
+  },
+
+  {
+    day:"Tue",
+    properties:18
+  },
+
+  {
+    day:"Wed",
+    properties:9
+  },
+
+  {
+    day:"Thu",
+    properties:22
+  },
+
+  {
+    day:"Fri",
+    properties:16
+  },
+
+  {
+    day:"Sat",
+    properties:28
+  },
+
+  {
+    day:"Sun",
+    properties:20
+  }
+
+];
+
+const COLORS = [
+
+  "#16a34a",
+
+  "#2563eb",
+
+  "#7c3aed",
+
+  "#eab308"
+
+];
 
   return (
     <div
@@ -540,6 +782,822 @@ const openLead =
             </div>
           ))}
         </div>
+
+        {/* Property Overview */}
+<div
+  style={{
+    display:"grid",
+
+    gridTemplateColumns:
+
+      mobile
+
+        ? "1fr"
+
+        : "repeat(4,1fr)",
+
+    gap:18,
+
+    marginBottom:24,
+  }}
+>
+
+  {/* Total Properties */}
+  <div
+    style={{
+      ...card,
+
+      borderLeft:
+        "6px solid #16a34a",
+    }}
+  >
+    <div
+      style={{
+        fontSize:13,
+
+        color:"#64748b",
+
+        fontWeight:600,
+      }}
+    >
+      Total Properties
+    </div>
+
+    <div
+      style={{
+        fontSize:
+          mobile ? 28 : 38,
+
+        fontWeight:800,
+
+        marginTop:12,
+      }}
+    >
+      {
+        analytics?.totalProperties || 0
+      }
+    </div>
+  </div>
+
+  {/* Pending */}
+  <div
+    style={{
+      ...card,
+
+      borderLeft:
+        "6px solid #eab308",
+    }}
+  >
+    <div
+      style={{
+        fontSize:13,
+
+        color:"#64748b",
+
+        fontWeight:600,
+      }}
+    >
+      Pending Approval
+    </div>
+
+    <div
+      style={{
+        fontSize:
+          mobile ? 28 : 38,
+
+        fontWeight:800,
+
+        marginTop:12,
+      }}
+    >
+      {
+        analytics?.pendingProperties || 0
+      }
+    </div>
+  </div>
+
+  {/* Approved */}
+  <div
+    style={{
+      ...card,
+
+      borderLeft:
+        "6px solid #2563eb",
+    }}
+  >
+    <div
+      style={{
+        fontSize:13,
+
+        color:"#64748b",
+
+        fontWeight:600,
+      }}
+    >
+      Approved Listings
+    </div>
+
+    <div
+      style={{
+        fontSize:
+          mobile ? 28 : 38,
+
+        fontWeight:800,
+
+        marginTop:12,
+      }}
+    >
+      {
+        analytics?.approvedProperties || 0
+      }
+    </div>
+  </div>
+
+  {/* Rejected */}
+  <div
+    style={{
+      ...card,
+
+      borderLeft:
+        "6px solid #dc2626",
+    }}
+  >
+    <div
+      style={{
+        fontSize:13,
+
+        color:"#64748b",
+
+        fontWeight:600,
+      }}
+    >
+      Rejected Listings
+    </div>
+
+    <div
+      style={{
+        fontSize:
+          mobile ? 28 : 38,
+
+        fontWeight:800,
+
+        marginTop:12,
+      }}
+    >
+      {
+        analytics?.rejectedProperties || 0
+      }
+    </div>
+  </div>
+
+</div>
+{/* Property Analytics */}
+<div
+  style={{
+    marginBottom:24,
+  }}
+>
+
+  {/* Main Card */}
+  <div
+
+    onClick={()=>
+
+      setShowPropertyAnalytics(
+
+        !showPropertyAnalytics
+
+      )
+
+    }
+
+    style={{
+
+      ...card,
+
+      display:"flex",
+
+      justifyContent:
+        "space-between",
+
+      alignItems:"center",
+
+      cursor:"pointer",
+
+    }}
+
+  >
+
+    <div>
+
+      <div
+        style={{
+          fontSize:13,
+          color:"#64748b",
+          fontWeight:600,
+        }}
+      >
+        Property Analytics
+      </div>
+
+      <div
+        style={{
+          fontSize:
+            mobile ? 28 : 40,
+
+          fontWeight:800,
+
+          marginTop:10,
+        }}
+      >
+        {
+          analytics?.totalProperties || 0
+        }
+      </div>
+
+      <div
+        style={{
+          fontSize:12,
+          color:"#16a34a",
+          marginTop:8,
+        }}
+      >
+        Total Listings
+      </div>
+
+    </div>
+
+    <div
+      style={{
+        fontSize:24,
+      }}
+    >
+      {
+
+        showPropertyAnalytics
+
+        ?
+
+        "▲"
+
+        :
+
+        "▼"
+
+      }
+    </div>
+
+  </div>
+
+  {/* Expanded */}
+  {
+
+    showPropertyAnalytics && (
+
+      <div
+
+        style={{
+
+          display:"grid",
+
+          gridTemplateColumns:
+
+            mobile
+
+              ? "1fr"
+
+              : "repeat(3,1fr)",
+
+          gap:18,
+
+          marginTop:18,
+
+        }}
+
+      >
+
+        <div style={card}>
+          <div>
+            Premium Properties
+          </div>
+
+          <div
+            style={{
+              fontSize:30,
+              fontWeight:800,
+              marginTop:10,
+            }}
+          >
+            {
+              analytics?.premiumProperties || 0
+            }
+          </div>
+        </div>
+
+        <div style={card}>
+          <div>
+            Featured Properties
+          </div>
+
+          <div
+            style={{
+              fontSize:30,
+              fontWeight:800,
+              marginTop:10,
+            }}
+          >
+            {
+              analytics?.featuredProperties || 0
+            }
+          </div>
+        </div>
+
+        <div style={card}>
+          <div>
+            Active Cities
+          </div>
+
+          <div
+            style={{
+              fontSize:30,
+              fontWeight:800,
+              marginTop:10,
+            }}
+          >
+            {
+              analytics?.activeCities || 0
+            }
+          </div>
+        </div>
+
+      </div>
+
+    )
+
+  }
+
+</div>
+
+{/* Recent Properties */}
+<div
+  style={{
+    ...card,
+    marginBottom:24,
+    overflow:"hidden",
+  }}
+>
+
+  {/* Header */}
+  <div
+    style={{
+      padding:20,
+      borderBottom:
+        "1px solid #e2e8f0",
+      fontWeight:700,
+      fontSize:16,
+    }}
+  >
+    Recent Properties
+  </div>
+
+  {/* Table */}
+  <div
+    style={{
+      overflowX:"auto",
+    }}
+  >
+
+    <div
+      style={{
+        minWidth:700,
+      }}
+    >
+
+      {/* Header Row */}
+      <div
+        style={{
+          display:"grid",
+
+          gridTemplateColumns:
+            "2fr 1fr 1fr 1fr 1fr auto",
+
+          padding:"16px 24px",
+
+          background:"#f8fafc",
+
+          fontSize:12,
+
+          fontWeight:700,
+
+          color:"#64748b",
+        }}
+      >
+        <div>Property</div>
+
+        <div>Owner</div>
+
+        <div>Price</div>
+
+        <div>Status</div>
+
+        <div>Date</div>
+
+        <div>Actions</div>
+      </div>
+
+      {/* Rows */}
+      {
+
+       properties
+
+  .slice(0,5)
+
+  .map(
+
+    (
+
+      property:any,
+
+      index:number
+
+    ) => (
+
+            <div
+
+              key={property._id || property.id || index}
+
+              style={{
+
+                display:"grid",
+
+                gridTemplateColumns:
+                  "2fr 1fr 1fr 1fr 1fr auto",
+
+                padding:"18px 24px",
+
+                borderTop:
+                  "1px solid #f1f5f9",
+
+                alignItems:"center",
+
+              }}
+
+            >
+
+              <div
+                style={{
+                  fontWeight:600,
+                }}
+              >
+                {
+                  property.title
+                }
+              </div>
+
+              <div>
+                {
+                  property.ownerName || "-"
+                }
+              </div>
+
+              <div>
+                ₹
+                {
+                  property.price || 0
+                }
+              </div>
+
+              <div>
+
+                <span
+                  style={{
+
+                    padding:
+                      "6px 12px",
+
+                    borderRadius:999,
+
+                    fontSize:11,
+
+                    fontWeight:700,
+
+                    background:
+
+                      property.approvalStatus ===
+                      "approved"
+
+                      ?
+
+                      "#dcfce7"
+
+                      :
+
+                      property.approvalStatus ===
+                      "rejected"
+
+                      ?
+
+                      "#fee2e2"
+
+                      :
+
+                      "#fef9c3",
+
+                    color:
+
+                      property.approvalStatus ===
+                      "approved"
+
+                      ?
+
+                      "#166534"
+
+                      :
+
+                      property.approvalStatus ===
+                      "rejected"
+
+                      ?
+
+                      "#991b1b"
+
+                      :
+
+                      "#854d0e",
+
+                  }}
+                >
+                  {
+                    property.approvalStatus
+                  }
+                </span>
+
+              </div>
+
+              <div>
+                {
+                  new Date(
+
+                    property.createdAt
+
+                  ).toLocaleDateString()
+                }
+              </div>
+
+              <div
+                style={{
+                  display:"flex",
+                  gap:10,
+                }}
+              >
+<button
+
+  onClick={() =>
+
+    window.location.href =
+
+      `/x-admin/properties/${property._id}`
+
+  }
+
+  style={{
+
+    border:"none",
+
+    background:"none",
+
+    cursor:"pointer",
+
+  }}
+
+>
+
+  👁
+
+</button>
+
+               <button
+
+  onClick={()=>
+
+    updatePropertyStatus(
+
+      property._id,
+
+      "approved"
+
+    )
+
+  }
+
+  style={{
+    border:"none",
+    background:"none",
+    cursor:"pointer",
+  }}
+>
+
+  ✔
+
+</button>
+
+               <button
+
+  onClick={()=>
+
+    updatePropertyStatus(
+
+      property._id,
+
+      "rejected"
+
+    )
+
+  }
+
+  style={{
+    border:"none",
+    background:"none",
+    cursor:"pointer",
+  }}
+>
+
+  ✖
+
+</button>
+
+              </div>
+
+            </div>
+
+          )
+
+        )
+
+      }
+
+    </div>
+
+  </div>
+
+</div>
+
+{/* Charts */}
+<div
+  style={{
+    display:"grid",
+
+    gridTemplateColumns:
+
+      mobile
+
+        ? "1fr"
+
+        : "1fr 1fr",
+
+    gap:24,
+
+    marginBottom:24,
+  }}
+>
+
+  {/* Pie Chart */}
+  <div
+    style={{
+      ...card,
+      height:350,
+    }}
+  >
+
+    <div
+      style={{
+        fontSize:16,
+        fontWeight:700,
+        marginBottom:20,
+      }}
+    >
+      Property Types
+    </div>
+
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+
+      <PieChart>
+
+        <Pie
+
+          data={
+            propertyTypeData
+          }
+
+          cx="50%"
+
+          cy="50%"
+
+          outerRadius={100}
+
+          dataKey="value"
+
+          label
+
+        >
+
+          {
+
+           propertyTypeData.map(
+
+  (
+    entry,
+    index
+  ) => (
+
+    <Cell
+
+      key={`chart-${index}`}
+
+  fill={
+    COLORS[
+      index %
+      COLORS.length
+    ]
+  }
+
+/>
+
+              )
+
+            )
+
+          }
+
+        </Pie>
+
+      </PieChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+  {/* Trend Chart */}
+  <div
+    style={{
+      ...card,
+      height:350,
+    }}
+  >
+
+    <div
+      style={{
+        fontSize:16,
+        fontWeight:700,
+        marginBottom:20,
+      }}
+    >
+      Property Posting Trend
+    </div>
+
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+
+      <LineChart
+        data={trendData}
+      >
+
+        <CartesianGrid
+          strokeDasharray="3 3"
+        />
+
+        <XAxis
+          dataKey="day"
+        />
+
+        <YAxis />
+
+        <Tooltip />
+
+        <Line
+
+          type="monotone"
+
+          dataKey="properties"
+
+          stroke="#16a34a"
+
+          strokeWidth={3}
+
+        />
+
+      </LineChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+</div>
 
         {/* Leads */}
         <div
@@ -684,9 +1742,9 @@ const openLead =
               </div>
 
               {/* Rows */}
-              {paginated.map((lead: any) => (
+              {paginated.map((lead: any ,index:number) => (
                 <div
-                  key={lead._id}
+                 key={lead._id || lead.id || index}
                   style={{
                     display: "grid",
                     gridTemplateColumns:
@@ -927,8 +1985,9 @@ color:
             </button>
           </div>
         </div>
-        
-      </div>
     </div>
-  );
+
+</div>
+
+);
 }

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+
 import {
   Menu,
   X,
@@ -17,12 +18,43 @@ import {
 } from "lucide-react";
 
 const items=[
-  {href:"/x-admin/dashboard",label:"Dashbord",icon:BarChart3},
-  {href:"/x-admin/leads",label:"Leads",icon:Users},
-  {href:"/x-admin/deals",label:"Deals",icon:Layers},
-  {href:"/x-admin/tasks",label:"Tasks",icon:ListChecks},
-  {href:"/x-admin/properties",label:"Properties",icon:Home},
-  {href:"/x-admin/search",label:"Global Search",icon:Search}
+
+  {
+    href:"/x-admin/dashboard",
+    label:"Dashboard",
+    icon:BarChart3
+  },
+
+  {
+    href:"/x-admin/properties",
+    label:"Properties",
+    icon:Home
+  },
+
+  {
+    href:"/x-admin/property-approvals",
+    label:"Approvals",
+    icon:ListChecks
+  },
+
+  {
+    href:"/x-admin/leads",
+    label:"Leads",
+    icon:Users
+  },
+
+  {
+    href:"/x-admin/analytics",
+    label:"Analytics",
+    icon:Layers
+  },
+
+  {
+    href:"/x-admin/search",
+    label:"Global Search",
+    icon:Search
+  }
+
 ];
 
 export function AdminSidebar(){
