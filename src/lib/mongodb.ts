@@ -7,5 +7,9 @@ export async function connectDB() {
     return mongoose;
   }
 
-  return await mongoose.connect(MONGODB_URI);
+  const db = await mongoose.connect(MONGODB_URI);
+
+  console.log("Connected DB:", db.connection.name);
+
+  return db;
 }
