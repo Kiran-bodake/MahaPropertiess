@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { useLocationStore } from "@/store/useLocationStore";
-import properties from "@/moc-data/properties.json";
 import HeroSearch from "@/components/home/HeroSearch";
 import {
   Phone,
@@ -458,25 +457,6 @@ const ICONS: any = {
   "Investment Plot": "📈",
   "Collector NA": "📋",
 };
-
-const categoryMap = new Map();
-
-properties.forEach((p) => {
-  if (!categoryMap.has(p.cat)) {
-    categoryMap.set(p.cat, {
-      l: p.cat,
-      c: 0,
-      img: p.img,
-      e: ICONS[p.cat] || "📍",
-    });
-  }
-  categoryMap.get(p.cat).c++;
-});
-
-const CATS = Array.from(categoryMap.values()).map((c) => ({
-  ...c,
-  c: `${c.c}+`,
-}));
 
 const PIMGS: Record<string, string[]> = {
   "1": [

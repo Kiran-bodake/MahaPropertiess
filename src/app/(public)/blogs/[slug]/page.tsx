@@ -1,15 +1,10 @@
-import blogs from "@/moc-data/blogs.json";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
-
-export function generateStaticParams() {
-  return blogs.map((b) => ({
-    slug: b.s,
-  }));
-}
+import { connectDB } from "@/lib/mongodb";
+import Blog from "@/models/Blog";
 
 export default async function BlogDetail({
   params,
@@ -18,12 +13,24 @@ export default async function BlogDetail({
 }) {
   const { slug } = await params;
 
-  const blog = blogs.find((b) => b.s === slug);
-  if (!blog) return notFound();
+  await connectDB();
 
-  const related = blogs
-    .filter((b) => b.cat === blog.cat && b.s !== blog.s)
-    .slice(0, 3);
+  const blog = await Blog.findOne({
+    s: slug,
+    active: true,
+  }).lean();
+
+  const related = await Blog.find({
+    cat: blog.cat,
+
+    s: {
+      $ne: blog.s,
+    },
+
+    active: true,
+  })
+    .limit(3)
+    .lean();
 
   return (
     <>
@@ -59,7 +66,14 @@ export default async function BlogDetail({
             }}
           >
             {/* IMAGE */}
-            <div style={{ borderRadius: "16px", overflow: "hidden", position: "relative", height: "380px" }}>
+            <div
+              style={{
+                borderRadius: "16px",
+                overflow: "hidden",
+                position: "relative",
+                height: "380px",
+              }}
+            >
               <Image
                 fill
                 src={blog.img}
