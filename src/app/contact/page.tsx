@@ -1,9 +1,64 @@
 "use client";
 
+import { useState } from "react";
+
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 
 export default function ContactPage() {
+   
+const [form, setForm] = useState({
+  fullName: "",
+  email: "",
+  phone: "",
+  message: "",
+});
+
+const [loading, setLoading] = useState(false);
+
+const handleSubmit = async () => {
+
+  try {
+
+    setLoading(true);
+
+    const res = await fetch("/api/contact-inquiry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+
+      console.log("Inquiry Submitted Successfully");
+
+      alert("Inquiry submitted successfully");
+
+      setForm({
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+    }
+
+  } catch (error) {
+
+    console.log(error);
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
+
+
+
   return (
     <>
       <Navbar />
@@ -57,10 +112,17 @@ export default function ContactPage() {
                     <label className="label">Full Name</label>
 
                     <input
-                      placeholder="Enter your full name"
-                      className="premiumField"
-                    />
-                  </div>
+  placeholder="Enter your full name"
+  className="premiumField"
+  value={form.fullName}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      fullName: e.target.value,
+    })
+  }
+/>
+</div>
 
                   <div>
                     <label className="label">Email Address</label>
@@ -69,6 +131,13 @@ export default function ContactPage() {
                       type="email"
                       placeholder="you@example.com"
                       className="premiumField"
+                      value={form.email}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          email: e.target.value,
+                        })
+                      }
                     />
                   </div>
 
@@ -76,31 +145,48 @@ export default function ContactPage() {
                     <label className="label">Phone Number</label>
 
                     <input
-                      type="tel"
-                      placeholder="Enter mobile number"
-                      className="premiumField"
-                      maxLength={10}
-                      inputMode="numeric"
-                      onInput={(e) => {
-                        e.currentTarget.value = e.currentTarget.value.replace(
-                          /\D/g,
-                          "",
-                        );
-                      }}
-                    />
+  type="tel"
+  placeholder="Enter mobile number"
+  className="premiumField"
+  maxLength={10}
+  inputMode="numeric"
+  value={form.phone}
+  onChange={(e) => {
+
+    const value = e.target.value.replace(/\D/g, "");
+
+    setForm({
+      ...form,
+      phone: value,
+    });
+  }}
+/>
                   </div>
 
                   <div>
                     <label className="label">Message</label>
 
                     <textarea
-                      rows={5}
-                      placeholder="Write your message..."
-                      className="premiumField textarea"
-                    />
+  rows={5}
+  placeholder="Write your message..."
+  className="premiumField textarea"
+  value={form.message}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      message: e.target.value,
+    })
+  }
+/>
                   </div>
 
-                  <button className="premiumBtn">Submit Enquiry</button>
+                  <button
+  className="premiumBtn"
+  onClick={handleSubmit}
+  disabled={loading}
+>
+  {loading ? "Submitting..." : "Submit Enquiry"}
+</button>
                 </div>
               </div>
 

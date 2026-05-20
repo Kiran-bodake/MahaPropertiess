@@ -50,6 +50,13 @@ const items=[
   },
 
   {
+  label: "Contact Settings",
+  href: "/x-admin/contact-inquiries",
+  icon:Users
+},
+
+  
+  {
     href:"/x-admin/search",
     label:"Global Search",
     icon:Search

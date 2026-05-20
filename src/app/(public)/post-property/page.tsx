@@ -1699,10 +1699,19 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                                 cursor: "pointer",
                                 fontWeight: 500,
                               }}
-                              onClick={() => {
-                                alert(`Demo OTP is ${TEMP_OTP}`);
-                                setOtpSent(true);
-                              }}
+                              onClick={async () => {
+  await fetch("/api/send-otp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      phone: form.agentPhone,
+    }),
+  });
+
+  setOtpSent(true);
+}}
                             >
                               Send OTP
                             </button>
@@ -1740,7 +1749,7 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                                   setPhoneVerified(true);
                                   setOtpSent(false);
 
-                                  alert("Phone number verified successfully!");
+                                  console.log("Phone number verified successfully!");
                                 } else {
                                   alert("Invalid OTP");
                                 }
