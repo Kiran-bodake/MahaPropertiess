@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLocationStore } from "@/store/useLocationStore";
 
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import PropertyImageSlider from "@/components/property/PropertyImageSlider";
@@ -166,6 +167,7 @@ export default function PropertiesPage() {
 }
 
 function PropertiesContent() {
+  const { city, lat, lng } = useLocationStore();
   const searchParams = useSearchParams();
   const router = useRouter();
   const type = searchParams.get("type") || searchParams.get("cat") || "";
@@ -190,6 +192,10 @@ function PropertiesContent() {
   // Favorites state
   const [favorites, setFavorites] = useState<string[]>([]);
   const [toast, setToast] = useState<string>("");
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [showCatDropdown, setShowCatDropdown] = useState(false);
+  const [activeCityIdx, setActiveCityIdx] = useState<number>(-1);
+  const [catInput, setCatInput] = useState("");
 
   const [filters, setFilters] = useState<Filters>({
     // Search property by full name from Hero search
@@ -205,20 +211,33 @@ function PropertiesContent() {
     sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
   });
 
-  // Adjust filters during render when URL shorthand params change (avoids effect)
   useEffect(() => {
-    setFilters({
-      q: "",
-      category: type ? [type] : [],
-      locality: location || "",
-      sortBy: "newest",
-    });
-  }, [type, location]);
+    // Detect if URL has params
+    const hasSearchParams = searchParams.toString().length > 0;
 
-  const [showCityDropdown, setShowCityDropdown] = useState(false);
-  const [showCatDropdown, setShowCatDropdown] = useState(false);
-  const [activeCityIdx, setActiveCityIdx] = useState<number>(-1);
-  const [catInput, setCatInput] = useState("");
+    setFilters((prev) => ({
+      ...prev,
+
+      // Sync category from URL
+      category: type ? [type] : searchParams.getAll("category"),
+
+      // Sync search query
+      q: searchParams.get("q") ?? "",
+
+      // Location logic
+      locality:
+        // URL location wins
+        location ||
+        // Apply IP city ONLY
+        // on plain /properties
+        (!hasSearchParams ? city || "Nashik" : ""),
+
+      // Sort
+      sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
+    }));
+  }, [city, location, type, searchParams]);
+
+  // Adjust filters during render when URL shorthand params change (avoids effect)
 
   const debouncedFilters = useDebounced(filters, 250);
 
@@ -457,8 +476,20 @@ function PropertiesContent() {
     });
   };
 
-  const resetFilters = () =>
-    setFilters({ q: "", category: [], locality: "", sortBy: "newest" });
+  const resetFilters = () => {
+    setFilters({
+      q: "",
+
+      category: [],
+
+      locality: "",
+
+      sortBy: "newest",
+    });
+
+    // Remove URL params
+    router.push("/properties");
+  };
 
   const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -580,22 +611,22 @@ function PropertiesContent() {
           <section className="hero">
             <h1>
               {formattedType && location
-                ? `Find ${formattedType} in ${location}, Nashik`
+                ? `Find ${formattedType} in ${location}, ${city}`
                 : formattedType
-                  ? `Find ${formattedType} in Nashik`
+                  ? `Find ${formattedType} in ${city}`
                   : location
-                    ? `Find Premium in ${location}, Nashik`
-                    : "Find Premium in Nashik"}
+                    ? `Find Premium in ${location}, ${city}`
+                    : `Find Premium in ${city}`}
             </h1>
 
             <p>
               {formattedType && location
-                ? `Explore verified ${formattedType.toLowerCase()} in ${location}, Nashik with premium investment opportunities.`
+                ? `Explore verified ${formattedType.toLowerCase()} in ${location}, ${city} with premium investment opportunities.`
                 : formattedType
-                  ? `Explore verified ${formattedType.toLowerCase()} across Nashik with premium investment opportunities.`
+                  ? `Explore verified ${formattedType.toLowerCase()} across ${city} with premium investment opportunities.`
                   : location
-                    ? `Explore verified NA plots, commercial properties, warehouses and investment opportunities in ${location}, Nashik.`
-                    : "Explore verified NA plots, commercial properties, warehouses and investment opportunities in prime locations."}
+                    ? `Explore verified NA plots, commercial properties, warehouses and investment opportunities in ${location}, ${city}.`
+                    : `Explore verified NA plots, commercial properties, warehouses and investment opportunities in prime locations.`}
             </p>
 
             <Link href="/favorites" className="favLink">
@@ -1019,7 +1050,10 @@ function PropertiesContent() {
                 <div className="empty">
                   <div className="emptyIcon">🏚️</div>
                   <h3>No matching properties found</h3>
-                  <p>Try adjusting your filters or searching another city.</p>
+                  <p>
+                    Try adjusting your filters or exploring nearby areas in{" "}
+                    {city}.
+                  </p>
                   <button
                     type="button"
                     className="primaryBtn"

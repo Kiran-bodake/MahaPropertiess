@@ -243,7 +243,7 @@ export default async function LocalityPage({ params }: Props) {
                     color: "#0f172a",
                   }}
                 >
-                  Nearby Properties
+                  More Properties Around {localityName}
                 </h2>
 
                 <p
@@ -253,7 +253,7 @@ export default async function LocalityPage({ params }: Props) {
                     fontSize: "0.9rem",
                   }}
                 >
-                  Based on location:
+                  Explore similar investment opportunities near
                   <strong> {currentProperty.locality}</strong>
                 </p>
               </div>

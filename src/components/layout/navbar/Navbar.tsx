@@ -953,7 +953,7 @@ export function Navbar() {
 
               {/* Enquiry CTA */}
               <Link
-                href="/enquiry"
+                href="/contact"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -1381,20 +1381,18 @@ export function Navbar() {
                             Favorite Properties
                           </Link>
                           <Link
-  href="/my-properties"
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    padding: "12px",
-    borderRadius: "8px",
-    color: "#111827",
-  }}
->
-
-  📋 My Property Status
-
-</Link>
+                            href="/my-properties"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "10px",
+                              padding: "12px",
+                              borderRadius: "8px",
+                              color: "#111827",
+                            }}
+                          >
+                            📋 My Property Status
+                          </Link>
 
                           {/* Logout */}
                           <button

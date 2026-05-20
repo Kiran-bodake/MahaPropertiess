@@ -5,6 +5,7 @@ import "@/styles/globals.scss";
 import "@/styles/x-admin.scss";
 import { PageTransitionProvider } from "@/components/shared/PageTransitionProvider";
 import { ScrollReveal } from "@/components/shared/ScrollReveal";
+import LocationProvider from "@/components/providers/LocationProvider";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -44,9 +45,9 @@ export default function RootLayout({
           }}
         />
         <ScrollReveal />
-        <PageTransitionProvider>
-          {children}
-        </PageTransitionProvider>
+        <LocationProvider>
+          <PageTransitionProvider>{children}</PageTransitionProvider>
+        </LocationProvider>
       </body>
     </html>
   );

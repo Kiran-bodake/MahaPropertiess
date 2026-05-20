@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
+import { useLocationStore } from "@/store/useLocationStore";
 import properties from "@/moc-data/properties.json";
 import HeroSearch from "@/components/home/HeroSearch";
 import {
@@ -673,6 +674,7 @@ function Nav() {
    HERO  — slider + integrated HeroSearch (redirects to /properties)
 ═══════════════════════════════════════════════════════════ */
 function Hero() {
+  const { city } = useLocationStore();
   const [slide, setSlide] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -858,7 +860,7 @@ function Hero() {
               textShadow: "0 2px 20px rgba(0,0,0,.35)",
             }}
           >
-            {S.h}
+            {S.h.replaceAll("Nashik", city)}
           </h1>
 
           {/* Subtitle */}
@@ -874,7 +876,7 @@ function Hero() {
               textShadow: "0 1px 10px rgba(0,0,0,.3)",
             }}
           >
-            {S.sub}
+            {S.sub.replaceAll("Nashik", city)}
           </p>
 
           {/* ✅ NEW SEARCH BAR — redirects to /properties with filters */}
@@ -1375,7 +1377,7 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
             }}
           >
             <span style={{ color: G.g }}>{I.pin}</span>
-            {p.loc || p.location}, Nashik
+            {p.loc || p.location}
           </div>
 
           <div
@@ -1740,6 +1742,7 @@ function Stats() {
    LOCALITIES  — 4/row, 3 rows, CTA instead of pill list
 ═══════════════════════════════════════════════════════════ */
 function Locs({ properties }: any) {
+  const { city } = useLocationStore();
   const [ref, vis] = useInView();
 
   if (!properties) return null;
@@ -1803,7 +1806,7 @@ function Locs({ properties }: any) {
           }}
         >
           <div>
-            <div className="sl">Explore Nashik</div>
+            <div className="sl">Explore {city}</div>
 
             <h2
               style={{
@@ -1959,7 +1962,7 @@ function Locs({ properties }: any) {
             className="b bo"
             style={{ padding: "10px 24px", fontSize: "13px" }}
           >
-            Explore All Nashik Localities {I.arr}
+            Explore All {city} Localities {I.arr}
           </Link>
         </div>
       </div>
@@ -3044,6 +3047,7 @@ function WA() {
    ROOT EXPORT  — single component, zero duplicates
 ═══════════════════════════════════════════════════════════ */
 export default function MahaHome() {
+  const { city } = useLocationStore();
   const [properties, setProperties] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
