@@ -86,9 +86,7 @@ export function PropertyActions({
 
       setSaved(false);
 
-      alert(
-        "Removed from saved"
-      );
+    
 
     }
 
@@ -101,10 +99,7 @@ export function PropertyActions({
 
       setSaved(true);
 
-      alert(
-        "Property saved"
-      );
-
+     
     }
 
     localStorage.setItem(
@@ -122,9 +117,7 @@ export function PropertyActions({
 
     if(!reportReason){
 
-      alert(
-        "Please enter reason"
-      );
+     
 
       return;
     }
@@ -153,10 +146,7 @@ export function PropertyActions({
       }
     );
 
-    alert(
-      "Report submitted"
-    );
-
+   
     setShowReport(false);
 
     setReportReason("");
@@ -278,10 +268,7 @@ export function PropertyActions({
                   propertyUrl
                 );
 
-                alert(
-                  "Link copied!"
-                );
-
+               
               }}
               style={shareBtn}
             >
