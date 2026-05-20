@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
 import { Heart, LogOut } from "lucide-react";
 import {
   Menu,
@@ -400,22 +401,64 @@ export function Navbar() {
   const menuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [user, setUser] = useState<any>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   /* Logout */
-  const logout = () => {
-    if (typeof window === "undefined") {
-      return;
+ const logout = () => {
+
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  localStorage.removeItem("token");
+
+  localStorage.removeItem("user");
+
+  setUser(null);
+
+  setShowProfileMenu(false);
+
+  router.push("/");
+};
+
+
+/* Close profile dropdown on outside click */
+useEffect(() => {
+
+  const handleClickOutside = (
+    event: MouseEvent
+  ) => {
+
+    if (
+      profileRef.current &&
+      !profileRef.current.contains(
+        event.target as Node
+      )
+    ) {
+
+      setShowProfileMenu(false);
+
     }
-
-    localStorage.removeItem("token");
-
-    localStorage.removeItem("user");
-
-    setUser(null);
-
-    window.location.href = "/";
   };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+  };
+
+}, []);
+
 
   /* Load logged in user */
   useEffect(() => {
@@ -528,6 +571,17 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const menuBtn = {
+  width: "100%",
+  border: "none",
+  background: "transparent",
+  padding: "14px 16px",
+  textAlign: "left",
+  cursor: "pointer",
+  fontWeight: 600,
+  color: "#111827",
+};
+
   const openMenu = (label: string) => {
     if (menuTimerRef.current) clearTimeout(menuTimerRef.current);
     setActiveMenu(label);
@@ -560,8 +614,8 @@ export function Navbar() {
         <div
           key={item.label}
           style={{
-            position: "relative",
-            display: item.label === "Coworking" ? "none" : "relative",
+
+           display: item.label === "Coworking" ? "none" : "block",
           }}
           onMouseEnter={() => openMenu(item.label)}
           onMouseLeave={closeMenu}
@@ -1314,134 +1368,171 @@ export function Navbar() {
                   }}
                 >
                   {user ? (
-                    <div
-                      style={{
-                        position: "relative",
-                      }}
-                    >
-                      {/* Profile Button */}
-                      <button
-                        onClick={() => setShowProfileMenu(!showProfileMenu)}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          border: "none",
-                          background: "transparent",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "38px",
-                            height: "38px",
-                            borderRadius: "50%",
-                            background: "#16a34a",
-                            color: "#fff",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <User size={18} />
-                        </div>
+                   <div
+  ref={profileRef}
+  style={{
+    position: "relative",
+  }}
+>
 
-                        <ChevronDown size={16} />
-                      </button>
+  {/* PROFILE BUTTON */}
+  <button
+    onClick={() =>
+      setShowProfileMenu(!showProfileMenu)
+    }
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      border: "1px solid #e5e7eb",
+      background: "#fff",
+      padding: "8px 14px",
+      borderRadius: "999px",
+      cursor: "pointer",
+      fontWeight: 700,
+      boxShadow: "0 1px 2px rgba(0,0,0,.05)",
+    }}
+  >
 
-                      {/* Dropdown */}
-                      {showProfileMenu && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: "50px",
-                            right: 0,
-                            width: "220px",
-                            background: "#fff",
-                            border: "1px solid #e5e7eb",
-                            borderRadius: "12px",
-                            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                            padding: "8px",
-                            zIndex: 999,
-                          }}
-                        >
-                          {/* Favorites */}
-                          <Link
-                            href="/favorites"
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "10px",
-                              padding: "12px",
-                              borderRadius: "8px",
-                              color: "#111827",
-                            }}
-                          >
-                            <Heart size={16} />
-                            Favorite Properties
-                          </Link>
-                          <Link
-                            href="/my-properties"
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "10px",
-                              padding: "12px",
-                              borderRadius: "8px",
-                              color: "#111827",
-                            }}
-                          >
-                            📋 My Property Status
-                          </Link>
+    {/* AVATAR */}
+    <div
+      style={{
+        width: 34,
+        height: 34,
+        borderRadius: "50%",
+        background: "#f59e0b",
+        color: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 800,
+        fontSize: "14px",
+      }}
+    >
+      {user?.name?.charAt(0) || "U"}
+    </div>
 
-                          {/* Logout */}
-                          <button
-                            onClick={logout}
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "10px",
-                              padding: "12px",
-                              border: "none",
-                              background: "transparent",
-                              cursor: "pointer",
-                              color: "#dc2626",
-                            }}
-                          >
-                            <LogOut size={16} />
-                            Logout
-                          </button>
-                        </div>
-                      )}
-                    </div>
+    {/* USER NAME */}
+    <span
+      style={{
+        color: "#111827",
+        fontSize: "14px",
+      }}
+    >
+      {user?.name || user?.phone}
+    </span>
+
+  </button>
+
+  
+  {/* DROPDOWN */}
+  {showProfileMenu && (
+
+    <div
+      style={{
+        position: "absolute",
+        top: "110%",
+        right: 0,
+        width: 240,
+        background: "#fff",
+        borderRadius: 16,
+        border: "1px solid #e5e7eb",
+        boxShadow:
+          "0 10px 40px rgba(0,0,0,.08)",
+        overflow: "hidden",
+        zIndex: 999,
+      }}
+    >
+
+      {/* USER INFO */}
+      <div
+        style={{
+          padding: "14px",
+          borderBottom: "1px solid #f3f4f6",
+        }}
+      >
+        <div
+          style={{
+            fontWeight: 700,
+            color: "#111827",
+          }}
+        >
+          {user?.name || "User"}
+        </div>
+
+        <div
+          style={{
+            fontSize: ".85rem",
+            color: "#64748b",
+            marginTop: "2px",
+          }}
+        >
+          {user?.phone}
+        </div>
+      </div>
+
+
+      {/* MENU ITEMS */}
+    <Link
+  href="/profile"
+  style={menuBtn as React.CSSProperties}
+>
+  My Profile
+</Link>
+
+<Link
+  href="/saved-properties"
+  style={menuBtn as React.CSSProperties}
+>
+  Saved Properties
+</Link>
+
+<Link
+  href="/my-activity"
+  style={menuBtn}
+>
+  My Activity
+</Link>
+
+
+      {/* LOGOUT */}
+      <button
+        onClick={logout}
+        style={{
+          ...menuBtn,
+          color: "#dc2626",
+        }}
+      >
+        Logout
+      </button>
+
+    </div>
+
+  )}
+
+</div>
                   ) : (
                     <button
-                      onClick={() => setShowAuthModal(true)}
-                      style={{
-                        height: "40px",
-
-                        padding: "0 18px",
-
-                        borderRadius: "10px",
-
-                        border: "1.5px solid #e5e7eb",
-
-                        background: "#ffffff",
-
-                        color: "#111827",
-
-                        fontWeight: 700,
-
-                        fontSize: "14px",
-
-                        cursor: "pointer",
-
-                        transition: "all .2s ease",
-                      }}
-                    >
-                      Login
-                    </button>
+  onClick={() => setShowAuthModal(true)}
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "10px 18px",
+    borderRadius: "999px",
+    border: "1px solid #e5e7eb",
+    background: "#fff",
+    cursor: "pointer",
+    fontWeight: 700,
+    fontSize: "14px",
+    color: "#111827",
+    transition: "all .2s ease",
+    boxShadow: "0 1px 2px rgba(0,0,0,.05)",
+  }}
+>
+  <User size={16} />
+  Login 
+</button>
                   )}
                 </div>
 
@@ -1684,6 +1775,65 @@ export function Navbar() {
                 <X size={18} />
               </button>
             </div>
+
+
+
+{/* MOBILE USER INFO */}
+{user && (
+
+  <div
+    style={{
+      padding: "18px 24px",
+      borderBottom: "1px solid #f3f4f6",
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+    }}
+  >
+
+    <div
+      style={{
+        width: 48,
+        height: 48,
+        borderRadius: "50%",
+        background: "#f59e0b",
+        color: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 800,
+        fontSize: "18px",
+      }}
+    >
+      {user?.name?.charAt(0) || "U"}
+    </div>
+
+    <div>
+
+      <div
+        style={{
+          fontWeight: 700,
+          color: "#111827",
+        }}
+      >
+        {user?.name || "User"}
+      </div>
+
+      <div
+        style={{
+          fontSize: ".85rem",
+          color: "#64748b",
+          marginTop: "2px",
+        }}
+      >
+        {user?.phone}
+      </div>
+
+    </div>
+
+  </div>
+
+)}
 
             {/* Search inside drawer */}
             <div
@@ -1939,7 +2089,45 @@ export function Navbar() {
                 </Link>
               ))}
             </div>
+{/* MOBILE LOGIN */}
+{!user && (
 
+  <div
+    style={{
+      padding: "20px 24px 0",
+    }}
+  >
+
+    <button
+      onClick={() => {
+
+        setShowAuthModal(true);
+
+        setMenuOpen(false);
+
+      }}
+      style={{
+        width: "100%",
+        height: "48px",
+        borderRadius: "12px",
+        border: "1px solid #e5e7eb",
+        background: "#fff",
+        fontWeight: 700,
+        fontSize: "15px",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
+      }}
+    >
+      <User size={18} />
+      Login / Register
+    </button>
+
+  </div>
+
+)}
             {/* Auth + CTA at bottom */}
             <div
               style={{

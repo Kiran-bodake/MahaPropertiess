@@ -137,17 +137,30 @@ export default function AuthModal({ onClose, onLoginSuccess }: Props) {
         return;
       }
 
-      const userData = data.user || data.userData || data.data;
+    const userData = {
+  name: "User",
+  phone: mobile,
+};
 
-      localStorage.setItem("token", data.token);
+localStorage.setItem(
+  "token",
+  data.token || "loggedin"
+);
 
-      localStorage.setItem("user", JSON.stringify(userData));
+localStorage.setItem(
+  "user",
+  JSON.stringify(userData)
+);
 
-      if (onLoginSuccess) {
-        onLoginSuccess(userData);
-      }
+console.log("LOGIN USER:", userData);
 
-      onClose();
+if (onLoginSuccess) {
+
+  onLoginSuccess(userData);
+
+}
+
+onClose();
     } catch {
       setError("Verification failed");
     } finally {
