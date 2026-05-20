@@ -611,29 +611,37 @@ function PropertiesContent() {
           <section className="hero">
             <h1>
               {formattedType && location
-                ? `Find ${formattedType} in ${location}, ${city}`
+                ? `Find ${formattedType} in ${
+                    location === city ? city : `${location}, ${city}`
+                  }`
                 : formattedType
                   ? `Find ${formattedType} in ${city}`
                   : location
-                    ? `Find Premium in ${location}, ${city}`
+                    ? `Find Premium in ${
+                        location === city ? city : `${location}, ${city}`
+                      }`
                     : `Find Premium in ${city}`}
             </h1>
 
             <p>
               {formattedType && location
-                ? `Explore verified ${formattedType.toLowerCase()} in ${location}, ${city} with premium investment opportunities.`
+                ? `Explore verified ${formattedType.toLowerCase()} in ${
+                    location === city ? city : `${location}, ${city}`
+                  } with premium investment opportunities.`
                 : formattedType
                   ? `Explore verified ${formattedType.toLowerCase()} across ${city} with premium investment opportunities.`
                   : location
-                    ? `Explore verified NA plots, commercial properties, warehouses and investment opportunities in ${location}, ${city}.`
+                    ? `Explore verified NA plots, commercial properties, warehouses and investment opportunities in ${
+                        location === city ? city : `${location}, ${city}`
+                      }.`
                     : `Explore verified NA plots, commercial properties, warehouses and investment opportunities in prime locations.`}
             </p>
 
-            <Link href="/favorites" className="favLink">
+            {/* <Link href="/favorites" className="favLink">
               <span className="favLinkHeart">❤</span>
               My Favorites
               <span className="favLinkCount">{favorites.length}</span>
-            </Link>
+            </Link> */}
           </section>
 
           <section className="layout">
