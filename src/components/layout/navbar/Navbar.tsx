@@ -1477,7 +1477,7 @@ useEffect(() => {
   href="/profile"
   style={menuBtn as React.CSSProperties}
 >
-  My Profile
+  
 </Link>
 
 <Link
@@ -1488,10 +1488,10 @@ useEffect(() => {
 </Link>
 
 <Link
-  href="/my-activity"
+  href="/favorites"
   style={menuBtn}
 >
-  My Activity
+
 </Link>
 
 
