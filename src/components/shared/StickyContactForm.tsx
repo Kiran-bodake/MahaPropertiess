@@ -5,9 +5,11 @@ import { useState } from "react";
 interface StickyContactFormProps {
   title?: string;
   description?: string;
+   propertyTitle: string;
 }
-
-export function StickyContactForm({}: StickyContactFormProps) {
+export function StickyContactForm({
+  propertyTitle,
+}: StickyContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -63,36 +65,54 @@ export function StickyContactForm({}: StickyContactFormProps) {
     return valid;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
 
-    setStatus("");
+const handleSubmit = async (e: React.FormEvent) => {
 
-    if (!validate()) return;
+  e.preventDefault();
 
-    try {
-      setStatus("Submitting...");
+  if (!validate()) return;
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+const res = await fetch("/api/property-inquiry", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    propertyTitle,
+    customerName: name,
+    email,
+    phone,
+    message,
+    inquiryType: "callback",
+  }),
+});
+
+    const data = await res.json();
+
+    if (data.success) {
+
+      console.log("Property Lead Saved");
+
+      setStatus("Request submitted successfully");
 
       setName("");
       setEmail("");
       setPhone("");
       setMessage("");
 
-      setErrors({
-        name: "",
-        email: "",
-        phone: "",
-      });
-
-      setStatus("Thank you! We will contact you shortly.");
-    } catch (error) {
-      console.error(error);
-
-      setStatus("Something went wrong. Please try again.");
     }
-  };
+
+  } catch (error) {
+
+    console.log(error);
+
+    setStatus("Something went wrong");
+
+  }
+};
+
+  
 
   const getInputStyle = (hasError: boolean): React.CSSProperties => ({
     width: "100%",

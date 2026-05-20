@@ -14,7 +14,8 @@ import {
   Layers,
   ListChecks,
   Search,
-  Users
+  Users,
+  Phone
 } from "lucide-react";
 
 const items=[
@@ -31,11 +32,11 @@ const items=[
     icon:Home
   },
 
-  {
-    href:"/x-admin/property-approvals",
-    label:"Approvals",
-    icon:ListChecks
-  },
+ {
+  label: "Property Inquiries",
+  href: "/x-admin/property-inquiries",
+  icon: Phone,
+},
 
   {
     href:"/x-admin/leads",
@@ -183,7 +184,7 @@ export function AdminSidebar(){
                 justifyContent:"center",
                 background:"rgba(255,255,255,.08)"
               }}>
-                <Icon size={18}/>
+               <Phone size={18}/>
               </div>
 
               <span style={{fontSize:14,fontWeight:600}}>

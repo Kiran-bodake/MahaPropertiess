@@ -222,7 +222,7 @@ export function PropertyGallery({
             boxShadow: "0 8px 18px rgba(0,0,0,.12)",
           }}
         >
-          ₹{price.toLocaleString()}
+       ₹{price.toLocaleString("en-IN")}
         </div>
       </div>
     </div>
