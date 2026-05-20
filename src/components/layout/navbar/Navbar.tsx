@@ -571,7 +571,7 @@ useEffect(() => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const menuBtn = {
+const menuBtn: React.CSSProperties = {
   width: "100%",
   border: "none",
   background: "transparent",
@@ -1474,25 +1474,21 @@ useEffect(() => {
 
       {/* MENU ITEMS */}
     <Link
-  href="/profile"
+  href="/favorites"
   style={menuBtn as React.CSSProperties}
 >
   
 </Link>
 
 <Link
-  href="/saved-properties"
-  style={menuBtn as React.CSSProperties}
->
-  Saved Properties
-</Link>
-
-<Link
   href="/favorites"
   style={menuBtn}
 >
-
+  ❤️ Favorite Properties
 </Link>
+
+
+
 
 
       {/* LOGOUT */}

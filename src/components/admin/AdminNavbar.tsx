@@ -7,7 +7,7 @@ import { Bell, LogOut, Search, Settings, UserCircle2 } from "lucide-react";
 const crumbs={
   "/x-admin":["Dashboard"],
   "/x-admin/leads":["Dashboard","Leads"],
-  "/x-admin/deals":["Dashboard","Deals"],
+  "/x-admin/deals":["DashboaSrd","Deals"],
   "/x-admin/tasks":["Dashboard","Tasks"],
   "/x-admin/properties":["Dashboard","Properties"]
 };
