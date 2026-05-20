@@ -31,6 +31,9 @@ import {
   School,
   Hospital,
   Store,
+  SquareDashedBottom,
+  UserRound,
+  BriefcaseBusiness,
   Shield,
 } from "lucide-react";
 
@@ -351,19 +354,18 @@ export default async function PropertyDetailPage({
                   }}
                 >
                   <InfoCard
-                    icon="📐"
+                    icon={<SquareDashedBottom size={18} strokeWidth={2.2} />}
                     label="Area"
                     value={`${property.area} ${property.areaUnit}`}
                   />
-
                   <InfoCard
-                    icon="🏢"
+                    icon={<BriefcaseBusiness size={18} strokeWidth={2.2} />}
                     label="Listed By"
                     value={property.postedBy}
                   />
 
                   <InfoCard
-                    icon="👤"
+                    icon={<UserRound size={18} strokeWidth={2.2} />}
                     label="Agent"
                     value={property.agentName}
                   />
@@ -519,10 +521,10 @@ export default async function PropertyDetailPage({
                     }}
                   >
                     <StickyContactForm
-  propertyTitle={property.title}
-  title="Request Callback"
-  description="Talk with owner today"
-/>
+                      propertyTitle={property.title}
+                      title="Request Callback"
+                      description="Talk with owner today"
+                    />
                   </div>
                 </div>
               </div>

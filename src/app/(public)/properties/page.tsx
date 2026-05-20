@@ -212,29 +212,25 @@ function PropertiesContent() {
   });
 
   useEffect(() => {
-    // Detect if URL has params
     const hasSearchParams = searchParams.toString().length > 0;
 
-    setFilters((prev) => ({
-      ...prev,
-
-      // Sync category from URL
-      category: type ? [type] : searchParams.getAll("category"),
-
-      // Sync search query
+    const nextFilters = {
       q: searchParams.get("q") ?? "",
 
-      // Location logic
-      locality:
-        // URL location wins
-        location ||
-        // Apply IP city ONLY
-        // on plain /properties
-        (!hasSearchParams ? city || "Nashik" : ""),
+      category: type ? [type] : searchParams.getAll("category"),
 
-      // Sort
+      locality: location || (!hasSearchParams ? city || "Nashik" : ""),
+
       sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
-    }));
+    };
+
+    setFilters((prev) => {
+      const same = JSON.stringify(prev) === JSON.stringify(nextFilters);
+
+      if (same) return prev;
+
+      return nextFilters;
+    });
   }, [city, location, type, searchParams]);
 
   // Adjust filters during render when URL shorthand params change (avoids effect)
