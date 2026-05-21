@@ -1,5 +1,6 @@
 "use client";
 
+import confetti from "canvas-confetti";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar/Navbar";
@@ -82,7 +83,7 @@ type FormData = {
 type FileEntry = { file: File; preview: string; name: string; size: string };
 
 const INITIAL: FormData = {
-  postedBy: "",
+  postedBy: "owner",
   agentName: "",
   agentPhone: "",
 
@@ -893,6 +894,24 @@ function ImageUploadZone({
   );
 }
 
+function formatPriceShort(amount: number) {
+  if (!amount) return "";
+
+  if (amount < 1000) {
+    return `₹ ${amount} Rupees`;
+  }
+
+  if (amount < 100000) {
+    return `₹ ${(amount / 1000).toFixed(2)} Thousand`;
+  }
+
+  if (amount < 10000000) {
+    return `₹ ${(amount / 100000).toFixed(2)} Lakh`;
+  }
+
+  return `₹ ${(amount / 10000000).toFixed(2)} Crore`;
+}
+
 /* ─── Main Component ──────────────────────────────────── */
 export default function PostPropertyPage() {
   const [meta, setMeta] = useState<Meta | null>(null);
@@ -918,6 +937,91 @@ export default function PostPropertyPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [enteredOtp, setEnteredOtp] = useState("");
   const [phoneVerified, setPhoneVerified] = useState(false);
+  const [showDescPopup, setShowDescPopup] = useState(false);
+
+  const [questionAnswers, setQuestionAnswers] = useState<
+    Record<string, string>
+  >({});
+
+  const getCategoryQuestions = () => {
+    const cat = form.categoryLabel.toLowerCase();
+
+    // AGRICULTURE
+    if (cat.includes("agriculture")) {
+      return [
+        "Is borewell available?",
+        "Is 7/12 documentation clear?",
+        "Any legal dispute on land?",
+        "Road touch property?",
+        "Water source available?",
+        "Suitable for farming or farmhouse?",
+      ];
+    }
+
+    // COMMERCIAL
+    if (
+      cat.includes("commercial") ||
+      cat.includes("showroom") ||
+      cat.includes("shop")
+    ) {
+      return [
+        "Is property on main road?",
+        "Parking available?",
+        "Near market area?",
+        "High footfall location?",
+        "Suitable for office/shop?",
+      ];
+    }
+
+    // INDUSTRIAL / MIDC / WAREHOUSE
+    if (
+      cat.includes("industrial") ||
+      cat.includes("warehouse") ||
+      cat.includes("midc")
+    ) {
+      return [
+        "Truck access available?",
+        "Power connection available?",
+        "Suitable for storage or manufacturing?",
+        "Wide road access available?",
+        "Industrial zone approved?",
+      ];
+    }
+
+    // FARMHOUSE
+    if (cat.includes("farmhouse")) {
+      return [
+        "Borewell available?",
+        "Road connectivity available?",
+        "Suitable for weekend stay?",
+        "Water source available?",
+        "Fencing available?",
+      ];
+    }
+
+    // RESIDENTIAL / NA / CIDCO
+    if (
+      cat.includes("residential") ||
+      cat.includes("na") ||
+      cat.includes("cidco")
+    ) {
+      return [
+        "Gated society?",
+        "Parking available?",
+        "Lift available?",
+        "Near school/hospital?",
+        "Furnished or unfurnished?",
+      ];
+    }
+
+    // DEFAULT
+    return [
+      "Prime location?",
+      "Road connectivity available?",
+      "Investment potential?",
+      "Nearby facilities?",
+    ];
+  };
 
   const TEMP_OTP = "123";
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -1103,6 +1207,47 @@ export default function PostPropertyPage() {
         body: JSON.stringify(payload),
       });
       setSubmitted(true);
+
+      const duration = 2500;
+
+      const animationEnd = Date.now() + duration;
+
+      const defaults = {
+        startVelocity: 30,
+        spread: 360,
+        ticks: 70,
+        zIndex: 9999,
+      };
+
+      const interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          return;
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: {
+            x: Math.random() * 0.3 + 0.1,
+            y: Math.random() - 0.2,
+          },
+        });
+
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: {
+            x: Math.random() * 0.3 + 0.7,
+            y: Math.random() - 0.2,
+          },
+        });
+      }, 250);
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);
@@ -1116,13 +1261,50 @@ export default function PostPropertyPage() {
     // AGRICULTURE
     if (category.toLowerCase().includes("agriculture")) {
       template = `
-Fertile agricultural land located in ${form.locality || form.city}, ideal for farming, farmhouse development and long-term investment.
+Premium agricultural land located in ${form.locality || form.city}, offering an excellent opportunity for farming, farmhouse development, and long-term investment.
 
-This property offers ${descFeature || "excellent land quality"} with peaceful surroundings and strong future appreciation potential.
+The property features ${
+        descFeature ||
+        "fertile soil, peaceful surroundings, and strong appreciation potential"
+      }.
 
-Nearby landmarks include ${descLandmark || "major connecting roads and local facilities"}.
+${
+  questionAnswers["Is borewell available?"] === "yes"
+    ? "A borewell facility is available on the property."
+    : ""
+}
 
-Suitable for ${descSuitable || "farming, farmhouse and investment buyers"}.
+${
+  questionAnswers["Is 7/12 documentation clear?"] === "yes"
+    ? "The land has clear 7/12 documentation."
+    : ""
+}
+
+${
+  questionAnswers["Any legal dispute on land?"] === "no"
+    ? "The property is free from legal disputes."
+    : ""
+}
+
+${
+  questionAnswers["Road touch property?"] === "yes"
+    ? "The property has good road connectivity and easy access."
+    : ""
+}
+
+${
+  questionAnswers["Water source available?"] === "yes"
+    ? "Reliable water availability makes it suitable for agricultural activities."
+    : ""
+}
+
+Nearby landmarks include ${
+        descLandmark || "major connecting roads and essential facilities"
+      }.
+
+Ideal for ${
+        descSuitable || "farming, farmhouse projects, and investment purposes"
+      }.
 `;
     }
 
@@ -1132,46 +1314,147 @@ Suitable for ${descSuitable || "farming, farmhouse and investment buyers"}.
       category.toLowerCase().includes("shop")
     ) {
       template = `
-Prime commercial property located in ${form.locality || form.city} with excellent connectivity and business potential.
+Prime commercial property located in ${form.locality || form.city}, offering excellent business visibility and strong investment potential.
 
-This property features ${descFeature || "high visibility and road access"} making it ideal for commercial use and investment opportunities.
+The property features ${
+        descFeature ||
+        "high visibility, excellent connectivity, and commercial growth potential"
+      }.
 
-Nearby landmarks include ${descLandmark || "main roads, markets and business hubs"}.
+${
+  questionAnswers["Is property on main road?"] === "yes"
+    ? "The property is strategically located on a main road for maximum business exposure."
+    : ""
+}
 
-Perfect for ${descSuitable || "showrooms, offices and retail businesses"}.
+${
+  questionAnswers["Parking available?"] === "yes"
+    ? "Dedicated parking space is available for customers and staff."
+    : ""
+}
+
+${
+  questionAnswers["Near market area?"] === "yes"
+    ? "The property is situated close to busy market and commercial zones."
+    : ""
+}
+
+${
+  questionAnswers["High footfall location?"] === "yes"
+    ? "The location enjoys high daily footfall, making it ideal for commercial activities."
+    : ""
+}
+
+Nearby landmarks include ${
+        descLandmark || "business hubs, markets, and major connecting roads"
+      }.
+
+Perfect for ${
+        descSuitable ||
+        "retail shops, offices, showrooms, and investment purposes"
+      }.
 `;
     }
 
-    // WAREHOUSE
+    // WAREHOUSE / INDUSTRIAL
     else if (
       category.toLowerCase().includes("warehouse") ||
       category.toLowerCase().includes("industrial")
     ) {
       template = `
-Strategically located warehouse property in ${form.locality || form.city} with excellent transportation access.
+Strategically located warehouse property in ${form.locality || form.city}, suitable for logistics, storage, and industrial operations.
 
-The property includes ${descFeature || "wide road connectivity and industrial access"} suitable for logistics and storage operations.
+The property offers ${
+        descFeature ||
+        "excellent transportation access and industrial infrastructure"
+      }.
 
-Nearby landmarks include ${descLandmark || "MIDC zones and highways"}.
+${
+  questionAnswers["Truck access available?"] === "yes"
+    ? "The property has convenient truck accessibility for smooth logistics movement."
+    : ""
+}
 
-Ideal for ${descSuitable || "warehouse operations, logistics and industrial use"}.
+${
+  questionAnswers["Power connection available?"] === "yes"
+    ? "Industrial power connection is available on the property."
+    : ""
+}
+
+${
+  questionAnswers["Suitable for storage or manufacturing?"]
+    ? `The property is suitable for ${questionAnswers["Suitable for storage or manufacturing?"]}.`
+    : ""
+}
+
+Nearby landmarks include ${
+        descLandmark || "MIDC zones, highways, and industrial corridors"
+      }.
+
+Ideal for ${
+        descSuitable ||
+        "warehouse operations, manufacturing, and logistics businesses"
+      }.
 `;
     }
 
     // RESIDENTIAL / DEFAULT
     else {
       template = `
-Premium ${category} property located in ${form.locality || form.city}.
+Premium residential property located in ${form.locality || form.city}, offering comfortable living with excellent surrounding infrastructure.
 
-This property offers ${descFeature || "excellent location benefits"} and is ideal for buyers looking for quality investment opportunities.
+The property features ${
+        descFeature ||
+        "modern amenities, good connectivity, and peaceful surroundings"
+      }.
 
-Nearby landmarks include ${descLandmark || "schools, hospitals and major roads"}.
+${
+  questionAnswers["Gated society?"] === "yes"
+    ? "The property is located within a secure gated community."
+    : ""
+}
 
-Perfect for ${descSuitable || "residential and investment purposes"}.
+${
+  questionAnswers["Parking available?"] === "yes"
+    ? "Dedicated parking space is available."
+    : ""
+}
+
+${
+  questionAnswers["Lift available?"] === "yes"
+    ? "Lift facility is available for convenience."
+    : ""
+}
+
+${
+  questionAnswers["Near school/hospital?"] === "yes"
+    ? "Schools, hospitals, and daily convenience facilities are located nearby."
+    : ""
+}
+
+${
+  questionAnswers["Furnished or unfurnished?"]
+    ? `The property is offered as ${questionAnswers["Furnished or unfurnished?"]}.`
+    : ""
+}
+
+Nearby landmarks include ${
+        descLandmark || "schools, hospitals, shopping areas, and major roads"
+      }.
+
+Perfect for ${
+        descSuitable || "families, residential living, and long-term investment"
+      }.
 `;
     }
 
-    set("description", template.trim());
+    set(
+      "description",
+      template
+        .replace(/\n\s*\n/g, " ")
+        .replace(/\s+/g, " ")
+        .trim(),
+    );
   };
 
   /* Success screen */
@@ -1700,18 +1983,18 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                                 fontWeight: 500,
                               }}
                               onClick={async () => {
-  await fetch("/api/send-otp", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      phone: form.agentPhone,
-    }),
-  });
+                                await fetch("/api/send-otp", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    phone: form.agentPhone,
+                                  }),
+                                });
 
-  setOtpSent(true);
-}}
+                                setOtpSent(true);
+                              }}
                             >
                               Send OTP
                             </button>
@@ -1749,7 +2032,9 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                                   setPhoneVerified(true);
                                   setOtpSent(false);
 
-                                  console.log("Phone number verified successfully!");
+                                  console.log(
+                                    "Phone number verified successfully!",
+                                  );
                                 } else {
                                   alert("Invalid OTP");
                                 }
@@ -1780,8 +2065,14 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                       <input
                         style={inp()}
                         value={form.title}
-                        onChange={(e) => set("title", e.target.value)}
-                        placeholder='e.g. "Prime NA Plot — Gangapur Road, Nashik"'
+                        onChange={(e) => {
+                          const value = e.target.value
+                            .replace(/["']/g, "") // remove quotes
+                            .replace(/[^a-zA-Z0-9\s\-&,]/g, ""); // allow only letters, numbers, space, - & ,
+
+                          set("title", value);
+                        }}
+                        placeholder="e.g. Prime NA Plot — Gangapur Road, Nashik"
                         required
                       />
                     </div>
@@ -2161,8 +2452,15 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                       >
                         📍{" "}
                         <strong>
-                          [ form.houseNo, form.street, form.locality, form.city,
-                          form.state ] .filter(Boolean) .join(", ")
+                          {[
+                            form.houseNo,
+                            form.street,
+                            form.locality,
+                            form.city,
+                            form.state,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
                         </strong>
                         {form.pincode && ` — ${form.pincode}`}
                       </div>
@@ -2244,11 +2542,20 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
 
                         <input
                           style={inp()}
-                          value={form.price}
-                          onChange={(e) => handlePriceChange(e.target.value)}
-                          placeholder="e.g. 4500000"
-                          type="number"
-                          min="0"
+                          value={
+                            form.price
+                              ? Number(form.price).toLocaleString("en-IN")
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const raw = e.target.value
+                              .replace(/,/g, "")
+                              .replace(/\D/g, "");
+
+                            handlePriceChange(raw);
+                          }}
+                          placeholder="e.g. 4,50,000"
+                          inputMode="numeric"
                         />
 
                         {errors.price && (
@@ -2272,7 +2579,7 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                               fontWeight: 600,
                             }}
                           >
-                            ≈ ₹{Number(form.price).toLocaleString("en-IN")}
+                            {formatPriceShort(Number(form.price))}
                           </div>
                         )}
                       </Field>
@@ -2464,50 +2771,13 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                       onPrev={() => setStep((s) => Math.max(0, s - 1))}
                       onNext={handleNext}
                     >
-                      <Row cols={2}>
-                        <Field>
-                          {lbl("Why should buyers choose this property?")}
-                          <input
-                            style={inp()}
-                            placeholder="e.g. High ROI, Prime location"
-                            value={descPurpose}
-                            onChange={(e) => setDescPurpose(e.target.value)}
-                          />
-                        </Field>
-
-                        <Field>
-                          {lbl("Special Features")}
-                          <input
-                            style={inp()}
-                            placeholder="e.g. Corner plot, Clear title"
-                            value={descFeature}
-                            onChange={(e) => setDescFeature(e.target.value)}
-                          />
-                        </Field>
-                      </Row>
-
-                      <Row cols={2}>
-                        <Field>
-                          {lbl("Nearby Landmarks")}
-                          <input
-                            style={inp()}
-                            placeholder="e.g. Near highway, MIDC"
-                            value={descLandmark}
-                            onChange={(e) => setDescLandmark(e.target.value)}
-                          />
-                        </Field>
-
-                        <Field>
-                          {lbl("Best Suitable For")}
-                          <input
-                            style={inp()}
-                            placeholder="e.g. Investment, Farming"
-                            value={descSuitable}
-                            onChange={(e) => setDescSuitable(e.target.value)}
-                          />
-                        </Field>
-                      </Row>
-
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          marginBottom: "18px",
+                        }}
+                      ></div>
                       <div
                         style={{
                           display: "flex",
@@ -2517,7 +2787,7 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                       >
                         <button
                           type="button"
-                          onClick={generateDescription}
+                          onClick={() => setShowDescPopup(true)}
                           style={{
                             border: "none",
                             background:
@@ -2533,6 +2803,112 @@ Perfect for ${descSuitable || "residential and investment purposes"}.
                           Generate Description ✨
                         </button>
                       </div>
+                      {showDescPopup && (
+                        <div
+                          style={{
+                            position: "fixed",
+                            inset: 0,
+                            background: "rgba(0,0,0,0.45)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            zIndex: 9999,
+                            padding: "20px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "100%",
+                              maxWidth: "620px",
+                              background: "#fff",
+                              borderRadius: "20px",
+                              padding: "24px",
+                              maxHeight: "85vh",
+                              overflowY: "auto",
+                            }}
+                          >
+                            <h3
+                              style={{
+                                marginTop: 0,
+                                marginBottom: "18px",
+                                fontSize: "1.2rem",
+                                fontWeight: 800,
+                              }}
+                            >
+                              Smart Property Questions ✨
+                            </h3>
+
+                            {getCategoryQuestions().map((q, i) => (
+                              <div key={i} style={{ marginBottom: "16px" }}>
+                                <label
+                                  style={{
+                                    display: "block",
+                                    marginBottom: "6px",
+                                    fontWeight: 600,
+                                    fontSize: "0.9rem",
+                                  }}
+                                >
+                                  {q}
+                                </label>
+
+                                <input
+                                  style={inp()}
+                                  placeholder="Your answer"
+                                  value={questionAnswers[q] || ""}
+                                  onChange={(e) =>
+                                    setQuestionAnswers((prev) => ({
+                                      ...prev,
+                                      [q]: e.target.value,
+                                    }))
+                                  }
+                                />
+                              </div>
+                            ))}
+
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: "10px",
+                                marginTop: "20px",
+                              }}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => setShowDescPopup(false)}
+                                style={{
+                                  padding: "10px 16px",
+                                  borderRadius: "10px",
+                                  border: "1px solid #d1d5db",
+                                  background: "#fff",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Cancel
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  generateDescription();
+                                  setShowDescPopup(false);
+                                }}
+                                style={{
+                                  padding: "10px 18px",
+                                  borderRadius: "10px",
+                                  border: "none",
+                                  background: "#16a34a",
+                                  color: "#fff",
+                                  fontWeight: 700,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Generate Description
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <textarea
                         value={form.description}
                         onChange={(e) => set("description", e.target.value)}
