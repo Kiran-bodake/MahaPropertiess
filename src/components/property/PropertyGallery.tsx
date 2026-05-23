@@ -13,6 +13,7 @@ export function PropertyGallery({
   price: number;
 }) {
   const [active, setActive] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
 
   /* DEFAULT IMAGE */
   const safeImages = images?.length ? images : ["/maha.png"];
@@ -46,8 +47,10 @@ export function PropertyGallery({
           alt={title}
           fill
           priority
+          onClick={() => setFullscreen(true)}
           style={{
             objectFit: "cover",
+            cursor: "zoom-in",
           }}
         />
 
@@ -213,18 +216,172 @@ export function PropertyGallery({
         <div
           style={{
             background: "#0f172a",
+
             color: "#fff",
+
             fontWeight: 800,
-            fontSize: "1.35rem",
-            padding: "12px 20px",
-            borderRadius: 16,
+
+            fontSize: "clamp(.95rem,3vw,1.2rem)",
+
+            padding:
+              typeof window !== "undefined" && window.innerWidth < 768
+                ? "9px 14px"
+                : "12px 20px",
+
+            borderRadius: 14,
+
             whiteSpace: "nowrap",
+
             boxShadow: "0 8px 18px rgba(0,0,0,.12)",
+
+            lineHeight: 1,
+
+            flexShrink: 0,
           }}
         >
-       ₹{price.toLocaleString("en-IN")}
+          ₹{price.toLocaleString("en-IN")}
         </div>
       </div>
+      {/* FULLSCREEN PREVIEW */}
+      {fullscreen && (
+        <div
+          onClick={() => setFullscreen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,.72)",
+            backdropFilter: "blur(18px)",
+            zIndex: 2147483647,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 24,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: 1500,
+              height: "90vh",
+              borderRadius: 28,
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              src={safeImages[active]}
+              alt={title}
+              fill
+              priority
+              style={{
+                objectFit: "contain",
+                background: "#000",
+              }}
+            />
+
+            {/* CLOSE */}
+            <button
+              onClick={() => setFullscreen(false)}
+              style={{
+                position: "absolute",
+                top: 20,
+                right: 20,
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
+                border: "none",
+                background: "rgba(255,255,255,.18)",
+                color: "#fff",
+                fontSize: 22,
+                cursor: "pointer",
+              }}
+            >
+              ✕
+            </button>
+            {/* PREV */}
+            {safeImages.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevImage();
+                }}
+                style={{
+                  position: "absolute",
+
+                  left: 18,
+
+                  top: "50%",
+
+                  transform: "translateY(-50%)",
+
+                  width: 54,
+
+                  height: 54,
+
+                  borderRadius: "50%",
+
+                  border: "1px solid rgba(255,255,255,.18)",
+
+                  background: "rgba(255,255,255,.12)",
+
+                  color: "#fff",
+
+                  fontSize: 24,
+
+                  cursor: "pointer",
+
+                  backdropFilter: "blur(10px)",
+
+                  zIndex: 20,
+                }}
+              >
+                ←
+              </button>
+            )}
+            {/* NEXT */}
+            {safeImages.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextImage();
+                }}
+                style={{
+                  position: "absolute",
+
+                  right: 18,
+
+                  top: "50%",
+
+                  transform: "translateY(-50%)",
+
+                  width: 54,
+
+                  height: 54,
+
+                  borderRadius: "50%",
+
+                  border: "1px solid rgba(255,255,255,.18)",
+
+                  background: "rgba(255,255,255,.12)",
+
+                  color: "#fff",
+
+                  fontSize: 24,
+
+                  cursor: "pointer",
+
+                  backdropFilter: "blur(10px)",
+
+                  zIndex: 20,
+                }}
+              >
+                →
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

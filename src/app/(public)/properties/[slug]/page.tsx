@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
 import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
-
+import { PropertySectionTabs } from "@/components/property/PropertySectionTabs";
 import { PropertyActions } from "@/components/property/PropertyActions";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
 import {
@@ -174,10 +174,72 @@ export default async function PropertyDetailPage({
   if (!property) notFound();
 
   const relatedProperties = await getRelatedProperties(property.city);
+  const jsonLd = {
+    "@context": "https://schema.org",
+
+    "@type": "RealEstateListing",
+
+    name: property.title,
+
+    description: property.description,
+
+    image: property.images,
+
+    url: `https://mahaproperties.in/properties/${property.slug}`,
+
+    datePosted: new Date().toISOString(),
+
+    offers: {
+      "@type": "Offer",
+
+      price: property.price,
+
+      priceCurrency: "INR",
+
+      availability: "https://schema.org/InStock",
+    },
+
+    provider: {
+      "@type": "RealEstateAgent",
+
+      name: property.agentName,
+
+      telephone: property.agentPhone,
+    },
+
+    mainEntity: {
+      "@type": "SingleFamilyResidence",
+
+      name: property.title,
+
+      floorSize: {
+        "@type": "QuantitativeValue",
+
+        value: property.area,
+
+        unitCode: property.areaUnit,
+      },
+      address: {
+        "@type": "PostalAddress",
+
+        addressLocality: property.locality,
+
+        addressRegion: property.city,
+
+        addressCountry: "IN",
+      },
+    },
+  };
 
   return (
     <>
       <Navbar />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
 
       <main
         style={{
@@ -200,10 +262,9 @@ export default async function PropertyDetailPage({
           <div
             className="mainGrid"
             style={{
-              display: "flex",
-
+              display: "grid",
+              gridTemplateColumns: "minmax(0,1fr) 340px",
               gap: 24,
-
               alignItems: "start",
             }}
           >
@@ -223,6 +284,7 @@ export default async function PropertyDetailPage({
                 boxShadow: "0 8px 30px rgba(0,0,0,.05)",
               }}
             >
+              <PropertySectionTabs />
               {/* HERO */}
               <div
                 style={{
@@ -251,7 +313,6 @@ export default async function PropertyDetailPage({
                   }}
                 />
               </div>
-
               {/* BODY */}
               <div
                 className="propertyBody"
@@ -342,7 +403,9 @@ export default async function PropertyDetailPage({
                 </div>
 
                 {/* OVERVIEW */}
-                <SectionTitle title="Property Overview" />
+                <div id="overview">
+                  <SectionTitle title="Property Overview" />
+                </div>
 
                 <div
                   style={{
@@ -372,7 +435,9 @@ export default async function PropertyDetailPage({
                 </div>
 
                 {/* DESCRIPTION */}
-                <SectionTitle title="Description" />
+                <div id="description">
+                  <SectionTitle title="Description" />
+                </div>
 
                 <div
                   style={{
@@ -397,7 +462,9 @@ export default async function PropertyDetailPage({
                 {/* AMENITIES */}
                 {property.amenities?.length ? (
                   <>
-                    <SectionTitle title="Amenities" />
+                    <div id="amenities">
+                      <SectionTitle title="Amenities" />
+                    </div>
 
                     <ChipList items={property.amenities} type="amenities" />
                   </>
@@ -406,14 +473,18 @@ export default async function PropertyDetailPage({
                 {/* HIGHLIGHTS */}
                 {property.highlights?.length ? (
                   <>
-                    <SectionTitle title="Highlights" />
+                    <div id="highlights">
+                      <SectionTitle title="Highlights" />
+                    </div>
 
                     <ChipList items={property.highlights} type="highlights" />
                   </>
                 ) : null}
 
                 {/* MAP */}
-                <SectionTitle title="Location" />
+                <div id="location">
+                  <SectionTitle title="Location" />
+                </div>
 
                 <div
                   style={{
@@ -450,15 +521,23 @@ export default async function PropertyDetailPage({
             <aside
               className="sidebar"
               style={{
-                width: 340,
-                flexShrink: 0,
-                alignSelf: "flex-start",
+                minWidth: 0,
               }}
             >
               <div
+                className="stickyFormWrapper"
                 style={{
                   position: "sticky",
-                  top: 100,
+                  top: 120,
+                  alignSelf: "start",
+                  border: "2px solid rgba(96, 165, 250, 0.28)",
+                  background: "rgba(239, 246, 255, 0.72)",
+
+                  backdropFilter: "blur(16px)",
+
+                  boxShadow: ` 0 12px 34px rgba(37, 99, 235, 0.08), inset 0 1px 0 rgba(255,255,255,.7)`,
+
+                  borderRadius: 28,
                 }}
               >
                 <div
@@ -512,7 +591,7 @@ export default async function PropertyDetailPage({
                   >
                     <div>✓ Verified Agent</div>
                     <div>⚡ Fast Response</div>
-                    <div>👁 High Buyer Interest</div>
+                    {/* <div>👁 High Buyer Interest</div> */}
                   </div>
 
                   <div
@@ -565,22 +644,31 @@ export default async function PropertyDetailPage({
 
         <style>{`
 
-  @media (max-width: 1024px) {
-
-    .mainGrid {
-  flex-direction: column !important;
+        html {
+  scroll-behavior: smooth;
 }
 
-    .sidebar {
-      width: 100% !important;
-      max-width: 100% !important;
-    }
+        .stickyFormWrapper::-webkit-scrollbar {
+  display: none;
+}
 
-     .sidebar > div {
-    position: static !important;
+  @media (max-width: 1024px) {
+
+  .mainGrid {
+  grid-template-columns: 1fr !important;
+}
+
+  .sidebar {
     width: 100% !important;
+    max-width: 100% !important;
   }
+
+  .stickyFormWrapper {
+    position: static !important;
+    max-height: unset !important;
+    overflow: visible !important;
   }
+}
 
   @media (max-width: 768px) {
 

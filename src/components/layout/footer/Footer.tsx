@@ -248,7 +248,7 @@ export function Footer() {
               e.currentTarget.style.color = "rgba(255,255,255,0.9)";
             }}
           >
-            Developed By Better Work
+            Developed By Betterwork
           </a>
         </div>
       </div>

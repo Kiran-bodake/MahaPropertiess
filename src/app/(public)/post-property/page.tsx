@@ -1142,11 +1142,33 @@ export default function PostPropertyPage() {
     const newErrors: Record<string, string> = {};
 
     if (step === 0) {
-      if (!form.postedBy) newErrors.postedBy = "Please select who is posting";
-      if (!form.agentName) newErrors.agentName = "Name is required";
-      if (!form.agentPhone) newErrors.agentPhone = "Phone is required";
-      if (!form.title) newErrors.title = "Title is required";
-      if (!form.category) newErrors.category = "Category is required";
+      if (!form.postedBy) {
+        newErrors.postedBy = "Please select who is posting";
+      }
+
+      if (!form.agentName.trim()) {
+        newErrors.agentName = "Name is required";
+      }
+
+      if (!form.agentPhone) {
+        newErrors.agentPhone = "Phone is required";
+      } else if (!/^[6-9]\d{9}$/.test(form.agentPhone)) {
+        newErrors.agentPhone = "Enter valid mobile number";
+      }
+
+      // OTP VALIDATION
+      if (!phoneVerified) {
+        newErrors.phoneVerified =
+          "Please verify your mobile number before continuing";
+      }
+
+      if (!form.title.trim()) {
+        newErrors.title = "Title is required";
+      }
+
+      if (!form.category) {
+        newErrors.category = "Category is required";
+      }
     }
 
     if (step === 1) {
@@ -2043,6 +2065,18 @@ Perfect for ${
                               Verify OTP
                             </button>
                           </div>
+                        )}
+                        {errors.phoneVerified && (
+                          <p
+                            style={{
+                              color: "#dc2626",
+                              marginTop: "8px",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {errors.phoneVerified}
+                          </p>
                         )}
 
                         {/* Verified Message */}

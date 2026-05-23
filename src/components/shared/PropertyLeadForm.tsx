@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 
-export function PropertyLeadForm({
-  propertyTitle,
-}: {
-  propertyTitle: string;
-}) {
-
+export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
   const [name, setName] = useState("");
 
   const [email, setEmail] = useState("");
@@ -20,13 +15,10 @@ export function PropertyLeadForm({
 
   const [loading, setLoading] = useState(false);
 
-
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
 
     try {
-
       setLoading(true);
 
       const res = await fetch("/api/property-inquiry", {
@@ -47,7 +39,6 @@ export function PropertyLeadForm({
       const data = await res.json();
 
       if (data.success) {
-
         console.log("Property Inquiry Saved");
 
         setSubmitted(true);
@@ -56,38 +47,39 @@ export function PropertyLeadForm({
         setEmail("");
         setPhone("");
         setMessage("");
-
       }
-
     } catch (error) {
-
       console.log(error);
 
       alert("Something went wrong");
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
-
   const inp: React.CSSProperties = {
-    flex: 1,
-    padding: "10px 12px",
-    borderRadius: "8px",
-    border: "1px solid #fcd34d",
-    background: "#fffdf7",
-    fontSize: "0.9rem",
+    width: "100%",
+
+    height: 52,
+
+    borderRadius: "14px",
+
+    border: "1px solid #cbd5e1",
+
+    background: "#ffffff",
+
+    padding: "0 16px",
+
+    fontSize: "0.95rem",
+
     fontFamily: "inherit",
+
     outline: "none",
+
     minWidth: 0,
   };
 
-
   if (submitted) {
-
     return (
       <div
         style={{
@@ -129,19 +121,16 @@ export function PropertyLeadForm({
     );
   }
 
-
   return (
     <div
       style={{
-        marginTop: "24px",
-        background:
-          "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)",
+        marginTop: "8px",
+        background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)",
         border: "1px solid #bbf7d0",
         borderRadius: "14px",
         padding: "18px 20px",
       }}
     >
-
       {/* HEADER */}
       <div
         style={{
@@ -165,8 +154,8 @@ export function PropertyLeadForm({
           style={{
             margin: 0,
             fontWeight: 700,
-            fontSize: "1rem",
-            color: "#78350f",
+            fontSize: "1.45rem",
+            color: "#14532d",
           }}
         >
           Interested in this property?
@@ -183,17 +172,20 @@ export function PropertyLeadForm({
         </p>
       </div>
 
-
       {/* FORM */}
       <form onSubmit={handleSubmit}>
-
         <div
+          className="quickLeadGrid"
           style={{
             display: "grid",
-            gap: "10px",
+
+            gridTemplateColumns: "1fr 1fr 1fr",
+
+            gap: 14,
+
+            alignItems: "start",
           }}
         >
-
           {/* NAME */}
           <input
             value={name}
@@ -202,7 +194,6 @@ export function PropertyLeadForm({
             required
             style={inp}
           />
-
 
           {/* EMAIL */}
           <input
@@ -214,15 +205,11 @@ export function PropertyLeadForm({
             style={inp}
           />
 
-
           {/* PHONE */}
           <input
             value={phone}
             onChange={(e) => {
-
-              const value = e.target.value
-                .replace(/\D/g, "")
-                .slice(0, 10);
+              const value = e.target.value.replace(/\D/g, "").slice(0, 10);
 
               setPhone(value);
             }}
@@ -235,51 +222,94 @@ export function PropertyLeadForm({
             style={inp}
           />
 
-
           {/* MESSAGE */}
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Message (optional)"
-            rows={4}
+          <div
             style={{
-              ...inp,
-              resize: "none",
-              paddingTop: 12,
-            }}
-          />
-
-
-          {/* BUTTON */}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: "12px 20px",
-              background:
-                "linear-gradient(135deg, #ca8a04, #f59e0b)",
-              border: "1px solid #fde68a",
-              color: "white",
-              borderRadius: "8px",
-              fontWeight: 700,
-              fontSize: "0.9rem",
-              cursor: loading
-                ? "not-allowed"
-                : "pointer",
-              whiteSpace: "nowrap",
-              fontFamily: "inherit",
-              opacity: loading ? 0.8 : 1,
+              gridColumn: "1 / -1",
             }}
           >
-            {loading
-              ? "Sending..."
-              : "Get a Callback"}
-          </button>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Message (optional)"
+              rows={4}
+              style={{
+                width: "100%",
 
+                borderRadius: "16px",
+
+                border: "1px solid #cbd5e1",
+
+                background: "#ffffff",
+
+                padding: 16,
+
+                fontSize: ".96rem",
+
+                fontFamily: "inherit",
+
+                outline: "none",
+
+                resize: "vertical",
+
+                minHeight: 120,
+              }}
+            />
+          </div>
+
+          {/* BUTTON */}
+          <div
+            style={{
+              gridColumn: "1 / -1",
+
+              display: "flex",
+
+              justifyContent: "flex-end",
+            }}
+          >
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                height: 52,
+
+                padding: "0 28px",
+
+                border: "none",
+
+                borderRadius: "14px",
+
+                background: "linear-gradient(to right,#15803d,#16a34a)",
+
+                color: "#fff",
+
+                fontWeight: 800,
+
+                fontSize: ".96rem",
+
+                cursor: loading ? "not-allowed" : "pointer",
+
+                whiteSpace: "nowrap",
+
+                fontFamily: "inherit",
+
+                opacity: loading ? 0.8 : 1,
+
+                boxShadow: "0 10px 20px rgba(22,163,74,.18)",
+              }}
+            >
+              {loading ? "Sending..." : "Get a Callback"}
+            </button>
+          </div>
         </div>
-
       </form>
-
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .quickLeadGrid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -5,11 +5,9 @@ import { useState } from "react";
 interface StickyContactFormProps {
   title?: string;
   description?: string;
-   propertyTitle: string;
+  propertyTitle: string;
 }
-export function StickyContactForm({
-  propertyTitle,
-}: StickyContactFormProps) {
+export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -65,66 +63,69 @@ export function StickyContactForm({
     return valid;
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-const handleSubmit = async (e: React.FormEvent) => {
+    if (!validate()) return;
 
-  e.preventDefault();
+    try {
+      const res = await fetch("/api/property-inquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          propertyTitle,
+          customerName: name,
+          email,
+          phone,
+          message,
+          inquiryType: "callback",
+        }),
+      });
 
-  if (!validate()) return;
+      const data = await res.json();
 
-  try {
-const res = await fetch("/api/property-inquiry", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    propertyTitle,
-    customerName: name,
-    email,
-    phone,
-    message,
-    inquiryType: "callback",
-  }),
-});
+      if (data.success) {
+        console.log("Property Lead Saved");
 
-    const data = await res.json();
+        setStatus("Request submitted successfully");
 
-    if (data.success) {
+        setName("");
+        setEmail("");
+        setPhone("");
+        setMessage("");
+      }
+    } catch (error) {
+      console.log(error);
 
-      console.log("Property Lead Saved");
-
-      setStatus("Request submitted successfully");
-
-      setName("");
-      setEmail("");
-      setPhone("");
-      setMessage("");
-
+      setStatus("Something went wrong");
     }
-
-  } catch (error) {
-
-    console.log(error);
-
-    setStatus("Something went wrong");
-
-  }
-};
-
-  
+  };
 
   const getInputStyle = (hasError: boolean): React.CSSProperties => ({
     width: "100%",
     marginBottom: "6px",
     padding: "14px 16px",
-    borderRadius: "14px",
-    border: hasError ? "1px solid #ef4444" : "1px solid #dbe2ea",
+
+    borderRadius: "16px",
+
+    border: hasError ? "1px solid #ef4444" : "1px solid #dbeafe",
+
     fontSize: "0.95rem",
+
     fontFamily: "inherit",
+
     outline: "none",
+
     boxSizing: "border-box",
-    background: "#f8fafc",
+
+    background: "#ffffff",
+
+    color: "#334155",
+
+    boxShadow: "inset 0 1px 2px rgba(255,255,255,.8)",
+
     transition: "0.2s ease",
   });
 
@@ -180,7 +181,7 @@ const res = await fetch("/api/property-inquiry", {
           alignItems: "center",
           border: errors.phone ? "1px solid #ef4444" : "1px solid #dbe2ea",
           borderRadius: "14px",
-          background: "#f8fafc",
+          background: "#ffffff",
           marginBottom: "6px",
           overflow: "hidden",
         }}
@@ -189,7 +190,7 @@ const res = await fetch("/api/property-inquiry", {
         <div
           style={{
             padding: "14px 12px",
-            background: "#f1f5f9",
+            background: "#ffffff",
             borderRight: "1px solid #dbe2ea",
             fontWeight: 700,
             color: "#0f172a",
