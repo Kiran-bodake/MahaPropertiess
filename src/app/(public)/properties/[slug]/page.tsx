@@ -154,9 +154,53 @@ export async function generateMetadata({
   }
 
   return {
+    metadataBase: new URL("https://mahaproperties.in"),
+
     title: `${property.title} | MahaProperties`,
 
     description: property.description,
+
+    openGraph: {
+      title: `${property.title} | MahaProperties`,
+
+      description: property.description,
+
+      url: `https://mahaproperties.in/properties/${property.slug}`,
+
+      siteName: "MahaProperties",
+
+      images: [
+        {
+          url: property.images?.[0]?.startsWith("http")
+            ? property.images[0]
+            : `https://mahaproperties.in${property.images?.[0]}`,
+
+          width: 1200,
+
+          height: 630,
+
+          alt: property.title,
+        },
+      ],
+
+      locale: "en_IN",
+
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+
+      title: `${property.title} | MahaProperties`,
+
+      description: property.description,
+
+      images: [
+        property.images?.[0]?.startsWith("http")
+          ? property.images[0]
+          : `https://mahaproperties.in${property.images?.[0]}`,
+      ],
+    },
   };
 }
 
