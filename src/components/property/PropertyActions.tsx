@@ -27,6 +27,9 @@ export function PropertyActions({
   const [reportReason,setReportReason] =
     useState("");
 
+  const [reporting,setReporting] =
+    useState(false);
+
 
   const propertyUrl =
     typeof window !== "undefined"
@@ -86,8 +89,6 @@ export function PropertyActions({
 
       setSaved(false);
 
-    
-
     }
 
     else{
@@ -99,7 +100,6 @@ export function PropertyActions({
 
       setSaved(true);
 
-     
     }
 
     localStorage.setItem(
@@ -112,44 +112,103 @@ export function PropertyActions({
   }
 
 
+
   /* REPORT PROPERTY */
   async function handleReport(){
 
-    if(!reportReason){
+    // VALIDATION
+    if(
 
-     
+      !reportReason.trim()
+
+    ){
+
+      alert(
+
+        "Please explain the issue"
+
+      );
 
       return;
     }
 
-    await fetch(
-      "/api/property-report",
-      {
-        method:"POST",
+    try{
 
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
+      setReporting(true);
 
-        body:
-          JSON.stringify({
+      const res = await fetch(
 
-            propertyId,
+        "/api/property-report",
 
-            propertyTitle,
+        {
 
-            reason:
-              reportReason
+          method:"POST",
 
-          })
+          headers:{
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+       body:JSON.stringify({
+
+  propertyId,
+
+  mongoId:
+    propertyId,
+
+  propertyTitle,
+
+  reason:
+    reportReason
+
+})
+
+        }
+
+      );
+
+      const data =
+        await res.json();
+
+      if(data.success){
+
+        alert(
+          "Report submitted successfully"
+        );
+
+        setShowReport(false);
+
+        setReportReason("");
+
       }
-    );
 
-   
-    setShowReport(false);
+      else{
 
-    setReportReason("");
+        alert(
+          "Failed to submit report"
+        );
+
+      }
+
+    }
+
+    catch(error){
+
+      console.error(error);
+
+      alert(
+        "Something went wrong"
+      );
+
+    }
+
+    finally{
+
+      setReporting(false);
+
+    }
 
   }
 
@@ -268,7 +327,10 @@ export function PropertyActions({
                   propertyUrl
                 );
 
-               
+                alert(
+                  "Link copied"
+                );
+
               }}
               style={shareBtn}
             >
@@ -344,15 +406,17 @@ export function PropertyActions({
               style={{
                 margin:0,
                 color:"#64748b",
-                fontSize:".92rem"
+                fontSize:".92rem",
+                lineHeight:1.5
               }}
             >
-              Tell us why you are
-              reporting this property.
+              Please explain the issue
+              with this property listing.
             </p>
 
 
             <textarea
+
               value={reportReason}
 
               onChange={(e) =>
@@ -361,16 +425,31 @@ export function PropertyActions({
                 )
               }
 
-              placeholder="Enter report reason..."
+              placeholder="Explain the issue with this property..."
 
               style={{
-                minHeight:120,
-                borderRadius:12,
-                border:"1px solid #e5e7eb",
-                padding:14,
+
+                minHeight:140,
+
+                borderRadius:16,
+
+                border:
+                  "1px solid #e2e8f0",
+
+                padding:16,
+
                 resize:"none",
+
                 outline:"none",
-                fontFamily:"inherit"
+
+                fontFamily:"inherit",
+
+                fontSize:14,
+
+                lineHeight:1.6,
+
+                background:"#f8fafc"
+
               }}
             />
 
@@ -406,6 +485,7 @@ export function PropertyActions({
                 onClick={
                   handleReport
                 }
+                disabled={reporting}
                 style={{
                   flex:1,
                   height:48,
@@ -414,10 +494,18 @@ export function PropertyActions({
                   background:"#dc2626",
                   color:"#fff",
                   cursor:"pointer",
-                  fontWeight:700
+                  fontWeight:700,
+                  opacity:
+                    reporting
+                      ? .7
+                      : 1
                 }}
               >
-                Submit Report
+                {
+                  reporting
+                    ? "Submitting..."
+                    : "Submit Report"
+                }
               </button>
 
             </div>
@@ -518,11 +606,11 @@ React.CSSProperties = {
 
   width:"100%",
 
-  maxWidth:360,
+  maxWidth:420,
 
   background:"#fff",
 
-  borderRadius:20,
+  borderRadius:24,
 
   padding:24,
 
@@ -530,7 +618,10 @@ React.CSSProperties = {
 
   flexDirection:"column",
 
-  gap:12,
+  gap:14,
+
+  boxShadow:
+    "0 20px 50px rgba(0,0,0,.18)"
 
 };
 

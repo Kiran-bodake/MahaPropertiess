@@ -676,468 +676,291 @@ const COLORS = [
       }}
     >
       {/* Header */}
-      <div
-        style={{
-          background: "#fff",
-          padding: mobile ? "16px" : "18px 28px",
-          borderBottom: "1px solid #e2e8f0",
-          display: "flex",
-          flexDirection: mobile ? "column" : "row",
-          justifyContent: "space-between",
-          alignItems: mobile ? "flex-start" : "center",
-          gap: mobile ? 12 : 0,
-        }}
-      >
-        <div>
-          <div
-            style={{
-              fontSize: mobile ? 18 : 20,
-              fontWeight: 700,
-            }}
-          >
-            Dashboard
-          </div>
-
-          <div
-            style={{
-              fontSize: 12,
-              color: "#64748b",
-            }}
-          >
-            Leads & Analytics
-          </div>
-        </div>
-
-        <Bell size={18} color="#64748b" />
-      </div>
-
-      <div style={{ padding: mobile ? 12 : 24 }}>
-        {/* KPI Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: mobile
-              ? "1fr"
-              : "repeat(4,1fr)",
-            gap: 18,
-            marginBottom: 24,
-          }}
-        >
-          {cards.map((c) => (
-            <div
-              key={c.label}
-              style={{
-                ...card,
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: "#64748b",
-                    fontWeight: 600,
-                  }}
-                >
-                  {c.label}
-                </div>
-
-                <div
-                  style={{
-                    fontSize: mobile ? 26 : 34,
-                    fontWeight: 700,
-                    marginTop: 8,
-                  }}
-                >
-                  {c.value}
-                </div>
-
-                <div
-                  style={{
-                    fontSize: 12,
-                    marginTop: 8,
-                    color: c.delta.includes("-")
-                      ? "#dc2626"
-                      : "#16a34a",
-                  }}
-                >
-                  {c.delta}
-                </div>
-              </div>
-
-              <div
-                style={{
-                  width: 46,
-                  height: 46,
-                  borderRadius: 16,
-                  background: "#eef2ff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <BarChart2 size={16} color="#4338ca" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Property Overview */}
+      {/* HEADER */}
 <div
   style={{
-    display:"grid",
+    height: 64,
+
+    background:
+      "rgba(255,255,255,.85)",
+
+    backdropFilter:
+      "blur(12px)",
+
+    borderBottom:
+      "1px solid #e2e8f0",
+
+    display: "flex",
+
+    justifyContent:
+      "space-between",
+
+    alignItems: "center",
+
+    padding:
+      mobile
+        ? "0 14px"
+        : "0 22px",
+
+    position: "sticky",
+
+    top: 0,
+
+    zIndex: 20,
+  }}
+>
+
+  {/* LEFT */}
+  <div>
+
+    <div
+      style={{
+        fontSize:
+          mobile
+            ? 18
+            : 22,
+
+        fontWeight: 700,
+
+        color:"#0f172a",
+
+        lineHeight:1.1,
+      }}
+    >
+      Dashboard
+    </div>
+
+    <div
+      style={{
+        fontSize:11,
+
+        color:"#64748b",
+
+        marginTop:2,
+
+        fontWeight:500,
+      }}
+    >
+      Leads & Analytics
+    </div>
+
+  </div>
+
+  {/* RIGHT */}
+  <div
+    style={{
+      display:"flex",
+      alignItems:"center",
+      gap:10,
+    }}
+  >
+
+    <button
+      style={{
+        width:36,
+        height:36,
+
+        border:"none",
+
+        borderRadius:12,
+
+        background:"#f8fafc",
+
+        display:"flex",
+
+        alignItems:"center",
+
+        justifyContent:
+          "center",
+
+        cursor:"pointer",
+      }}
+    >
+      <Bell
+        size={16}
+        color="#64748b"
+      />
+    </button>
+
+  </div>
+
+</div>
+
+{/* BODY */}
+<div
+  style={{
+    padding:
+      mobile
+        ? 12
+        : 20,
+  }}
+>
+     {/* COMPACT KPI */}
+<div
+  style={{
+    display: "grid",
 
     gridTemplateColumns:
-
       mobile
-
         ? "1fr"
-
         : "repeat(4,1fr)",
 
-    gap:18,
+    gap: 16,
 
-    marginBottom:24,
+    marginBottom: 22,
   }}
 >
 
-  {/* Total Properties */}
-  <div
-    style={{
-      ...card,
+  {[
+    {
+      label:"Total Leads",
 
-      borderLeft:
-        "6px solid #16a34a",
-    }}
-  >
-    <div
-      style={{
-        fontSize:13,
+      value:
+        analytics?.totalLeads || 0,
 
-        color:"#64748b",
+      icon:"📈",
 
-        fontWeight:600,
-      }}
-    >
-      Total Properties
-    </div>
+      color:"#2563eb",
 
-    <div
-      style={{
-        fontSize:
-          mobile ? 28 : 38,
+      bg:"#eff6ff",
+    },
 
-        fontWeight:800,
+    {
+      label:"New Leads",
 
-        marginTop:12,
-      }}
-    >
-      {
-        analytics?.totalProperties || 0
-      }
-    </div>
-  </div>
+      value:
+        analytics?.newLeads || 0,
 
-  {/* Pending */}
-  <div
-    style={{
-      ...card,
+      icon:"🔥",
 
-      borderLeft:
-        "6px solid #eab308",
-    }}
-  >
-    <div
-      style={{
-        fontSize:13,
+      color:"#7c3aed",
 
-        color:"#64748b",
+      bg:"#f5f3ff",
+    },
 
-        fontWeight:600,
-      }}
-    >
-      Pending Approval
-    </div>
+    {
+      label:"Properties",
+
+      value:
+        analytics?.totalProperties || 0,
+
+      icon:"🏠",
+
+      color:"#16a34a",
+
+      bg:"#ecfdf5",
+    },
+
+    {
+      label:"Pending",
+
+      value:
+        analytics?.pendingProperties || 0,
+
+      icon:"⏳",
+
+      color:"#ea580c",
+
+      bg:"#fff7ed",
+    },
+  ].map((item,index)=>(
 
     <div
+      key={index}
+
       style={{
-        fontSize:
-          mobile ? 28 : 38,
+        background:"#fff",
 
-        fontWeight:800,
+        border:
+          "1px solid #e2e8f0",
 
-        marginTop:12,
+        borderRadius:20,
+
+        padding:"14px 16px",
+
+        display:"flex",
+
+        alignItems:"center",
+
+        justifyContent:
+          "space-between",
+
+        boxShadow:
+          "0 4px 14px rgba(15,23,42,.04)",
+
+        minHeight:92,
       }}
     >
-      {
-        analytics?.pendingProperties || 0
-      }
+
+      {/* LEFT */}
+      <div>
+
+        <div
+          style={{
+            fontSize:11,
+
+            fontWeight:700,
+
+            color:"#64748b",
+
+            textTransform:
+              "uppercase",
+
+            letterSpacing:.4,
+          }}
+        >
+          {item.label}
+        </div>
+
+        <div
+          style={{
+            fontSize:
+              mobile
+                ? 24
+                : 30,
+
+            fontWeight:800,
+
+            marginTop:6,
+
+            color:"#0f172a",
+
+            lineHeight:1,
+          }}
+        >
+          {item.value}
+        </div>
+
+      </div>
+
+      {/* RIGHT */}
+      <div
+        style={{
+          width:46,
+          height:46,
+
+          borderRadius:16,
+
+          background:item.bg,
+
+          display:"flex",
+
+          alignItems:"center",
+
+          justifyContent:
+            "center",
+
+          fontSize:20,
+        }}
+      >
+        {item.icon}
+      </div>
+
     </div>
-  </div>
 
-  {/* Approved */}
-  <div
-    style={{
-      ...card,
-
-      borderLeft:
-        "6px solid #2563eb",
-    }}
-  >
-    <div
-      style={{
-        fontSize:13,
-
-        color:"#64748b",
-
-        fontWeight:600,
-      }}
-    >
-      Approved Listings
-    </div>
-
-    <div
-      style={{
-        fontSize:
-          mobile ? 28 : 38,
-
-        fontWeight:800,
-
-        marginTop:12,
-      }}
-    >
-      {
-        analytics?.approvedProperties || 0
-      }
-    </div>
-  </div>
-
-  {/* Rejected */}
-  <div
-    style={{
-      ...card,
-
-      borderLeft:
-        "6px solid #dc2626",
-    }}
-  >
-    <div
-      style={{
-        fontSize:13,
-
-        color:"#64748b",
-
-        fontWeight:600,
-      }}
-    >
-      Rejected Listings
-    </div>
-
-    <div
-      style={{
-        fontSize:
-          mobile ? 28 : 38,
-
-        fontWeight:800,
-
-        marginTop:12,
-      }}
-    >
-      {
-        analytics?.rejectedProperties || 0
-      }
-    </div>
-  </div>
+  ))}
 
 </div>
-{/* Property Analytics */}
-<div
-  style={{
-    marginBottom:24,
-  }}
->
-
-  {/* Main Card */}
-  <div
-
-    onClick={()=>
-
-      setShowPropertyAnalytics(
-
-        !showPropertyAnalytics
-
-      )
-
-    }
-
-    style={{
-
-      ...card,
-
-      display:"flex",
-
-      justifyContent:
-        "space-between",
-
-      alignItems:"center",
-
-      cursor:"pointer",
-
-    }}
-
-  >
-
-    <div>
-
-      <div
-        style={{
-          fontSize:13,
-          color:"#64748b",
-          fontWeight:600,
-        }}
-      >
-        Property Analytics
-      </div>
-
-      <div
-        style={{
-          fontSize:
-            mobile ? 28 : 40,
-
-          fontWeight:800,
-
-          marginTop:10,
-        }}
-      >
-        {
-          analytics?.totalProperties || 0
-        }
-      </div>
-
-      <div
-        style={{
-          fontSize:12,
-          color:"#16a34a",
-          marginTop:8,
-        }}
-      >
-        Total Listings
-      </div>
-
-    </div>
-
-    <div
-      style={{
-        fontSize:24,
-      }}
-    >
-      {
-
-        showPropertyAnalytics
-
-        ?
-
-        "▲"
-
-        :
-
-        "▼"
-
-      }
-    </div>
-
-  </div>
-
-  {/* Expanded */}
-  {
-
-    showPropertyAnalytics && (
-
-      <div
-
-        style={{
-
-          display:"grid",
-
-          gridTemplateColumns:
-
-            mobile
-
-              ? "1fr"
-
-              : "repeat(3,1fr)",
-
-          gap:18,
-
-          marginTop:18,
-
-        }}
-
-      >
-
-        <div style={card}>
-          <div>
-            Premium Properties
-          </div>
-
-          <div
-            style={{
-              fontSize:30,
-              fontWeight:800,
-              marginTop:10,
-            }}
-          >
-            {
-              analytics?.premiumProperties || 0
-            }
-          </div>
-        </div>
-
-        <div style={card}>
-          <div>
-            Featured Properties
-          </div>
-
-          <div
-            style={{
-              fontSize:30,
-              fontWeight:800,
-              marginTop:10,
-            }}
-          >
-            {
-              analytics?.featuredProperties || 0
-            }
-          </div>
-        </div>
-
-        <div style={card}>
-          <div>
-            Active Cities
-          </div>
-
-          <div
-            style={{
-              fontSize:30,
-              fontWeight:800,
-              marginTop:10,
-            }}
-          >
-            {
-              analytics?.activeCities || 0
-            }
-          </div>
-        </div>
-
-      </div>
-
-    )
-
-  }
-
-</div>
-
 {/* Recent Properties */}
 <div
   style={{
@@ -1254,17 +1077,47 @@ const COLORS = [
                 }
               </div>
 
-              <div>
-                {
-                  property.ownerName || "-"
-                }
-              </div>
+            <div>
 
-              <div>
-                ₹
-                {
-                  property.price || 0
-                }
+  <div
+    style={{
+      fontWeight:600
+    }}
+  >
+    {
+      property.agentName || "-"
+    }
+  </div>
+
+  <div
+    style={{
+
+      fontSize:11,
+
+      color:"#64748b",
+
+      marginTop:4
+
+    }}
+  >
+
+    {
+
+      property.postedBy || "Owner"
+
+    }
+
+  </div>
+
+</div>
+
+   <div>
+              ₹
+{
+  Number(
+    property.price || 0
+  ).toLocaleString("en-IN")
+}
               </div>
 
               <div>
@@ -1441,6 +1294,458 @@ const COLORS = [
   </div>
 
 </div>
+{/* RECENT LEADS */}
+<div
+  style={{
+    ...card,
+
+    overflow:"hidden",
+
+    borderRadius:24,
+  }}
+>
+
+  {/* HEADER */}
+  <div
+    style={{
+      padding:"18px 20px",
+
+      borderBottom:
+        "1px solid #e2e8f0",
+
+      display:"flex",
+
+      justifyContent:
+        "space-between",
+
+      alignItems:"center",
+    }}
+  >
+
+    <div>
+
+      <div
+        style={{
+          fontSize:16,
+          fontWeight:700,
+        }}
+      >
+        Recent Leads
+      </div>
+
+      <div
+        style={{
+          fontSize:12,
+          color:"#64748b",
+          marginTop:4,
+        }}
+      >
+        Latest customer enquiries
+      </div>
+
+    </div>
+
+    {/* SEARCH */}
+    <div
+      style={{
+        display:"flex",
+
+        alignItems:"center",
+
+        gap:8,
+
+        padding:"8px 12px",
+
+        border:
+          "1px solid #e2e8f0",
+
+        borderRadius:12,
+
+        background:"#fff",
+      }}
+    >
+
+      <Search size={14}/>
+
+      <input
+        value={query}
+
+        onChange={(e)=>
+          setQuery(
+            e.target.value
+          )
+        }
+
+        placeholder="Search"
+
+        style={{
+          border:"none",
+          outline:"none",
+          background:"none",
+          width:120,
+          fontSize:13,
+        }}
+      />
+
+    </div>
+
+  </div>
+
+  {/* LIST */}
+  {
+
+    paginated
+      .slice(0,5)
+      .map((lead:any,index:number)=>(
+
+        <div
+          key={
+            lead._id
+            ||
+            lead.id
+            ||
+            index
+          }
+
+          style={{
+            display:"flex",
+
+            justifyContent:
+              "space-between",
+
+            alignItems:"center",
+
+            padding:"14px 20px",
+
+            borderTop:
+              "1px solid #f1f5f9",
+
+            background:
+
+              !lead.isViewed
+
+              ?
+
+              "#eff6ff"
+
+              :
+
+              "#fff",
+          }}
+        >
+
+          {/* LEFT */}
+          <div
+            style={{
+              display:"flex",
+              alignItems:"center",
+              gap:12,
+            }}
+          >
+
+            {/* AVATAR */}
+            <div
+              style={{
+                width:42,
+                height:42,
+
+                borderRadius:"50%",
+
+                background:
+
+                  lead.isViewed
+
+                  ?
+
+                  "#dcfce7"
+
+                  :
+
+                  "#eef2ff",
+
+                color:
+
+                  lead.isViewed
+
+                  ?
+
+                  "#166534"
+
+                  :
+
+                  "#4338ca",
+
+                display:"flex",
+
+                alignItems:"center",
+
+                justifyContent:
+                  "center",
+
+                fontWeight:700,
+
+                fontSize:14,
+              }}
+            >
+              {
+                lead.name?.charAt(0)
+              }
+            </div>
+
+            {/* INFO */}
+            <div>
+
+              <div
+                style={{
+                  fontWeight:700,
+                  fontSize:14,
+                }}
+              >
+                {lead.name}
+              </div>
+
+              <div
+                style={{
+                  fontSize:12,
+                  color:"#64748b",
+                  marginTop:4,
+                }}
+              >
+                {
+                  lead.contact
+                  ||
+                  "No Contact"
+                }
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* RIGHT */}
+          <div
+            style={{
+              display:"flex",
+              alignItems:"center",
+              gap:10,
+            }}
+          >
+
+            {/* STATUS */}
+            <span
+              style={{
+                background:
+
+                  !lead.isViewed
+
+                  ?
+
+                  "#dbeafe"
+
+                  :
+
+                  "#dcfce7",
+
+                color:
+
+                  !lead.isViewed
+
+                  ?
+
+                  "#1d4ed8"
+
+                  :
+
+                  "#166534",
+
+                padding:"5px 10px",
+
+                borderRadius:999,
+
+                fontSize:11,
+
+                fontWeight:700,
+              }}
+            >
+              {
+
+                !lead.isViewed
+
+                ?
+
+                "New"
+
+                :
+
+                "Viewed"
+
+              }
+            </span>
+
+            {/* ACTIONS */}
+            <div
+              style={{
+                display:"flex",
+                gap:6,
+              }}
+            >
+
+              <button
+
+                onClick={()=>
+                  openLead(
+                    lead
+                  )
+                }
+
+                style={{
+                  width:34,
+                  height:34,
+
+                  border:"none",
+
+                  borderRadius:10,
+
+                  background:"#eff6ff",
+
+                  cursor:"pointer",
+                }}
+              >
+                <Eye
+                  size={14}
+                  color="#2563eb"
+                />
+              </button>
+
+              <button
+                style={{
+                  width:34,
+                  height:34,
+
+                  border:"none",
+
+                  borderRadius:10,
+
+                  background:"#f8fafc",
+
+                  cursor:"pointer",
+                }}
+              >
+                <Pencil
+                  size={14}
+                  color="#64748b"
+                />
+              </button>
+
+              <button
+                style={{
+                  width:34,
+                  height:34,
+
+                  border:"none",
+
+                  borderRadius:10,
+
+                  background:"#fef2f2",
+
+                  cursor:"pointer",
+                }}
+              >
+                <Trash2
+                  size={14}
+                  color="#dc2626"
+                />
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      ))
+
+  }
+
+  {/* PAGINATION */}
+  <div
+    style={{
+      padding:16,
+
+      borderTop:
+        "1px solid #e2e8f0",
+
+      display:"flex",
+
+      justifyContent:
+        "flex-end",
+
+      alignItems:"center",
+
+      gap:10,
+    }}
+  >
+
+    <button
+
+      onClick={()=>
+
+        setPage((p)=>
+
+          Math.max(
+            1,
+            p - 1
+          )
+
+        )
+
+      }
+
+      style={{
+        border:"none",
+        background:"none",
+        cursor:"pointer",
+      }}
+    >
+      <ChevronLeft size={16}/>
+    </button>
+
+    <div
+      style={{
+        fontWeight:600,
+      }}
+    >
+      {page}/{totalPages}
+    </div>
+
+    <button
+
+      onClick={()=>
+
+        setPage((p)=>
+
+          Math.min(
+            totalPages,
+            p + 1
+          )
+
+        )
+
+      }
+
+      style={{
+        border:"none",
+        background:"none",
+        cursor:"pointer",
+      }}
+    >
+      <ChevronRight size={16}/>
+    </button>
+
+  </div>
+
+</div>
+        
 
 {/* Charts */}
 <div
@@ -1599,392 +1904,7 @@ const COLORS = [
 
 </div>
 
-        {/* Leads */}
-        <div
-          style={{
-            ...card,
-            padding: 0,
-            overflow: "hidden",
-          }}
-        >
-          {/* Toolbar */}
-          <div
-            style={{
-              padding: 20,
-              borderBottom: "1px solid #e2e8f0",
-              display: "flex",
-              flexDirection: mobile ? "column" : "row",
-              justifyContent: "space-between",
-              alignItems: mobile ? "stretch" : "center",
-              gap: 12,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                flexWrap: "wrap",
-              }}
-            >
-              <div
-                style={{
-                  fontWeight: 700,
-                  fontSize: 16,
-                }}
-              >
-                Recent Leads ({filtered.length})
-              </div>
-
-              {selected.length > 0 && (
-                <button
-                  onClick={deleteSelected}
-                  style={{
-                    background: "#dc2626",
-                    color: "#fff",
-                    border: "none",
-                    padding: "10px 14px",
-                    borderRadius: 12,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                  }}
-                >
-                  <Trash2 size={14} />
-                  Delete ({selected.length})
-                </button>
-              )}
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: mobile ? "column" : "row",
-                gap: 10,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "10px 14px",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: 14,
-                  width: mobile ? "100%" : "auto",
-                }}
-              >
-                <Search size={13} />
-
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search..."
-                  style={{
-                    border: "none",
-                    outline: "none",
-                    width: "100%",
-                  }}
-                />
-              </div>
-
-              <button
-                style={{
-                  border: "1px solid #e2e8f0",
-                  background: "#fff",
-                  borderRadius: 14,
-                  padding: "10px 14px",
-                }}
-              >
-                <RefreshCw size={13} />
-              </button>
-            </div>
-          </div>
-
-          {/* Table */}
-          <div style={{ overflowX: "auto" }}>
-            <div style={{ minWidth: mobile ? 760 : "100%" }}>
-              {/* Header Row */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "60px 2fr 1fr 1fr 1fr auto",
-                  padding: "16px 24px",
-                  background: "#f8fafc",
-                  borderBottom: "1px solid #e2e8f0",
-                  fontSize: 12,
-                  fontWeight: 700,
-                  color: "#64748b",
-                }}
-              >
-                <div>
-                  <input
-                    type="checkbox"
-                    checked={
-                      paginated.length > 0 &&
-                      paginated.every((x: any) =>
-                        selected.includes(x._id)
-                      )
-                    }
-                    onChange={toggleSelectAll}
-                  />
-                </div>
-
-                <div>Name</div>
-                <div>Contact</div>
-                <div>Source</div>
-                <div>Status</div>
-                <div>Actions</div>
-              </div>
-
-              {/* Rows */}
-              {paginated.map((lead: any ,index:number) => (
-                <div
-                 key={lead._id || lead.id || index}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "60px 2fr 1fr 1fr 1fr auto",
-                    alignItems: "center",
-                    padding: "22px 24px",
-                    borderTop: "1px solid #f1f5f9",
-                   background:
-
-  !lead.isViewed
-
-  ?
-
-  "#dbeafe"
-
-  :
-
-  selected.includes(
-    lead._id
-  )
-
-  ?
-
-  "#f8fafc"
-
-  :
-
-  "#ffffff"
-                  }}
-                >
-                  {/* Checkbox */}
-                  <div>
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(lead._id)}
-                      onChange={() =>
-                        toggleSelect(lead._id)
-                      }
-                    />
-                  </div>
-
-                  {/* User */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 14,
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 46,
-                        height: 46,
-                        borderRadius: "50%",
-                      background:
-
-  lead.isViewed
-
-  ?
-
-  "#dcfce7"
-
-  :
-
-  "#eef2ff",
-
-color:
-
-  lead.isViewed
-
-  ?
-
-  "#166534"
-
-  :
-
-  "#4338ca",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {lead.name?.charAt(0)}
-                    </div>
-
-                    <div>
-                      <div
-                        style={{
-                          fontWeight: 600,
-                          fontSize: 14,
-                        }}
-                      >
-                        {lead.name}
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: "#64748b",
-                        }}
-                      >
-                        Prospect Lead
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>{lead.contact || "—"}</div>
-
-                  <div>{lead.source || "Website"}</div>
-
-                  <div>
-                    <span
-                      style={{
-                        background: "#eef2ff",
-                        color: "#4338ca",
-                        padding: "6px 12px",
-                        borderRadius: 999,
-                        fontSize: 11,
-                        fontWeight: 600,
-                      }}
-                    >
-                    {
-
-  lead.isViewed
-
-  ?
-
-  "Viewed"
-
-  :
-
-  "New"
-
-}
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 8,
-                    }}
-                  >
-                   <button
-
-  onClick={()=>
-
-    openLead(
-
-      lead
-
-    )
-
-  }
-
-  style={{
-
-    border:"none",
-
-    background:"none",
-
-    cursor:"pointer"
-
-  }}
-
->
-
-  <Eye size={14} />
-
-</button>
-
-                    <button
-                      style={{
-                        border: "none",
-                        background: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Pencil size={14} />
-                    </button>
-
-                    <button
-                      style={{
-                        border: "none",
-                        background: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pagination */}
-          <div
-            style={{
-              padding: 18,
-              borderTop: "1px solid #e2e8f0",
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: 10,
-            }}
-          >
-            <button
-              onClick={() =>
-                setPage((p) => Math.max(1, p - 1))
-              }
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-              }}
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            <div>
-              {page}/{totalPages}
-            </div>
-
-            <button
-              onClick={() =>
-                setPage((p) =>
-                  Math.min(totalPages, p + 1)
-                )
-              }
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-              }}
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
+       
     </div>
 
 </div>

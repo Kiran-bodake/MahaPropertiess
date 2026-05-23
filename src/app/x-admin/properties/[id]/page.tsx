@@ -36,6 +36,41 @@ export default function AdminPropertyDetails({ params }: any) {
     setSaving
   ] = useState(false);
 
+const [
+  amenityInput,
+  setAmenityInput
+] = useState("");
+
+const [
+  featureInput,
+  setFeatureInput
+] = useState("");
+ const categoryOptions = [
+
+  "Residential",
+
+  "Commercial",
+
+  "Agriculture",
+
+  "Plot",
+
+  "Villa",
+
+  "Apartment",
+
+  "Office",
+
+  "Shop",
+
+  "Warehouse",
+
+  "Industrial",
+
+  "Farm House"
+
+];
+
 
   useEffect(() => {
 
@@ -97,59 +132,73 @@ export default function AdminPropertyDetails({ params }: any) {
   };
 
 
-  const saveChanges =
-    async () => {
+ const saveChanges =
+  async () => {
 
-      try {
+    try {
 
-        setSaving(true);
+      setSaving(true);
 
-        const res =
-          await fetch(
-            `/api/admin/properties/${propertyId}`,
-            {
-              method: "PUT",
+      await fetch(
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+        `/api/admin/properties/${propertyId}`,
 
-              body:
-                JSON.stringify(
-                  formData
-                )
-            }
-          );
+        {
 
-        const data =
-          await res.json();
+          method:"PUT",
 
-        setProperty(
-          data.property
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(
+              formData
+            )
+
+        }
+
+      );
+
+     
+      // REFETCH FULL UPDATED PROPERTY
+      const refresh =
+        await fetch(
+
+          `/api/admin/properties/${propertyId}`
+
         );
 
-        setFormData(
-          data.property
-        );
+      const updated =
+        await refresh.json();
 
-        setEditing(false);
 
-      }
+      setProperty(
+        updated.property
+      );
 
-      catch (error) {
+      setFormData(
+        updated.property
+      );
 
-        console.error(error);
+      setEditing(false);
 
-      }
+    }
 
-      finally {
+    catch(error){
 
-        setSaving(false);
+      console.error(error);
 
-      }
+    }
 
-    };
+    finally{
+
+      setSaving(false);
+
+    }
+
+  };
 
 
   const approveProperty =
@@ -362,14 +411,15 @@ export default function AdminPropertyDetails({ params }: any) {
             />
 
             <AdminField
-              label="Category"
-              field="category"
-              value={
-                formData?.category
-              }
-              editing={editing}
-              onChange={updateField}
-            />
+  label="Category"
+  field="category"
+  value={
+    formData?.category
+  }
+  editing={editing}
+  onChange={updateField}
+  options={categoryOptions}
+/>
 
             <AdminField
               label="Price"
@@ -381,15 +431,79 @@ export default function AdminPropertyDetails({ params }: any) {
               onChange={updateField}
             />
 
-            <AdminField
-              label="Area"
-              field="area"
-              value={
-                formData?.area
-              }
-              editing={editing}
-              onChange={updateField}
-            />
+            
+
+            <div>
+
+  {/* DISPLAY */}
+  {
+    !editing && (
+
+      <InfoCard
+        label="Area"
+        value={
+
+          formData?.area
+
+            ?
+
+            `${formData.area} ${formData?.areaUnit || ""}`
+
+            :
+
+            "--"
+
+        }
+      />
+
+    )
+  }
+
+
+  {/* EDIT MODE */}
+  {
+    editing && (
+
+      <div style={{
+        display:"grid",
+        gap:10
+      }}>
+
+        <AdminField
+          label="Area"
+          field="area"
+          value={formData?.area}
+          editing={editing}
+          onChange={updateField}
+        />
+
+        <AdminField
+          label="Area Unit"
+          field="areaUnit"
+          value={formData?.areaUnit}
+          editing={editing}
+          onChange={updateField}
+          options={[
+
+            "sqft",
+
+            "sqyd",
+
+            "acre",
+
+            "hectare",
+
+            "guntha"
+
+          ]}
+        />
+
+      </div>
+
+    )
+  }
+
+</div>
 
             <AdminField
               label="Posted By"
@@ -400,63 +514,74 @@ export default function AdminPropertyDetails({ params }: any) {
               editing={editing}
               onChange={updateField}
             />
+<AdminField
+  label={
 
-            <AdminField
-              label="Agent Name"
-              field="agentName"
-              value={
-                formData?.agentName
-              }
-              editing={editing}
-              onChange={updateField}
-            />
+    formData?.postedBy === "Owner"
 
-            <AdminField
-              label="Agent Phone"
-              field="agentPhone"
-              value={
-                formData?.agentPhone
-              }
-              editing={editing}
-              onChange={updateField}
-            />
+      ? "Owner Name"
 
-            <AdminField
-              label="Status"
-              field="status"
-              value={
-                formData?.status
-              }
-              editing={editing}
-              onChange={updateField}
-            />
+      : formData?.postedBy === "Builder"
 
-            <InfoCard
-              label="RERA"
-              value={
-                property.isRERA
-                  ? "Yes"
-                  : "No"
-              }
-            />
+      ? "Builder Name"
 
-            <InfoCard
-              label="Featured"
-              value={
-                property.isFeatured
-                  ? "Yes"
-                  : "No"
-              }
-            />
+      : "Agent Name"
 
-            <InfoCard
-              label="Zero Brokerage"
-              value={
-                property.isZeroBrokerage
-                  ? "Yes"
-                  : "No"
-              }
-            />
+  }
+  field="agentName"
+  value={
+    formData?.agentName
+  }
+  editing={editing}
+  onChange={updateField}
+/>
+
+
+<AdminField
+  label={
+
+    formData?.postedBy === "Owner"
+
+      ? "Owner Phone"
+
+      : formData?.postedBy === "Builder"
+
+      ? "Builder Phone"
+
+      : "Agent Phone"
+
+  }
+  field="agentPhone"
+  value={
+    formData?.agentPhone
+  }
+  editing={editing}
+  onChange={updateField}
+/>
+
+           <ToggleField
+  label="RERA Approved"
+  field="isRERA"
+  value={formData?.isRERA}
+  editing={editing}
+  onChange={updateField}
+/>
+
+<ToggleField
+  label="Featured Property"
+  field="isFeatured"
+  value={formData?.isFeatured}
+  editing={editing}
+  onChange={updateField}
+/>
+
+<ToggleField
+  label="Zero Brokerage"
+  field="isZeroBrokerage"
+  value={formData?.isZeroBrokerage}
+  editing={editing}
+  onChange={updateField}
+/>
 
           </div>
 
@@ -487,8 +612,388 @@ export default function AdminPropertyDetails({ params }: any) {
             }
 
           </p>
+{/* AMENITIES */}
+<div style={{marginTop:24}}>
+
+  <h2 style={{
+    marginBottom:14,
+    fontSize:20,
+    fontWeight:700,
+    color:"#0f172a"
+  }}>
+    Amenities
+  </h2>
+
+  {
+
+    editing
+
+    ?
+
+    <>
+
+      {/* TAGS */}
+      <div style={{
+        display:"flex",
+        flexWrap:"wrap",
+        gap:10,
+        marginBottom:12
+      }}>
+
+        {
+
+          formData?.amenities?.map(
+
+            (
+              item:string,
+              index:number
+            )=>(
+
+              <div
+                key={index}
+                style={{
+                  display:"flex",
+                  alignItems:"center",
+                  gap:8,
+                  padding:"8px 12px",
+                  background:"#f1f5f9",
+                  border:"1px solid #e2e8f0",
+                  borderRadius:10,
+                  fontSize:13,
+                  fontWeight:600
+                }}
+              >
+
+                ✓ {item}
+
+                <button
+                  onClick={()=>
+                    updateField(
+                      "amenities",
+                      formData.amenities.filter(
+                        (_:any,i:number)=>
+                          i !== index
+                      )
+                    )
+                  }
+                  style={{
+                    border:"none",
+                    background:"transparent",
+                    color:"#dc2626",
+                    cursor:"pointer",
+                    fontWeight:700,
+                    padding:0
+                  }}
+                >
+                  ✕
+                </button>
+
+              </div>
+
+            )
+
+          )
+
+        }
+
+      </div>
 
 
+      {/* ADD */}
+      <div style={{
+        display:"flex",
+        gap:10
+      }}>
+
+        <input
+          value={amenityInput}
+          onChange={(e)=>
+            setAmenityInput(
+              e.target.value
+            )
+          }
+          placeholder="Add amenity"
+          style={{
+            flex:1,
+            height:44,
+            border:"1px solid #cbd5e1",
+            borderRadius:10,
+            padding:"0 12px",
+            outline:"none"
+          }}
+        />
+
+        <button
+          onClick={()=>{
+
+            if(!amenityInput.trim())
+              return;
+
+            updateField(
+              "amenities",
+              [
+                ...(formData?.amenities || []),
+                amenityInput
+              ]
+            );
+
+            setAmenityInput("");
+
+          }}
+          style={{
+            width:90,
+            border:"none",
+            borderRadius:10,
+            background:"#2563eb",
+            color:"#fff",
+            fontWeight:700,
+            cursor:"pointer"
+          }}
+        >
+          Add
+        </button>
+
+      </div>
+
+    </>
+
+    :
+
+    <div style={{
+      display:"flex",
+      flexWrap:"wrap",
+      gap:10
+    }}>
+
+      {
+
+        property.amenities?.map(
+
+          (
+            item:string,
+            index:number
+          )=>(
+
+            <div
+              key={index}
+              style={{
+                padding:"8px 12px",
+                borderRadius:10,
+                background:"#f1f5f9",
+                border:"1px solid #e2e8f0",
+                fontSize:13,
+                fontWeight:600,
+                color:"#334155"
+              }}
+            >
+
+              ✓ {item}
+
+            </div>
+
+          )
+
+        )
+
+      }
+
+    </div>
+
+  }
+
+</div>
+
+
+
+{/* KEY FEATURES */}
+<div style={{marginTop:28}}>
+
+  <h2 style={{
+    marginBottom:14,
+    fontSize:20,
+    fontWeight:700,
+    color:"#0f172a"
+  }}>
+    Key Features
+  </h2>
+
+  {
+
+    editing
+
+    ?
+
+    <>
+
+      {/* TAGS */}
+      <div style={{
+        display:"flex",
+        flexWrap:"wrap",
+        gap:10,
+        marginBottom:12
+      }}>
+
+        {
+
+          formData?.highlights?.map(
+
+            (
+              item:string,
+              index:number
+            )=>(
+
+              <div
+                key={index}
+                style={{
+                  display:"flex",
+                  alignItems:"center",
+                  gap:8,
+                  padding:"8px 12px",
+                  background:"#ecfeff",
+                  border:"1px solid #a5f3fc",
+                  borderRadius:10,
+                  fontSize:13,
+                  fontWeight:600
+                }}
+              >
+
+                ⭐ {item}
+
+                <button
+                  onClick={()=>
+                    updateField(
+                      "highlights",
+                      formData.highlights.filter(
+                        (_:any,i:number)=>
+                          i !== index
+                      )
+                    )
+                  }
+                  style={{
+                    border:"none",
+                    background:"transparent",
+                    color:"#dc2626",
+                    cursor:"pointer",
+                    fontWeight:700,
+                    padding:0
+                  }}
+                >
+                  ✕
+                </button>
+
+              </div>
+
+            )
+
+          )
+
+        }
+
+      </div>
+
+
+      {/* ADD */}
+      <div style={{
+        display:"flex",
+        gap:10
+      }}>
+
+        <input
+          value={featureInput}
+          onChange={(e)=>
+            setFeatureInput(
+              e.target.value
+            )
+          }
+          placeholder="Add feature"
+          style={{
+            flex:1,
+            height:44,
+            border:"1px solid #cbd5e1",
+            borderRadius:10,
+            padding:"0 12px",
+            outline:"none"
+          }}
+        />
+
+        <button
+          onClick={()=>{
+
+            if(!featureInput.trim())
+              return;
+
+            updateField(
+              "highlights",
+              [
+                ...(formData?.highlights || []),
+                featureInput
+              ]
+            );
+
+            setFeatureInput("");
+
+          }}
+          style={{
+            width:90,
+            border:"none",
+            borderRadius:10,
+            background:"#0891b2",
+            color:"#fff",
+            fontWeight:700,
+            cursor:"pointer"
+          }}
+        >
+          Add
+        </button>
+
+      </div>
+
+    </>
+
+    :
+
+    <div style={{
+      display:"grid",
+      gap:10
+    }}>
+
+      {
+
+        property.highlights?.map(
+
+          (
+            item:string,
+            index:number
+          )=>(
+
+            <div
+              key={index}
+              style={{
+                padding:"12px 14px",
+                borderRadius:10,
+                background:"#ecfeff",
+                border:"1px solid #a5f3fc",
+                fontSize:13,
+                fontWeight:600,
+                color:"#155e75"
+              }}
+            >
+
+              ⭐ {item}
+
+            </div>
+
+          )
+
+        )
+
+      }
+
+    </div>
+
+  }
+
+</div>
           {/* BUTTONS */}
           <div
             style={{
@@ -654,9 +1159,11 @@ function AdminField({
 
   editing,
 
-  onChange
+  onChange,
 
-}: any){
+  options
+
+}:any){
 
   return (
 
@@ -675,62 +1182,137 @@ function AdminField({
       }}
     >
 
-      {
+    {
 
-        editing
+  editing
 
-          ?
+  ?
 
-          <input
-            value={
-              value || ""
-            }
-            onChange={(e)=>
+  Array.isArray(options) && options.length > 0
 
-              onChange(
-                field,
-                e.target.value
-              )
+  ?
 
-            }
-            style={{
+  <select
 
-              width: "100%",
+    value={value || ""}
 
-              height: 40,
+    onChange={(e)=>
 
-              border:
-                "1px solid #cbd5e1",
+      onChange(
+        field,
+        e.target.value
+      )
 
-              borderRadius: 10,
+    }
 
-              padding:
-                "0 12px"
+    style={{
 
-            }}
-          />
+      width:"100%",
 
-          :
+      height:46,
 
-          <div
-            style={{
+      border:
+        "1px solid #cbd5e1",
 
-              fontWeight: 700,
+      borderRadius:12,
 
-              fontSize: 16
+      padding:"0 14px",
 
-            }}
+      background:"#fff",
+
+      fontSize:14,
+
+      outline:"none",
+
+      cursor:"pointer"
+
+    }}
+  >
+
+    <option value="">
+      Select {label}
+    </option>
+
+    {
+
+      options.map(
+
+        (
+          item:string
+        )=>(
+
+          <option
+            key={item}
+            value={item}
           >
 
-            {
+            {item}
 
-              value || "--"
+          </option>
 
-            }
+        )
 
-          </div>
+      )
 
-      }
+    }
+
+  </select>
+
+  :
+
+  <input
+
+    value={
+      value || ""
+    }
+
+    onChange={(e)=>
+
+      onChange(
+        field,
+        e.target.value
+      )
+
+    }
+
+    style={{
+
+      width:"100%",
+
+      height:40,
+
+      border:
+        "1px solid #cbd5e1",
+
+      borderRadius:10,
+
+      padding:
+        "0 12px"
+
+    }}
+  />
+
+  :
+
+  <div
+    style={{
+
+      fontWeight:700,
+
+      fontSize:16
+
+    }}
+  >
+
+    {
+
+      value || "--"
+
+    }
+
+  </div>
+
+}
 
       <div
         style={{
@@ -753,8 +1335,6 @@ function AdminField({
   );
 
 }
-
-
 function InfoCard({
 
   label,
@@ -768,14 +1348,14 @@ function InfoCard({
     <div
       style={{
 
-        background: "#f8fafc",
+        background:"#f8fafc",
 
         border:
           "1px solid #e2e8f0",
 
-        borderRadius: 14,
+        borderRadius:14,
 
-        padding: 14
+        padding:14
 
       }}
     >
@@ -783,9 +1363,9 @@ function InfoCard({
       <div
         style={{
 
-          fontWeight: 700,
+          fontWeight:700,
 
-          fontSize: 16
+          fontSize:16
 
         }}
       >
@@ -801,11 +1381,11 @@ function InfoCard({
       <div
         style={{
 
-          marginTop: 8,
+          marginTop:8,
 
-          fontSize: 13,
+          fontSize:13,
 
-          color: "#64748b"
+          color:"#64748b"
 
         }}
       >
@@ -813,6 +1393,149 @@ function InfoCard({
         {label}
 
       </div>
+
+    </div>
+
+  );
+
+}
+function ToggleField({
+
+  label,
+
+  field,
+
+  value,
+
+  editing,
+
+  onChange
+
+}:any){
+
+  return(
+
+    <div
+      style={{
+
+        background:"#f8fafc",
+
+        border:
+          "1px solid #e2e8f0",
+
+        borderRadius:14,
+
+        padding:14
+
+      }}
+    >
+
+      {
+
+        editing
+
+        ?
+
+        <label
+          style={{
+
+            display:"flex",
+
+            alignItems:"center",
+
+            justifyContent:"space-between",
+
+            cursor:"pointer"
+
+          }}
+        >
+
+          <span
+            style={{
+
+              fontWeight:600,
+
+              color:"#0f172a"
+
+            }}
+          >
+
+            {label}
+
+          </span>
+
+          <input
+            type="checkbox"
+            checked={value || false}
+            onChange={(e)=>
+
+              onChange(
+                field,
+                e.target.checked
+              )
+
+            }
+            style={{
+
+              width:18,
+
+              height:18,
+
+              cursor:"pointer"
+
+            }}
+          />
+
+        </label>
+
+        :
+
+        <>
+
+          <div
+            style={{
+
+              fontWeight:700,
+
+              fontSize:16,
+
+              color:
+                value
+                  ? "#16a34a"
+                  : "#dc2626"
+
+            }}
+          >
+
+            {
+
+              value
+                ? "Yes"
+                : "No"
+
+            }
+
+          </div>
+
+          <div
+            style={{
+
+              marginTop:8,
+
+              fontSize:13,
+
+              color:"#64748b"
+
+            }}
+          >
+
+            {label}
+
+          </div>
+
+        </>
+
+      }
 
     </div>
 

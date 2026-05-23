@@ -1,5 +1,4 @@
-import { NextResponse }
-  from "next/server";
+import { NextResponse } from "next/server";
 
 import { connectDB }
   from "@/lib/mongodb";
@@ -24,7 +23,6 @@ export async function GET() {
     await connectDB();
 
 
-    // Get pending properties
     const properties =
       await Property.find({
 
@@ -35,25 +33,23 @@ export async function GET() {
 
       .sort({
 
-        createdAt: -1
+        createdAt:-1
 
       })
 
       .lean();
 
 
-    // Merge related collections
     const finalProperties =
       await Promise.all(
 
         properties.map(
 
-          async (
-            property: any
-          ) => {
+          async(property:any)=>{
 
-            const mongoId =
-              property._id;
+            // IMPORTANT FIX
+            const propertyId =
+              property.propertyId;
 
 
             // Pricing
@@ -61,7 +57,7 @@ export async function GET() {
               await PropertyPricing.findOne({
 
                 propertyId:
-                  mongoId
+                  propertyId
 
               }).lean();
 
@@ -71,7 +67,7 @@ export async function GET() {
               await PropertyLocation.findOne({
 
                 propertyId:
-                  mongoId
+                  propertyId
 
               }).lean();
 
@@ -81,7 +77,7 @@ export async function GET() {
               await PropertyImage.findOne({
 
                 propertyId:
-                  mongoId
+                  propertyId
 
               }).lean();
 
@@ -90,12 +86,13 @@ export async function GET() {
 
               ...property,
 
-              // Price
+
+              // PRICE
               price:
                 pricing?.price || 0,
 
 
-              // Flat location fields
+              // LOCATION
               city:
                 location?.city || "",
 
@@ -105,10 +102,18 @@ export async function GET() {
               locality:
                 location?.locality || "",
 
+              houseNo:
+                location?.houseNo || "",
 
-              // Main image
+              street:
+                location?.street || "",
+
+              landmark:
+                location?.landmark || "",
+
+
+              // IMAGE
               image:
-
                 image?.images?.[0]?.url ||
 
                 "/maha.png"
@@ -122,9 +127,15 @@ export async function GET() {
       );
 
 
+    console.log(
+      "FINAL PROPERTIES:",
+      finalProperties
+    );
+
+
     return NextResponse.json({
 
-      success: true,
+      success:true,
 
       properties:
         finalProperties
@@ -133,29 +144,26 @@ export async function GET() {
 
   }
 
-  catch (error) {
+  catch(error){
 
     console.error(
-
       "Property fetch error:",
-
       error
-
     );
 
     return NextResponse.json(
 
       {
 
-        success: false,
+        success:false,
 
-        properties: []
+        properties:[]
 
       },
 
       {
 
-        status: 500
+        status:500
 
       }
 
