@@ -19,6 +19,7 @@ type Property = {
   agentPhone?: string;
   createdAt?: string;
   image?: string;
+  images?: string[];
 };
 
 export default function PropertiesPage() {
@@ -28,6 +29,22 @@ export default function PropertiesPage() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [showGallery,setShowGallery] =
+    useState(false);
+
+  const [activeImage,setActiveImage] =
+    useState(0);
+
+  const [
+
+    galleryImages,
+
+    setGalleryImages
+
+  ] = useState<string[]>([]);
+
+
 
   useEffect(() => {
 
@@ -66,6 +83,8 @@ export default function PropertiesPage() {
   }, []);
 
 
+
+
   const approveProperty =
     async (id: string) => {
 
@@ -77,6 +96,7 @@ export default function PropertiesPage() {
             "/api/admin/properties/approve",
 
             {
+
               method: "POST",
 
               headers: {
@@ -124,6 +144,8 @@ export default function PropertiesPage() {
       }
 
     };
+
+
 
 
   const rejectProperty =
@@ -137,6 +159,7 @@ export default function PropertiesPage() {
             "/api/admin/properties/reject",
 
             {
+
               method: "POST",
 
               headers: {
@@ -184,6 +207,90 @@ export default function PropertiesPage() {
       }
 
     };
+
+
+
+
+  function formatPrice(
+
+    price:number
+
+  ){
+
+    return `₹ ${
+
+      Number(
+
+        price || 0
+
+      ).toLocaleString(
+
+        "en-IN"
+
+      )
+
+    }`;
+
+  }
+
+
+
+
+  const navBtnLeft:any = {
+
+    position:"absolute",
+
+    left:20,
+
+    top:"50%",
+
+    transform:"translateY(-50%)",
+
+    width:60,
+
+    height:60,
+
+    borderRadius:"50%",
+
+    border:"none",
+
+    fontSize:36,
+
+    background:"#fff",
+
+    cursor:"pointer"
+
+  };
+
+
+
+  const navBtnRight:any = {
+
+    position:"absolute",
+
+    right:20,
+
+    top:"50%",
+
+    transform:"translateY(-50%)",
+
+    width:60,
+
+    height:60,
+
+    borderRadius:"50%",
+
+    border:"none",
+
+    fontSize:36,
+
+    background:"#fff",
+
+    cursor:"pointer"
+
+  };
+
+
 
 
   return (
@@ -253,48 +360,51 @@ export default function PropertiesPage() {
         </div>
 
 
-         <button
 
-    onClick={() =>
+        <button
 
-      window.location.href =
+          onClick={() =>
 
-        "/x-admin/post-property"
+            window.location.href =
 
-    }
+              "/x-admin/post-property"
 
-    style={{
+          }
 
-      background:
-        "#16a34a",
+          style={{
 
-      color:
-        "#fff",
+            background:
+              "#16a34a",
 
-      border:
-        "none",
+            color:
+              "#fff",
 
-      padding:
-        "12px 18px",
+            border:
+              "none",
 
-      borderRadius:
-        "12px",
+            padding:
+              "12px 18px",
 
-      fontWeight:
-        700,
+            borderRadius:
+              "12px",
 
-      cursor:
-        "pointer"
+            fontWeight:
+              700,
 
-    }}
+            cursor:
+              "pointer"
 
-  >
+          }}
 
-    + Post Property
+        >
 
-  </button>
+          + Post Property
+
+        </button>
 
       </div>
+
+
 
 
       {loading ? (
@@ -353,7 +463,7 @@ export default function PropertiesPage() {
 
               >
 
-                {/* Image */}
+                {/* IMAGE */}
                 <div
                   style={{
 
@@ -367,6 +477,35 @@ export default function PropertiesPage() {
                 >
 
                   <img
+
+                    onClick={() => {
+
+                      setGalleryImages(
+
+                        property.images?.length
+
+                          ?
+
+                          property.images
+
+                          :
+
+                          [
+
+                            property.image ||
+
+                            "/maha.png"
+
+                          ]
+
+                      );
+
+                      setActiveImage(0);
+
+                      setShowGallery(true);
+
+                    }}
+
                     src={
 
                       property.image ||
@@ -388,7 +527,10 @@ export default function PropertiesPage() {
                         "100%",
 
                       objectFit:
-                        "cover"
+                        "cover",
+
+                      cursor:
+                        "pointer"
 
                     }}
                   />
@@ -396,7 +538,9 @@ export default function PropertiesPage() {
                 </div>
 
 
-                {/* Content */}
+
+
+                {/* CONTENT */}
                 <div
                   style={{
 
@@ -428,6 +572,8 @@ export default function PropertiesPage() {
                   </h2>
 
 
+
+
                   <div
                     style={{
 
@@ -447,41 +593,64 @@ export default function PropertiesPage() {
                   >
 
                     <div>
-                      💰 ₹
-                      {
-                        property.price || 0
+
+                      💰 {
+
+                        formatPrice(
+
+                          property.price || 0
+
+                        )
+
                       }
+
                     </div>
 
+
                     <div>
+
                       📍
+
                       {
                         property.city
                       },
+
                       {" "}
+
                       {
                         property.state
                       }
+
                     </div>
 
+
                     <div>
+
                       👤
+
                       {
                         property.agentName
                       }
+
                     </div>
 
+
                     <div>
+
                       📞
+
                       {
                         property.agentPhone
                       }
+
                     </div>
 
                   </div>
 
 
-                  {/* Buttons */}
+
+
+                  {/* BUTTONS */}
                   <div
                     style={{
 
@@ -525,7 +694,10 @@ export default function PropertiesPage() {
                           "10px",
 
                         fontWeight:
-                          700
+                          700,
+
+                        cursor:
+                          "pointer"
 
                       }}
 
@@ -534,6 +706,8 @@ export default function PropertiesPage() {
                       View Details
 
                     </button>
+
+
 
 
                     <div
@@ -576,7 +750,10 @@ export default function PropertiesPage() {
                             "none",
 
                           borderRadius:
-                            "10px"
+                            "10px",
+
+                          cursor:
+                            "pointer"
 
                         }}
 
@@ -585,6 +762,8 @@ export default function PropertiesPage() {
                         Approve
 
                       </button>
+
+
 
 
                       <button
@@ -615,7 +794,10 @@ export default function PropertiesPage() {
                             "none",
 
                           borderRadius:
-                            "10px"
+                            "10px",
+
+                          cursor:
+                            "pointer"
 
                         }}
 
@@ -640,6 +822,195 @@ export default function PropertiesPage() {
         </div>
 
       )}
+
+
+
+
+      {/* FULLSCREEN GALLERY */}
+      {
+
+        showGallery && (
+
+          <div
+            style={{
+
+              position:"fixed",
+
+              inset:0,
+
+              background:
+                "rgba(0,0,0,.92)",
+
+              zIndex:9999,
+
+              display:"flex",
+
+              alignItems:"center",
+
+              justifyContent:"center",
+
+              flexDirection:"column"
+
+            }}
+          >
+
+            {/* CLOSE */}
+            <button
+
+              onClick={() =>
+
+                setShowGallery(false)
+
+              }
+
+              style={{
+
+                position:"absolute",
+
+                top:20,
+
+                right:20,
+
+                width:46,
+
+                height:46,
+
+                borderRadius:"50%",
+
+                border:"none",
+
+                background:"#fff",
+
+                fontSize:20,
+
+                cursor:"pointer",
+
+                fontWeight:700
+
+              }}
+
+            >
+
+              ✕
+
+            </button>
+
+
+
+
+            {/* MAIN IMAGE */}
+            <img
+
+              src={
+
+                galleryImages[activeImage]
+
+              }
+
+              style={{
+
+                width:"90%",
+
+                maxWidth:"1200px",
+
+                maxHeight:"80vh",
+
+                objectFit:"contain",
+
+                borderRadius:"16px"
+
+              }}
+
+            />
+
+
+
+
+            {/* NAVIGATION */}
+            {
+
+              galleryImages.length > 1 && (
+
+                <>
+
+                  {/* PREV */}
+                  <button
+
+                    onClick={() =>
+
+                      setActiveImage(
+
+                        prev =>
+
+                          prev === 0
+
+                          ?
+
+                          galleryImages.length - 1
+
+                          :
+
+                          prev - 1
+
+                      )
+
+                    }
+
+                    style={navBtnLeft}
+
+                  >
+
+                    ‹
+
+                  </button>
+
+
+
+
+                  {/* NEXT */}
+                  <button
+
+                    onClick={() =>
+
+                      setActiveImage(
+
+                        prev =>
+
+                          prev ===
+
+                          galleryImages.length - 1
+
+                          ?
+
+                          0
+
+                          :
+
+                          prev + 1
+
+                      )
+
+                    }
+
+                    style={navBtnRight}
+
+                  >
+
+                    ›
+
+                  </button>
+
+                </>
+
+              )
+
+            }
+
+          </div>
+
+        )
+
+      }
 
     </section>
 

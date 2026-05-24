@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { connectDB }
-  from "@/lib/mongodb";
+from "@/lib/mongodb";
 
-import Lead
-  from "@/models/Lead";
+import PropertyInquiry
+from "@/models/PropertyInquiry";
 
 import Notification
-  from "@/models/Notification";
-
+from "@/models/Notification";
 
 export async function POST(
   req: Request
@@ -16,8 +15,10 @@ export async function POST(
 
   try {
 
+    /* CONNECT DATABASE */
     await connectDB();
 
+    /* GET REQUEST BODY */
     const body =
       await req.json();
 
@@ -26,10 +27,11 @@ export async function POST(
       body
     );
 
+    /* CREATE PROPERTY INQUIRY */
+    const propertyInquiry =
+      await PropertyInquiry.create({
 
-    /* CREATE LEAD */
-    const lead =
-      await Lead.create({
+        /* OLD LEAD STRUCTURE */
 
         propertyId:
           body.propertyId ||
@@ -40,24 +42,45 @@ export async function POST(
           "Unknown Property",
 
         name:
-          body.name,
+          body.name || "",
 
         mobileNumber:
-          body.mobileNumber,
-
-        email:
-          body.email,
+          body.mobileNumber || "",
 
         interest:
-          body.interest ||
-          "Buy",
+          body.interest || "Buy",
 
         whatsappConsent:
           body.whatsappConsent
-          ?? true
+          ?? true,
+
+        /* NEW PROPERTY INQUIRY STRUCTURE */
+
+        propertyTitle:
+          body.propertyName ||
+          "Unknown Property",
+
+        customerName:
+          body.name || "",
+
+        phone:
+          body.mobileNumber || "",
+
+        message:
+          body.message || "",
+
+        inquiryType:
+          body.interest || "Buy",
+
+        /* COMMON */
+
+        email:
+          body.email || "",
+
+        status:
+          "new"
 
       });
-
 
     /* CREATE NOTIFICATION */
     await Notification.create({
@@ -66,26 +89,26 @@ export async function POST(
         "lead",
 
       title:
-        "New Lead Received",
+        "New Property Inquiry",
 
       message:
-        `${body.name} submitted a lead for ${body.propertyName}`,
+        `${body.name} submitted inquiry for ${body.propertyName}`,
 
       referenceId:
-        lead._id,
+        propertyInquiry._id,
 
       isRead:
         false
 
     });
 
-
+    /* SUCCESS RESPONSE */
     return NextResponse.json({
 
       success: true,
 
       data:
-        lead
+        propertyInquiry
 
     });
 
@@ -93,9 +116,7 @@ export async function POST(
 
   catch (error) {
 
-    console.error(
-      error
-    );
+    console.error(error);
 
     return NextResponse.json(
 
@@ -104,7 +125,7 @@ export async function POST(
         success: false,
 
         message:
-          "Failed to save lead"
+          "Failed to save inquiry"
 
       },
 

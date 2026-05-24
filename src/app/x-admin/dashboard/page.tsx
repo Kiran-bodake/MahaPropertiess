@@ -15,6 +15,11 @@ import {
 
 import { useRouter }
 from "next/navigation";
+import {
+
+  DashboardCard
+
+} from "@/components/admin/cards/DashboardCard";
 
 import {
 
@@ -668,13 +673,12 @@ const COLORS = [
 ];
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f8fafc",
-        fontFamily: "Inter,sans-serif",
-      }}
-    >
+   <div
+  className="
+  min-h-screen
+  bg-slate-50
+  font-sans"
+>
       {/* Header */}
       {/* HEADER */}
 <div
@@ -805,7 +809,7 @@ const COLORS = [
         ? "1fr"
         : "repeat(4,1fr)",
 
-    gap: 16,
+    gap: 12,
 
     marginBottom: 22,
   }}
@@ -868,28 +872,26 @@ const COLORS = [
     <div
       key={index}
 
-      style={{
-        background:"#fff",
+     style={{
+  background:"#fff",
 
-        border:
-          "1px solid #e2e8f0",
+  border:"1px solid #e2e8f0",
 
-        borderRadius:20,
+  borderRadius:18,
 
-        padding:"14px 16px",
+  padding:"10px 14px",
 
-        display:"flex",
+  display:"flex",
 
-        alignItems:"center",
+  alignItems:"center",
 
-        justifyContent:
-          "space-between",
+  justifyContent:"space-between",
 
-        boxShadow:
-          "0 4px 14px rgba(15,23,42,.04)",
+  boxShadow:
+    "0 2px 10px rgba(15,23,42,.04)",
 
-        minHeight:92,
-      }}
+  minHeight:76,
+}}
     >
 
       {/* LEFT */}
@@ -913,20 +915,20 @@ const COLORS = [
         </div>
 
         <div
-          style={{
-            fontSize:
-              mobile
-                ? 24
-                : 30,
+         style={{
+  fontSize:
+    mobile
+      ? 20
+      : 24,
 
-            fontWeight:800,
+  fontWeight:800,
 
-            marginTop:6,
+  marginTop:4,
 
-            color:"#0f172a",
+  color:"#0f172a",
 
-            lineHeight:1,
-          }}
+  lineHeight:1,
+}}
         >
           {item.value}
         </div>
@@ -936,22 +938,24 @@ const COLORS = [
       {/* RIGHT */}
       <div
         style={{
-          width:46,
-          height:46,
+  width:38,
 
-          borderRadius:16,
+  height:38,
 
-          background:item.bg,
+  borderRadius:12,
 
-          display:"flex",
+  background:item.bg,
 
-          alignItems:"center",
+  display:"flex",
 
-          justifyContent:
-            "center",
+  alignItems:"center",
 
-          fontSize:20,
-        }}
+  justifyContent:"center",
+
+  fontSize:16,
+
+  flexShrink:0,
+}}
       >
         {item.icon}
       </div>
@@ -959,8 +963,35 @@ const COLORS = [
     </div>
 
   ))}
+  </div>
+ <div
+  style={{
+    display:"grid",
 
-</div>
+    gridTemplateColumns:
+
+      mobile
+
+        ? "1fr"
+
+        : "2fr 380px",
+
+    gap:24,
+
+    alignItems:"start",
+  }}
+>
+
+  {/* LEFT SIDE */}
+  <div
+    style={{
+      display:"flex",
+
+      flexDirection:"column",
+
+      gap:24,
+    }}
+  >
 {/* Recent Properties */}
 <div
   style={{
@@ -972,13 +1003,17 @@ const COLORS = [
 
   {/* Header */}
   <div
-    style={{
-      padding:20,
-      borderBottom:
-        "1px solid #e2e8f0",
-      fontWeight:700,
-      fontSize:16,
-    }}
+   style={{
+  fontSize:10,
+
+  fontWeight:700,
+
+  color:"#64748b",
+
+  textTransform:"uppercase",
+
+  letterSpacing:.3,
+}}
   >
     Recent Properties
   </div>
@@ -1056,7 +1091,9 @@ const COLORS = [
                 gridTemplateColumns:
                   "2fr 1fr 1fr 1fr 1fr auto",
 
-                padding:"18px 24px",
+                padding:"1px 24px",
+                transition:"all .2s ease",
+                cursor:"pointer",
 
                 borderTop:
                   "1px solid #f1f5f9",
@@ -1294,6 +1331,238 @@ const COLORS = [
   </div>
 
 </div>
+{/* COMPACT PREMIUM RECENT LEADS */}
+<div
+  style={{
+    background:"#fff",
+    border:"1px solid #e2e8f0",
+    borderRadius:20,
+    overflow:"hidden",
+    boxShadow:"0 4px 16px rgba(15,23,42,.05)",
+  }}
+>
+
+  {/* HEADER */}
+  <div
+    style={{
+      padding:"16px 18px",
+      borderBottom:"1px solid #eef2f7",
+
+      display:"flex",
+      justifyContent:"space-between",
+      alignItems:"center",
+      gap:12,
+      flexWrap:"wrap",
+    }}
+  >
+
+    {/* LEFT */}
+    <div>
+
+      <div
+        style={{
+          fontSize:18,
+          fontWeight:700,
+          color:"#0f172a",
+        }}
+      >
+        Recent Leads
+      </div>
+
+      <div
+        style={{
+          fontSize:12,
+          color:"#64748b",
+          marginTop:4,
+        }}
+      >
+        Latest customer inquiries
+      </div>
+
+    </div>
+
+    {/* SEARCH */}
+    <div
+      style={{
+        display:"flex",
+        alignItems:"center",
+        gap:8,
+
+        background:"#f8fafc",
+
+        border:"1px solid #e2e8f0",
+
+        borderRadius:12,
+
+        padding:"8px 12px",
+
+        minWidth:
+          mobile
+            ? "100%"
+            : 220,
+      }}
+    >
+
+      <Search
+        size={14}
+        color="#64748b"
+      />
+
+      <input
+        value={query}
+
+        onChange={(e)=>
+          setQuery(
+            e.target.value
+          )
+        }
+
+        placeholder="Search leads"
+
+        style={{
+          border:"none",
+          outline:"none",
+          background:"transparent",
+          width:"100%",
+          fontSize:13,
+          color:"#0f172a",
+        }}
+      />
+
+    </div>
+
+  </div>
+
+ 
+
+  {/* FOOTER */}
+  <div
+    style={{
+      padding:"14px 18px",
+
+      display:"flex",
+
+      justifyContent:
+        "space-between",
+
+      alignItems:"center",
+
+      background:"#fff",
+    }}
+  >
+
+    {/* LEFT */}
+    <div
+      style={{
+        fontSize:12,
+        color:"#64748b",
+      }}
+    >
+      Showing latest leads
+    </div>
+
+    {/* PAGINATION */}
+    <div
+      style={{
+        display:"flex",
+        alignItems:"center",
+        gap:10,
+      }}
+    >
+
+      <button
+
+        onClick={()=>
+
+          setPage((p)=>
+
+            Math.max(
+              1,
+              p - 1
+            )
+
+          )
+
+        }
+
+        style={{
+          width:30,
+          height:30,
+
+          border:"1px solid #e2e8f0",
+
+          borderRadius:10,
+
+          background:"#fff",
+
+          display:"flex",
+
+          alignItems:"center",
+
+          justifyContent:"center",
+
+          cursor:"pointer",
+        }}
+      >
+        <ChevronLeft
+          size={14}
+        />
+      </button>
+
+      <div
+        style={{
+          fontSize:13,
+          fontWeight:700,
+          color:"#0f172a",
+        }}
+      >
+        {page}/{totalPages}
+      </div>
+
+      <button
+
+        onClick={()=>
+
+          setPage((p)=>
+
+            Math.min(
+              totalPages,
+              p + 1
+            )
+
+          )
+
+        }
+
+        style={{
+          width:30,
+          height:30,
+
+          border:"1px solid #e2e8f0",
+
+          borderRadius:10,
+
+          background:"#fff",
+
+          display:"flex",
+
+          alignItems:"center",
+
+          justifyContent:"center",
+
+          cursor:"pointer",
+        }}
+      >
+        <ChevronRight
+          size={14}
+        />
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 {/* RECENT LEADS */}
 <div
   style={{
@@ -1324,46 +1593,7 @@ const COLORS = [
 
     <div>
 
-      <div
-        style={{
-          fontSize:16,
-          fontWeight:700,
-        }}
-      >
-        Recent Leads
-      </div>
-
-      <div
-        style={{
-          fontSize:12,
-          color:"#64748b",
-          marginTop:4,
-        }}
-      >
-        Latest customer enquiries
-      </div>
-
-    </div>
-
-    {/* SEARCH */}
-    <div
-      style={{
-        display:"flex",
-
-        alignItems:"center",
-
-        gap:8,
-
-        padding:"8px 12px",
-
-        border:
-          "1px solid #e2e8f0",
-
-        borderRadius:12,
-
-        background:"#fff",
-      }}
-    >
+    
 
       <Search size={14}/>
 
@@ -1390,206 +1620,264 @@ const COLORS = [
     </div>
 
   </div>
+    {/* CHARTS */}
 
-  {/* LIST */}
-  {
+    {/* RECENT LEADS */}
 
-    paginated
-      .slice(0,5)
-      .map((lead:any,index:number)=>(
+  
 
-        <div
-          key={
-            lead._id
-            ||
-            lead.id
-            ||
-            index
-          }
+ 
 
-          style={{
-            display:"flex",
 
-            justifyContent:
-              "space-between",
 
-            alignItems:"center",
+  
+  {/* RIGHT SIDEBAR */}
+  
+<div
+  style={{
+    display:"flex",
 
-            padding:"14px 20px",
+    flexDirection:"column",
 
-            borderTop:
-              "1px solid #f1f5f9",
+    gap:24,
+  }
+}
 
-            background:
 
-              !lead.isViewed
+  
+>
 
-              ?
+   {/* LEADS */}
+  <div>
 
-              "#eff6ff"
+    {
 
-              :
+      paginated
+        .slice(0,5)
+        .map((lead:any,index:number)=>(
 
-              "#fff",
-          }}
-        >
-
-          {/* LEFT */}
           <div
+            key={
+              lead._id
+              ||
+              lead.id
+              ||
+              index
+            }
+
             style={{
               display:"flex",
+
+              justifyContent:
+                "space-between",
+
               alignItems:"center",
-              gap:12,
-            }}
-          >
 
-            {/* AVATAR */}
-            <div
-              style={{
-                width:42,
-                height:42,
+              padding:"12px 18px",
 
-                borderRadius:"50%",
+              borderBottom:
+                "1px solid #f1f5f9",
 
-                background:
-
-                  lead.isViewed
-
-                  ?
-
-                  "#dcfce7"
-
-                  :
-
-                  "#eef2ff",
-
-                color:
-
-                  lead.isViewed
-
-                  ?
-
-                  "#166534"
-
-                  :
-
-                  "#4338ca",
-
-                display:"flex",
-
-                alignItems:"center",
-
-                justifyContent:
-                  "center",
-
-                fontWeight:700,
-
-                fontSize:14,
-              }}
-            >
-              {
-                lead.name?.charAt(0)
-              }
-            </div>
-
-            {/* INFO */}
-            <div>
-
-              <div
-                style={{
-                  fontWeight:700,
-                  fontSize:14,
-                }}
-              >
-                {lead.name}
-              </div>
-
-              <div
-                style={{
-                  fontSize:12,
-                  color:"#64748b",
-                  marginTop:4,
-                }}
-              >
-                {
-                  lead.contact
-                  ||
-                  "No Contact"
-                }
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* RIGHT */}
-          <div
-            style={{
-              display:"flex",
-              alignItems:"center",
-              gap:10,
-            }}
-          >
-
-            {/* STATUS */}
-            <span
-              style={{
-                background:
-
-                  !lead.isViewed
-
-                  ?
-
-                  "#dbeafe"
-
-                  :
-
-                  "#dcfce7",
-
-                color:
-
-                  !lead.isViewed
-
-                  ?
-
-                  "#1d4ed8"
-
-                  :
-
-                  "#166534",
-
-                padding:"5px 10px",
-
-                borderRadius:999,
-
-                fontSize:11,
-
-                fontWeight:700,
-              }}
-            >
-              {
+              background:
 
                 !lead.isViewed
 
                 ?
 
-                "New"
+                "#f8fbff"
 
                 :
 
-                "Viewed"
+                "#fff",
 
-              }
-            </span>
+              transition:
+                "all .2s ease",
 
-            {/* ACTIONS */}
+              cursor:"pointer",
+            }}
+
+            onMouseEnter={(e)=>{
+
+              e.currentTarget.style.background =
+                "#f8fafc";
+
+            }}
+
+            onMouseLeave={(e)=>{
+
+              e.currentTarget.style.background =
+
+                !lead.isViewed
+
+                ?
+
+                "#f8fbff"
+
+                :
+
+                "#fff";
+
+            }}
+          >
+
+            {/* LEFT */}
             <div
               style={{
                 display:"flex",
-                gap:6,
+                alignItems:"center",
+                gap:12,
               }}
             >
 
+              {/* AVATAR */}
+              <div
+                style={{
+                  width:40,
+                  height:40,
+
+                  borderRadius:12,
+
+                  background:
+
+                    !lead.isViewed
+
+                    ?
+
+                    "#dbeafe"
+
+                    :
+
+                    "#dcfce7",
+
+                  color:
+
+                    !lead.isViewed
+
+                    ?
+
+                    "#2563eb"
+
+                    :
+
+                    "#16a34a",
+
+                  display:"flex",
+
+                  alignItems:"center",
+
+                  justifyContent:"center",
+
+                  fontWeight:700,
+
+                  fontSize:14,
+
+                  flexShrink:0,
+                }}
+              >
+                {
+                  lead.name
+                    ?.charAt(0)
+                }
+              </div>
+
+              {/* INFO */}
+              <div>
+
+                <div
+                  style={{
+                    fontSize:14,
+                    fontWeight:700,
+                    color:"#0f172a",
+                  }}
+                >
+                  {lead.name}
+                </div>
+
+                <div
+                  style={{
+                    fontSize:12,
+                    color:"#64748b",
+                    marginTop:3,
+                  }}
+                >
+                  {
+                    lead.contact
+                    ||
+                    "No Contact"
+                  }
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* RIGHT */}
+            <div
+              style={{
+                display:"flex",
+                alignItems:"center",
+                gap:8,
+              }}
+            >
+
+              {/* STATUS */}
+              {
+                !mobile && (
+
+                  <span
+                    style={{
+                      background:
+
+                        !lead.isViewed
+
+                        ?
+
+                        "#dbeafe"
+
+                        :
+
+                        "#dcfce7",
+
+                      color:
+
+                        !lead.isViewed
+
+                        ?
+
+                        "#1d4ed8"
+
+                        :
+
+                        "#166534",
+
+                      padding:"5px 10px",
+
+                      borderRadius:999,
+
+                      fontSize:11,
+
+                      fontWeight:700,
+                    }}
+                  >
+                    {
+
+                      !lead.isViewed
+
+                      ?
+
+                      "New"
+
+                      :
+
+                      "Viewed"
+
+                    }
+                  </span>
+
+                )
+              }
+
+              {/* VIEW */}
               <button
 
                 onClick={()=>
@@ -1599,14 +1887,20 @@ const COLORS = [
                 }
 
                 style={{
-                  width:34,
-                  height:34,
+                  width:32,
+                  height:32,
 
                   border:"none",
 
                   borderRadius:10,
 
                   background:"#eff6ff",
+
+                  display:"flex",
+
+                  alignItems:"center",
+
+                  justifyContent:"center",
 
                   cursor:"pointer",
                 }}
@@ -1617,16 +1911,23 @@ const COLORS = [
                 />
               </button>
 
+              {/* EDIT */}
               <button
                 style={{
-                  width:34,
-                  height:34,
+                  width:32,
+                  height:32,
 
                   border:"none",
 
                   borderRadius:10,
 
                   background:"#f8fafc",
+
+                  display:"flex",
+
+                  alignItems:"center",
+
+                  justifyContent:"center",
 
                   cursor:"pointer",
                 }}
@@ -1637,16 +1938,23 @@ const COLORS = [
                 />
               </button>
 
+              {/* DELETE */}
               <button
                 style={{
-                  width:34,
-                  height:34,
+                  width:32,
+                  height:32,
 
                   border:"none",
 
                   borderRadius:10,
 
                   background:"#fef2f2",
+
+                  display:"flex",
+
+                  alignItems:"center",
+
+                  justifyContent:"center",
 
                   cursor:"pointer",
                 }}
@@ -1661,11 +1969,18 @@ const COLORS = [
 
           </div>
 
-        </div>
+        ))
 
-      ))
+    }
 
-  }
+  </div>
+
+
+
+</div>
+
+</div>
+ </div>
 
   {/* PAGINATION */}
   <div
@@ -1910,4 +2225,5 @@ const COLORS = [
 </div>
 
 );
+
 }

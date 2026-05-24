@@ -28,10 +28,11 @@ export async function POST(
     const body =
       await req.json();
 
+
     // VALIDATION
     if(
 
-      !body.propertyId ||
+      !body.propertyMongoId ||
 
       !body.reason
 
@@ -64,14 +65,22 @@ export async function POST(
 
       await PropertyReport.create({
 
+        // REAL DATABASE ID
+        propertyMongoId:
+          body.propertyMongoId,
+
+        // DISPLAY ID
         propertyId:
-          body.propertyId,
+          body.propertyId || "",
 
         propertyTitle:
           body.propertyTitle || "",
 
         reason:
-          body.reason
+          body.reason,
+
+        status:
+          "Pending"
 
       });
 

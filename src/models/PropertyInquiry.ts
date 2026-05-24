@@ -1,28 +1,116 @@
 import mongoose from "mongoose";
 
-const PropertyInquirySchema = new mongoose.Schema(
-  {
-    propertyTitle: String,
+const PropertyInquirySchema =
 
-    customerName: String,
+  new mongoose.Schema(
 
-    email: String,
+    {
 
-    phone: String,
+      propertyId: {
+        type: String,
+        default: "",
+      },
 
-    message: String,
+      propertyName: {
+        type: String,
+        default: "",
+      },
 
-    inquiryType: String,
+      name: {
+        type: String,
+        default: "",
+      },
 
-    status: {
-      type: String,
-      default: "new",
+      mobileNumber: {
+        type: String,
+        default: "",
+      },
+
+      email: {
+        type: String,
+        default: "",
+      },
+
+      interest: {
+        type: String,
+        default: "",
+      },
+
+      whatsappConsent: {
+        type: Boolean,
+        default: false,
+      },
+
+      propertyTitle: {
+        type: String,
+        default: "",
+      },
+
+      customerName: {
+        type: String,
+        default: "",
+      },
+
+      phone: {
+        type: String,
+        default: "",
+      },
+
+      message: {
+        type: String,
+        default: "",
+      },
+
+      inquiryType: {
+        type: String,
+        default: "general",
+      },
+
+      status: {
+
+        type: String,
+
+        enum: [
+
+          "new",
+
+          "contacted",
+
+          "closed"
+
+        ],
+
+        default: "new",
+
+      },
+
     },
-  },
-  {
-    timestamps: true,
-  },
-);
 
-export default mongoose.models.PropertyInquiry ||
-  mongoose.model("PropertyInquiry", PropertyInquirySchema);
+    {
+
+      timestamps: true,
+
+    }
+
+  );
+
+
+
+/* PROFESSIONAL MODEL EXPORT */
+const PropertyInquiry =
+
+  mongoose.models.PropertyInquiry ||
+
+  mongoose.model(
+
+    "PropertyInquiry",
+
+    PropertyInquirySchema,
+
+    "property_inquiries"
+
+  );
+
+
+
+export default PropertyInquiry;

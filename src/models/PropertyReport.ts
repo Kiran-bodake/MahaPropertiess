@@ -1,37 +1,77 @@
 import mongoose
 from "mongoose";
 
+
+
 const PropertyReportSchema =
 
   new mongoose.Schema(
 
     {
 
+      // REAL PROPERTY DATABASE ID
+      propertyMongoId:{
+
+        type:String,
+
+        required:true
+
+      },
+
+
+      // PROPERTY SLUG / DISPLAY ID
       propertyId:{
-        type:String,
-        required:true
-      },
 
-      propertyTitle:{
         type:String,
+
         default:""
-      },
-status:{
-  type:String,
-  default:"Pending"
-},
 
-resolvedAt:{
-  type:Date
-},
-      reason:{
+      },
+
+
+      // PROPERTY TITLE
+      propertyTitle:{
+
         type:String,
-        required:true
+
+        default:""
+
       },
 
-      createdAt:{
-        type:Date,
-        default:Date.now
+
+      // REPORT REASON
+      reason:{
+
+        type:String,
+
+        required:true
+
+      },
+
+
+      // REPORT STATUS
+      status:{
+
+        type:String,
+
+        enum:[
+
+          "Pending",
+
+          "Resolved"
+
+        ],
+
+        default:"Pending"
+
+      },
+
+
+      // RESOLVED DATE
+      resolvedAt:{
+
+        type:Date
+
       }
 
     },
@@ -43,6 +83,8 @@ resolvedAt:{
     }
 
   );
+
+
 
 export default
 

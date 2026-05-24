@@ -45,6 +45,17 @@ const [
   featureInput,
   setFeatureInput
 ] = useState("");
+
+const [
+  showGallery,
+  setShowGallery
+] = useState(false);
+
+const [
+  activeImage,
+  setActiveImage
+] = useState(0);
+
  const categoryOptions = [
 
   "Residential",
@@ -310,28 +321,41 @@ const [
             height: 320
           }}
         >
+<img
 
-          <img
-            src={
+  onClick={() => {
 
-              property.images?.[0] ||
+    setActiveImage(0);
 
-              property.image ||
+    setShowGallery(true);
 
-              "/maha.png"
+  }}
 
-            }
-            alt={property.title}
-            style={{
+  src={
 
-              width: "100%",
+    property.images?.[0] ||
 
-              height: "100%",
+    property.image ||
 
-              objectFit: "cover"
+    "/maha.png"
 
-            }}
-          />
+  }
+
+  alt={property.title}
+
+  style={{
+
+    width: "100%",
+
+    height: "100%",
+
+    objectFit: "cover",
+
+    cursor:"pointer"
+
+  }}
+
+/>
 
         </div>
 
@@ -1095,6 +1119,243 @@ const [
         </div>
 
       </div>
+
+{
+  showGallery && (
+
+    <div
+      style={{
+
+        position:"fixed",
+
+        inset:0,
+
+        background:
+          "rgba(0,0,0,.94)",
+
+        zIndex:9999,
+
+        display:"flex",
+
+        alignItems:"center",
+
+        justifyContent:"center",
+
+        flexDirection:"column"
+
+      }}
+    >
+
+      {/* CLOSE */}
+      <button
+
+        onClick={() =>
+
+          setShowGallery(false)
+
+        }
+
+        style={{
+
+          position:"absolute",
+
+          top:20,
+
+          right:20,
+
+          width:50,
+
+          height:50,
+
+          borderRadius:"50%",
+
+          border:"none",
+
+          background:"#fff",
+
+          fontSize:22,
+
+          fontWeight:700,
+
+          cursor:"pointer"
+
+        }}
+
+      >
+
+        ✕
+
+      </button>
+
+
+
+      {/* MAIN IMAGE */}
+      <img
+
+        src={
+
+          property.images?.[activeImage] ||
+
+          property.image ||
+
+          "/maha.png"
+
+        }
+
+        style={{
+
+          width:"92%",
+
+          maxWidth:"1300px",
+
+          maxHeight:"82vh",
+
+          objectFit:"contain",
+
+          borderRadius:"16px"
+
+        }}
+
+      />
+
+
+
+      {/* PREV BUTTON */}
+      {
+
+        property.images?.length > 1 && (
+
+          <button
+
+            onClick={() =>
+
+              setActiveImage(
+
+                prev =>
+
+                  prev === 0
+
+                  ?
+
+                  property.images.length - 1
+
+                  :
+
+                  prev - 1
+
+              )
+
+            }
+
+            style={{
+
+              position:"absolute",
+
+              left:20,
+
+              top:"50%",
+
+              transform:
+                "translateY(-50%)",
+
+              width:60,
+
+              height:60,
+
+              borderRadius:"50%",
+
+              border:"none",
+
+              background:"#fff",
+
+              fontSize:34,
+
+              cursor:"pointer"
+
+            }}
+
+          >
+
+            ‹
+
+          </button>
+
+        )
+
+      }
+
+
+
+      {/* NEXT BUTTON */}
+      {
+
+        property.images?.length > 1 && (
+
+          <button
+
+            onClick={() =>
+
+              setActiveImage(
+
+                prev =>
+
+                  prev ===
+
+                  property.images.length - 1
+
+                  ?
+
+                  0
+
+                  :
+
+                  prev + 1
+
+              )
+
+            }
+
+            style={{
+
+              position:"absolute",
+
+              right:20,
+
+              top:"50%",
+
+              transform:
+                "translateY(-50%)",
+
+              width:60,
+
+              height:60,
+
+              borderRadius:"50%",
+
+              border:"none",
+
+              background:"#fff",
+
+              fontSize:34,
+
+              cursor:"pointer"
+
+            }}
+
+          >
+
+            ›
+
+          </button>
+
+        )
+
+      }
+
+    </div>
+
+  )
+}
 
     </section>
 
