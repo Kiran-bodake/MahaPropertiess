@@ -2,7 +2,48 @@ import Link from "next/link";
 import Image from "next/image";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
+import type { Metadata } from "next";
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  const localityName = slug
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+  return {
+    title: `Properties in ${localityName}, Nashik | MahaProperties`,
+
+    description: `Explore verified NA plots, agricultural land, commercial properties and investment opportunities in ${localityName}, Nashik.`,
+
+    openGraph: {
+      title: `Properties in ${localityName}, Nashik`,
+
+      description: `Verified property listings in ${localityName}, Nashik.`,
+
+      url: `https://mahaproperties.in/localities/${slug}`,
+
+      siteName: "MahaProperties",
+
+      images: [
+        {
+          url: "/maha.png",
+
+          width: 1200,
+
+          height: 630,
+
+          alt: localityName,
+        },
+      ],
+
+      locale: "en_IN",
+
+      type: "website",
+    },
+  };
+}
 type Props = {
   params: Promise<{
     slug: string;
@@ -114,6 +155,22 @@ export default async function LocalityPage({ params }: Props) {
             </div>
           </section>
 
+          <section className="seoBlock">
+            <h2>About {localityName}</h2>
+
+            <p>
+              {localityName} is one of Nashik’s emerging real-estate
+              destinations known for NA plots, agricultural land, commercial
+              developments and long-term investment potential.
+            </p>
+
+            <p>
+              The locality offers strong road connectivity, growing
+              infrastructure and increasing demand for residential and
+              commercial projects.
+            </p>
+          </section>
+
           {/* TOPBAR */}
           <div className="topbar">
             <div>
@@ -216,6 +273,30 @@ export default async function LocalityPage({ params }: Props) {
               <p>No listings available for this locality.</p>
             </div>
           )}
+
+          <section className="faqSection">
+            <h2>FAQs About {localityName}</h2>
+
+            <div className="faqItem">
+              <h3>Is {localityName} good for investment?</h3>
+
+              <p>
+                Yes, {localityName} is considered one of Nashik’s promising
+                real-estate investment zones due to infrastructure growth and
+                increasing demand.
+              </p>
+            </div>
+
+            <div className="faqItem">
+              <h3>What property types are available in {localityName}?</h3>
+
+              <p>
+                You can find NA plots, agricultural land, commercial properties
+                and investment properties in
+                {localityName}.
+              </p>
+            </div>
+          </section>
 
           {/* Nearby Properties */}
           {nearbyProperties.length > 0 && (
@@ -563,6 +644,40 @@ export default async function LocalityPage({ params }: Props) {
   .empty p {
     color: #64748b;
   }
+
+  .seoBlock,
+.faqSection {
+  background: white;
+  border-radius: 22px;
+  padding: 28px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.seoBlock h2,
+.faqSection h2 {
+  margin-top: 0;
+  color: #111827;
+  font-size: 1.5rem;
+}
+
+.seoBlock p,
+.faqItem p {
+  color: #475569;
+  line-height: 1.8;
+}
+
+.faqItem {
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 18px;
+}
+
+.faqItem h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: #0f172a;
+}
 
   /* RELATED PROPERTIES */
 

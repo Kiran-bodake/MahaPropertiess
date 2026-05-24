@@ -938,6 +938,21 @@ export default function PostPropertyPage() {
   const [enteredOtp, setEnteredOtp] = useState("");
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [showDescPopup, setShowDescPopup] = useState(false);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+
+      setForm((prev) => ({
+        ...prev,
+        agentPhone: user.phone || "",
+      }));
+
+      // AUTO VERIFY LOGIN USER
+      setPhoneVerified(true);
+    }
+  }, []);
 
   const [questionAnswers, setQuestionAnswers] = useState<
     Record<string, string>
@@ -1991,7 +2006,8 @@ Perfect for ${
                         {form.agentPhone.length === 10 &&
                           !errors.agentPhone &&
                           !otpSent &&
-                          !phoneVerified && (
+                          !phoneVerified &&
+                          !localStorage.getItem("user") && (
                             <button
                               type="button"
                               style={{
@@ -2023,49 +2039,53 @@ Perfect for ${
                           )}
 
                         {/* OTP Input */}
-                        {otpSent && !phoneVerified && (
-                          <div style={{ marginTop: "12px" }}>
-                            <input
-                              style={inp()}
-                              type="text"
-                              inputMode="numeric"
-                              maxLength={3}
-                              placeholder="Enter OTP"
-                              value={enteredOtp}
-                              onChange={(e) =>
-                                setEnteredOtp(e.target.value.replace(/\D/g, ""))
-                              }
-                            />
-
-                            <button
-                              type="button"
-                              style={{
-                                marginTop: "8px",
-                                padding: "8px 14px",
-                                border: "none",
-                                borderRadius: "8px",
-                                background: "#16a34a",
-                                color: "#fff",
-                                cursor: "pointer",
-                                fontWeight: 500,
-                              }}
-                              onClick={() => {
-                                if (enteredOtp === TEMP_OTP) {
-                                  setPhoneVerified(true);
-                                  setOtpSent(false);
-
-                                  console.log(
-                                    "Phone number verified successfully!",
-                                  );
-                                } else {
-                                  alert("Invalid OTP");
+                        {otpSent &&
+                          !phoneVerified &&
+                          !localStorage.getItem("user") && (
+                            <div style={{ marginTop: "12px" }}>
+                              <input
+                                style={inp()}
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={3}
+                                placeholder="Enter OTP"
+                                value={enteredOtp}
+                                onChange={(e) =>
+                                  setEnteredOtp(
+                                    e.target.value.replace(/\D/g, ""),
+                                  )
                                 }
-                              }}
-                            >
-                              Verify OTP
-                            </button>
-                          </div>
-                        )}
+                              />
+
+                              <button
+                                type="button"
+                                style={{
+                                  marginTop: "8px",
+                                  padding: "8px 14px",
+                                  border: "none",
+                                  borderRadius: "8px",
+                                  background: "#16a34a",
+                                  color: "#fff",
+                                  cursor: "pointer",
+                                  fontWeight: 500,
+                                }}
+                                onClick={() => {
+                                  if (enteredOtp === TEMP_OTP) {
+                                    setPhoneVerified(true);
+                                    setOtpSent(false);
+
+                                    console.log(
+                                      "Phone number verified successfully!",
+                                    );
+                                  } else {
+                                    alert("Invalid OTP");
+                                  }
+                                }}
+                              >
+                                Verify OTP
+                              </button>
+                            </div>
+                          )}
                         {errors.phoneVerified && (
                           <p
                             style={{
