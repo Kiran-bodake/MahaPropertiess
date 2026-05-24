@@ -300,16 +300,16 @@ export default async function PropertyDetailPage({
             margin: "0 auto",
 
             padding: "20px 16px 40px",
+            overflow: "visible",
           }}
         >
           {/* MAIN GRID */}
           <div
             className="mainGrid"
             style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(0,1fr) 340px",
+              display: "flex",
               gap: 24,
-              alignItems: "start",
+              alignItems: "flex-start",
             }}
           >
             {/* LEFT */}
@@ -565,15 +565,19 @@ export default async function PropertyDetailPage({
             <aside
               className="sidebar"
               style={{
-                minWidth: 0,
+                width: 340,
+                flexShrink: 0,
+                position: "sticky",
+                top: 90,
+                alignSelf: "flex-start",
               }}
             >
               <div
                 className="stickyFormWrapper"
                 style={{
-                  position: "sticky",
-                  top: 120,
                   alignSelf: "start",
+                  zIndex: 30,
+                  willChange: "transform",
                   border: "2px solid rgba(96, 165, 250, 0.28)",
                   background: "rgba(239, 246, 255, 0.72)",
 
@@ -692,6 +696,19 @@ export default async function PropertyDetailPage({
   scroll-behavior: smooth;
 }
 
+.sidebar {
+  position: relative;
+  align-self: start;
+}
+
+.stickyFormWrapper {
+  position: sticky;
+  top: 90px;
+  height: fit-content;
+  z-index: 30;
+  will-change: transform;
+}
+
         .stickyFormWrapper::-webkit-scrollbar {
   display: none;
 }
@@ -699,19 +716,23 @@ export default async function PropertyDetailPage({
   @media (max-width: 1024px) {
 
   .mainGrid {
-  grid-template-columns: 1fr !important;
+  flex-direction: column !important;
 }
 
   .sidebar {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
+  width: 100% !important;
+  max-width: 100% !important;
 
-  .stickyFormWrapper {
-    position: static !important;
-    max-height: unset !important;
-    overflow: visible !important;
-  }
+  position: static !important;
+  top: unset !important;
+}
+
+.stickyFormWrapper {
+  position: static !important;
+  width: 100% !important;
+  max-height: unset !important;
+  overflow: visible !important;
+}
 }
 
   @media (max-width: 768px) {
