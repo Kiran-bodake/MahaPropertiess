@@ -960,7 +960,33 @@ function PropertiesContent() {
                       key,
                     );
                   return (
-                    <article key={p.id || p._id || p.slug} className="card">
+                    <article
+                      key={p.id || p._id || p.slug}
+                      className="card"
+                      onClick={() => router.push(`/properties/${p.slug}`)}
+                    >
+                      <button
+                        type="button"
+                        aria-label={
+                          isFav ? "Remove from favorites" : "Add to favorites"
+                        }
+                        aria-pressed={isFav}
+                        className={`favBtn ${isFav ? "favBtn--active" : ""}`}
+                        onClick={(e) => toggleFavorite(e, p)}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="20"
+                          height="20"
+                          fill={isFav ? "#ffffff" : "none"}
+                          stroke={isFav ? "#ffffff" : "#111827"}
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                      </button>
                       <div className="imageWrap">
                         <PropertyImageSlider
                           title={p.title || p.t || "Property"}
@@ -969,29 +995,6 @@ function PropertiesContent() {
                         <div className="verified">VERIFIED</div>
                         {p.badge && <div className="badge">{p.badge}</div>}
                         {/* <div className="photoCount">📸 {images.length}</div> */}
-
-                        <button
-                          type="button"
-                          aria-label={
-                            isFav ? "Remove from favorites" : "Add to favorites"
-                          }
-                          aria-pressed={isFav}
-                          className={`favBtn ${isFav ? "favBtn--active" : ""}`}
-                          onClick={(e) => toggleFavorite(e, p)}
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            width="20"
-                            height="20"
-                            fill={isFav ? "#ffffff" : "none"}
-                            stroke={isFav ? "#ffffff" : "#111827"}
-                            strokeWidth="2.2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                          </svg>
-                        </button>
                       </div>
                       <div className="cardContent">
                         <div>
@@ -1035,7 +1038,16 @@ function PropertiesContent() {
                             >
                               Contact
                             </button>
-                            <button type="button" className="primaryBtn">
+                            <button
+                              type="button"
+                              className="primaryBtn"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                router.push(`/properties/${p.slug}`);
+                              }}
+                            >
                               View Details
                             </button>
                           </div>
@@ -1718,6 +1730,7 @@ function PropertiesContent() {
           }
           .card {
             display: grid;
+            position: relative;
             grid-template-columns: 260px 1fr;
             background: white;
             border-radius: 18px;
@@ -1734,6 +1747,7 @@ function PropertiesContent() {
           .imageWrap {
             position: relative;
             min-height: 200px;
+            overflow: hidden;
           }
           .verified,
           .badge,
@@ -1764,19 +1778,29 @@ function PropertiesContent() {
 
           .favBtn {
             position: absolute;
-            top: 12px;
-            left: 800px;
-            z-index: 50;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            top: 18px;
+            right: 18px;
+
+            z-index: 40;
+
+            width: 48px;
+            height: 48px;
+
             border: none;
-            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.96);
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             cursor: pointer;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+
+            box-shadow:
+              0 10px 24px rgba(0, 0, 0, 0.12),
+              0 2px 6px rgba(0, 0, 0, 0.05);
+
             transition:
               transform 0.2s ease,
               background 0.2s ease,
