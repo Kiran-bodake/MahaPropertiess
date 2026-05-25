@@ -1,997 +1,452 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState
-} from "react";
-import {
-  useSearchParams
-} from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-import {
-  Eye,
-  EyeOff
-} from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 type Lead = {
-  _id:string;
-  name:string;
-  source:string;
-  status:string;
-  createdAt:string;
-  contact?:string;
-   isViewed?:boolean;
+  _id: string;
+  name: string;
+  source: string;
+  status: string;
+  createdAt: string;
+  contact?: string;
+  isViewed?: boolean;
 };
 
-const badge = (s?:string) => {
+const badge = (s?: string) => {
+  const status = (s || "new").toLowerCase();
 
-  const status =
-    (s || "new")
-      .toLowerCase();
+  return (
+    {
+      new: {
+        bg: "#eff6ff",
+        c: "#2563eb",
+      },
 
-  return {
+      contacted: {
+        bg: "#fff7ed",
+        c: "#ea580c",
+      },
 
-    new:{
-      bg:"#eff6ff",
-      c:"#2563eb"
-    },
+      negotiation: {
+        bg: "#f5f3ff",
+        c: "#7c3aed",
+      },
 
-    contacted:{
-      bg:"#fff7ed",
-      c:"#ea580c"
-    },
-
-    negotiation:{
-      bg:"#f5f3ff",
-      c:"#7c3aed"
-    },
-
-    closed:{
-      bg:"#f0fdf4",
-      c:"#16a34a"
+      closed: {
+        bg: "#f0fdf4",
+        c: "#16a34a",
+      },
+    }[status] || {
+      bg: "#f8fafc",
+      c: "#475569",
     }
-
-  }[status] || {
-
-    bg:"#f8fafc",
-    c:"#475569"
-
-  };
-
+  );
 };
 
+export default function LeadsPage() {
+  const [leads, setLeads] = useState<Lead[]>([]);
 
-export default function LeadsPage(){
+  const searchParams = useSearchParams();
 
-  const [
+  const leadId = searchParams.get("id");
 
-    leads,
+  const [loading, setLoading] = useState(true);
 
-    setLeads
+  const [query, setQuery] = useState("");
 
-  ] = useState<Lead[]>([]);
+  const [dateFilter, setDateFilter] = useState("today");
 
+  const [fromDate, setFromDate] = useState("");
 
-  const searchParams =
-  useSearchParams();
+  const [toDate, setToDate] = useState("");
 
-const leadId =
-  searchParams.get("id");
+  const [selected, setSelected] = useState<string[]>([]);
 
+  const [selectedProperty, setSelectedProperty] = useState<any>(null);
 
-  const [
+  const [activeLead, setActiveLead] = useState<any>(null);
 
-    loading,
-
-    setLoading
-
-  ] = useState(true);
-
-
-  const [
-
-    query,
-
-    setQuery
-
-  ] = useState("");
-
-  const [
-
-  dateFilter,
-
-  setDateFilter
-
-] = useState("today");
-
-
-const [
-
-  fromDate,
-
-  setFromDate
-
-] = useState("");
-
-
-const [
-
-  toDate,
-
-  setToDate
-
-] = useState("");
-
-
-  const [
-
-    selected,
-
-    setSelected
-
-  ] = useState<string[]>([]);
-
-  const [
-
-  selectedProperty,
-
-  setSelectedProperty
-
-] = useState<any>(null);
-
-
-
-const [
-
-  activeLead,
-
-  setActiveLead
-
-] = useState<any>(null);
-
-
-  const [
-
-    visibleContacts,
-
-    setVisibleContacts
-
-  ] = useState<
+  const [visibleContacts, setVisibleContacts] = useState<
     Record<string, boolean>
   >({});
 
+  const maskPhone = (phone?: string) => {
+    if (!phone) return "-";
 
-  const maskPhone =
-    (phone?:string) => {
+    return "xxxxxx" + phone.slice(-4);
+  };
 
-      if(!phone)
-        return "-";
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/leads");
 
-      return (
-        "xxxxxx" +
-        phone.slice(-4)
-      );
+        const data = await res.json();
 
-    };
-
-
-  useEffect(()=>{
-
-    (async()=>{
-
-      try{
-
-        const res =
-
-          await fetch(
-
-            "/api/admin/leads"
-
-          );
-
-        const data =
-
-          await res.json();
-
-        setLeads(
-
-          data.leads || []
-
-        );
-
-      }
-
-      finally{
-
+        setLeads(data.leads || []);
+      } finally {
         setLoading(false);
-
       }
-
     })();
+  }, []);
 
-  },[]);
+  useEffect(() => {
+    if (leadId && leads.length) {
+      const found = leads.find((x) => x._id === leadId);
 
-  useEffect(()=>{
-
-  if(
-    leadId &&
-    leads.length
-  ){
-
-    const found =
-      leads.find(
-        x => x._id === leadId
-      );
-
-    if(found && !activeLead){
-
-      openLead(found);
-
+      if (found && !activeLead) {
+        openLead(found);
+      }
     }
+  }, [leadId]);
 
-  }
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
 
-},[
-  leadId,
-  leads
-]);
+    const now = new Date();
 
+    return leads.filter((x) => {
+      const searchMatch =
+        !q ||
+        x.name?.toLowerCase().includes(q) ||
+        x.source?.toLowerCase().includes(q);
 
-const filtered =
-  useMemo(()=>{
+      const leadDate = new Date(x.createdAt);
 
-    const q =
+      let dateMatch = true;
 
-      query
-        .trim()
-        .toLowerCase();
+      if (dateFilter === "today") {
+        dateMatch = leadDate.toDateString() === now.toDateString();
+      } else if (dateFilter === "7") {
+        const d = new Date();
 
-    const now =
-      new Date();
+        d.setDate(now.getDate() - 7);
 
-    return leads.filter(
+        dateMatch = leadDate >= d;
+      } else if (dateFilter === "15") {
+        const d = new Date();
 
-      x => {
+        d.setDate(now.getDate() - 15);
 
-        const searchMatch =
+        dateMatch = leadDate >= d;
+      } else if (dateFilter === "custom") {
+        const fromMatch = !fromDate || leadDate >= new Date(fromDate);
 
-          !q ||
+        const toMatch = !toDate || leadDate <= new Date(`${toDate}T23:59:59`);
 
-          x.name
-            ?.toLowerCase()
-            .includes(q) ||
-
-          x.source
-            ?.toLowerCase()
-            .includes(q);
-
-        const leadDate =
-          new Date(
-            x.createdAt
-          );
-
-        let dateMatch =
-          true;
-
-
-        if(
-          dateFilter === "today"
-        ){
-
-          dateMatch =
-
-            leadDate
-              .toDateString()
-
-            ===
-
-            now
-              .toDateString();
-
-        }
-
-
-        else if(
-          dateFilter === "7"
-        ){
-
-          const d =
-            new Date();
-
-          d.setDate(
-            now.getDate() - 7
-          );
-
-          dateMatch =
-            leadDate >= d;
-
-        }
-
-
-        else if(
-          dateFilter === "15"
-        ){
-
-          const d =
-            new Date();
-
-          d.setDate(
-            now.getDate() - 15
-          );
-
-          dateMatch =
-            leadDate >= d;
-
-        }
-
-
-        else if(
-          dateFilter === "custom"
-        ){
-
-          const fromMatch =
-
-            !fromDate ||
-
-            leadDate >=
-
-            new Date(
-              fromDate
-            );
-
-          const toMatch =
-
-            !toDate ||
-
-            leadDate <=
-
-            new Date(
-              `${toDate}T23:59:59`
-            );
-
-          dateMatch =
-
-            fromMatch &&
-            toMatch;
-
-        }
-
-        return (
-
-          searchMatch &&
-          dateMatch
-
-        );
-
+        dateMatch = fromMatch && toMatch;
       }
 
+      return searchMatch && dateMatch;
+    });
+  }, [leads, query, dateFilter, fromDate, toDate]);
+
+  const toggleSelect = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
+  };
 
-  },[
-    leads,
-    query,
-    dateFilter,
-    fromDate,
-    toDate
-  ]);
-
-  const toggleSelect =
-    (id:string) => {
-
-      setSelected(
-
-        prev =>
-
-          prev.includes(id)
-
-            ?
-
-            prev.filter(
-
-              x =>
-
-                x !== id
-
-            )
-
-            :
-
-            [
-
-              ...prev,
-
-              id
-
-            ]
-
-      );
-
-    };
-
-const openLead =
-  async (
-    lead:any
-  ) => {
-
-    try{
-
+  const openLead = async (lead: any) => {
+    try {
       // mark viewed
       await fetch(
-
         "/api/admin/leads/view",
 
         {
+          method: "POST",
 
-          method:"POST",
-
-          headers:{
-
-            "Content-Type":
-              "application/json"
-
+          headers: {
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
-
-            id:
-              lead._id
-
-          })
-
-        }
-
+            id: lead._id,
+          }),
+        },
       );
-
 
       // open drawer
-      setActiveLead(
-        lead
-      );
-
+      setActiveLead(lead);
 
       // fetch property details
-      if(
+      if (lead.propertyId) {
+        const res = await fetch(`/api/admin/properties/${lead.propertyId}`);
 
-        lead.propertyId
+        const data = await res.json();
 
-      ){
-
-        const res =
-
-          await fetch(
-
-            `/api/admin/properties/${lead.propertyId}`
-
-          );
-
-
-        const data =
-
-          await res.json();
-
-
-        setSelectedProperty(
-
-          data.property
-
-        );
-
+        setSelectedProperty(data.property);
       }
-
 
       // update UI
-      setLeads(
-
-        prev =>
-
-          prev.map(
-
-            item =>
-
-              item._id === lead._id
-
-              ?
-
-              {
-
+      setLeads((prev) =>
+        prev.map((item) =>
+          item._id === lead._id
+            ? {
                 ...item,
 
-                isViewed:true
-
+                isViewed: true,
               }
-
-              :
-
-              item
-
-          )
-
+            : item,
+        ),
       );
-
+    } catch (error) {
+      console.error(error);
     }
+  };
 
-    catch(error){
-
-      console.error(
-        error
-      );
-
-    }
-
-};
-
-
-  const toggleSelectAll =
-    () => {
-
-      if(
-
-        selected.length ===
-
-        filtered.length
-
-      ){
-
-        setSelected([]);
-
-      }
-
-      else{
-
-        setSelected(
-
-          filtered.map(
-
-            x =>
-
-              x._id
-
-          )
-
-        );
-
-      }
-
-    };
-
-
-  const deleteSelected =
-    async () => {
-
-      if(
-
-        selected.length === 0
-
-      ) return;
-
-
-      const ok =
-
-        confirm(
-
-          `Delete ${selected.length} leads?`
-
-        );
-
-      if(!ok) return;
-
-
-      await Promise.all(
-
-        selected.map(
-
-          id =>
-
-            fetch(
-
-              `/api/admin/leads/${id}`,
-
-              {
-
-                method:"DELETE"
-
-              }
-
-            )
-
-        )
-
-      );
-
-
-      setLeads(
-
-        prev =>
-
-          prev.filter(
-
-            x =>
-
-              !selected.includes(
-
-                x._id
-
-              )
-
-          )
-
-      );
-
-
+  const toggleSelectAll = () => {
+    if (selected.length === filtered.length) {
       setSelected([]);
+    } else {
+      setSelected(filtered.map((x) => x._id));
+    }
+  };
 
-    };
+  const deleteSelected = async () => {
+    if (selected.length === 0) return;
 
+    const ok = confirm(`Delete ${selected.length} leads?`);
 
-  return(
+    if (!ok) return;
 
+    await Promise.all(
+      selected.map((id) =>
+        fetch(
+          `/api/admin/leads/${id}`,
+
+          {
+            method: "DELETE",
+          },
+        ),
+      ),
+    );
+
+    setLeads((prev) => prev.filter((x) => !selected.includes(x._id)));
+
+    setSelected([]);
+  };
+
+  return (
     <div
       style={{
+        padding: "20px 24px",
 
-        padding:"20px 24px",
+        background: "#f8fafc",
 
-        background:"#f8fafc",
+        minHeight: "100vh",
 
-        minHeight:"100vh",
-
-        fontFamily:"Inter,sans-serif"
-
+        fontFamily: "Inter,sans-serif",
       }}
     >
-
       {/* TOP */}
       <div
         style={{
+          background: "#fff",
 
-          background:"#fff",
+          borderRadius: 20,
 
-          borderRadius:20,
+          padding: "20px 24px",
 
-          padding:"20px 24px",
+          marginBottom: 18,
 
-          marginBottom:18,
+          border: "1px solid #e2e8f0",
 
-          border:"1px solid #e2e8f0",
-
-          boxShadow:
-
-            "0 6px 24px rgba(15,23,42,.04)"
-
+          boxShadow: "0 6px 24px rgba(15,23,42,.04)",
         }}
       >
-
         <h1
           style={{
+            margin: 0,
 
-            margin:0,
+            fontSize: 28,
 
-            fontSize:28,
+            fontWeight: 800,
 
-            fontWeight:800,
-
-            color:"#0f172a"
-
+            color: "#0f172a",
           }}
         >
-
           Lead Dashboard
-
         </h1>
-
 
         <p
           style={{
+            marginTop: 6,
 
-            marginTop:6,
-
-            color:"#64748b"
-
+            color: "#64748b",
           }}
         >
-
           Manage all incoming sales leads
-
         </p>
-
 
         <div
           style={{
-
-           display:"flex",
-gap:12,
-alignItems:"center",
-marginTop:20
-
+            display: "flex",
+            gap: 12,
+            alignItems: "center",
+            marginTop: 20,
           }}
         >
-
           {/* SEARCH */}
           <input
-
             value={query}
-
-            onChange={(e)=>
-
-              setQuery(
-
-                e.target.value
-
-              )
-
-            }
-
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search leads..."
-
             style={{
+              width: 260,
 
-              width:260,
+              height: 48,
 
-              height:48,
+              border: "1px solid #e2e8f0",
 
-              border:"1px solid #e2e8f0",
+              borderRadius: 14,
 
-              borderRadius:14,
+              padding: "0 16px",
 
-              padding:"0 16px",
+              outline: "none",
 
-              outline:"none",
-
-              fontSize:14
-
+              fontSize: 14,
             }}
-
           />
           <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            style={{
+              height: 48,
 
-  value={dateFilter}
+              border: "1px solid #e2e8f0",
 
-  onChange={(e)=>
+              borderRadius: 14,
 
-    setDateFilter(
+              padding: "0 16px",
+            }}
+          >
+            <option value="today">Today</option>
 
-      e.target.value
+            <option value="7">Last 7 Days</option>
 
-    )
+            <option value="15">Last 15 Days</option>
 
-  }
+            <option value="custom">Custom</option>
+          </select>
+          {dateFilter === "custom" && (
+            <>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
 
-  style={{
-
-    height:48,
-
-    border:
-      "1px solid #e2e8f0",
-
-    borderRadius:14,
-
-    padding:"0 16px"
-
-  }}
-
->
-
-  <option value="today">
-    Today
-  </option>
-
-  <option value="7">
-    Last 7 Days
-  </option>
-
-  <option value="15">
-    Last 15 Days
-  </option>
-
-  <option value="custom">
-    Custom
-  </option>
-
-</select>
-{
-
-  dateFilter === "custom" && (
-
-    <>
-
-      <input
-        type="date"
-        value={fromDate}
-        onChange={(e)=>
-
-          setFromDate(
-
-            e.target.value
-
-          )
-
-        }
-      />
-
-      <input
-        type="date"
-        value={toDate}
-        onChange={(e)=>
-
-          setToDate(
-
-            e.target.value
-
-          )
-
-        }
-      />
-
-    </>
-
-  )
-
-}
-
-
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </>
+          )}
 
           {/* COUNT */}
           <div
             style={{
+              height: 48,
 
-              height:48,
+              padding: "0 18px",
 
-              padding:"0 18px",
+              display: "flex",
 
-              display:"flex",
+              alignItems: "center",
 
-              alignItems:"center",
+              borderRadius: 14,
 
-              borderRadius:14,
+              background: "#eff6ff",
 
-              background:"#eff6ff",
+              color: "#1d4ed8",
 
-              color:"#1d4ed8",
-
-              fontWeight:700
-
+              fontWeight: 700,
             }}
           >
-
-            {
-              filtered.length
-            }
-            {" "}
-            Leads
-
+            {filtered.length} Leads
           </div>
 
-
           {/* DELETE */}
-          {
+          {selected.length > 0 && (
+            <button
+              onClick={deleteSelected}
+              style={{
+                height: 48,
 
-            selected.length > 0 && (
+                border: "none",
 
-              <button
+                borderRadius: 14,
 
-                onClick={
+                background: "#dc2626",
 
-                  deleteSelected
+                color: "#fff",
 
-                }
+                padding: "0 20px",
 
-                style={{
+                cursor: "pointer",
 
-                  height:48,
-
-                  border:"none",
-
-                  borderRadius:14,
-
-                  background:"#dc2626",
-
-                  color:"#fff",
-
-                  padding:"0 20px",
-
-                  cursor:"pointer",
-
-                  fontWeight:700
-
-                }}
-
-              >
-
-                Delete (
-                {
-                  selected.length
-                }
-                )
-
-              </button>
-
-            )
-
-          }
-
+                fontWeight: 700,
+              }}
+            >
+              Delete ({selected.length})
+            </button>
+          )}
         </div>
-
       </div>
-
 
       {/* TABLE */}
       <div
         style={{
+          background: "#fff",
 
-          background:"#fff",
+          borderRadius: 20,
 
-          borderRadius:20,
+          border: "1px solid #e2e8f0",
 
-          border:"1px solid #e2e8f0",
+          overflow: "hidden",
 
-          overflow:"hidden",
-
-          boxShadow:
-
-            "0 8px 30px rgba(15,23,42,.04)"
-
+          boxShadow: "0 8px 30px rgba(15,23,42,.04)",
         }}
       >
-
-        {
-
-          loading
-
-          ?
-
+        {loading ? (
           <div
             style={{
-
-              padding:30
-
+              padding: 30,
             }}
           >
-
             Loading...
-
           </div>
-
-          :
-
+        ) : (
           <>
-
             {/* HEADER */}
             <div
               style={{
+                display: "grid",
 
-                display:"grid",
+                gridTemplateColumns: "60px 2fr 1fr 1fr 1fr 1fr",
 
-                gridTemplateColumns:
+                padding: "14px 20px",
 
-                  "60px 2fr 1fr 1fr 1fr 1fr",
+                background: "#f8fafc",
 
-                padding:"14px 20px",
+                fontWeight: 700,
 
-                background:"#f8fafc",
+                fontSize: 13,
 
-                fontWeight:700,
-
-                fontSize:13,
-
-                color:"#475569"
-
+                color: "#475569",
               }}
             >
-
               <input
                 type="checkbox"
                 checked={
-
-                  selected.length ===
-
-                  filtered.length &&
-
-                  filtered.length > 0
-
+                  selected.length === filtered.length && filtered.length > 0
                 }
-                onChange={
-                  toggleSelectAll
-                }
+                onChange={toggleSelectAll}
               />
 
               <div>Name</div>
@@ -999,432 +454,180 @@ marginTop:20
               <div>Source</div>
               <div>Status</div>
               <div>Created</div>
-
             </div>
 
-
             {/* ROWS */}
-            {
+            {filtered.map((x) => {
+              const s = badge(x.status);
 
-              filtered.map(
+              return (
+                <div
+                  key={x._id}
+                  onClick={() => openLead(x)}
+                  style={{
+                    display: "grid",
 
-                x => {
+                    gridTemplateColumns: "60px 2fr 1fr 1fr 1fr 1fr",
 
-                  const s =
+                    padding: "14px 20px",
 
-                    badge(
+                    borderTop: "1px solid #f1f5f9",
 
-                      x.status
+                    alignItems: "center",
 
-                    );
+                    minHeight: 64,
 
-                  return(
+                    background: x.isViewed ? "#ffffff" : "#dbeafe",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(x._id)}
+                    onChange={() => toggleSelect(x._id)}
+                  />
 
-                    <div
-  key={x._id}
-  onClick={()=>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                    }}
+                  >
+                    {x.name}
+                  </div>
 
-    openLead(x)
+                  {/* CONTACT */}
+                  <div
+                    style={{
+                      display: "flex",
 
-  }
-  style={{
+                      gap: 8,
 
-    display:"grid",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span>
+                      {visibleContacts[x._id]
+                        ? x.contact
+                        : maskPhone(x.contact)}
+                    </span>
 
-    gridTemplateColumns:
-      "60px 2fr 1fr 1fr 1fr 1fr",
+                    <button
+                      onClick={() =>
+                        setVisibleContacts((prev) => ({
+                          ...prev,
 
-    padding:"14px 20px",
+                          [x._id]: !prev[x._id],
+                        }))
+                      }
+                      style={{
+                        width: 32,
 
-    borderTop:
-      "1px solid #f1f5f9",
+                        height: 32,
 
-    alignItems:"center",
+                        borderRadius: 10,
 
-    minHeight:64,
+                        border: "1px solid #e2e8f0",
 
+                        background: "#fff",
 
-    background:
+                        cursor: "pointer",
 
-      x.isViewed
+                        display: "flex",
 
-      ?
+                        alignItems: "center",
 
-      "#ffffff"
+                        justifyContent: "center",
+                      }}
+                    >
+                      {visibleContacts[x._id] ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
 
-      :
+                  <div>{x.source}</div>
 
-      "#dbeafe"
+                  <div>
+                    <span
+                      style={{
+                        background: s.bg,
 
-  }}
->
+                        color: s.c,
 
-                      <input
-                        type="checkbox"
-                        checked={
+                        padding: "6px 12px",
 
-                          selected.includes(
-
-                            x._id
-
-                          )
-
-                        }
-                        onChange={()=>
-
-                          toggleSelect(
-
-                            x._id
-
-                          )
-
-                        }
-                      />
-
-
-                      <div
-                        style={{
-
-                          fontWeight:600
-
-                        }}
-                      >
-
-                        {
-                          x.name
-                        }
-
-                      </div>
-
-
-                      {/* CONTACT */}
-                      <div
-                        style={{
-
-                          display:"flex",
-
-                          gap:8,
-
-                          alignItems:"center"
-
-                        }}
-                      >
-
-                        <span>
-
-                          {
-
-                            visibleContacts[
-                              x._id
-                            ]
-
-                            ?
-
-                            x.contact
-
-                            :
-
-                            maskPhone(
-                              x.contact
-                            )
-
-                          }
-
-                        </span>
-
-
-                        <button
-                          onClick={()=>
-
-                            setVisibleContacts(
-
-                              prev=>({
-
-                                ...prev,
-
-                                [x._id]:
-
-                                  !prev[
-                                    x._id
-                                  ]
-
-                              })
-
-                            )
-
-                          }
-                          style={{
-
-                            width:32,
-
-                            height:32,
-
-                            borderRadius:10,
-
-                            border:
-
-                              "1px solid #e2e8f0",
-
-                            background:"#fff",
-
-                            cursor:"pointer",
-
-                            display:"flex",
-
-                            alignItems:"center",
-
-                            justifyContent:"center"
-
-                          }}
-                        >
-
-                          {
-
-                            visibleContacts[
-                              x._id
-                            ]
-
-                            ?
-
-                            <EyeOff size={16}/>
-
-                            :
-
-                            <Eye size={16}/>
-
-                          }
-
-                        </button>
-
-                      </div>
-
-
-                      <div>
-                        {
-                          x.source
-                        }
-                      </div>
-
-
-                      <div>
-
-                        <span
-                          style={{
-
-                            background:s.bg,
-
-                            color:s.c,
-
-                            padding:
-
-                              "6px 12px",
-
-                            borderRadius:999,
-
-                            fontSize:12,
-
-                            fontWeight:700
-
-                          }}
-                        >
-
-                          {
-                            x.status
-                          }
-
-                        </span>
-
-                      </div>
-
-
-                      <div>
-
-                        {
-
-                          new Date(
-
-                            x.createdAt
-
-                          )
-                            .toLocaleDateString()
-
-                        }
-
-                      </div>
-
-                    </div>
-
-                  );
-
-                }
-
-              )
-
-            }
-
+                        borderRadius: 999,
+
+                        fontSize: 12,
+
+                        fontWeight: 700,
+                      }}
+                    >
+                      {x.status}
+                    </span>
+                  </div>
+
+                  <div>{new Date(x.createdAt).toLocaleDateString()}</div>
+                </div>
+              );
+            })}
           </>
-
-        }
-
+        )}
       </div>
-{
+      {activeLead && (
+        <div
+          style={{
+            position: "fixed",
 
-  activeLead && (
+            top: 0,
 
-    <div
-      style={{
+            right: 0,
 
-        position:"fixed",
+            width: "420px",
 
-        top:0,
+            height: "100vh",
 
-        right:0,
+            background: "#fff",
 
-        width:"420px",
+            padding: "24px",
 
-        height:"100vh",
+            boxShadow: "-10px 0 30px rgba(0,0,0,.12)",
 
-        background:"#fff",
+            zIndex: 999,
+          }}
+        >
+          <button
+            onClick={() => {
+              setActiveLead(null);
 
-        padding:"24px",
+              setSelectedProperty(null);
+            }}
+          >
+            Close
+          </button>
 
-        boxShadow:
-          "-10px 0 30px rgba(0,0,0,.12)",
+          <h2>Customer Info</h2>
 
-        zIndex:999
+          <p>Name: {activeLead.name}</p>
 
-      }}
-    >
+          <p>Contact: {activeLead.contact}</p>
 
-      <button
+          <h2>Property Info</h2>
 
-        onClick={() => {
+          <p>Property Name: {selectedProperty?.title || "--"}</p>
 
-          setActiveLead(
-            null
-          );
+          <p>Property ID: {selectedProperty?.propertyId || "--"}</p>
 
-          setSelectedProperty(
-            null
-          );
+          <p>Type: {selectedProperty?.propertyType || "--"}</p>
 
-        }}
+          <p>Price: ₹{selectedProperty?.price || 0}</p>
 
-      >
+          <p>Location: {selectedProperty?.city}</p>
 
-        Close
-
-      </button>
-
-
-
-      <h2>
-        Customer Info
-      </h2>
-
-      <p>
-        Name:
-        {" "}
-        {
-
-          activeLead.name
-
-        }
-      </p>
-
-      <p>
-        Contact:
-        {" "}
-        {
-
-          activeLead.contact
-
-        }
-      </p>
-
-
-
-      <h2>
-        Property Info
-      </h2>
-
-      <p>
-        Property Name:
-        {" "}
-        {
-
-          selectedProperty?.title ||
-
-          "--"
-
-        }
-      </p>
-
-      <p>
-        Property ID:
-        {" "}
-        {
-
-          selectedProperty?.propertyId ||
-
-          "--"
-
-        }
-      </p>
-
-      <p>
-        Type:
-        {" "}
-        {
-
-          selectedProperty?.propertyType ||
-
-          "--"
-
-        }
-      </p>
-
-      <p>
-        Price:
-        {" "}
-        ₹{
-
-          selectedProperty?.price || 0
-
-        }
-      </p>
-
-      <p>
-        Location:
-        {" "}
-        {
-
-          selectedProperty?.city
-
-        }
-
-      </p>
-
-      <p>
-        Category:
-        {" "}
-        {
-
-          selectedProperty?.category
-
-        }
-
-      </p>
-
+          <p>Category: {selectedProperty?.category}</p>
+        </div>
+      )}
     </div>
-
-  )
-
-}
-
-
-    </div>
-
   );
-
 }
