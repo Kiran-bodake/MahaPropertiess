@@ -38,10 +38,12 @@ import {
 } from "lucide-react";
 
 type PropertyType = {
-  id: any;
+ id:string;
   slug: string;
   title: string;
   description: string;
+  propertyId?: string;
+  
 
   locality: string;
   city: string;
@@ -420,10 +422,15 @@ export default async function PropertyDetailPage({
                       flexShrink: 0,
                     }}
                   >
-                    <PropertyActions
-                      propertyId={property.slug}
-                      propertyTitle={property.title}
-                    />
+          <PropertyActions
+
+  propertyMongoId={property.id || ""}
+
+  propertyId={property.propertyId || ""}
+
+  propertyTitle={property.title || ""}
+
+/>
                   </div>
                 </div>
 

@@ -14,29 +14,55 @@ from "@/models/PropertyReport";
 
 
 
-/* CREATE PROPERTY REPORT */
+/* =========================================
+   CREATE PROPERTY REPORT
+========================================= */
 export async function POST(
 
-  req:NextRequest
+  req: NextRequest
 
 ){
 
-  try{
+  try {
 
     await connectDB();
 
     const body =
       await req.json();
 
+    console.log(
+      "[PROPERTY_REPORT_BODY]",
+      body
+    );
 
-    // VALIDATION
-    if(
 
-      !body.propertyMongoId ||
+    const {
 
-      !body.reason
+      propertyMongoId,
 
-    ){
+      propertyId,
+
+      propertyTitle,
+
+      reason,
+      reportedByUserId,
+
+  reportedByName,
+
+  reportedByPhone
+
+
+    } = body;
+
+
+    /* VALIDATION */
+    if (
+
+      !propertyMongoId ||
+
+      !reason
+
+    ) {
 
       return NextResponse.json(
 
@@ -45,7 +71,7 @@ export async function POST(
           success:false,
 
           message:
-            "Missing required fields"
+            "propertyMongoId and reason are required"
 
         },
 
@@ -60,27 +86,36 @@ export async function POST(
     }
 
 
-    // SAVE REPORT
+    /* SAVE REPORT */
     const report =
 
       await PropertyReport.create({
 
-        // REAL DATABASE ID
-        propertyMongoId:
-          body.propertyMongoId,
+        // REAL PROPERTY MONGO ID
+        propertyMongoId,
 
-        // DISPLAY ID
+        // DISPLAY PROPERTY ID
         propertyId:
-          body.propertyId || "",
+          propertyId || "",
 
+        // PROPERTY TITLE
         propertyTitle:
-          body.propertyTitle || "",
+          propertyTitle || "",
 
-        reason:
-          body.reason,
+        reportedByUserId:
+           reportedByUserId || "",
 
-        status:
-          "Pending"
+        reportedByName:
+           reportedByName || "",
+
+        reportedByPhone:
+            reportedByPhone || "",
+
+        // REPORT REASON
+        reason,
+
+        // DEFAULT STATUS
+        status:"Pending"
 
       });
 
@@ -102,7 +137,7 @@ export async function POST(
 
     console.error(
 
-      "Property Report Error:",
+      "[PROPERTY_REPORT_ERROR]",
 
       error
 
@@ -133,10 +168,13 @@ export async function POST(
 
 
 
-/* FETCH ALL REPORTS */
+
+/* =========================================
+   FETCH ALL REPORTS
+========================================= */
 export async function GET(){
 
-  try{
+  try {
 
     await connectDB();
 
@@ -165,7 +203,7 @@ export async function GET(){
 
     console.error(
 
-      "Fetch Reports Error:",
+      "[FETCH_REPORTS_ERROR]",
 
       error
 

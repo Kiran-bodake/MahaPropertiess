@@ -1433,221 +1433,7 @@ const COLORS = [
 
   </div>
 
- 
-
-  {/* FOOTER */}
-  <div
-    style={{
-      padding:"14px 18px",
-
-      display:"flex",
-
-      justifyContent:
-        "space-between",
-
-      alignItems:"center",
-
-      background:"#fff",
-    }}
-  >
-
-    {/* LEFT */}
-    <div
-      style={{
-        fontSize:12,
-        color:"#64748b",
-      }}
-    >
-      Showing latest leads
-    </div>
-
-    {/* PAGINATION */}
-    <div
-      style={{
-        display:"flex",
-        alignItems:"center",
-        gap:10,
-      }}
-    >
-
-      <button
-
-        onClick={()=>
-
-          setPage((p)=>
-
-            Math.max(
-              1,
-              p - 1
-            )
-
-          )
-
-        }
-
-        style={{
-          width:30,
-          height:30,
-
-          border:"1px solid #e2e8f0",
-
-          borderRadius:10,
-
-          background:"#fff",
-
-          display:"flex",
-
-          alignItems:"center",
-
-          justifyContent:"center",
-
-          cursor:"pointer",
-        }}
-      >
-        <ChevronLeft
-          size={14}
-        />
-      </button>
-
-      <div
-        style={{
-          fontSize:13,
-          fontWeight:700,
-          color:"#0f172a",
-        }}
-      >
-        {page}/{totalPages}
-      </div>
-
-      <button
-
-        onClick={()=>
-
-          setPage((p)=>
-
-            Math.min(
-              totalPages,
-              p + 1
-            )
-
-          )
-
-        }
-
-        style={{
-          width:30,
-          height:30,
-
-          border:"1px solid #e2e8f0",
-
-          borderRadius:10,
-
-          background:"#fff",
-
-          display:"flex",
-
-          alignItems:"center",
-
-          justifyContent:"center",
-
-          cursor:"pointer",
-        }}
-      >
-        <ChevronRight
-          size={14}
-        />
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-{/* RECENT LEADS */}
-<div
-  style={{
-    ...card,
-
-    overflow:"hidden",
-
-    borderRadius:24,
-  }}
->
-
-  {/* HEADER */}
-  <div
-    style={{
-      padding:"18px 20px",
-
-      borderBottom:
-        "1px solid #e2e8f0",
-
-      display:"flex",
-
-      justifyContent:
-        "space-between",
-
-      alignItems:"center",
-    }}
-  >
-
-    <div>
-
-    
-
-      <Search size={14}/>
-
-      <input
-        value={query}
-
-        onChange={(e)=>
-          setQuery(
-            e.target.value
-          )
-        }
-
-        placeholder="Search"
-
-        style={{
-          border:"none",
-          outline:"none",
-          background:"none",
-          width:120,
-          fontSize:13,
-        }}
-      />
-
-    </div>
-
-  </div>
-    {/* CHARTS */}
-
-    {/* RECENT LEADS */}
-
-  
-
- 
-
-
-
-  
-  {/* RIGHT SIDEBAR */}
-  
-<div
-  style={{
-    display:"flex",
-
-    flexDirection:"column",
-
-    gap:24,
-  }
-}
-
-
-  
->
-
-   {/* LEADS */}
+  {/* LEADS */}
   <div>
 
     {
@@ -1974,6 +1760,216 @@ const COLORS = [
     }
 
   </div>
+
+  {/* FOOTER */}
+  <div
+    style={{
+      padding:"14px 18px",
+
+      display:"flex",
+
+      justifyContent:
+        "space-between",
+
+      alignItems:"center",
+
+      background:"#fff",
+    }}
+  >
+
+    {/* LEFT */}
+    <div
+      style={{
+        fontSize:12,
+        color:"#64748b",
+      }}
+    >
+      Showing latest leads
+    </div>
+
+    {/* PAGINATION */}
+    <div
+      style={{
+        display:"flex",
+        alignItems:"center",
+        gap:10,
+      }}
+    >
+
+      <button
+
+        onClick={()=>
+
+          setPage((p)=>
+
+            Math.max(
+              1,
+              p - 1
+            )
+
+          )
+
+        }
+
+        style={{
+          width:30,
+          height:30,
+
+          border:"1px solid #e2e8f0",
+
+          borderRadius:10,
+
+          background:"#fff",
+
+          display:"flex",
+
+          alignItems:"center",
+
+          justifyContent:"center",
+
+          cursor:"pointer",
+        }}
+      >
+        <ChevronLeft
+          size={14}
+        />
+      </button>
+
+      <div
+        style={{
+          fontSize:13,
+          fontWeight:700,
+          color:"#0f172a",
+        }}
+      >
+        {page}/{totalPages}
+      </div>
+
+      <button
+
+        onClick={()=>
+
+          setPage((p)=>
+
+            Math.min(
+              totalPages,
+              p + 1
+            )
+
+          )
+
+        }
+
+        style={{
+          width:30,
+          height:30,
+
+          border:"1px solid #e2e8f0",
+
+          borderRadius:10,
+
+          background:"#fff",
+
+          display:"flex",
+
+          alignItems:"center",
+
+          justifyContent:"center",
+
+          cursor:"pointer",
+        }}
+      >
+        <ChevronRight
+          size={14}
+        />
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+{/* RECENT LEADS */}
+<div
+  style={{
+    ...card,
+
+    overflow:"hidden",
+
+    borderRadius:24,
+  }}
+>
+
+  {/* HEADER */}
+  <div
+    style={{
+      padding:"18px 20px",
+
+      borderBottom:
+        "1px solid #e2e8f0",
+
+      display:"flex",
+
+      justifyContent:
+        "space-between",
+
+      alignItems:"center",
+    }}
+  >
+
+    <div>
+
+    
+
+      <Search size={14}/>
+
+      <input
+        value={query}
+
+        onChange={(e)=>
+          setQuery(
+            e.target.value
+          )
+        }
+
+        placeholder="Search"
+
+        style={{
+          border:"none",
+          outline:"none",
+          background:"none",
+          width:120,
+          fontSize:13,
+        }}
+      />
+
+    </div>
+
+  </div>
+    {/* CHARTS */}
+
+    {/* RECENT LEADS */}
+
+  
+
+ 
+
+
+
+  
+  {/* RIGHT SIDEBAR */}
+  
+<div
+  style={{
+    display:"flex",
+
+    flexDirection:"column",
+
+    gap:24,
+  }
+}
+  
+>
 
 
 

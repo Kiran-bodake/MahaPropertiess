@@ -284,9 +284,9 @@ export async function PUT(
 
       {
 
-        new: true,
+        returnDocument:"after",
 
-        runValidators: true
+        runValidators:true
 
       }
 
@@ -302,6 +302,14 @@ export async function PUT(
 
         price:
           body.price
+
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
 
       }
 
@@ -320,6 +328,14 @@ export async function PUT(
 
         areaUnit:
           body.areaUnit
+
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
 
       }
 
@@ -354,6 +370,14 @@ export async function PUT(
         pincode:
           body.pincode
 
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
+
       }
 
     );
@@ -375,6 +399,14 @@ export async function PUT(
         isZeroBrokerage:
           body.isZeroBrokerage
 
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
+
       }
 
     );
@@ -388,7 +420,15 @@ export async function PUT(
       {
 
         amenities:
-          body.amenities
+          body.amenities || []
+
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
 
       }
 
@@ -403,7 +443,47 @@ export async function PUT(
       {
 
         highlights:
-          body.highlights
+          body.highlights || []
+
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
+
+      }
+
+    );
+
+
+    /* UPDATE IMAGES */
+    await PropertyImage.findOneAndUpdate(
+
+      { propertyId },
+
+      {
+
+        images:
+
+          (body.images || []).map(
+
+            (url:string)=>({
+
+              url
+
+            })
+
+          )
+
+      },
+
+      {
+
+        upsert:true,
+
+        returnDocument:"after"
 
       }
 

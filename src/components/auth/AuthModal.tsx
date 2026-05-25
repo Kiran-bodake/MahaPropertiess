@@ -136,23 +136,52 @@ export default function AuthModal({ onClose, onLoginSuccess }: Props) {
 
         return;
       }
+const userData = {
 
-    const userData = {
-  name: "User",
-  phone: mobile,
+  _id:
+    data.user?._id || "",
+
+  name:
+    data.user?.name || "User",
+
+  phone:
+    data.user?.phone || mobile,
+
+  email:
+    data.user?.email || "",
+
+  role:
+    data.user?.role || "user"
+
 };
 
+
 localStorage.setItem(
+
   "token",
+
   data.token || "loggedin"
+
 );
+
 
 localStorage.setItem(
+
   "user",
+
   JSON.stringify(userData)
+
 );
 
-console.log("LOGIN USER:", userData);
+
+console.log(
+
+  "LOGIN USER:",
+
+  userData
+
+);
+
 
 if (onLoginSuccess) {
 

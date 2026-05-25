@@ -55,6 +55,31 @@ const [
   activeImage,
   setActiveImage
 ] = useState(0);
+useEffect(() => {
+
+  if (
+
+    activeImage >=
+
+    (formData?.images?.length || 0)
+
+  ) {
+
+    setActiveImage(0);
+
+  }
+
+}, [
+
+  formData?.images,
+
+  activeImage
+
+]);
+const [
+  uploadingImage,
+  setUploadingImage
+] = useState(false);
 
  const categoryOptions = [
 
@@ -142,6 +167,138 @@ const [
 
   };
 
+  const uploadImage = async (
+  file: File
+) => {
+
+  try {
+
+    setUploadingImage(true);
+
+    const body =
+      new FormData();
+
+    body.append(
+      "images",
+      file
+    );
+
+    body.append(
+      "propertyId",
+      propertyId
+    );
+
+    const res =
+      await fetch(
+
+        "/api/upload",
+
+        {
+          method: "POST",
+          body
+        }
+
+      );
+
+    const data =
+      await res.json();
+
+    if (!data.success) {
+
+      console.log(data.error);
+      return;
+
+    }
+
+    updateField(
+      "images",
+      [
+
+         ...(formData?.images || 0),
+
+        ...data.urls
+
+      ]
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+  }
+
+  finally {
+
+    setUploadingImage(false);
+
+  }
+
+};
+const removeImage = async (
+  index:number
+) => {
+
+  try {
+
+    const imageUrl =
+      formData?.images?.[index];
+
+    if(!imageUrl)
+      return;
+
+    // DELETE FROM SERVER
+    await fetch(
+
+      "/api/upload/delete",
+
+      {
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+
+          imageUrl
+
+        })
+
+      }
+
+    );
+
+    // REMOVE FROM UI
+    updateField(
+
+      "images",
+
+      (formData?.images || []).filter(
+
+        (_:any,i:number)=>
+
+          i !== index
+
+      )
+
+    );
+
+    // RESET ACTIVE IMAGE
+    setActiveImage(0);
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+  }
+
+};
 
  const saveChanges =
   async () => {
@@ -327,13 +484,17 @@ const [
 
     setActiveImage(0);
 
-    setShowGallery(true);
+   if(formData?.images?.length){
+
+  setShowGallery(true);
+
+}
 
   }}
 
   src={
 
-    property.images?.[0] ||
+    formData?.images?.[0] ||
 
     property.image ||
 
@@ -341,7 +502,7 @@ const [
 
   }
 
-  alt={property.title}
+  alt={formData?.title}
 
   style={{
 
@@ -356,8 +517,253 @@ const [
   }}
 
 />
+{/* IMAGE MANAGEMENT */}
 
         </div>
+        {/* IMAGE MANAGER */}
+<div
+  style={{
+    padding:20,
+
+    borderTop:
+      "1px solid #e2e8f0",
+  }}
+>
+
+  <div
+    style={{
+      display:"flex",
+
+      justifyContent:
+        "space-between",
+
+      alignItems:"center",
+
+      marginBottom:16,
+    }}
+  >
+
+    <div>
+
+      <div
+        style={{
+          fontSize:18,
+          fontWeight:700,
+        }}
+      >
+        Property Images
+      </div>
+
+      <div
+        style={{
+          fontSize:13,
+          color:"#64748b",
+          marginTop:4,
+        }}
+      >
+        Manage property gallery
+      </div>
+
+    </div>
+
+    {
+
+      editing && (
+
+        <label
+          style={{
+            padding:"10px 16px",
+
+            background:"#2563eb",
+
+            color:"#fff",
+
+            borderRadius:12,
+
+            cursor:"pointer",
+
+            fontWeight:600,
+
+            fontSize:14,
+          }}
+        >
+
+          {
+
+            uploadingImage
+
+            ?
+
+            "Uploading..."
+
+            :
+
+            "Add Image"
+
+          }
+
+         <input
+  type="file"
+
+  accept="image/*"
+
+            hidden
+
+            onChange={(e)=>{
+
+              const file =
+                e.target.files?.[0];
+
+              if(file){
+
+                uploadImage(file);
+
+              }
+               e.target.value = "";
+
+            }}
+          />
+
+        </label>
+
+      )
+
+    }
+
+  </div>
+ 
+
+  {/* GRID */}
+  <div
+    style={{
+      display:"grid",
+
+      gridTemplateColumns:
+        "repeat(auto-fill,minmax(160px,1fr))",
+
+      gap:16,
+    }}
+  >
+
+    {
+
+      formData?.images?.map(
+
+        (
+          image:string,
+          index:number
+        )=>(
+
+         <div
+  key={index}
+
+  onClick={() => {
+
+    setActiveImage(index);
+
+   if(formData?.images?.length){
+
+  setShowGallery(true);
+
+}
+
+  }}
+
+  style={{
+    position:"relative",
+
+    borderRadius:16,
+
+    overflow:"hidden",
+
+    border:
+      "1px solid #e2e8f0",
+
+    background:"#fff",
+
+    cursor:"pointer",
+
+    transition:"all .2s ease",
+  }}
+>
+
+            <img
+
+              src={image}
+
+              style={{
+                width:"100%",
+
+                height:140,
+
+                objectFit:"cover",
+
+                display:"block",
+              }}
+
+            />
+
+            {
+
+              editing && (
+
+                <button
+
+                 onClick={(e)=>{
+
+  e.stopPropagation();
+
+  removeImage(index);
+
+}}
+
+                  style={{
+
+                    position:"absolute",
+
+                    top:10,
+
+                    right:10,
+
+                    width:32,
+
+                    height:32,
+
+                    borderRadius:"50%",
+
+                    border:"none",
+
+                    background:
+                      "rgba(220,38,38,.9)",
+
+                    color:"#fff",
+
+                    cursor:"pointer",
+
+                    fontWeight:700,
+                  }}
+                >
+
+                  ✕
+
+                </button>
+
+              )
+
+            }
+
+          </div>
+
+        )
+
+      )
+
+    }
+
+  </div>
+
+</div>
+
 
 
         {/* CONTENT */}
@@ -379,7 +785,7 @@ const [
             }}
           >
 
-            {property.title}
+            {formData?.title}
 
           </h1>
 
@@ -396,15 +802,15 @@ const [
 
             📍 {
 
-              property.locality || "--"
+              formData?.locality || "--"
 
             }, {
 
-              property.city || "--"
+              formData?.city || "--"
 
             }, {
 
-              property.state || "--"
+              formData?.state || "--"
 
             }
 
@@ -430,7 +836,7 @@ const [
             <InfoCard
               label="Property ID"
               value={
-                property.propertyId
+                formData?.propertyId
               }
             />
 
@@ -629,7 +1035,7 @@ const [
 
             {
 
-              property.description ||
+              formData?.description ||
 
               "No description"
 
@@ -1131,7 +1537,7 @@ const [
         inset:0,
 
         background:
-          "rgba(0,0,0,.94)",
+          "rgba(0,0,0,.96)",
 
         zIndex:9999,
 
@@ -1141,12 +1547,14 @@ const [
 
         justifyContent:"center",
 
-        flexDirection:"column"
+        flexDirection:"column",
+
+        padding:"30px"
 
       }}
     >
 
-      {/* CLOSE */}
+      {/* CLOSE BUTTON */}
       <button
 
         onClick={() =>
@@ -1163,9 +1571,9 @@ const [
 
           right:20,
 
-          width:50,
+          width:52,
 
-          height:50,
+          height:52,
 
           borderRadius:"50%",
 
@@ -1177,7 +1585,12 @@ const [
 
           fontWeight:700,
 
-          cursor:"pointer"
+          cursor:"pointer",
+
+          boxShadow:
+            "0 10px 25px rgba(0,0,0,.25)",
+
+          zIndex:10
 
         }}
 
@@ -1188,42 +1601,202 @@ const [
       </button>
 
 
-
       {/* MAIN IMAGE */}
       <img
 
         src={
 
-          property.images?.[activeImage] ||
+  formData?.images?.[
+    activeImage
+  ]
 
-          property.image ||
+  ||
 
-          "/maha.png"
+  "/maha.png"
 
-        }
+}
+
+        alt="Property"
 
         style={{
 
-          width:"92%",
+          width:"auto",
 
-          maxWidth:"1300px",
+          maxWidth:"92%",
 
-          maxHeight:"82vh",
+          maxHeight:"72vh",
 
           objectFit:"contain",
 
-          borderRadius:"16px"
+          borderRadius:20,
+
+          display:"block",
+
+          boxShadow:
+            "0 20px 60px rgba(0,0,0,.45)",
+
+          transition:"all .25s ease"
 
         }}
 
       />
 
 
+      {/* IMAGE COUNTER */}
+      <div
+        style={{
 
-      {/* PREV BUTTON */}
+          marginTop:18,
+
+          color:"#fff",
+
+          fontSize:14,
+
+          fontWeight:700,
+
+          letterSpacing:.5
+
+        }}
+      >
+
+        {
+
+          activeImage + 1
+
+        }
+
+        /
+
+        {
+
+          formData?.images?.length
+
+        }
+
+      </div>
+
+
+      {/* THUMBNAILS */}
+      <div
+        style={{
+
+          display:"flex",
+
+          gap:12,
+
+          marginTop:24,
+
+          overflowX:"auto",
+
+          maxWidth:"92%",
+
+          paddingBottom:10
+
+        }}
+      >
+
+        {
+
+          formData?.images?.map(
+
+            (
+              image:string,
+              index:number
+            ) => (
+
+              <img
+
+                key={index}
+
+                src={image}
+
+                alt={`thumb-${index}`}
+
+                onClick={() =>
+                  setActiveImage(index)
+                }
+
+                onMouseEnter={(e)=>{
+
+                  e.currentTarget.style.opacity =
+                    "1";
+
+                }}
+
+                onMouseLeave={(e)=>{
+
+                  if(
+                    activeImage !== index
+                  ){
+
+                    e.currentTarget.style.opacity =
+                      ".7";
+
+                  }
+
+                }}
+
+                style={{
+
+                  width:110,
+
+                  height:72,
+
+                  objectFit:"cover",
+
+                  borderRadius:14,
+
+                  cursor:"pointer",
+
+                  border:
+
+                    activeImage === index
+
+                    ?
+
+                    "3px solid #3b82f6"
+
+                    :
+
+                    "2px solid transparent",
+
+                  opacity:
+
+                    activeImage === index
+
+                    ?
+
+                    1
+
+                    :
+
+                    .7,
+
+                  transition:
+                    "all .2s ease",
+
+                  flexShrink:0,
+
+                  boxShadow:
+                    "0 8px 20px rgba(0,0,0,.25)"
+
+                }}
+
+              />
+
+            )
+
+          )
+
+        }
+
+      </div>
+
+
+      {/* PREVIOUS BUTTON */}
       {
 
-        property.images?.length > 1 && (
+        formData?.images?.length > 1 && (
 
           <button
 
@@ -1237,7 +1810,7 @@ const [
 
                   ?
 
-                  property.images.length - 1
+                  formData?.images.length - 1
 
                   :
 
@@ -1251,16 +1824,16 @@ const [
 
               position:"absolute",
 
-              left:20,
+              left:24,
 
               top:"50%",
 
               transform:
                 "translateY(-50%)",
 
-              width:60,
+              width:64,
 
-              height:60,
+              height:64,
 
               borderRadius:"50%",
 
@@ -1268,9 +1841,14 @@ const [
 
               background:"#fff",
 
-              fontSize:34,
+              fontSize:36,
 
-              cursor:"pointer"
+              fontWeight:700,
+
+              cursor:"pointer",
+
+              boxShadow:
+                "0 10px 30px rgba(0,0,0,.35)"
 
             }}
 
@@ -1285,11 +1863,10 @@ const [
       }
 
 
-
       {/* NEXT BUTTON */}
       {
 
-        property.images?.length > 1 && (
+        formData?.images?.length > 1 && (
 
           <button
 
@@ -1301,7 +1878,7 @@ const [
 
                   prev ===
 
-                  property.images.length - 1
+                  formData?.images.length - 1
 
                   ?
 
@@ -1319,16 +1896,16 @@ const [
 
               position:"absolute",
 
-              right:20,
+              right:24,
 
               top:"50%",
 
               transform:
                 "translateY(-50%)",
 
-              width:60,
+              width:64,
 
-              height:60,
+              height:64,
 
               borderRadius:"50%",
 
@@ -1336,9 +1913,14 @@ const [
 
               background:"#fff",
 
-              fontSize:34,
+              fontSize:36,
 
-              cursor:"pointer"
+              fontWeight:700,
+
+              cursor:"pointer",
+
+              boxShadow:
+                "0 10px 30px rgba(0,0,0,.35)"
 
             }}
 

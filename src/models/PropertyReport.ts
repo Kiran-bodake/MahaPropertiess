@@ -2,7 +2,6 @@ import mongoose
 from "mongoose";
 
 
-
 const PropertyReportSchema =
 
   new mongoose.Schema(
@@ -31,6 +30,32 @@ const PropertyReportSchema =
 
       // PROPERTY TITLE
       propertyTitle:{
+
+        type:String,
+
+        default:""
+
+      },
+
+
+      // REPORTED USER INFO
+      reportedByUserId:{
+
+        type:String,
+
+        default:""
+
+      },
+
+      reportedByName:{
+
+        type:String,
+
+        default:""
+
+      },
+
+      reportedByPhone:{
 
         type:String,
 
@@ -83,7 +108,6 @@ const PropertyReportSchema =
     }
 
   );
-
 
 
 export default

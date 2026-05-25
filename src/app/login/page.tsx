@@ -113,6 +113,14 @@ export default function LoginPage() {
 
       const data = await res.json();
 
+      console.log(
+
+  "LOGIN API RESPONSE",
+
+  data
+
+);
+
       if (!res.ok) {
         setError(data.error || "Invalid OTP");
 
@@ -120,16 +128,41 @@ export default function LoginPage() {
       }
 
       /* Save token */
-      localStorage.setItem("token", data.token);
+localStorage.setItem(
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: data.user?.name || "User",
+  "user",
 
-          phone: data.user?.phone || mobile,
-        }),
-      );
+  JSON.stringify({
+
+    _id:
+      data.user?._id || "",
+
+    name:
+      data.user?.name || "User",
+
+    phone:
+      data.user?.phone || mobile,
+
+    email:
+      data.user?.email || "",
+
+    role:
+      data.user?.role || "user"
+
+  })
+
+);
+console.log(
+
+  "AFTER SAVE",
+
+  JSON.parse(
+
+    localStorage.getItem("user") || "{}"
+
+  )
+
+);
 
       window.location.href = "/";
     } catch {

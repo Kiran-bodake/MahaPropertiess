@@ -12,20 +12,29 @@ from "@/lib/mongodb";
 import PropertyReport
 from "@/models/PropertyReport";
 
+import Notification
+from "@/models/Notification";
 
 
-/* UPDATE REPORT STATUS */
+
+/* =========================================
+   RESOLVE REPORT
+========================================= */
 export async function PATCH(
 
-  req:NextRequest,
+  request:NextRequest,
 
   {
+
     params
+
   }:{
 
-    params:{
+    params:Promise<{
+
       id:string
-    }
+
+    }>
 
   }
 
@@ -35,31 +44,57 @@ export async function PATCH(
 
     await connectDB();
 
-    const report =
+    const {
+
+      id
+
+    } = await params;
+
+    console.log(
+
+      "[PATCH_REPORT_ID]",
+
+      id
+
+    );
+
+
+    /* UPDATE REPORT STATUS */
+    const updatedReport =
 
       await PropertyReport.findByIdAndUpdate(
 
-        params.id,
+        id,
 
         {
 
-          status:"Resolved",
+          $set:{
 
-          resolvedAt:
-            new Date()
+            status:"Resolved"
+
+          }
 
         },
 
         {
 
-          new:true
+          returnDocument:"after"
 
         }
 
       );
 
+    console.log(
 
-    if(!report){
+      "[UPDATED_REPORT]",
+
+      updatedReport
+
+    );
+
+
+    /* REPORT NOT FOUND */
+    if(!updatedReport){
 
       return NextResponse.json(
 
@@ -83,6 +118,35 @@ export async function PATCH(
     }
 
 
+
+    /* CREATE USER NOTIFICATION */
+  if (
+
+  updatedReport.reportedByUserId
+
+) {
+
+  await Notification.create({
+
+    userId:
+      updatedReport.reportedByUserId,
+
+    title:
+      "Report Resolved",
+
+    message:
+      "Your reported property has been resolved successfully.",
+
+    type:
+      "report_resolved",
+
+    referenceId:
+      updatedReport.propertyMongoId
+
+  });
+
+}
+
     return NextResponse.json({
 
       success:true,
@@ -90,7 +154,8 @@ export async function PATCH(
       message:
         "Report resolved successfully",
 
-      report
+      report:
+        updatedReport
 
     });
 
@@ -100,7 +165,7 @@ export async function PATCH(
 
     console.error(
 
-      "Resolve Report Error:",
+      "[RESOLVE_REPORT_ERROR]",
 
       error
 
@@ -132,18 +197,24 @@ export async function PATCH(
 
 
 
-/* DELETE REPORT */
+/* =========================================
+   DELETE REPORT
+========================================= */
 export async function DELETE(
 
-  req:NextRequest,
+  request:NextRequest,
 
   {
+
     params
+
   }:{
 
-    params:{
+    params:Promise<{
+
       id:string
-    }
+
+    }>
 
   }
 
@@ -153,16 +224,32 @@ export async function DELETE(
 
     await connectDB();
 
-    const report =
+    const {
+
+      id
+
+    } = await params;
+
+    console.log(
+
+      "[DELETE_REPORT_ID]",
+
+      id
+
+    );
+
+
+    const deletedReport =
 
       await PropertyReport.findByIdAndDelete(
 
-        params.id
+        id
 
       );
 
 
-    if(!report){
+    /* REPORT NOT FOUND */
+    if(!deletedReport){
 
       return NextResponse.json(
 
@@ -201,7 +288,7 @@ export async function DELETE(
 
     console.error(
 
-      "Delete Report Error:",
+      "[DELETE_REPORT_ERROR]",
 
       error
 

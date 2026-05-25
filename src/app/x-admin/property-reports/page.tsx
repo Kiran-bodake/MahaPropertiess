@@ -1,16 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 
-import { useRouter }
-from "next/navigation";
 import {
   useEffect,
   useMemo,
   useState
 }
 from "react";
-
-
 
 export default function PropertyReportsPage(){
 
@@ -20,8 +17,8 @@ export default function PropertyReportsPage(){
   const [loading,setLoading] =
     useState(true);
 
-    const router =
-  useRouter();
+  const router =
+    useRouter();
 
   const [search,setSearch] =
     useState("");
@@ -73,111 +70,116 @@ export default function PropertyReportsPage(){
     fetchReports();
 
   },[]);
+
+
+
+
   /* RESOLVE REPORT */
-async function handleResolve(
+  async function handleResolve(
 
-  id:string
+    id:string
 
-){
+  ){
 
-  try{
+    try{
 
-    const res = await fetch(
+      const res = await fetch(
 
-      `/api/property-report/${id}`,
+        `/api/property-report/${id}`,
 
-      {
+        {
 
-        method:"PATCH"
+          method:"PATCH"
+
+        }
+
+      );
+
+      const data =
+        await res.json();
+
+      if(data.success){
+
+        alert(
+          "Report resolved"
+        );
+
+        fetchReports();
 
       }
 
-    );
+    }
 
-    const data =
-      await res.json();
+    catch(error){
 
-    if(data.success){
+      console.error(error);
 
       alert(
-        "Report resolved"
+        "Failed to resolve report"
       );
-
-      fetchReports();
 
     }
 
   }
 
-  catch(error){
 
-    console.error(error);
 
-    alert(
-      "Failed to resolve report"
-    );
+  /* DELETE REPORT */
+  async function handleDelete(
 
-  }
+    id:string
 
-}
-/* DELETE REPORT */
-async function handleDelete(
+  ){
 
-  id:string
+    const confirmDelete =
 
-){
+      confirm(
+        "Delete this report?"
+      );
 
-  const confirmDelete =
+    if(!confirmDelete)
+      return;
 
-    confirm(
+    try{
 
-      "Delete this report?"
+      const res = await fetch(
 
-    );
+        `/api/property-report/${id}`,
 
-  if(!confirmDelete)
-    return;
+        {
 
-  try{
+          method:"DELETE"
 
-    const res = await fetch(
+        }
 
-      `/api/property-report/${id}`,
+      );
 
-      {
+      const data =
+        await res.json();
 
-        method:"DELETE"
+      if(data.success){
+
+        alert(
+          "Report deleted"
+        );
+
+        fetchReports();
 
       }
 
-    );
+    }
 
-    const data =
-      await res.json();
+    catch(error){
 
-    if(data.success){
+      console.error(error);
 
       alert(
-        "Report deleted"
+        "Failed to delete report"
       );
-
-      fetchReports();
 
     }
 
   }
-
-  catch(error){
-
-    console.error(error);
-
-    alert(
-      "Failed to delete report"
-    );
-
-  }
-
-}
 
 
 
@@ -297,7 +299,7 @@ async function handleDelete(
 
 
 
-      {/* STATS */}
+      {/* KPI CARDS */}
       <div
         style={{
           display:"grid",
@@ -629,62 +631,75 @@ async function handleDelete(
                               flexWrap:"wrap"
                             }}
                           >
-<button
 
-  style={viewBtn}
-
-  onClick={()=>
-
-    router.push(
-
-      `/property/${report.propertyId}`
-
-    )
-
-  }
-
->
-
-  View
-
-</button>
-
-                          <button
-
-  style={resolveBtn}
-
-  onClick={()=>
-
-    handleResolve(
-      report._id
-    )
-
-  }
-
->
-
-  Resolve
-
-</button>
-
-
+                            {/* VIEW */}
                             <button
 
-  style={deleteBtn}
+                              style={viewBtn}
 
-  onClick={()=>
+                              onClick={()=>
 
-    handleDelete(
-      report._id
-    )
+                                router.push(
 
-  }
+                                  `/x-admin/properties/${report.propertyMongoId}`
 
->
+                                )
 
-  Delete
+                              }
 
-</button>
+                            >
+
+                              View Details
+
+                            </button>
+
+
+                            {/* RESOLVE */}
+                            {
+
+                              report.status !== "Resolved" && (
+
+                                <button
+
+                                  style={resolveBtn}
+
+                                  onClick={()=>
+
+                                    handleResolve(
+                                      report._id
+                                    )
+
+                                  }
+
+                                >
+
+                                  Resolve
+
+                                </button>
+
+                              )
+
+                            }
+
+
+                            {/* DELETE */}
+                            <button
+
+                              style={deleteBtn}
+
+                              onClick={()=>
+
+                                handleDelete(
+                                  report._id
+                                )
+
+                              }
+
+                            >
+
+                              Delete
+
+                            </button>
 
                           </div>
 

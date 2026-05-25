@@ -3,16 +3,26 @@
 import {
   useEffect,
   useState
-} from "react";
-
+}
+from "react";
 
 
 export function PropertyActions({
+
+  propertyMongoId,
+
   propertyId,
+
   propertyTitle
+
 }:{
+
+  propertyMongoId:string;
+
   propertyId:string;
+
   propertyTitle:string;
+
 }){
 
   const [saved,setSaved] =
@@ -29,7 +39,8 @@ export function PropertyActions({
 
   const [reporting,setReporting] =
     useState(false);
-
+const [user,setUser] =
+  useState<any>(null);
 
   const propertyUrl =
     typeof window !== "undefined"
@@ -42,15 +53,19 @@ export function PropertyActions({
 
     const old =
       JSON.parse(
+
         localStorage.getItem(
           "savedProperties"
         ) || "[]"
+
       );
 
     setSaved(
+
       old.includes(
         propertyId
       )
+
     );
 
   }, [propertyId]);
@@ -64,27 +79,33 @@ export function PropertyActions({
 
     const old =
       JSON.parse(
+
         localStorage.getItem(
           key
         ) || "[]"
+
       );
 
     let updated =
       old;
 
     if(
+
       old.includes(
         propertyId
       )
+
     ){
 
       updated =
         old.filter(
+
           (
             x:string
           ) =>
-            x !==
-            propertyId
+
+            x !== propertyId
+
         );
 
       setSaved(false);
@@ -94,8 +115,11 @@ export function PropertyActions({
     else{
 
       updated = [
+
         ...old,
+
         propertyId
+
       ];
 
       setSaved(true);
@@ -103,15 +127,36 @@ export function PropertyActions({
     }
 
     localStorage.setItem(
+
       key,
+
       JSON.stringify(
         updated
       )
+
     );
 
   }
 
+useEffect(() => {
 
+  const savedUser =
+
+    localStorage.getItem(
+      "user"
+    );
+
+  if(savedUser){
+
+    setUser(
+
+      JSON.parse(savedUser)
+
+    );
+
+  }
+
+},[]);
 
   /* REPORT PROPERTY */
   async function handleReport(){
@@ -124,50 +169,70 @@ export function PropertyActions({
     ){
 
       alert(
-
         "Please explain the issue"
-
       );
 
       return;
+
     }
 
     try{
 
       setReporting(true);
 
-      const res = await fetch(
+      console.log({
 
-        "/api/property-report",
+        propertyMongoId,
 
-        {
+        propertyId,
 
-          method:"POST",
+        propertyTitle,
 
-          headers:{
+        reason:
+          reportReason
 
-            "Content-Type":
-              "application/json"
+      });
 
-          },
+      const res =
+        await fetch(
 
-       body:JSON.stringify({
+          "/api/property-report",
+
+          {
+
+            method:"POST",
+
+            headers:{
+
+              "Content-Type":
+                "application/json"
+
+            },
+
+          body:JSON.stringify({
+
+  propertyMongoId,
 
   propertyId,
-
-  mongoId:
-    propertyId,
 
   propertyTitle,
 
   reason:
-    reportReason
+    reportReason,
+
+  reportedByUserId:
+    user?._id || "",
+
+  reportedByName:
+    user?.name || "",
+
+  reportedByPhone:
+    user?.phone || ""
 
 })
+          }
 
-        }
-
-      );
+        );
 
       const data =
         await res.json();
@@ -187,7 +252,11 @@ export function PropertyActions({
       else{
 
         alert(
+
+          data.message ||
+
           "Failed to submit report"
+
         );
 
       }
@@ -229,33 +298,47 @@ export function PropertyActions({
 
         {/* SAVE */}
         <ActionBtn
+
           label={
+
             saved
+
               ? "❤️ Saved"
+
               : "🤍 Save"
+
           }
+
           onClick={
             handleSave
           }
+
         />
 
 
         {/* SHARE */}
         <ActionBtn
+
           label="🔗 Share"
+
           onClick={() =>
             setShowShare(true)
           }
+
         />
 
 
         {/* REPORT */}
         <ActionBtn
+
           label="🚩 Report"
+
           danger
+
           onClick={() =>
             setShowReport(true)
           }
+
         />
 
       </div>
@@ -281,13 +364,19 @@ export function PropertyActions({
 
             {/* WHATSAPP */}
             <a
+
               href={`https://wa.me/?text=${encodeURIComponent(
+
                 propertyTitle +
                 " " +
                 propertyUrl
+
               )}`}
+
               target="_blank"
+
               style={shareBtn}
+
             >
               WhatsApp
             </a>
@@ -295,13 +384,21 @@ export function PropertyActions({
 
             {/* TELEGRAM */}
             <a
+
               href={`https://t.me/share/url?url=${encodeURIComponent(
+
                 propertyUrl
+
               )}&text=${encodeURIComponent(
+
                 propertyTitle
+
               )}`}
+
               target="_blank"
+
               style={shareBtn}
+
             >
               Telegram
             </a>
@@ -309,11 +406,17 @@ export function PropertyActions({
 
             {/* FACEBOOK */}
             <a
+
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+
                 propertyUrl
+
               )}`}
+
               target="_blank"
+
               style={shareBtn}
+
             >
               Facebook
             </a>
@@ -321,6 +424,7 @@ export function PropertyActions({
 
             {/* COPY LINK */}
             <button
+
               onClick={() => {
 
                 navigator.clipboard.writeText(
@@ -332,7 +436,9 @@ export function PropertyActions({
                 );
 
               }}
+
               style={shareBtn}
+
             >
               Copy Link
             </button>
@@ -340,6 +446,7 @@ export function PropertyActions({
 
             {/* MOBILE SHARE */}
             <button
+
               onClick={async () => {
 
                 if(
@@ -362,7 +469,9 @@ export function PropertyActions({
                 }
 
               }}
+
               style={shareBtn}
+
             >
               More Options
             </button>
@@ -370,10 +479,13 @@ export function PropertyActions({
 
             {/* CLOSE */}
             <button
+
               onClick={() =>
                 setShowShare(false)
               }
+
               style={closeBtn}
+
             >
               Close
             </button>
@@ -463,18 +575,29 @@ export function PropertyActions({
 
               {/* CANCEL */}
               <button
+
                 onClick={() =>
                   setShowReport(false)
                 }
+
                 style={{
+
                   flex:1,
+
                   height:48,
+
                   borderRadius:12,
+
                   border:"1px solid #e5e7eb",
+
                   background:"#fff",
+
                   cursor:"pointer",
+
                   fontWeight:700
+
                 }}
+
               >
                 Cancel
               </button>
@@ -482,29 +605,50 @@ export function PropertyActions({
 
               {/* SUBMIT */}
               <button
+
                 onClick={
                   handleReport
                 }
+
                 disabled={reporting}
+
                 style={{
+
                   flex:1,
+
                   height:48,
+
                   border:"none",
+
                   borderRadius:12,
+
                   background:"#dc2626",
+
                   color:"#fff",
+
                   cursor:"pointer",
+
                   fontWeight:700,
+
                   opacity:
+
                     reporting
+
                       ? .7
+
                       : 1
+
                 }}
+
               >
                 {
+
                   reporting
+
                     ? "Submitting..."
+
                     : "Submit Report"
+
                 }
               </button>
 
@@ -526,18 +670,25 @@ export function PropertyActions({
 
 
 function ActionBtn({
+
   label,
+
   onClick,
+
   danger
+
 }:any){
 
   return (
 
     <button
+
       onClick={
         onClick
       }
+
       style={{
+
         padding:
           "10px 16px",
 
@@ -550,13 +701,19 @@ function ActionBtn({
           "pointer",
 
         background:
+
           danger
+
             ? "#fef2f2"
+
             : "#f8fafc",
 
         color:
+
           danger
+
             ? "#dc2626"
+
             : "#334155",
 
         fontWeight:
@@ -567,7 +724,9 @@ function ActionBtn({
 
         boxShadow:
           "0 2px 8px rgba(0,0,0,.05)"
+
       }}
+
     >
       {label}
     </button>
