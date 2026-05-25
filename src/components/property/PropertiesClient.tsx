@@ -952,6 +952,7 @@ function PropertiesContent() {
                     : p.img
                       ? [p.img]
                       : [fallbackImage];
+                  console.log("PROPERTY IMAGES:", p.title, images);
                   const key = getPropKey(p);
                   const isFav =
                     typeof window !== "undefined" &&
@@ -959,93 +960,88 @@ function PropertiesContent() {
                       key,
                     );
                   return (
-                    <Link
-                      key={p.id || p._id || p.slug}
-                      href={`/properties/${p.slug}`}
-                      className="cardLink"
-                    >
-                      <article className="card">
-                        <div className="imageWrap">
-                          <PropertyImageSlider
-                            title={p.title || p.t || "Property"}
-                            images={images}
-                          />
-                          <div className="verified">VERIFIED</div>
-                          {p.badge && <div className="badge">{p.badge}</div>}
-                          <div className="photoCount">📸 {images.length}</div>
+                    <article key={p.id || p._id || p.slug} className="card">
+                      <div className="imageWrap">
+                        <PropertyImageSlider
+                          title={p.title || p.t || "Property"}
+                          images={images}
+                        />
+                        <div className="verified">VERIFIED</div>
+                        {p.badge && <div className="badge">{p.badge}</div>}
+                        {/* <div className="photoCount">📸 {images.length}</div> */}
 
-                          <button
-                            type="button"
-                            aria-label={
-                              isFav
-                                ? "Remove from favorites"
-                                : "Add to favorites"
-                            }
-                            aria-pressed={isFav}
-                            className={`favBtn ${isFav ? "favBtn--active" : ""}`}
-                            onClick={(e) => toggleFavorite(e, p)}
+                        <button
+                          type="button"
+                          aria-label={
+                            isFav ? "Remove from favorites" : "Add to favorites"
+                          }
+                          aria-pressed={isFav}
+                          className={`favBtn ${isFav ? "favBtn--active" : ""}`}
+                          onClick={(e) => toggleFavorite(e, p)}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="20"
+                            height="20"
+                            fill={isFav ? "#ffffff" : "none"}
+                            stroke={isFav ? "#ffffff" : "#111827"}
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           >
-                            <svg
-                              viewBox="0 0 24 24"
-                              width="20"
-                              height="20"
-                              fill={isFav ? "#ffffff" : "none"}
-                              stroke={isFav ? "#ffffff" : "#111827"}
-                              strokeWidth="2.2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                            </svg>
-                          </button>
-                        </div>
-                        <div className="cardContent">
-                          <div>
-                            <div className="category">
-                              {p.category || p.cat}
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="cardContent">
+                        <div>
+                          <div className="category">{p.category || p.cat}</div>
+                          <h3 className="title">{p.title || p.t}</h3>
+                          <p className="location">📍 {p.locality || p.loc}</p>
+                          <div className="features">
+                            <div className="feature">📐 {p.area}</div>
+                            <div className="feature">
+                              👁 {p.views || 0} views
                             </div>
-                            <h3 className="title">{p.title || p.t}</h3>
-                            <p className="location">📍 {p.locality || p.loc}</p>
-                            <div className="features">
-                              <div className="feature">📐 {p.area}</div>
-                              <div className="feature">
-                                👁 {p.views || 0} views
-                              </div>
-                              {p.rera && (
-                                <div className="rera">RERA Approved</div>
+                            {p.rera && (
+                              <div className="rera">RERA Approved</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="footer">
+                          <div>
+                            <div className="price">
+                              ₹
+                              {parsePrice(p.price || p.pr).toLocaleString(
+                                "en-IN",
                               )}
                             </div>
+                            <span className="neg">Negotiable</span>
                           </div>
-                          <div className="footer">
-                            <div>
-                              <div className="price">{p.price || p.pr}</div>
-                              <span className="neg">Negotiable</span>
-                            </div>
-                            <div className="btns">
-                              {/* ✅ CAPTURE PROPERTY ID + NAME ON CONTACT CLICK */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setSelectedProperty({
-                                    id: String(p.id || p._id || p.slug),
-                                    name: p.title || p.t || "Property",
-                                  });
-                                  setShowPopup(true);
-                                }}
-                                className="secondaryBtn"
-                              >
-                                Contact
-                              </button>
-                              <button type="button" className="primaryBtn">
-                                View Details
-                              </button>
-                            </div>
+                          <div className="btns">
+                            {/* ✅ CAPTURE PROPERTY ID + NAME ON CONTACT CLICK */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSelectedProperty({
+                                  id: String(p.id || p._id || p.slug),
+                                  name: p.title || p.t || "Property",
+                                });
+                                setShowPopup(true);
+                              }}
+                              className="secondaryBtn"
+                            >
+                              Contact
+                            </button>
+                            <button type="button" className="primaryBtn">
+                              View Details
+                            </button>
                           </div>
                         </div>
-                      </article>
-                    </Link>
+                      </div>
+                    </article>
                   );
                 })}
               </div>

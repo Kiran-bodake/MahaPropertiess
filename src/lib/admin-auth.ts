@@ -3,7 +3,10 @@ import { setupDatabase } from "@/lib/db-init";
 import User from "@/models/User";
 import { verifyAccessToken } from "@/lib/jwt";
 
-export async function requireAdminUser(req: NextRequest, allowedRoles: string[] = ["admin", "super-admin"]) {
+export async function requireAdminUser(
+  req: NextRequest,
+  allowedRoles: string[] = ["admin", "super-admin"],
+) {
   await setupDatabase();
   const access = req.cookies.get("propvista-access-token")?.value;
   if (!access) {
@@ -17,13 +20,11 @@ export async function requireAdminUser(req: NextRequest, allowedRoles: string[] 
 
   const user = await User.findById(payload.sub);
   console.log(
+    "USER ROLE:",
 
-  "USER ROLE:",
+    user?.role,
+  );
 
-  user?.role
-
-);
-  
   if (!user || !allowedRoles.includes(user.role)) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }

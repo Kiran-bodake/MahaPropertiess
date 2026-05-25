@@ -49,7 +49,7 @@ export async function GET(req: Request) {
           propertyId,
         });
 
-        const images = await PropertyImage.findOne({
+        const imageDoc = await PropertyImage.findOne({
           propertyId,
         });
 
@@ -74,7 +74,9 @@ export async function GET(req: Request) {
 
           rera: flags?.isRERA || false,
 
-          img: images?.images?.[0]?.url || "/maha.png",
+          img: imageDoc?.images?.[0]?.url || "/maha.png",
+
+          images: imageDoc?.images?.map((img: any) => img.url) || ["/maha.png"],
 
           views: property.views || 0,
         };
