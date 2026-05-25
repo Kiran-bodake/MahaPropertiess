@@ -1127,7 +1127,12 @@ function PropertiesContent() {
                               <p>📍 {p.locality || p.loc}</p>
 
                               <div className="relatedBottom">
-                                <span>{p.price || p.pr}</span>
+                                <span>
+                                  ₹
+                                  {parsePrice(p.price || p.pr).toLocaleString(
+                                    "en-IN",
+                                  )}
+                                </span>
 
                                 <button type="button">View Details →</button>
                               </div>
