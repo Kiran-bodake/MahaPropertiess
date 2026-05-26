@@ -1,32 +1,112 @@
+import Link from "next/link";
+
 export default function FinalInvestmentCTA() {
   return (
-    <section className="px-4 py-16 md:py-28">
-      <div className="mx-auto max-w-6xl">
+    <section className="py-20 md:py-28">
+      <div className="w-full">
         <div
-          className="relative overflow-hidden rounded-[52px] px-6 py-24 md:py-40 text-center text-white shadow-[0_40px_120px_rgba(0,0,0,0.22)] md:px-16 lg:rounded-[48px]"
+          className="
+            relative
+            overflow-hidden
+            rounded-[40px]
+            px-6
+            py-16
+            shadow-[0_40px_120px_rgba(0,0,0,0.22)]
+            md:px-10
+            md:py-20
+            lg:rounded-[28px]
+          "
           style={{
             backgroundImage: "url('/nashik/hero.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-[#041108]/85 via-[#041108]/60 to-[#041108]/35" />
-          <div className="relative z-10 space-y-6">
-            <h2 className="mx-auto max-w-4xl text-3xl font-black leading-tight text-white drop-shadow-2xl md:text-5xl lg:text-6xl">
-              Nashik's Next Growth Phase Has Already Started
-            </h2>
+          {/* OVERLAY */}
+          <div className="absolute inset-0 bg-black/55" />
 
-            <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-gray-100 drop-shadow-lg md:text-lg">
-              Invest before infrastructure, tourism, and connectivity projects
-              significantly increase land values.
-            </p>
+          {/* CONTENT */}
+          <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-between gap-10 lg:flex-row lg:items-end">
+            {/* LEFT CONTENT */}
+            <div className="max-w-4xl">
+              <h2
+                className="
+    max-w-[820px]
+    text-3xl
+    font-black
+    leading-[1.08]
+    tracking-[-0.03em]
+    !text-white
+    drop-shadow-2xl
+    md:text-5xl
+    lg:text-[54px]
+  "
+              >
+                Nashik's Next Growth Phase
+                <br />
+                Has Already Started
+              </h2>
 
-            <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <button className="rounded-xl bg-green-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-green-600/40 transition-all duration-300 hover:-translate-y-1 hover:bg-green-700">
+              <p
+                className="
+                  mt-6
+                  max-w-2xl
+                  text-base
+                  leading-8
+                  text-white/90
+                  md:text-lg
+                "
+              >
+                Invest before infrastructure, tourism, and connectivity projects
+                significantly increase land values.
+              </p>
+            </div>
+
+            {/* RIGHT BUTTONS */}
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/properties"
+                className="
+    flex
+    h-14
+    min-w-[220px]
+    items-center
+    justify-center
+    rounded-full
+    bg-[#05a336]
+    px-8
+    text-base
+    font-semibold
+    text-black
+    transition-all
+    duration-300
+    hover:scale-[1.03]
+  "
+              >
                 Explore Properties
-              </button>
+              </Link>
 
-              <button className="rounded-xl border-2 border-white/40 bg-white/15 px-8 py-3.5 font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/25">
+              <button
+                className="
+    flex
+    h-14
+    min-w-[220px]
+    items-center
+    justify-center
+    rounded-full
+    border
+    border-white/30
+    bg-white/10
+    px-8
+    text-base
+    font-semibold
+    text-white
+    backdrop-blur-xl
+    transition-all
+    duration-300
+    hover:bg-white/20
+  "
+              >
                 Schedule Consultation
               </button>
             </div>

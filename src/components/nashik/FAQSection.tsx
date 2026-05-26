@@ -7,19 +7,19 @@ const faqs = [
   {
     question: "Is Nashik good for real estate investment?",
     answer:
-      "Yes. Nashik is experiencing rapid growth due to infrastructure projects, industrial development, educational migration, and tourism.",
+      "Yes. Nashik is experiencing rapid growth due to infrastructure projects, industrial development, educational migration, tourism, and future infrastructure expansion.",
   },
 
   {
     question: "Which areas in Nashik have highest appreciation potential?",
     answer:
-      "Gangapur Road, Pathardi, Trimbak Road, and Nashik Road are among the fastest-growing investment corridors.",
+      "Gangapur Road, Pathardi, Trimbak Road, and Nashik Road are among the fastest-growing investment corridors due to connectivity and infrastructure development.",
   },
 
   {
     question: "Will the bullet train impact property prices?",
     answer:
-      "Major connectivity projects historically increase land appreciation and attract commercial development.",
+      "Major connectivity projects historically increase land appreciation and attract commercial and residential development across surrounding regions.",
   },
 ];
 
@@ -27,47 +27,105 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="bg-gradient-to-b from-white to-[#f7faf7] py-16 md:py-28">
-      <div className="mx-auto max-w-4xl px-4 md:px-6">
+    <section className="bg-[#f8fafc] py-20 md:py-28">
+      <div className="mx-auto max-w-[1600px] px-5 md:px-8">
+        {/* HEADER */}
         <div className="mb-12 text-center md:mb-16">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
+          <p className="mb-3 text-lg font-semibold uppercase tracking-[0.3em] text-green-600">
             FAQs
           </p>
 
-          <h2 className="text-4xl font-bold text-gray-900 md:text-5xl">
+          <h2 className="mx-auto max-w-5xl text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-6xl">
             Frequently Asked Questions
           </h2>
         </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div
-              key={faq.question}
-              className="overflow-hidden rounded-[24px] border border-gray-200 bg-white shadow-[0_12px_40px_rgba(16,24,40,0.06)] hover:-translate-y-1 transition-all duration-300"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="flex w-full items-center justify-between px-6 py-5 text-left transition-all duration-200 hover:bg-green-50/50 md:px-8 md:py-6 group"
-              >
-                <h3 className="text-base font-semibold text-gray-900 md:text-lg group-hover:text-green-700 transition-colors">
-                  {faq.question}
-                </h3>
-                <ChevronDown
-                  className={`ml-4 h-5 w-5 flex-shrink-0 text-green-600 transition-transform duration-300 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
+        {/* FAQ LIST */}
+        <div className="space-y-5">
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index;
 
-              {openIndex === index && (
-                <div className="border-t border-gray-100 px-6 py-5 md:px-8 md:py-6">
-                  <p className="text-base leading-7 text-gray-600">
-                    {faq.answer}
-                  </p>
+            return (
+              <div
+                key={faq.question}
+                className="
+                  overflow-hidden
+                  rounded-[24px]
+                  border
+                  border-gray-200
+                  bg-white
+                  shadow-[0_10px_40px_rgba(0,0,0,0.05)]
+                  transition-all
+                  duration-300
+                "
+              >
+                {/* QUESTION */}
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  className="
+                    flex
+                    w-full
+                    items-center
+                    justify-between
+                    gap-5
+                    px-6
+                    py-5
+                    text-left
+                    transition-all
+                    duration-300
+                    hover:bg-gray-50
+                    md:px-8
+                    md:py-6
+                  "
+                >
+                  <h3 className="text-lg font-bold leading-7 text-gray-900 md:text-xl">
+                    {faq.question}
+                  </h3>
+
+                  <div
+                    className={`
+                      flex
+                      h-10
+                      w-10
+                      flex-shrink-0
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-green-50
+                      transition-all
+                      duration-300
+                      ${isOpen ? "rotate-180" : ""}
+                    `}
+                  >
+                    <ChevronDown className="h-5 w-5 text-green-600" />
+                  </div>
+                </button>
+
+                {/* ANSWER */}
+                <div
+                  className={`
+                    grid
+                    transition-all
+                    duration-300
+                    ease-in-out
+                    ${
+                      isOpen
+                        ? "grid-rows-[1fr] opacity-100"
+                        : "grid-rows-[0fr] opacity-0"
+                    }
+                  `}
+                >
+                  <div className="overflow-hidden">
+                    <div className="border-t border-gray-100 px-6 py-5 md:px-8 md:py-6">
+                      <p className="text-base leading-8 text-gray-600">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

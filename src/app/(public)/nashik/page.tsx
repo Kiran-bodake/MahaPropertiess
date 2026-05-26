@@ -17,35 +17,20 @@ export const metadata = {
 
 export default function NashikPage() {
   return (
-    <main className="overflow-hidden bg-white pb-24 md:pb-0">
+    <main className="overflow-hidden bg-[#f6faf7] pb-24 md:pb-0">
       <NashikHero />
 
       <TrustStrip />
 
       <WhyInvestSlider />
 
-      {/* DIVIDER */}
-      <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
       <InfrastructureSection />
-
-      {/* DIVIDER */}
-      <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
       <HotLocalities />
 
-      {/* DIVIDER */}
-      <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
       <InvestmentConsultationForm />
 
-      {/* DIVIDER */}
-      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
       <FAQSection />
-
-      {/* DIVIDER */}
-      <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
       <FinalInvestmentCTA />
 

@@ -29,25 +29,39 @@ const localities = [
 
 export default function HotLocalities() {
   return (
-    <section className="bg-gradient-to-b from-[#f8fbf8] to-white py-16 md:py-28">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mb-12 max-w-3xl md:mb-16">
+    <section className="px-3 py-20 md:px-5 md:py-32">
+      <div className="w-full">
+        <div className="mb-14 max-w-6xl md:mb-20">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
             Investment Opportunities
           </p>
 
-          <h2 className="text-4xl font-bold text-gray-900 md:text-5xl">
+          <h2 className="text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-6xl">
             High-Growth Investment Localities In Nashik
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
           {localities.map((item) => (
             <div
               key={item.title}
-              className="group overflow-hidden rounded-[36px] border border-gray-100 bg-white shadow-[0_12px_50px_rgba(16,24,40,0.08)] backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)]"
+              className="
+group
+flex
+flex-col
+overflow-hidden
+rounded-[36px]
+border
+border-gray-100
+bg-white
+shadow-[0_12px_50px_rgba(16,24,40,0.08)]
+transition-all
+duration-500
+hover:-translate-y-2
+hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)]
+"
             >
-              <div className="relative h-72 overflow-hidden">
+              <div className="relative h-[240px] overflow-hidden md:h-[300px]">
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -57,16 +71,30 @@ export default function HotLocalities() {
                 />
               </div>
 
-              <div className="p-6">
+              <div className="flex flex-1 flex-col p-7">
                 <div className="inline-flex rounded-full bg-green-100 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-green-700">
                   {item.tag}
                 </div>
 
-                <h3 className="mt-5 text-2xl font-bold text-gray-900">
+                <h3 className="mt-5 text-3xl font-black tracking-[-0.03em] text-gray-900">
                   {item.title}
                 </h3>
 
-                <div className="mt-6 flex items-center justify-between rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 p-4">
+                <div
+                  className="
+mt-7
+flex
+items-center
+justify-between
+rounded-[24px]
+border
+border-green-100
+bg-gradient-to-r
+from-green-50
+to-emerald-50
+p-5
+"
+                >
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-green-700">
                       Price
@@ -90,7 +118,23 @@ export default function HotLocalities() {
 
                 <Link
                   href="/properties"
-                  className="mt-6 inline-flex rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
+                  className="
+    mt-7
+    inline-flex
+    h-14
+    items-center
+    justify-center
+    rounded-2xl
+    bg-green-600
+    px-7
+    font-semibold
+    text-white
+    shadow-[0_15px_40px_rgba(22,163,74,0.24)]
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:bg-green-700
+  "
                 >
                   Explore Properties
                 </Link>
