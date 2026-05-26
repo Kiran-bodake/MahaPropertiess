@@ -2,2224 +2,553 @@
 
 import { useEffect, useState } from "react";
 import {
-  BarChart2,
-  Search,
-  RefreshCw,
+  Home,
+  Users,
+  TrendingUp,
+  ListChecks,
   Eye,
   Pencil,
   Trash2,
-  Bell,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
-import { useRouter }
-from "next/navigation";
 import {
-
-  DashboardCard
-
-} from "@/components/admin/cards/DashboardCard";
-
-import {
-
   PieChart,
   Pie,
   Cell,
   ResponsiveContainer,
-
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   CartesianGrid,
-
+  Legend,
 } from "recharts";
+import { DashboardLayout } from "@/components/admin/layout/DashboardLayout";
+import { StatCard } from "@/components/admin/cards/StatCard";
+import { ChartCard } from "@/components/admin/cards/ChartCard";
+import { DataTableCard } from "@/components/admin/cards/DataTableCard";
+import { TableHeader } from "@/components/admin/table/TableHeader";
+import { Badge } from "@/components/admin/common/Badge";
+import { SearchBar } from "@/components/admin/common/SearchBar";
+import { ActionButtons } from "@/components/admin/common/ActionButtons";
+import { Pagination } from "@/components/admin/common/Pagination";
 
 
 
 
-const card = {
-  background: "#fff",
-  border: "1px solid #e2e8f0",
-  borderRadius: 22,
-  padding: 20,
-  boxShadow: "0 8px 24px rgba(15,23,42,.05)",
-};
+// Chart Data
+const propertyTypeData = [
+  { name: "Plots", value: 45 },
+  { name: "Flats", value: 30 },
+  { name: "Villas", value: 15 },
+  { name: "Commercial", value: 10 },
+];
+
+const trendData = [
+  { month: "Jan", properties: 12, leads: 24 },
+  { month: "Feb", properties: 18, leads: 13 },
+  { month: "Mar", properties: 9, leads: 98 },
+  { month: "Apr", properties: 22, leads: 39 },
+  { month: "May", properties: 16, leads: 48 },
+  { month: "Jun", properties: 28, leads: 38 },
+];
+
+const COLORS = ["#3b82f6", "#10b981", "#a855f7", "#f59e0b"];
 
 
 export default function AdminDashboard() {
-
-  const router = useRouter();
   const [stats, setStats] = useState({
-      leads: 0,
-      deals: 0,
-      tasks: 0,
-    }),
-    [leads, setLeads] = useState<any[]>([]),
-    
-    [loading, setLoading] = useState(true),
-    [query, setQuery] = useState(""),
-    [page, setPage] = useState(1),
-    [mobile, setMobile] = useState(false),
-    
-    
-
-    
-
-    // ✅ selected rows
-    [selected, setSelected] = useState<string[]>([]);
-
-    const [
-
-  properties,
-
-  setProperties
-
-] = useState<any[]>([]);
-const [
-
-  activity,
-
-  setActivity
-
-] = useState<any[]>([]);
-
+    totalLeads: 0,
+    newLeads: 0,
+    totalProperties: 0,
+    totalDeals: 0,
+  });
+  const [leads, setLeads] = useState<any[]>([]);
+  const [properties, setProperties] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [analytics, setAnalytics] = useState<any>(null);
 
   const perPage = 10;
 
-  const [
-
-  analytics,
-
-  setAnalytics
-
-] = useState<any>(null);
-
-const [
-
-  showPropertyAnalytics,
-
-  setShowPropertyAnalytics
-
-] = useState(false);
-
-
-const [
-
-  showLeadAnalytics,
-
-  setShowLeadAnalytics
-
-] = useState(false);
-
-  /* screen detect */
+  // Fetch dashboard data
   useEffect(() => {
-    const check = () => setMobile(window.innerWidth < 768);
-
-    check();
-
-    window.addEventListener("resize", check);
-
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  /* data fetch */
-  useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       try {
-     const [s, l, a, p, rp ,ac] =
+        const responses = await Promise.allSettled([
+          fetch("/api/admin/dashboard").catch(() => null),
+          fetch("/api/admin/leads").catch(() => null),
+          fetch("/api/admin/recent-properties").catch(() => null),
+          fetch("/api/admin/analytics/leads").catch(() => null),
+        ]);
 
-  await Promise.all([
+        let dashData = {};
+        let leadsData = { leads: [] };
+        let propsData = { properties: [] };
+        let analyticsData = {};
 
-    fetch(
-      "/api/admin/dashboard"
-    ),
+        // Process dashboard response
+        if (responses[0].status === "fulfilled" && responses[0].value?.ok) {
+          dashData = await responses[0].value.json().catch(() => ({}));
+        }
 
-    fetch(
-      "/api/admin/leads"
-    ),
+        // Process leads response
+        if (responses[1].status === "fulfilled" && responses[1].value?.ok) {
+          leadsData = await responses[1].value.json().catch(() => ({ leads: [] }));
+        }
 
-    fetch(
-      "/api/admin/analytics/leads"
-    ),
+        // Process properties response
+        if (responses[2].status === "fulfilled" && responses[2].value?.ok) {
+          propsData = await responses[2].value.json().catch(() => ({ properties: [] }));
+        }
 
-    fetch(
-      "/api/admin/analytics/properties"
-    ),
-    fetch(
-  "/api/admin/recent-properties"
-),
-fetch(
-  "/api/admin/activity"
-)
-
-
-]);
-
-        const sd = s.ok ? await s.json() : {};
-        const ld = l.ok ? await l.json() : {};
-        const ad= a.ok ? await a.json() : {};
-        const pd =
-  p.ok ? await p.json() : {};
+        // Process analytics response
+        if (responses[3].status === "fulfilled" && responses[3].value?.ok) {
+          analyticsData = await responses[3].value.json().catch(() => ({}));
+        }
 
         setStats({
-          leads: sd.leadsCount || 0,
-          deals: sd.dealsCount || 0,
-          tasks: sd.tasksCount || 0,
+          totalLeads: dashData?.leadsCount || 0,
+          newLeads: analyticsData?.newLeads || 0,
+          totalProperties: dashData?.propertiesCount || 0,
+          totalDeals: dashData?.dealsCount || 0,
         });
 
-        
-        const rpd =
-
-  rp.ok
-
-    ? await rp.json()
-
-    : {};
-
-        setLeads(ld.leads || []);
-
-        
-        setProperties(
-
-  rpd.properties || []
-
-);
-
-
-
-      setAnalytics({
-
-  ...ad,
-
-  ...pd
-
-});
+        setLeads(Array.isArray(leadsData?.leads) ? leadsData.leads : []);
+        setProperties(Array.isArray(propsData?.properties) ? propsData.properties : []);
+        setAnalytics(analyticsData || {});
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+        // Set default values on error
+        setStats({
+          totalLeads: 0,
+          newLeads: 0,
+          totalProperties: 0,
+          totalDeals: 0,
+        });
+        setLeads([]);
+        setProperties([]);
+        setAnalytics({});
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchData();
   }, []);
 
-  if (loading) {
-    return <div style={{ padding: 30 }}>Loading...</div>;
-  }
-
-  const conversion = stats.leads
-    ? Math.round((stats.deals / stats.leads) * 100)
-    : 0;
-
-const cards = [
-
-  {
-
-    label:"Total Leads",
-
-    value:
-      analytics?.totalLeads || 0,
-
-    delta:"+"
-
-  },
-
-  {
-
-    label:"Today's Leads",
-
-    value:
-      analytics?.todayLeads || 0,
-
-    delta:"+"
-
-  },
-
-  {
-
-    label:"New Leads",
-
-    value:
-      analytics?.newLeads || 0,
-
-    delta:"+"
-
-  },
-
-  {
-
-    label:"Unread Leads",
-
-    value:
-      analytics?.unreadLeads || 0,
-
-    delta:"+"
-
-  }
-
-];
-
-const propertyCards = [
-
-  {
-
-    label:
-      "Pending Properties",
-
-    value:
-      analytics?.pendingProperties || 0,
-
-    delta:
-      "Waiting Approval"
-
-  },
-
-  {
-
-    label:
-      "Approved Properties",
-
-    value:
-      analytics?.approvedProperties || 0,
-
-    delta:
-      "Live Listings"
-
-  },
-
-  {
-
-    label:
-      "Rejected Properties",
-
-    value:
-      analytics?.rejectedProperties || 0,
-
-    delta:
-      "Rejected Listings"
-
-  },
-
-  {
-
-    label:
-      "Premium Properties",
-
-    value:
-      analytics?.premiumProperties || 0,
-
-    delta:
-      "Premium Listings"
-
-  },
-
-  {
-
-    label:
-      "Featured Properties",
-
-    value:
-      analytics?.featuredProperties || 0,
-
-    delta:
-      "Homepage Featured"
-
-  }
-
-];
-
-const openLead =
-  async (
-    lead:any
-  ) => {
-
-    try{
-
-      const res =
-
-        await fetch(
-
-          "/api/admin/leads/view",
-
-          {
-
-            method:"POST",
-
-            headers:{
-
-              "Content-Type":
-                "application/json"
-
-            },
-
-            body: JSON.stringify({
-
-              id:
-                lead._id
-
-            })
-
-          }
-
-        );
-
-
-      if(!res.ok){
-
-        console.error(
-          "View update failed"
-        );
-
-        return;
-
-      }
-
-
-      // update UI instantly
-      setLeads(
-
-        prev =>
-
-          prev.map(
-
-            item =>
-
-              item._id === lead._id
-
-              ?
-
-              {
-
-                ...item,
-
-                isViewed:true
-
-              }
-
-              :
-
-              item
-
-          )
-
-      );
-
-
-      // update analytics instantly
-      setAnalytics(
-
-        (prev:any) => ({
-
-          ...prev,
-
-          unreadLeads:
-
-            Math.max(
-
-              0,
-
-              prev?.unreadLeads - 1
-
-            )
-
-        })
-
-      );
-
-    }
-
-    catch(error){
-
-      console.error(
-        error
-      );
-
-    }
-
-};
-
-const updatePropertyStatus = async (
-
-  id:string,
-
-  status:string
-
-) => {
-
-  try{
-
-    const res = await fetch(
-
-      "/api/admin/properties/update-status",
-
-      {
-
-        method:"POST",
-
-        headers:{
-
-          "Content-Type":
-            "application/json"
-
-        },
-
-        body: JSON.stringify({
-
-          id,
-
-          status
-
-        })
-
-      }
-
-    );
-
-    if(!res.ok){
-
-      console.error(
-        "Status update failed"
-      );
-
-      return;
-
-    }
-
-    // update UI instantly
-    setProperties(
-
-      prev =>
-
-        prev.map(
-
-          (p:any)=>
-
-            p._id === id
-
-            ?
-
-            {
-
-              ...p,
-
-              approvalStatus:status
-
-            }
-
-            :
-
-            p
-
-        )
-
-    );
-
-  }
-
-  catch(error){
-
-    console.error(error);
-
-  }
-
-};
-
-  const filtered = leads.filter(
-    (x: any) =>
-      !query ||
-      x.name?.toLowerCase().includes(query.toLowerCase())
+  // Filter and paginate leads
+  const filteredLeads = leads.filter(
+    (lead) =>
+      !query || lead.name?.toLowerCase().includes(query.toLowerCase())
   );
-
   const totalPages = Math.max(
     1,
-    Math.ceil(filtered.length / perPage)
+    Math.ceil(filteredLeads.length / perPage)
   );
-
-  const paginated = filtered.slice(
+  const paginatedLeads = filteredLeads.slice(
     (page - 1) * perPage,
     page * perPage
   );
 
-  /* ✅ checkbox select */
-  const toggleSelect = (id: string) => {
-    setSelected((prev) =>
-      prev.includes(id)
-        ? prev.filter((x) => x !== id)
-        : [...prev, id]
-    );
-  };
-
-  /* ✅ select all */
-  const toggleSelectAll = () => {
-    const ids = paginated.map((x: any) => x._id);
-
-    if (ids.every((id: string) => selected.includes(id))) {
-      setSelected((prev) =>
-        prev.filter((id) => !ids.includes(id))
-      );
-    } else {
-      setSelected((prev) => [
-        ...new Set([...prev, ...ids]),
-      ]);
-    }
-  };
-
-  /* ✅ delete selected */
-  const deleteSelected = async () => {
-    if (selected.length === 0) return;
-
-    const confirmDelete = confirm(
-      `Delete ${selected.length} selected leads?`
-    );
-
-    if (!confirmDelete) return;
-
+  // Update lead view status
+  const handleViewLead = async (leadId: string) => {
+    if (!leadId) return;
     try {
-      // API delete request
-      await fetch("/api/admin/leads/delete-many", {
+      const response = await fetch("/api/admin/leads/view", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ids: selected,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: leadId }),
       });
 
-      // remove from UI
-      setLeads((prev) =>
-        prev.filter((x: any) => !selected.includes(x._id))
-      );
-
-      setSelected([]);
-    } catch (err) {
-      console.error(err);
+      if (response.ok) {
+        setLeads((prev) =>
+          prev.map((lead) =>
+            lead._id === leadId ? { ...lead, isViewed: true } : lead
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update lead view:", error);
     }
   };
 
-  const propertyTypeData = [
+  // Update property status
+  const handlePropertyStatus = async (propertyId: string, status: string) => {
+    if (!propertyId || !status) return;
+    try {
+      const response = await fetch("/api/admin/properties/update-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: propertyId, status }),
+      });
 
-  {
-    name:"Plots",
-    value:45
-  },
+      if (response.ok) {
+        setProperties((prev) =>
+          prev.map((prop) =>
+            prop._id === propertyId
+              ? { ...prop, approvalStatus: status }
+              : prop
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update property status:", error);
+    }
+  };
 
-  {
-    name:"Flats",
-    value:30
-  },
-
-  {
-    name:"Villas",
-    value:15
-  },
-
-  {
-    name:"Commercial",
-    value:10
+  if (loading) {
+    return (
+      <DashboardLayout title="Dashboard">
+        <div className="flex items-center justify-center py-16">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-blue-500"></div>
+            <p className="text-gray-300 font-medium">Loading dashboard...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
-
-];
-
-const trendData = [
-
-  {
-    day:"Mon",
-    properties:12
-  },
-
-  {
-    day:"Tue",
-    properties:18
-  },
-
-  {
-    day:"Wed",
-    properties:9
-  },
-
-  {
-    day:"Thu",
-    properties:22
-  },
-
-  {
-    day:"Fri",
-    properties:16
-  },
-
-  {
-    day:"Sat",
-    properties:28
-  },
-
-  {
-    day:"Sun",
-    properties:20
-  }
-
-];
-
-const COLORS = [
-
-  "#16a34a",
-
-  "#2563eb",
-
-  "#7c3aed",
-
-  "#eab308"
-
-];
 
   return (
-   <div
-  className="
-  min-h-screen
-  bg-slate-50
-  font-sans"
->
-      {/* Header */}
-      {/* HEADER */}
-<div
-  style={{
-    height: 64,
-
-    background:
-      "rgba(255,255,255,.85)",
-
-    backdropFilter:
-      "blur(12px)",
-
-    borderBottom:
-      "1px solid #e2e8f0",
-
-    display: "flex",
-
-    justifyContent:
-      "space-between",
-
-    alignItems: "center",
-
-    padding:
-      mobile
-        ? "0 14px"
-        : "0 22px",
-
-    position: "sticky",
-
-    top: 0,
-
-    zIndex: 20,
-  }}
->
-
-  {/* LEFT */}
-  <div>
-
-    <div
-      style={{
-        fontSize:
-          mobile
-            ? 18
-            : 22,
-
-        fontWeight: 700,
-
-        color:"#0f172a",
-
-        lineHeight:1.1,
-      }}
+    <DashboardLayout
+      title="Dashboard"
+      subtitle="Welcome back! Here's your business overview at a glance."
     >
-      Dashboard
-    </div>
+      {/* KPI Stats Grid */}
+      <div className="grid grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-4 mb-10">
+        <StatCard
+          label="Total Leads"
+          value={stats.totalLeads}
+          icon={<Users className="h-7 w-7" />}
+          trend={12}
+          color="blue"
+        />
+        <StatCard
+          label="New Leads"
+          value={stats.newLeads}
+          icon={<TrendingUp className="h-6 w-6" />}
+          trend={8}
+          color="green"
+        />
+        <StatCard
+          label="Properties"
+          value={stats.totalProperties}
+          icon={<Home className="h-6 w-6" />}
+          trend={15}
+          color="purple"
+        />
+        <StatCard
+          label="Deals"
+          value={stats.totalDeals}
+          icon={<ListChecks className="h-6 w-6" />}
+          trend={-3}
+          color="orange"
+        />
+      </div>
 
-    <div
-      style={{
-        fontSize:11,
-
-        color:"#64748b",
-
-        marginTop:2,
-
-        fontWeight:500,
-      }}
-    >
-      Leads & Analytics
-    </div>
-
-  </div>
-
-  {/* RIGHT */}
-  <div
-    style={{
-      display:"flex",
-      alignItems:"center",
-      gap:10,
-    }}
-  >
-
-    <button
-      style={{
-        width:36,
-        height:36,
-
-        border:"none",
-
-        borderRadius:12,
-
-        background:"#f8fafc",
-
-        display:"flex",
-
-        alignItems:"center",
-
-        justifyContent:
-          "center",
-
-        cursor:"pointer",
-      }}
-    >
-      <Bell
-        size={16}
-        color="#64748b"
-      />
-    </button>
-
-  </div>
-
-</div>
-
-{/* BODY */}
-<div
-  style={{
-    padding:
-      mobile
-        ? 12
-        : 20,
-  }}
->
-     {/* COMPACT KPI */}
-<div
-  style={{
-    display: "grid",
-
-    gridTemplateColumns:
-      mobile
-        ? "1fr"
-        : "repeat(4,1fr)",
-
-    gap: 12,
-
-    marginBottom: 22,
-  }}
->
-
-  {[
-    {
-      label:"Total Leads",
-
-      value:
-        analytics?.totalLeads || 0,
-
-      icon:"📈",
-
-      color:"#2563eb",
-
-      bg:"#eff6ff",
-    },
-
-    {
-      label:"New Leads",
-
-      value:
-        analytics?.newLeads || 0,
-
-      icon:"🔥",
-
-      color:"#7c3aed",
-
-      bg:"#f5f3ff",
-    },
-
-    {
-      label:"Properties",
-
-      value:
-        analytics?.totalProperties || 0,
-
-      icon:"🏠",
-
-      color:"#16a34a",
-
-      bg:"#ecfdf5",
-    },
-
-    {
-      label:"Pending",
-
-      value:
-        analytics?.pendingProperties || 0,
-
-      icon:"⏳",
-
-      color:"#ea580c",
-
-      bg:"#fff7ed",
-    },
-  ].map((item,index)=>(
-
-    <div
-      key={index}
-
-     style={{
-  background:"#fff",
-
-  border:"1px solid #e2e8f0",
-
-  borderRadius:18,
-
-  padding:"10px 14px",
-
-  display:"flex",
-
-  alignItems:"center",
-
-  justifyContent:"space-between",
-
-  boxShadow:
-    "0 2px 10px rgba(15,23,42,.04)",
-
-  minHeight:76,
-}}
-    >
-
-      {/* LEFT */}
-      <div>
-
-        <div
-          style={{
-            fontSize:11,
-
-            fontWeight:700,
-
-            color:"#64748b",
-
-            textTransform:
-              "uppercase",
-
-            letterSpacing:.4,
-          }}
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 gap-7 lg:grid-cols-2 mb-10">
+        <ChartCard
+          title="Monthly Activity Trend"
+          subtitle="Properties & Leads performance over time"
         >
-          {item.label}
-        </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={trendData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" vertical={false} />
+              <XAxis
+                dataKey="month"
+                stroke="#9ca3af"
+                style={{ fontSize: 12, fontWeight: 500 }}
+                tick={{ fill: "#d1d5db" }}
+              />
+              <YAxis
+                stroke="#9ca3af"
+                style={{ fontSize: 12, fontWeight: 500 }}
+                tick={{ fill: "#d1d5db" }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1e293b",
+                  border: "1px solid #ffffff30",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
+                }}
+              />
+              <Legend
+                wrapperStyle={{ paddingTop: "20px" }}
+                iconType="line"
+              />
+              <Line
+                type="monotone"
+                dataKey="properties"
+                stroke="#3b82f6"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6 }}
+                name="Properties"
+              />
+              <Line
+                type="monotone"
+                dataKey="leads"
+                stroke="#10b981"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6 }}
+                name="Leads"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartCard>
 
-        <div
-         style={{
-  fontSize:
-    mobile
-      ? 20
-      : 24,
-
-  fontWeight:800,
-
-  marginTop:4,
-
-  color:"#0f172a",
-
-  lineHeight:1,
-}}
+        <ChartCard
+          title="Property Type Distribution"
+          subtitle="Breakdown of your property listings by category"
         >
-          {item.value}
-        </div>
-
-      </div>
-
-      {/* RIGHT */}
-      <div
-        style={{
-  width:38,
-
-  height:38,
-
-  borderRadius:12,
-
-  background:item.bg,
-
-  display:"flex",
-
-  alignItems:"center",
-
-  justifyContent:"center",
-
-  fontSize:16,
-
-  flexShrink:0,
-}}
-      >
-        {item.icon}
-      </div>
-
-    </div>
-
-  ))}
-  </div>
- <div
-  style={{
-    display:"grid",
-
-    gridTemplateColumns:
-
-      mobile
-
-        ? "1fr"
-
-        : "2fr 380px",
-
-    gap:24,
-
-    alignItems:"start",
-  }}
->
-
-  {/* LEFT SIDE */}
-  <div
-    style={{
-      display:"flex",
-
-      flexDirection:"column",
-
-      gap:24,
-    }}
-  >
-{/* Recent Properties */}
-<div
-  style={{
-    ...card,
-    marginBottom:24,
-    overflow:"hidden",
-  }}
->
-
-  {/* Header */}
-  <div
-   style={{
-  fontSize:10,
-
-  fontWeight:700,
-
-  color:"#64748b",
-
-  textTransform:"uppercase",
-
-  letterSpacing:.3,
-}}
-  >
-    Recent Properties
-  </div>
-
-  {/* Table */}
-  <div
-    style={{
-      overflowX:"auto",
-    }}
-  >
-
-    <div
-      style={{
-        minWidth:700,
-      }}
-    >
-
-      {/* Header Row */}
-      <div
-        style={{
-          display:"grid",
-
-          gridTemplateColumns:
-            "2fr 1fr 1fr 1fr 1fr auto",
-
-          padding:"16px 24px",
-
-          background:"#f8fafc",
-
-          fontSize:12,
-
-          fontWeight:700,
-
-          color:"#64748b",
-        }}
-      >
-        <div>Property</div>
-
-        <div>Owner</div>
-
-        <div>Price</div>
-
-        <div>Status</div>
-
-        <div>Date</div>
-
-        <div>Actions</div>
-      </div>
-
-      {/* Rows */}
-      {
-
-       properties
-
-  .slice(0,5)
-
-  .map(
-
-    (
-
-      property:any,
-
-      index:number
-
-    ) => (
-
-            <div
-
-              key={property._id || property.id || index}
-
-              style={{
-
-                display:"grid",
-
-                gridTemplateColumns:
-                  "2fr 1fr 1fr 1fr 1fr auto",
-
-                padding:"1px 24px",
-                transition:"all .2s ease",
-                cursor:"pointer",
-
-                borderTop:
-                  "1px solid #f1f5f9",
-
-                alignItems:"center",
-
-              }}
-
-            >
-
-              <div
-                style={{
-                  fontWeight:600,
-                }}
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={propertyTypeData}
+                cx="50%"
+                cy="50%"
+                labelLine={true}
+                label={({ name, value }) => `${name}: ${value}`}
+                outerRadius={90}
+                fill="#8884d8"
+                dataKey="value"
               >
-                {
-                  property.title
-                }
-              </div>
-
-            <div>
-
-  <div
-    style={{
-      fontWeight:600
-    }}
-  >
-    {
-      property.agentName || "-"
-    }
-  </div>
-
-  <div
-    style={{
-
-      fontSize:11,
-
-      color:"#64748b",
-
-      marginTop:4
-
-    }}
-  >
-
-    {
-
-      property.postedBy || "Owner"
-
-    }
-
-  </div>
-
-</div>
-
-   <div>
-              ₹
-{
-  Number(
-    property.price || 0
-  ).toLocaleString("en-IN")
-}
-              </div>
-
-              <div>
-
-                <span
-                  style={{
-
-                    padding:
-                      "6px 12px",
-
-                    borderRadius:999,
-
-                    fontSize:11,
-
-                    fontWeight:700,
-
-                    background:
-
-                      property.approvalStatus ===
-                      "approved"
-
-                      ?
-
-                      "#dcfce7"
-
-                      :
-
-                      property.approvalStatus ===
-                      "rejected"
-
-                      ?
-
-                      "#fee2e2"
-
-                      :
-
-                      "#fef9c3",
-
-                    color:
-
-                      property.approvalStatus ===
-                      "approved"
-
-                      ?
-
-                      "#166534"
-
-                      :
-
-                      property.approvalStatus ===
-                      "rejected"
-
-                      ?
-
-                      "#991b1b"
-
-                      :
-
-                      "#854d0e",
-
-                  }}
-                >
-                  {
-                    property.approvalStatus
-                  }
-                </span>
-
-              </div>
-
-              <div>
-                {
-                  new Date(
-
-                    property.createdAt
-
-                  ).toLocaleDateString()
-                }
-              </div>
-
-              <div
-                style={{
-                  display:"flex",
-                  gap:10,
+                {propertyTypeData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1e293b",
+                  border: "1px solid #ffffff30",
+                  borderRadius: "12px",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
                 }}
-              >
-<button
-
-  onClick={() =>
-
-    window.location.href =
-
-      `/x-admin/properties/${property._id}`
-
-  }
-
-  style={{
-
-    border:"none",
-
-    background:"none",
-
-    cursor:"pointer",
-
-  }}
-
->
-
-  👁
-
-</button>
-
-               <button
-
-  onClick={()=>
-
-    updatePropertyStatus(
-
-      property._id,
-
-      "approved"
-
-    )
-
-  }
-
-  style={{
-    border:"none",
-    background:"none",
-    cursor:"pointer",
-  }}
->
-
-  ✔
-
-</button>
-
-               <button
-
-  onClick={()=>
-
-    updatePropertyStatus(
-
-      property._id,
-
-      "rejected"
-
-    )
-
-  }
-
-  style={{
-    border:"none",
-    background:"none",
-    cursor:"pointer",
-  }}
->
-
-  ✖
-
-</button>
-
-              </div>
-
-            </div>
-
-          )
-
-        )
-
-      }
-
-    </div>
-
-  </div>
-
-</div>
-{/* COMPACT PREMIUM RECENT LEADS */}
-<div
-  style={{
-    background:"#fff",
-    border:"1px solid #e2e8f0",
-    borderRadius:20,
-    overflow:"hidden",
-    boxShadow:"0 4px 16px rgba(15,23,42,.05)",
-  }}
->
-
-  {/* HEADER */}
-  <div
-    style={{
-      padding:"16px 18px",
-      borderBottom:"1px solid #eef2f7",
-
-      display:"flex",
-      justifyContent:"space-between",
-      alignItems:"center",
-      gap:12,
-      flexWrap:"wrap",
-    }}
-  >
-
-    {/* LEFT */}
-    <div>
-
-      <div
-        style={{
-          fontSize:18,
-          fontWeight:700,
-          color:"#0f172a",
-        }}
-      >
-        Recent Leads
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartCard>
       </div>
 
-      <div
-        style={{
-          fontSize:12,
-          color:"#64748b",
-          marginTop:4,
-        }}
-      >
-        Latest customer inquiries
-      </div>
-
-    </div>
-
-    {/* SEARCH */}
-    <div
-      style={{
-        display:"flex",
-        alignItems:"center",
-        gap:8,
-
-        background:"#f8fafc",
-
-        border:"1px solid #e2e8f0",
-
-        borderRadius:12,
-
-        padding:"8px 12px",
-
-        minWidth:
-          mobile
-            ? "100%"
-            : 220,
-      }}
-    >
-
-      <Search
-        size={14}
-        color="#64748b"
-      />
-
-      <input
-        value={query}
-
-        onChange={(e)=>
-          setQuery(
-            e.target.value
-          )
-        }
-
-        placeholder="Search leads"
-
-        style={{
-          border:"none",
-          outline:"none",
-          background:"transparent",
-          width:"100%",
-          fontSize:13,
-          color:"#0f172a",
-        }}
-      />
-
-    </div>
-
-  </div>
-
-  {/* LEADS */}
-  <div>
-
-    {
-
-      paginated
-        .slice(0,5)
-        .map((lead:any,index:number)=>(
-
-          <div
-            key={
-              lead._id
-              ||
-              lead.id
-              ||
-              index
-            }
-
-            style={{
-              display:"flex",
-
-              justifyContent:
-                "space-between",
-
-              alignItems:"center",
-
-              padding:"12px 18px",
-
-              borderBottom:
-                "1px solid #f1f5f9",
-
-              background:
-
-                !lead.isViewed
-
-                ?
-
-                "#f8fbff"
-
-                :
-
-                "#fff",
-
-              transition:
-                "all .2s ease",
-
-              cursor:"pointer",
-            }}
-
-            onMouseEnter={(e)=>{
-
-              e.currentTarget.style.background =
-                "#f8fafc";
-
-            }}
-
-            onMouseLeave={(e)=>{
-
-              e.currentTarget.style.background =
-
-                !lead.isViewed
-
-                ?
-
-                "#f8fbff"
-
-                :
-
-                "#fff";
-
-            }}
+      {/* Tables Section */}
+      <div className="mb-10 grid grid-cols-1 gap-7 lg:grid-cols-3">
+        {/* Recent Properties */}
+        <div className="lg:col-span-2">
+          <DataTableCard
+            title="Recent Properties"
+            subtitle={`${properties.slice(0, 5).length} latest property listings`}
           >
+            <table className="w-full">
+              <TableHeader
+                columns={[
+                  { key: "property", label: "Property" },
+                  { key: "owner", label: "Owner" },
+                  { key: "price", label: "Price" },
+                  { key: "status", label: "Status" },
+                  { key: "actions", label: "Actions" },
+                ]}
+              />
+              <tbody className="divide-y divide-white/10">
+                {properties.slice(0, 5).length > 0 ? (
+                  properties.slice(0, 5).map((property, idx) => (
+                    <tr
+                      key={property._id || idx}
+                      className="hover:bg-white/5 transition-all duration-300 group border-b border-white/10"
+                    >
+                      <td className="px-8 py-6 text-sm font-semibold text-white group-hover:text-white transition-colors">
+                        {property.title}
+                      </td>
+                      <td className="px-8 py-6 text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
+                        {property.agentName || "-"}
+                      </td>
+                      <td className="px-8 py-6 text-sm font-medium text-white">
+                        ₹{Number(property.price || 0).toLocaleString("en-IN")}
+                      </td>
+                      <td className="px-8 py-6">
+                        <Badge
+                          label={property.approvalStatus || "pending"}
+                          variant={
+                            property.approvalStatus === "approved"
+                              ? "success"
+                              : property.approvalStatus === "rejected"
+                                ? "error"
+                                : "warning"
+                          }
+                          size="sm"
+                        />
+                      </td>
+                      <td className="px-8 py-6 flex-shrink-0">
+                        <ActionButtons
+                          onView={() =>
+                            (window.location.href = `/x-admin/properties/${property._id}`)
+                          }
+                          onEdit={() =>
+                            (window.location.href = `/x-admin/properties/${property._id}/edit`)
+                          }
+                          onDelete={() =>
+                            handlePropertyStatus(property._id, "rejected")
+                          }
+                          size="sm"
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-8 py-20 text-center">
+                      <div className="flex flex-col items-center gap-5">
+                        <div className="text-6xl text-gray-400">📦</div>
+                        <p className="text-gray-300 font-semibold text-lg">No properties yet</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </DataTableCard>
+        </div>
 
-            {/* LEFT */}
-            <div
-              style={{
-                display:"flex",
-                alignItems:"center",
-                gap:12,
-              }}
-            >
-
-              {/* AVATAR */}
-              <div
-                style={{
-                  width:40,
-                  height:40,
-
-                  borderRadius:12,
-
-                  background:
-
-                    !lead.isViewed
-
-                    ?
-
-                    "#dbeafe"
-
-                    :
-
-                    "#dcfce7",
-
-                  color:
-
-                    !lead.isViewed
-
-                    ?
-
-                    "#2563eb"
-
-                    :
-
-                    "#16a34a",
-
-                  display:"flex",
-
-                  alignItems:"center",
-
-                  justifyContent:"center",
-
-                  fontWeight:700,
-
-                  fontSize:14,
-
-                  flexShrink:0,
-                }}
-              >
-                {
-                  lead.name
-                    ?.charAt(0)
-                }
+        {/* Quick Stats Sidebar */}
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl p-9 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:border-white/20 min-h-64">
+            <h3 className="text-2xl font-black text-white mb-8 tracking-tight">Property Status</h3>
+            <div className="space-y-5">
+              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 hover:border-amber-400/50 transition-all duration-300">
+                <span className="text-base font-semibold text-amber-200">Pending</span>
+                <span className="text-3xl font-black text-amber-300">
+                  {analytics?.pendingProperties || 0}
+                </span>
               </div>
-
-              {/* INFO */}
-              <div>
-
-                <div
-                  style={{
-                    fontSize:14,
-                    fontWeight:700,
-                    color:"#0f172a",
-                  }}
-                >
-                  {lead.name}
-                </div>
-
-                <div
-                  style={{
-                    fontSize:12,
-                    color:"#64748b",
-                    marginTop:3,
-                  }}
-                >
-                  {
-                    lead.contact
-                    ||
-                    "No Contact"
-                  }
-                </div>
-
+              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-green-500/20 to-transparent border border-green-500/30 hover:border-green-400/50 transition-all duration-300">
+                <span className="text-base font-semibold text-green-200">Approved</span>
+                <span className="text-3xl font-black text-green-300">
+                  {analytics?.approvedProperties || 0}
+                </span>
               </div>
-
+              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-red-500/20 to-transparent border border-red-500/30 hover:border-red-400/50 transition-all duration-300">
+                <span className="text-base font-semibold text-red-200">Rejected</span>
+                <span className="text-3xl font-black text-red-300">
+                  {analytics?.rejectedProperties || 0}
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-purple-500/20 to-transparent border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300">
+                <span className="text-base font-semibold text-purple-200">Premium</span>
+                <span className="text-3xl font-black text-purple-300">
+                  {analytics?.premiumProperties || 0}
+                </span>
+              </div>
             </div>
-
-            {/* RIGHT */}
-            <div
-              style={{
-                display:"flex",
-                alignItems:"center",
-                gap:8,
-              }}
-            >
-
-              {/* STATUS */}
-              {
-                !mobile && (
-
-                  <span
-                    style={{
-                      background:
-
-                        !lead.isViewed
-
-                        ?
-
-                        "#dbeafe"
-
-                        :
-
-                        "#dcfce7",
-
-                      color:
-
-                        !lead.isViewed
-
-                        ?
-
-                        "#1d4ed8"
-
-                        :
-
-                        "#166534",
-
-                      padding:"5px 10px",
-
-                      borderRadius:999,
-
-                      fontSize:11,
-
-                      fontWeight:700,
-                    }}
-                  >
-                    {
-
-                      !lead.isViewed
-
-                      ?
-
-                      "New"
-
-                      :
-
-                      "Viewed"
-
-                    }
-                  </span>
-
-                )
-              }
-
-              {/* VIEW */}
-              <button
-
-                onClick={()=>
-                  openLead(
-                    lead
-                  )
-                }
-
-                style={{
-                  width:32,
-                  height:32,
-
-                  border:"none",
-
-                  borderRadius:10,
-
-                  background:"#eff6ff",
-
-                  display:"flex",
-
-                  alignItems:"center",
-
-                  justifyContent:"center",
-
-                  cursor:"pointer",
-                }}
-              >
-                <Eye
-                  size={14}
-                  color="#2563eb"
-                />
-              </button>
-
-              {/* EDIT */}
-              <button
-                style={{
-                  width:32,
-                  height:32,
-
-                  border:"none",
-
-                  borderRadius:10,
-
-                  background:"#f8fafc",
-
-                  display:"flex",
-
-                  alignItems:"center",
-
-                  justifyContent:"center",
-
-                  cursor:"pointer",
-                }}
-              >
-                <Pencil
-                  size={14}
-                  color="#64748b"
-                />
-              </button>
-
-              {/* DELETE */}
-              <button
-                style={{
-                  width:32,
-                  height:32,
-
-                  border:"none",
-
-                  borderRadius:10,
-
-                  background:"#fef2f2",
-
-                  display:"flex",
-
-                  alignItems:"center",
-
-                  justifyContent:"center",
-
-                  cursor:"pointer",
-                }}
-              >
-                <Trash2
-                  size={14}
-                  color="#dc2626"
-                />
-              </button>
-
-            </div>
-
           </div>
-
-        ))
-
-    }
-
-  </div>
-
-  {/* FOOTER */}
-  <div
-    style={{
-      padding:"14px 18px",
-
-      display:"flex",
-
-      justifyContent:
-        "space-between",
-
-      alignItems:"center",
-
-      background:"#fff",
-    }}
-  >
-
-    {/* LEFT */}
-    <div
-      style={{
-        fontSize:12,
-        color:"#64748b",
-      }}
-    >
-      Showing latest leads
-    </div>
-
-    {/* PAGINATION */}
-    <div
-      style={{
-        display:"flex",
-        alignItems:"center",
-        gap:10,
-      }}
-    >
-
-      <button
-
-        onClick={()=>
-
-          setPage((p)=>
-
-            Math.max(
-              1,
-              p - 1
-            )
-
-          )
-
-        }
-
-        style={{
-          width:30,
-          height:30,
-
-          border:"1px solid #e2e8f0",
-
-          borderRadius:10,
-
-          background:"#fff",
-
-          display:"flex",
-
-          alignItems:"center",
-
-          justifyContent:"center",
-
-          cursor:"pointer",
-        }}
-      >
-        <ChevronLeft
-          size={14}
-        />
-      </button>
-
-      <div
-        style={{
-          fontSize:13,
-          fontWeight:700,
-          color:"#0f172a",
-        }}
-      >
-        {page}/{totalPages}
+        </div>
       </div>
 
-      <button
-
-        onClick={()=>
-
-          setPage((p)=>
-
-            Math.min(
-              totalPages,
-              p + 1
-            )
-
-          )
-
+      {/* Recent Leads Table */}
+      <DataTableCard
+        title="Recent Leads"
+        subtitle="Latest customer inquiries and contact requests"
+        action={
+          <div className="w-full max-w-sm">
+            <SearchBar
+              placeholder="Search leads by name..."
+              value={query}
+              onChange={setQuery}
+            />
+          </div>
         }
-
-        style={{
-          width:30,
-          height:30,
-
-          border:"1px solid #e2e8f0",
-
-          borderRadius:10,
-
-          background:"#fff",
-
-          display:"flex",
-
-          alignItems:"center",
-
-          justifyContent:"center",
-
-          cursor:"pointer",
-        }}
-      >
-        <ChevronRight
-          size={14}
-        />
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-{/* RECENT LEADS */}
-<div
-  style={{
-    ...card,
-
-    overflow:"hidden",
-
-    borderRadius:24,
-  }}
->
-
-  {/* HEADER */}
-  <div
-    style={{
-      padding:"18px 20px",
-
-      borderBottom:
-        "1px solid #e2e8f0",
-
-      display:"flex",
-
-      justifyContent:
-        "space-between",
-
-      alignItems:"center",
-    }}
-  >
-
-    <div>
-
-    
-
-      <Search size={14}/>
-
-      <input
-        value={query}
-
-        onChange={(e)=>
-          setQuery(
-            e.target.value
+        footer={
+          paginatedLeads.length > 0 && (
+            <div className="flex items-center justify-between gap-6">
+              <div className="text-sm font-medium text-gray-300">
+                Showing <span className="font-bold text-white">{paginatedLeads.length}</span> of{" "}
+                <span className="font-bold text-white">{filteredLeads.length}</span> leads
+              </div>
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            </div>
           )
         }
-
-        placeholder="Search"
-
-        style={{
-          border:"none",
-          outline:"none",
-          background:"none",
-          width:120,
-          fontSize:13,
-        }}
-      />
-
-    </div>
-
-  </div>
-    {/* CHARTS */}
-
-    {/* RECENT LEADS */}
-
-  
-
- 
-
-
-
-  
-  {/* RIGHT SIDEBAR */}
-  
-<div
-  style={{
-    display:"flex",
-
-    flexDirection:"column",
-
-    gap:24,
-  }
-}
-  
->
-
-
-
-</div>
-
-</div>
- </div>
-
-  {/* PAGINATION */}
-  <div
-    style={{
-      padding:16,
-
-      borderTop:
-        "1px solid #e2e8f0",
-
-      display:"flex",
-
-      justifyContent:
-        "flex-end",
-
-      alignItems:"center",
-
-      gap:10,
-    }}
-  >
-
-    <button
-
-      onClick={()=>
-
-        setPage((p)=>
-
-          Math.max(
-            1,
-            p - 1
-          )
-
-        )
-
-      }
-
-      style={{
-        border:"none",
-        background:"none",
-        cursor:"pointer",
-      }}
-    >
-      <ChevronLeft size={16}/>
-    </button>
-
-    <div
-      style={{
-        fontWeight:600,
-      }}
-    >
-      {page}/{totalPages}
-    </div>
-
-    <button
-
-      onClick={()=>
-
-        setPage((p)=>
-
-          Math.min(
-            totalPages,
-            p + 1
-          )
-
-        )
-
-      }
-
-      style={{
-        border:"none",
-        background:"none",
-        cursor:"pointer",
-      }}
-    >
-      <ChevronRight size={16}/>
-    </button>
-
-  </div>
-
-</div>
-        
-
-{/* Charts */}
-<div
-  style={{
-    display:"grid",
-
-    gridTemplateColumns:
-
-      mobile
-
-        ? "1fr"
-
-        : "1fr 1fr",
-
-    gap:24,
-
-    marginBottom:24,
-  }}
->
-
-  {/* Pie Chart */}
-  <div
-    style={{
-      ...card,
-      height:350,
-    }}
-  >
-
-    <div
-      style={{
-        fontSize:16,
-        fontWeight:700,
-        marginBottom:20,
-      }}
-    >
-      Property Types
-    </div>
-
-    <ResponsiveContainer
-      width="100%"
-      height="100%"
-    >
-
-      <PieChart>
-
-        <Pie
-
-          data={
-            propertyTypeData
-          }
-
-          cx="50%"
-
-          cy="50%"
-
-          outerRadius={100}
-
-          dataKey="value"
-
-          label
-
-        >
-
-          {
-
-           propertyTypeData.map(
-
-  (
-    entry,
-    index
-  ) => (
-
-    <Cell
-
-      key={`chart-${index}`}
-
-  fill={
-    COLORS[
-      index %
-      COLORS.length
-    ]
-  }
-
-/>
-
-              )
-
-            )
-
-          }
-
-        </Pie>
-
-      </PieChart>
-
-    </ResponsiveContainer>
-
-  </div>
-
-  {/* Trend Chart */}
-  <div
-    style={{
-      ...card,
-      height:350,
-    }}
-  >
-
-    <div
-      style={{
-        fontSize:16,
-        fontWeight:700,
-        marginBottom:20,
-      }}
-    >
-      Property Posting Trend
-    </div>
-
-    <ResponsiveContainer
-      width="100%"
-      height="100%"
-    >
-
-      <LineChart
-        data={trendData}
       >
-
-        <CartesianGrid
-          strokeDasharray="3 3"
-        />
-
-        <XAxis
-          dataKey="day"
-        />
-
-        <YAxis />
-
-        <Tooltip />
-
-        <Line
-
-          type="monotone"
-
-          dataKey="properties"
-
-          stroke="#16a34a"
-
-          strokeWidth={3}
-
-        />
-
-      </LineChart>
-
-    </ResponsiveContainer>
-
-  </div>
-
-</div>
-
-       
-    </div>
-
-</div>
-
-);
-
+        <table className="w-full">
+          <TableHeader
+            columns={[
+              { key: "name", label: "Name" },
+              { key: "contact", label: "Contact" },
+              { key: "status", label: "Status" },
+              { key: "date", label: "Date" },
+              { key: "actions", label: "Actions" },
+            ]}
+          />
+          <tbody className="divide-y divide-white/10">
+            {paginatedLeads.length > 0 ? (
+              paginatedLeads.map((lead, idx) => (
+                <tr
+                  key={lead._id || idx}
+                  className={`hover:bg-white/5 transition-all duration-300 group border-b border-white/10 ${!lead.isViewed ? "bg-blue-500/10" : ""}`}
+                >
+                  <td className="px-8 py-6 text-sm font-semibold text-white group-hover:text-white transition-colors">
+                    {lead.name}
+                  </td>
+                  <td className="px-8 py-6 text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
+                    {lead.contact || lead.email || "-"}
+                  </td>
+                  <td className="px-8 py-6">
+                    <Badge
+                      label={lead.isViewed ? "Viewed" : "New"}
+                      variant={lead.isViewed ? "info" : "success"}
+                      size="sm"
+                    />
+                  </td>
+                  <td className="px-8 py-6 text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
+                    {lead.createdAt
+                      ? new Date(lead.createdAt).toLocaleDateString("en-IN", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "-"}
+                  </td>
+                  <td className="px-8 py-6 flex-shrink-0">
+                    <ActionButtons
+                      onView={() => handleViewLead(lead._id)}
+                      onEdit={() =>
+                        (window.location.href = `/x-admin/leads/${lead._id}/edit`)
+                      }
+                      onDelete={() => console.log("Delete:", lead._id)}
+                      size="sm"
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="px-8 py-20 text-center">
+                  <div className="flex flex-col items-center gap-5">
+                    <div className="text-6xl text-gray-300">📋</div>
+                    <p className="text-gray-600 font-semibold text-lg">
+                      {query ? "No leads match your search" : "No leads yet"}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </DataTableCard>
+    </DashboardLayout>
+  );
 }
