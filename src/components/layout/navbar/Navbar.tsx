@@ -402,87 +402,48 @@ export function Navbar() {
 
   const [user, setUser] = useState<any>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-const [
+  const [notifications, setNotifications] = useState<any[]>([]);
 
-  notifications,
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  setNotifications
-
-] = useState<any[]>([]);
-
-const [
-
-  unreadCount,
-
-  setUnreadCount
-
-] = useState(0);
-
-const [
-
-  showNotifications,
-
-  setShowNotifications
-
-] = useState(false);
-
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   /* Logout */
- const logout = () => {
-
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  localStorage.removeItem("token");
-
-  localStorage.removeItem("user");
-
-  setUser(null);
-
-  setShowProfileMenu(false);
-
-  router.push("/");
-};
-
-
-/* Close profile dropdown on outside click */
-useEffect(() => {
-
-  const handleClickOutside = (
-    event: MouseEvent
-  ) => {
-
-    if (
-      profileRef.current &&
-      !profileRef.current.contains(
-        event.target as Node
-      )
-    ) {
-
-      setShowProfileMenu(false);
-
+  const logout = () => {
+    if (typeof window === "undefined") {
+      return;
     }
+
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("user");
+
+    setUser(null);
+
+    setShowProfileMenu(false);
+
+    router.push("/");
   };
 
-  document.addEventListener(
-    "mousedown",
-    handleClickOutside
-  );
+  /* Close profile dropdown on outside click */
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setShowProfileMenu(false);
+      }
+    };
 
-  return () => {
+    document.addEventListener("mousedown", handleClickOutside);
 
-    document.removeEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
-  };
-
-}, []);
-
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   /* Load logged in user */
   useEffect(() => {
@@ -510,63 +471,33 @@ useEffect(() => {
   }, []);
 
   /* FETCH NOTIFICATIONS */
-useEffect(() => {
+  useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        if (!user?._id) {
+          return;
+        }
 
-  async function fetchNotifications(){
+        const res = await fetch(`/api/notifications?userId=${user._id}`);
 
-    try{
+        const data = await res.json();
 
-      if(!user?._id){
+        if (data.success) {
+          setNotifications(data.notifications || []);
 
-        return;
+          setUnreadCount(data.unreadCount || 0);
+        }
+      } catch (error) {
+        console.error(
+          "Notification Error:",
 
+          error,
+        );
       }
-
-      const res =
-        await fetch(
-
-          `/api/notifications?userId=${user._id}`
-
-        );
-
-      const data =
-        await res.json();
-
-      if(data.success){
-
-        setNotifications(
-
-          data.notifications || []
-
-        );
-
-        setUnreadCount(
-
-          data.unreadCount || 0
-
-        );
-
-      }
-
     }
 
-    catch(error){
-
-      console.error(
-
-        "Notification Error:",
-
-        error
-
-      );
-
-    }
-
-  }
-
-  fetchNotifications();
-
-},[user]);
+    fetchNotifications();
+  }, [user]);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -654,16 +585,16 @@ useEffect(() => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-const menuBtn: React.CSSProperties = {
-  width: "100%",
-  border: "none",
-  background: "transparent",
-  padding: "14px 16px",
-  textAlign: "left",
-  cursor: "pointer",
-  fontWeight: 600,
-  color: "#111827",
-};
+  const menuBtn: React.CSSProperties = {
+    width: "100%",
+    border: "none",
+    background: "transparent",
+    padding: "14px 16px",
+    textAlign: "left",
+    cursor: "pointer",
+    fontWeight: 600,
+    color: "#111827",
+  };
 
   const openMenu = (label: string) => {
     if (menuTimerRef.current) clearTimeout(menuTimerRef.current);
@@ -697,8 +628,7 @@ const menuBtn: React.CSSProperties = {
         <div
           key={item.label}
           style={{
-
-           display: item.label === "Coworking" ? "none" : "block",
+            display: item.label === "Coworking" ? "none" : "block",
           }}
           onMouseEnter={() => openMenu(item.label)}
           onMouseLeave={closeMenu}
@@ -1338,7 +1268,7 @@ const menuBtn: React.CSSProperties = {
                           }}
                         >
                           <Link
-                            href="/properties"
+                            href="/nashik"
                             style={{
                               display: "flex",
                               alignItems: "center",
@@ -1386,330 +1316,215 @@ const menuBtn: React.CSSProperties = {
                   <Search size={16} />
                 </button>
                 {/* NOTIFICATION BELL */}
-<div
-  style={{
-    position:"relative"
-  }}
->
-
-  {/* BELL BUTTON */}
-  <button
-
-    onClick={()=>
-
-      setShowNotifications(
-
-        !showNotifications
-
-      )
-
-    }
-
-    style={{
-
-      width:"45px",
-
-      height:"38px",
-
-      borderRadius:"12px",
-
-      display:"flex",
-
-      alignItems:"center",
-
-      justifyContent:"center",
-
-      border:"1.5px solid #e5e7eb",
-
-      background:"#fff",
-
-      color:"#374151",
-
-      transition:"all .2s ease",
-
-      cursor:"pointer",
-
-      position:"relative",
-
-      boxShadow:
-        "0 1px 2px rgba(0,0,0,.04)"
-
-    }}
-
-  >
-
-    <Bell size={18} />
-
-
-
-    {/* RED BADGE */}
-    {
-
-      unreadCount > 0 && (
-
-        <div
-          style={{
-
-            position:"absolute",
-
-            top:-5,
-
-            right:-5,
-
-            minWidth:20,
-
-            height:20,
-
-            borderRadius:"50%",
-
-            background:"#ef4444",
-
-            color:"#fff",
-
-            fontSize:11,
-
-            fontWeight:700,
-
-            display:"flex",
-
-            alignItems:"center",
-
-            justifyContent:"center",
-
-            padding:"0 5px",
-
-            boxShadow:
-              "0 4px 10px rgba(239,68,68,.3)"
-
-          }}
-        >
-
-          {unreadCount}
-
-        </div>
-
-      )
-
-    }
-
-  </button>
-
-
-
-  {/* NOTIFICATION DROPDOWN */}
-  {
-
-    showNotifications && (
-
-      <div
-        style={{
-
-          position:"absolute",
-
-          top:"52px",
-
-          right:0,
-
-          width:"340px",
-
-          maxHeight:"420px",
-
-          overflowY:"auto",
-
-          background:"#fff",
-
-          borderRadius:"18px",
-
-          border:"1px solid #e5e7eb",
-
-          boxShadow:
-            "0 20px 60px rgba(0,0,0,.12)",
-
-          padding:"16px",
-
-          zIndex:9999
-
-        }}
-      >
-
-        {/* HEADER */}
-        <div
-          style={{
-
-            display:"flex",
-
-            justifyContent:"space-between",
-
-            alignItems:"center",
-
-            marginBottom:"14px"
-
-          }}
-        >
-
-          <h3
-            style={{
-
-              fontSize:"16px",
-
-              fontWeight:800,
-
-              color:"#111827"
-
-            }}
-          >
-
-            Notifications
-
-          </h3>
-
-
-          <div
-            style={{
-
-              fontSize:"12px",
-
-              color:"#6b7280",
-
-              fontWeight:600
-
-            }}
-          >
-
-            {notifications.length} Total
-
-          </div>
-
-        </div>
-
-
-
-        {/* EMPTY */}
-        {
-
-          notifications.length === 0 && (
-
-            <div
-              style={{
-
-                textAlign:"center",
-
-                padding:"30px 10px",
-
-                color:"#9ca3af",
-
-                fontSize:"14px"
-
-              }}
-            >
-
-              No notifications
-
-            </div>
-
-          )
-
-        }
-
-
-
-        {/* LIST */}
-        {
-
-          notifications.map(
-
-            (item:any)=>(
-
-              <div
-
-                key={item._id}
-
-                style={{
-
-                  padding:"14px",
-
-                  borderRadius:"14px",
-
-                  marginBottom:"10px",
-
-                  background:
-
-                    item.isRead
-
-                    ?
-
-                    "#fff"
-
-                    :
-
-                    "#f0fdf4",
-
-                  border:
-
-                    item.isRead
-
-                    ?
-
-                    "1px solid #f3f4f6"
-
-                    :
-
-                    "1px solid #bbf7d0"
-
-                }}
-
-              >
-
                 <div
                   style={{
-
-                    fontWeight:700,
-
-                    fontSize:"14px",
-
-                    color:"#111827",
-
-                    marginBottom:"4px"
-
+                    position: "relative",
                   }}
                 >
+                  {/* BELL BUTTON */}
+                  <button
+                    onClick={() => setShowNotifications(!showNotifications)}
+                    style={{
+                      width: "45px",
 
-                  {item.title}
+                      height: "38px",
 
+                      borderRadius: "12px",
+
+                      display: "flex",
+
+                      alignItems: "center",
+
+                      justifyContent: "center",
+
+                      border: "1.5px solid #e5e7eb",
+
+                      background: "#fff",
+
+                      color: "#374151",
+
+                      transition: "all .2s ease",
+
+                      cursor: "pointer",
+
+                      position: "relative",
+
+                      boxShadow: "0 1px 2px rgba(0,0,0,.04)",
+                    }}
+                  >
+                    <Bell size={18} />
+
+                    {/* RED BADGE */}
+                    {unreadCount > 0 && (
+                      <div
+                        style={{
+                          position: "absolute",
+
+                          top: -5,
+
+                          right: -5,
+
+                          minWidth: 20,
+
+                          height: 20,
+
+                          borderRadius: "50%",
+
+                          background: "#ef4444",
+
+                          color: "#fff",
+
+                          fontSize: 11,
+
+                          fontWeight: 700,
+
+                          display: "flex",
+
+                          alignItems: "center",
+
+                          justifyContent: "center",
+
+                          padding: "0 5px",
+
+                          boxShadow: "0 4px 10px rgba(239,68,68,.3)",
+                        }}
+                      >
+                        {unreadCount}
+                      </div>
+                    )}
+                  </button>
+
+                  {/* NOTIFICATION DROPDOWN */}
+                  {showNotifications && (
+                    <div
+                      style={{
+                        position: "absolute",
+
+                        top: "52px",
+
+                        right: 0,
+
+                        width: "340px",
+
+                        maxHeight: "420px",
+
+                        overflowY: "auto",
+
+                        background: "#fff",
+
+                        borderRadius: "18px",
+
+                        border: "1px solid #e5e7eb",
+
+                        boxShadow: "0 20px 60px rgba(0,0,0,.12)",
+
+                        padding: "16px",
+
+                        zIndex: 9999,
+                      }}
+                    >
+                      {/* HEADER */}
+                      <div
+                        style={{
+                          display: "flex",
+
+                          justifyContent: "space-between",
+
+                          alignItems: "center",
+
+                          marginBottom: "14px",
+                        }}
+                      >
+                        <h3
+                          style={{
+                            fontSize: "16px",
+
+                            fontWeight: 800,
+
+                            color: "#111827",
+                          }}
+                        >
+                          Notifications
+                        </h3>
+
+                        <div
+                          style={{
+                            fontSize: "12px",
+
+                            color: "#6b7280",
+
+                            fontWeight: 600,
+                          }}
+                        >
+                          {notifications.length} Total
+                        </div>
+                      </div>
+
+                      {/* EMPTY */}
+                      {notifications.length === 0 && (
+                        <div
+                          style={{
+                            textAlign: "center",
+
+                            padding: "30px 10px",
+
+                            color: "#9ca3af",
+
+                            fontSize: "14px",
+                          }}
+                        >
+                          No notifications
+                        </div>
+                      )}
+
+                      {/* LIST */}
+                      {notifications.map((item: any) => (
+                        <div
+                          key={item._id}
+                          style={{
+                            padding: "14px",
+
+                            borderRadius: "14px",
+
+                            marginBottom: "10px",
+
+                            background: item.isRead ? "#fff" : "#f0fdf4",
+
+                            border: item.isRead
+                              ? "1px solid #f3f4f6"
+                              : "1px solid #bbf7d0",
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: 700,
+
+                              fontSize: "14px",
+
+                              color: "#111827",
+
+                              marginBottom: "4px",
+                            }}
+                          >
+                            {item.title}
+                          </div>
+
+                          <div
+                            style={{
+                              fontSize: "13px",
+
+                              color: "#6b7280",
+
+                              lineHeight: 1.5,
+                            }}
+                          >
+                            {item.message}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-
-
-                <div
-                  style={{
-
-                    fontSize:"13px",
-
-                    color:"#6b7280",
-
-                    lineHeight:1.5
-
-                  }}
-                >
-
-                  {item.message}
-
-                </div>
-
-              </div>
-
-            )
-
-          )
-
-        }
-
-      </div>
-
-    )
-
-  }
-
-</div>
 
                 {/* Phone */}
                 {/* <a
@@ -1776,167 +1591,145 @@ const menuBtn: React.CSSProperties = {
                   }}
                 >
                   {user ? (
-                   <div
-  ref={profileRef}
-  style={{
-    position: "relative",
-  }}
->
+                    <div
+                      ref={profileRef}
+                      style={{
+                        position: "relative",
+                      }}
+                    >
+                      {/* PROFILE BUTTON */}
+                      <button
+                        onClick={() => setShowProfileMenu(!showProfileMenu)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          border: "1px solid #e5e7eb",
+                          background: "#fff",
+                          padding: "8px 14px",
+                          borderRadius: "999px",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                          boxShadow: "0 1px 2px rgba(0,0,0,.05)",
+                        }}
+                      >
+                        {/* AVATAR */}
+                        <div
+                          style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: "50%",
+                            background: "#f59e0b",
+                            color: "#fff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: 800,
+                            fontSize: "14px",
+                          }}
+                        >
+                          {user?.name?.charAt(0) || "U"}
+                        </div>
 
-  {/* PROFILE BUTTON */}
-  <button
-    onClick={() =>
-      setShowProfileMenu(!showProfileMenu)
-    }
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-      border: "1px solid #e5e7eb",
-      background: "#fff",
-      padding: "8px 14px",
-      borderRadius: "999px",
-      cursor: "pointer",
-      fontWeight: 700,
-      boxShadow: "0 1px 2px rgba(0,0,0,.05)",
-    }}
-  >
+                        {/* USER NAME */}
+                        <span
+                          style={{
+                            color: "#111827",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {user?.name || user?.phone}
+                        </span>
+                      </button>
 
-    {/* AVATAR */}
-    <div
-      style={{
-        width: 34,
-        height: 34,
-        borderRadius: "50%",
-        background: "#f59e0b",
-        color: "#fff",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontWeight: 800,
-        fontSize: "14px",
-      }}
-    >
-      {user?.name?.charAt(0) || "U"}
-    </div>
+                      {/* DROPDOWN */}
+                      {showProfileMenu && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "110%",
+                            right: 0,
+                            width: 240,
+                            background: "#fff",
+                            borderRadius: 16,
+                            border: "1px solid #e5e7eb",
+                            boxShadow: "0 10px 40px rgba(0,0,0,.08)",
+                            overflow: "hidden",
+                            zIndex: 999,
+                          }}
+                        >
+                          {/* USER INFO */}
+                          <div
+                            style={{
+                              padding: "14px",
+                              borderBottom: "1px solid #f3f4f6",
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: 700,
+                                color: "#111827",
+                              }}
+                            >
+                              {user?.name || "User"}
+                            </div>
 
-    {/* USER NAME */}
-    <span
-      style={{
-        color: "#111827",
-        fontSize: "14px",
-      }}
-    >
-      {user?.name || user?.phone}
-    </span>
+                            <div
+                              style={{
+                                fontSize: ".85rem",
+                                color: "#64748b",
+                                marginTop: "2px",
+                              }}
+                            >
+                              {user?.phone}
+                            </div>
+                          </div>
 
-  </button>
+                          {/* MENU ITEMS */}
+                          <Link
+                            href="/favorites"
+                            style={menuBtn as React.CSSProperties}
+                          ></Link>
 
-  
-  {/* DROPDOWN */}
-  {showProfileMenu && (
+                          <Link href="/favorites" style={menuBtn}>
+                            ❤️ Favorite Properties
+                          </Link>
 
-    <div
-      style={{
-        position: "absolute",
-        top: "110%",
-        right: 0,
-        width: 240,
-        background: "#fff",
-        borderRadius: 16,
-        border: "1px solid #e5e7eb",
-        boxShadow:
-          "0 10px 40px rgba(0,0,0,.08)",
-        overflow: "hidden",
-        zIndex: 999,
-      }}
-    >
-
-      {/* USER INFO */}
-      <div
-        style={{
-          padding: "14px",
-          borderBottom: "1px solid #f3f4f6",
-        }}
-      >
-        <div
-          style={{
-            fontWeight: 700,
-            color: "#111827",
-          }}
-        >
-          {user?.name || "User"}
-        </div>
-
-        <div
-          style={{
-            fontSize: ".85rem",
-            color: "#64748b",
-            marginTop: "2px",
-          }}
-        >
-          {user?.phone}
-        </div>
-      </div>
-
-
-      {/* MENU ITEMS */}
-    <Link
-  href="/favorites"
-  style={menuBtn as React.CSSProperties}
->
-  
-</Link>
-
-<Link
-  href="/favorites"
-  style={menuBtn}
->
-  ❤️ Favorite Properties
-</Link>
-
-
-
-
-
-      {/* LOGOUT */}
-      <button
-        onClick={logout}
-        style={{
-          ...menuBtn,
-          color: "#dc2626",
-        }}
-      >
-        Logout
-      </button>
-
-    </div>
-
-  )}
-
-</div>
+                          {/* LOGOUT */}
+                          <button
+                            onClick={logout}
+                            style={{
+                              ...menuBtn,
+                              color: "#dc2626",
+                            }}
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <button
-  onClick={() => setShowAuthModal(true)}
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "10px 18px",
-    borderRadius: "999px",
-    border: "1px solid #e5e7eb",
-    background: "#fff",
-    cursor: "pointer",
-    fontWeight: 700,
-    fontSize: "14px",
-    color: "#111827",
-    transition: "all .2s ease",
-    boxShadow: "0 1px 2px rgba(0,0,0,.05)",
-  }}
->
-  <User size={16} />
-  Login 
-</button>
+                      onClick={() => setShowAuthModal(true)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "10px 18px",
+                        borderRadius: "999px",
+                        border: "1px solid #e5e7eb",
+                        background: "#fff",
+                        cursor: "pointer",
+                        fontWeight: 700,
+                        fontSize: "14px",
+                        color: "#111827",
+                        transition: "all .2s ease",
+                        boxShadow: "0 1px 2px rgba(0,0,0,.05)",
+                      }}
+                    >
+                      <User size={16} />
+                      Login
+                    </button>
                   )}
                 </div>
 
@@ -2180,64 +1973,56 @@ const menuBtn: React.CSSProperties = {
               </button>
             </div>
 
+            {/* MOBILE USER INFO */}
+            {user && (
+              <div
+                style={{
+                  padding: "18px 24px",
+                  borderBottom: "1px solid #f3f4f6",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
+              >
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: "#f59e0b",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 800,
+                    fontSize: "18px",
+                  }}
+                >
+                  {user?.name?.charAt(0) || "U"}
+                </div>
 
+                <div>
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      color: "#111827",
+                    }}
+                  >
+                    {user?.name || "User"}
+                  </div>
 
-{/* MOBILE USER INFO */}
-{user && (
-
-  <div
-    style={{
-      padding: "18px 24px",
-      borderBottom: "1px solid #f3f4f6",
-      display: "flex",
-      alignItems: "center",
-      gap: "12px",
-    }}
-  >
-
-    <div
-      style={{
-        width: 48,
-        height: 48,
-        borderRadius: "50%",
-        background: "#f59e0b",
-        color: "#fff",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontWeight: 800,
-        fontSize: "18px",
-      }}
-    >
-      {user?.name?.charAt(0) || "U"}
-    </div>
-
-    <div>
-
-      <div
-        style={{
-          fontWeight: 700,
-          color: "#111827",
-        }}
-      >
-        {user?.name || "User"}
-      </div>
-
-      <div
-        style={{
-          fontSize: ".85rem",
-          color: "#64748b",
-          marginTop: "2px",
-        }}
-      >
-        {user?.phone}
-      </div>
-
-    </div>
-
-  </div>
-
-)}
+                  <div
+                    style={{
+                      fontSize: ".85rem",
+                      color: "#64748b",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {user?.phone}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Search inside drawer */}
             <div
@@ -2493,45 +2278,39 @@ const menuBtn: React.CSSProperties = {
                 </Link>
               ))}
             </div>
-{/* MOBILE LOGIN */}
-{!user && (
+            {/* MOBILE LOGIN */}
+            {!user && (
+              <div
+                style={{
+                  padding: "20px 24px 0",
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setShowAuthModal(true);
 
-  <div
-    style={{
-      padding: "20px 24px 0",
-    }}
-  >
-
-    <button
-      onClick={() => {
-
-        setShowAuthModal(true);
-
-        setMenuOpen(false);
-
-      }}
-      style={{
-        width: "100%",
-        height: "48px",
-        borderRadius: "12px",
-        border: "1px solid #e5e7eb",
-        background: "#fff",
-        fontWeight: 700,
-        fontSize: "15px",
-        cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "8px",
-      }}
-    >
-      <User size={18} />
-      Login / Register
-    </button>
-
-  </div>
-
-)}
+                    setMenuOpen(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    height: "48px",
+                    borderRadius: "12px",
+                    border: "1px solid #e5e7eb",
+                    background: "#fff",
+                    fontWeight: 700,
+                    fontSize: "15px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <User size={18} />
+                  Login / Register
+                </button>
+              </div>
+            )}
             {/* Auth + CTA at bottom */}
             <div
               style={{

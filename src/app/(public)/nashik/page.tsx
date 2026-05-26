@@ -17,22 +17,52 @@ export const metadata = {
 
 export default function NashikPage() {
   return (
-    <main className="overflow-hidden bg-[#f6faf7] pb-24 md:pb-0">
+    <main className="bg-[#f6faf7]">
       <NashikHero />
 
       <TrustStrip />
 
-      <WhyInvestSlider />
+      {/* WHY INVEST */}
+      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
+          <WhyInvestSlider />
+        </div>
+      </section>
 
-      <InfrastructureSection />
+      {/* INFRASTRUCTURE */}
+      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
+          <InfrastructureSection />
+        </div>
+      </section>
 
-      <HotLocalities />
+      {/* LOCALITIES */}
+      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
+          <HotLocalities />
+        </div>
+      </section>
 
-      <InvestmentConsultationForm />
+      {/* CONSULTATION */}
+      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px]">
+          <InvestmentConsultationForm />
+        </div>
+      </section>
 
-      <FAQSection />
+      {/* FAQ */}
+      <section className="bg-white px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
+        <div className="mx-auto max-w-7xl">
+          <FAQSection />
+        </div>
+      </section>
 
-      <FinalInvestmentCTA />
+      {/* FINAL CTA */}
+      <section className="bg-white px-4 py-16 md:px-8 md:py-24 lg:py-32">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px]">
+          <FinalInvestmentCTA />
+        </div>
+      </section>
 
       <StickyInvestmentCTA />
     </main>

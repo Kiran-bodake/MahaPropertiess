@@ -24,12 +24,12 @@ const items = [
 
 export default function InfrastructureSection() {
   return (
-    <section className="bg-white px-3 py-20 md:px-5 md:py-32">
-      <div className="w-full space-y-20 md:space-y-28">
+    <section className="bg-white px-5 py-16 md:px-8 md:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl space-y-20 md:space-y-28 lg:space-y-32">
         {items.map((item, index) => (
           <div
             key={item.title}
-            className="grid items-center gap-10 xl:grid-cols-[1.05fr_0.95fr]"
+            className="grid items-center gap-12 xl:grid-cols-[1.05fr_0.95fr] xl:gap-16"
           >
             <div className={index % 2 === 1 ? "lg:order-2" : ""}>
               <div
@@ -57,11 +57,11 @@ md:h-[520px]
                 Infrastructure Growth
               </p>
 
-              <h2 className="mt-5 text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-6xl">
+              <h2 className="mt-6 text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-5xl lg:text-6xl">
                 {item.title}
               </h2>
 
-              <p className="mt-7 text-lg leading-9 text-gray-600 md:text-xl">
+              <p className="mt-8 text-lg leading-9 text-gray-600 md:text-xl md:leading-10">
                 {item.description}
               </p>
             </div>

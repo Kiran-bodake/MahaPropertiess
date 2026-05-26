@@ -16,10 +16,10 @@ import "swiper/css/pagination";
 
 export default function WhyInvestSlider() {
   return (
-    <section className="overflow-hidden py-20 md:py-32">
+    <section className="overflow-hidden py-16 md:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         {/* HEADER */}
-        <div className="mb-12 max-w-4xl md:mb-16">
+        <div className="mb-16 max-w-4xl md:mb-20 lg:mb-24">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
             Why Invest In Nashik
           </p>
@@ -45,7 +45,7 @@ export default function WhyInvestSlider() {
         >
           {investmentReasons.map((item) => (
             <SwiperSlide key={item.title}>
-              <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_.95fr] xl:gap-20">
+              <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_.95fr] xl:gap-12">
                 {/* IMAGE */}
                 <motion.div
                   initial={{ opacity: 0, x: -40 }}

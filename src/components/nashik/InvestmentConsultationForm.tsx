@@ -26,15 +26,15 @@ export default function InvestmentConsultationForm() {
   };
 
   return (
-    <section className="px-3 py-16 md:px-5 md:py-24">
-      <div
-        className="
-w-full
+    <section className="px-5 py-16 md:px-8 md:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl">
+        <div
+          className="
 grid
 items-stretch
 gap-0
 overflow-visible
-rounded-[42px]
+rounded-[40px]
 bg-gradient-to-br
 from-[#08150d]
 via-[#102318]
@@ -42,36 +42,37 @@ to-[#173924]
 shadow-[0_30px_100px_rgba(0,0,0,0.25)]
 lg:grid-cols-[0.95fr_1.05fr]
 "
-      >
-        <div className="flex flex-col justify-center px-8 py-12 md:px-14 md:py-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-green-400">
-            Investment Consultation
-          </p>
+        >
+          <div className="flex flex-col justify-center px-8 py-16 md:px-12 md:py-20 lg:px-16 lg:py-24">
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-green-400">
+              Investment Consultation
+            </p>
 
-          <h2 className="mt-4 text-4xl font-black leading-[1.05] tracking-[-0.04em] !text-white md:text-5xl lg:text-6xl">
-            Talk To Nashik
-            <br />
-            Investment Experts
-          </h2>
+            <h2 className="mt-6 text-4xl font-black leading-[1.05] tracking-[-0.04em] !text-white md:text-5xl lg:text-6xl">
+              Talk To Nashik
+              <br />
+              Investment Experts
+            </h2>
 
-          <p className="mt-6 text-base leading-relaxed text-gray-300 md:text-lg">
-            Get personalized investment opportunities based on your budget and
-            preferred localities.
-          </p>
-        </div>
+            <p className="mt-8 text-base leading-relaxed text-gray-300 md:text-lg">
+              Get personalized investment opportunities based on your budget and
+              preferred localities.
+            </p>
+          </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="
 flex
 flex-col
-gap-3
+gap-5
 bg-white
-p-6
-md:p-7
+p-8
+md:p-10
+lg:p-12
 "
-        >
-          <div className="flex flex-col gap-3">
+          >
+            <div className="flex flex-col gap-3">
             <div>
               <input
                 {...register("name")}
@@ -175,8 +176,9 @@ md:p-7
             >
               Get Consultation
             </button>
-          </div>
-        </form>
+            </div>
+          </form>
+        </div>
       </div>
     </section>
   );

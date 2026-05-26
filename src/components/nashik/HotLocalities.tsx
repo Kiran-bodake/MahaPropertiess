@@ -29,19 +29,19 @@ const localities = [
 
 export default function HotLocalities() {
   return (
-    <section className="px-3 py-20 md:px-5 md:py-32">
-      <div className="w-full">
-        <div className="mb-14 max-w-6xl md:mb-20">
+    <section className="px-5 py-16 md:px-8 md:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-16 max-w-6xl md:mb-20 lg:mb-24">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
             Investment Opportunities
           </p>
 
-          <h2 className="text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-6xl">
+          <h2 className="text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-5xl lg:text-6xl">
             High-Growth Investment Localities In Nashik
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-10 md:grid-cols-2 lg:gap-12 xl:grid-cols-3">
           {localities.map((item) => (
             <div
               key={item.title}

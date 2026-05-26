@@ -27,15 +27,15 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="bg-[#f8fafc] py-20 md:py-28">
-      <div className="mx-auto max-w-[1600px] px-5 md:px-8">
+    <section className="py-0">
+      <div className="mx-auto max-w-7xl">
         {/* HEADER */}
-        <div className="mb-12 text-center md:mb-16">
+        <div className="mb-16 text-center md:mb-20 lg:mb-24">
           <p className="mb-3 text-lg font-semibold uppercase tracking-[0.3em] text-green-600">
             FAQs
           </p>
 
-          <h2 className="mx-auto max-w-5xl text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-6xl">
+          <h2 className="mx-auto max-w-5xl text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-5xl lg:text-6xl">
             Frequently Asked Questions
           </h2>
         </div>
