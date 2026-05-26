@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import {
-  BarChart3,
   Home,
   Users,
   ListChecks,
   TrendingUp,
-  Calendar,
 } from "lucide-react";
+
 import {
   LineChart,
   Line,
@@ -21,17 +20,15 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+
 import { DashboardLayout } from "@/components/admin/layout/DashboardLayout";
 import { StatCard } from "@/components/admin/cards/StatCard";
 import { ChartCard } from "@/components/admin/cards/ChartCard";
 import { DataTableCard } from "@/components/admin/cards/DataTableCard";
 import { TableHeader } from "@/components/admin/table/TableHeader";
-import { TableRow } from "@/components/admin/table/TableRow";
 import { ActionButtons } from "@/components/admin/common/ActionButtons";
 import { Badge } from "@/components/admin/common/Badge";
-import { EmptyState } from "@/components/admin/common/EmptyState";
 
-// Sample data
 const chartData = [
   { month: "Jan", properties: 40, leads: 24, deals: 24 },
   { month: "Feb", properties: 30, leads: 13, deals: 22 },
@@ -48,7 +45,7 @@ const recentLeads = [
     email: "john@example.com",
     status: "active",
     source: "Website",
-    date: "2024-05-20",
+    date: "20 May 2026",
   },
   {
     id: 2,
@@ -56,7 +53,7 @@ const recentLeads = [
     email: "jane@example.com",
     status: "pending",
     source: "Phone",
-    date: "2024-05-19",
+    date: "19 May 2026",
   },
   {
     id: 3,
@@ -64,7 +61,7 @@ const recentLeads = [
     email: "mike@example.com",
     status: "completed",
     source: "Referral",
-    date: "2024-05-18",
+    date: "18 May 2026",
   },
 ];
 
@@ -75,15 +72,15 @@ export default function AdminDashboard() {
     totalDeals: 0,
     totalTasks: 0,
   });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch dashboard stats
     const fetchStats = async () => {
       try {
-        // Replace with your actual API endpoint
         const response = await fetch("/api/admin/dashboard");
         const data = await response.json();
+
         setStats({
           totalProperties: data.properties || 0,
           totalLeads: data.leads || 0,
@@ -103,17 +100,20 @@ export default function AdminDashboard() {
   return (
     <DashboardLayout
       title="Dashboard"
-      subtitle="Welcome back! Here's what's happening with your properties."
+      subtitle="Welcome back! Here’s what’s happening with your properties."
     >
-      {/* Stats Grid */}
-     <div className="mb-12 grid grid-cols-1 gap-7 md:grid-cols-2 2xl:grid-cols-4">
+
+      {/* KPI SECTION */}
+      <div className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+
         <StatCard
           label="Total Properties"
           value={stats.totalProperties}
-          icon={<Home className="h-8 w-8" />}
+          icon={<Home className="h-6 w-6" />}
           trend={12}
           color="blue"
         />
+
         <StatCard
           label="Active Leads"
           value={stats.totalLeads}
@@ -121,6 +121,7 @@ export default function AdminDashboard() {
           trend={8}
           color="green"
         />
+
         <StatCard
           label="Total Deals"
           value={stats.totalDeals}
@@ -128,6 +129,7 @@ export default function AdminDashboard() {
           trend={-3}
           color="purple"
         />
+
         <StatCard
           label="Pending Tasks"
           value={stats.totalTasks}
@@ -137,122 +139,274 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* Charts Section */}
-      <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <ChartCard title="Activity Overview" subtitle="Last 6 months">
-          <ResponsiveContainer width="100%" height={300}>
+      {/* CHART SECTION */}
+      <div className="mb-10 grid grid-cols-1 gap-5 xl:grid-cols-2">
+
+        {/* LINE CHART */}
+        <ChartCard
+          title="Activity Overview"
+          subtitle="Last 6 months performance"
+        >
+          <ResponsiveContainer width="100%" height={260}>
+
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="month" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
+
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#e5e7eb"
+              />
+
+              <XAxis
+                dataKey="month"
+                stroke="#94a3b8"
+                tickLine={false}
+                axisLine={false}
+              />
+
+              <YAxis
+                stroke="#94a3b8"
+                tickLine={false}
+                axisLine={false}
+              />
+
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #f1f5f9",
+                  borderRadius: "16px",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
                 }}
               />
+
               <Legend />
+
               <Line
                 type="monotone"
                 dataKey="properties"
                 stroke="#3b82f6"
+                strokeWidth={3}
                 dot={false}
               />
+
               <Line
                 type="monotone"
                 dataKey="leads"
                 stroke="#10b981"
+                strokeWidth={3}
                 dot={false}
               />
+
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Performance Metrics" subtitle="Deals vs Properties">
-          <ResponsiveContainer width="100%" height={300}>
+        {/* BAR CHART */}
+        <ChartCard
+          title="Performance Metrics"
+          subtitle="Deals vs Properties"
+        >
+          <ResponsiveContainer width="100%" height={260}>
+
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="month" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
+
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#e5e7eb"
+              />
+
+              <XAxis
+                dataKey="month"
+                stroke="#94a3b8"
+                tickLine={false}
+                axisLine={false}
+              />
+
+              <YAxis
+                stroke="#94a3b8"
+                tickLine={false}
+                axisLine={false}
+              />
+
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid #f1f5f9",
+                  borderRadius: "16px",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
                 }}
               />
+
               <Legend />
-              <Bar dataKey="deals" fill="#a855f7" />
-              <Bar dataKey="properties" fill="#f59e0b" />
+
+              <Bar
+                dataKey="deals"
+                fill="#a855f7"
+                radius={[10, 10, 0, 0]}
+              />
+
+              <Bar
+                dataKey="properties"
+                fill="#f59e0b"
+                radius={[10, 10, 0, 0]}
+              />
+
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
       </div>
 
-      {/* Recent Leads Table */}
+      {/* RECENT LEADS */}
       <DataTableCard
         title="Recent Leads"
         subtitle="Latest leads from all sources"
         action={
-          <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+          <button
+            className="
+              rounded-2xl
+              bg-blue-600
+              px-4
+              py-2
+              text-sm
+              font-medium
+              text-white
+              shadow-sm
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:bg-blue-700
+              hover:shadow-md
+            "
+          >
             View All
           </button>
         }
         footer={
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-700">
             Showing {recentLeads.length} of 24 leads
           </div>
         }
       >
-        <table className="w-full">
+
+        <table className="w-full overflow-hidden rounded-2xl">
+
           <TableHeader
             columns={[
-              { key: "name", label: "Name" },
+              { key: "name", label: "Customer" },
               { key: "email", label: "Email" },
               { key: "source", label: "Source" },
               { key: "status", label: "Status" },
               { key: "date", label: "Date" },
-              { key: "actions", label: "Actions", width: "w-20" },
+              { key: "actions", label: "Actions", width: "w-24" },
             ]}
           />
+
           <tbody>
+
             {recentLeads.map((lead) => (
+
               <tr
                 key={lead.id}
-                className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                className="
+                  border-b
+                  border-gray-100
+                  transition-all
+                  duration-200
+                  hover:bg-gray-50/80
+                "
               >
-                <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                  {lead.name}
+
+                {/* NAME */}
+                <td className="px-6 py-5">
+
+                  <div className="flex items-center gap-3">
+
+                    <div className="
+                      flex
+                      h-10
+                      w-10
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-blue-100
+                      text-sm
+                      font-semibold
+                      text-blue-600
+                    ">
+                      {lead.name.charAt(0)}
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {lead.name}
+                      </p>
+
+                      <p className="text-xs text-gray-700">
+                        Premium Customer
+                      </p>
+                    </div>
+
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{lead.email}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">
+
+                {/* EMAIL */}
+                <td className="px-6 py-5 text-sm text-gray-700">
+                  {lead.email}
+                </td>
+
+                {/* SOURCE */}
+                <td className="px-6 py-5 text-sm text-gray-700">
                   {lead.source}
                 </td>
-                <td className="px-6 py-4">
+
+                {/* STATUS */}
+                <td className="px-6 py-5">
+
                   <Badge
-                    label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                    label={
+                      lead.status.charAt(0).toUpperCase() +
+                      lead.status.slice(1)
+                    }
                     variant={
                       lead.status === "active"
                         ? "success"
                         : lead.status === "pending"
-                          ? "warning"
-                          : "info"
+                        ? "warning"
+                        : "info"
                     }
                     size="sm"
                   />
+
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{lead.date}</td>
-                <td className="px-6 py-4">
+
+                {/* DATE */}
+                <td className="px-6 py-5 text-sm text-gray-700">
+                  {lead.date}
+                </td>
+
+                {/* ACTIONS */}
+                <td className="px-6 py-5">
+
                   <ActionButtons
-                    onView={() => console.log("View lead:", lead.id)}
-                    onEdit={() => console.log("Edit lead:", lead.id)}
-                    onDelete={() => console.log("Delete lead:", lead.id)}
+                    onView={() =>
+                      console.log("View lead:", lead.id)
+                    }
+                    onEdit={() =>
+                      console.log("Edit lead:", lead.id)
+                    }
+                    onDelete={() =>
+                      console.log("Delete lead:", lead.id)
+                    }
                     size="sm"
                   />
+
                 </td>
+
               </tr>
             ))}
+
           </tbody>
         </table>
+
       </DataTableCard>
     </DashboardLayout>
   );

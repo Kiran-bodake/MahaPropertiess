@@ -6,8 +6,13 @@ interface TableHeaderProps {
     label: string;
     width?: string;
   }[];
+
   selectable?: boolean;
-  onSelectAll?: (selected: boolean) => void;
+
+  onSelectAll?: (
+    selected: boolean
+  ) => void;
+
   isAllSelected?: boolean;
 }
 
@@ -17,25 +22,82 @@ export function TableHeader({
   onSelectAll,
   isAllSelected,
 }: TableHeaderProps) {
+
   return (
-    <thead className="border-b border-white/10 bg-white/5 backdrop-blur-sm">
+    <thead
+      style={{
+        background: "#f8fafc",
+
+        borderBottom:
+          "1px solid #e5e7eb",
+      }}
+    >
+
       <tr>
+
+        {/* Checkbox Column */}
         {selectable && (
-          <th className="w-12 px-8 py-6">
+          <th
+            style={{
+              width: "48px",
+
+              padding: "18px 24px",
+
+              textAlign: "left",
+            }}
+          >
+
             <input
               type="checkbox"
+
               checked={isAllSelected || false}
-              onChange={(e) => onSelectAll?.(e.target.checked)}
-              className="rounded border-white/30 accent-blue-500 cursor-pointer"
+
+              onChange={(e) =>
+                onSelectAll?.(e.target.checked)
+              }
+
+              style={{
+                width: "16px",
+                height: "16px",
+
+                cursor: "pointer",
+
+                accentColor: "#2563eb",
+
+                borderRadius: "6px",
+
+                border:
+                  "1px solid #d1d5db",
+              }}
             />
           </th>
         )}
+
+        {/* Columns */}
         {columns.map((col) => (
+
           <th
             key={col.key}
-            className={`px-8 py-6 text-left text-xs font-bold text-gray-300 uppercase tracking-widest ${
-              col.width || ""
-            }`}
+
+            style={{
+              padding: "18px 24px",
+
+              textAlign: "left",
+
+              fontSize: "12px",
+
+              fontWeight: 700,
+
+              textTransform: "uppercase",
+
+              letterSpacing: "0.14em",
+
+              color: "#6b7280",
+
+              whiteSpace: "nowrap",
+
+              width: col.width || "auto",
+            }}
           >
             {col.label}
           </th>

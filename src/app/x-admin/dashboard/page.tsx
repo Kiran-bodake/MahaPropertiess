@@ -221,7 +221,19 @@ export default function AdminDashboard() {
       subtitle="Welcome back! Here's your business overview at a glance."
     >
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-1 gap-7 md:grid-cols-2 xl:grid-cols-4 mb-10">
+   <div
+  style={{
+    display: "grid",
+
+    gridTemplateColumns:
+      "repeat(4,minmax(0,1fr))",
+
+    gap: "18px",
+
+    marginBottom: "16px",
+  }}
+>
+      
         <StatCard
           label="Total Leads"
           value={stats.totalLeads}
@@ -251,304 +263,1124 @@ export default function AdminDashboard() {
           color="orange"
         />
       </div>
+{/* Charts Section */}
+<div
+  style={{
+    display: "grid",
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 gap-7 lg:grid-cols-2 mb-10">
-        <ChartCard
-          title="Monthly Activity Trend"
-          subtitle="Properties & Leads performance over time"
+    gridTemplateColumns:
+      "repeat(2,minmax(0,1fr))",
+
+    gap: "16px",
+
+    marginBottom: "20px",
+  }}
+>
+
+  {/* Line Chart */}
+  <ChartCard
+    title="Monthly Activity Trend"
+    subtitle="Properties & Leads performance over time"
+  >
+    <ResponsiveContainer
+      width="100%"
+      height={190}
+    >
+      <LineChart
+        data={trendData}
+        margin={{
+          top: 5,
+          right: 10,
+          left: -15,
+          bottom: 0,
+        }}
+      >
+
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="#f1f5f9"
+          vertical={false}
+        />
+
+        <XAxis
+          dataKey="month"
+          stroke="#94a3b8"
+          tick={{
+            fill: "#94a3b8",
+            fontSize: 11,
+          }}
+
+          axisLine={false}
+          tickLine={false}
+        />
+
+        <YAxis
+          stroke="#94a3b8"
+          tick={{
+            fill: "#94a3b8",
+            fontSize: 11,
+          }}
+
+          axisLine={false}
+          tickLine={false}
+        />
+
+        <Tooltip
+          contentStyle={{
+            backgroundColor: "#ffffff",
+
+            border:
+              "1px solid #e2e8f0",
+
+            borderRadius: "14px",
+
+            boxShadow:
+              "0 8px 24px rgba(15,23,42,.08)",
+          }}
+        />
+
+        <Legend
+          wrapperStyle={{
+            paddingTop: "10px",
+
+            fontSize: "12px",
+          }}
+        />
+
+        <Line
+          type="monotone"
+          dataKey="properties"
+          stroke="#3b82f6"
+          strokeWidth={2.5}
+          dot={false}
+          activeDot={{ r: 5 }}
+          name="Properties"
+        />
+
+        <Line
+          type="monotone"
+          dataKey="leads"
+          stroke="#10b981"
+          strokeWidth={2.5}
+          dot={false}
+          activeDot={{ r: 5 }}
+          name="Leads"
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  </ChartCard>
+
+  {/* Pie Chart */}
+  <ChartCard
+    title="Property Type Distribution"
+    subtitle="Breakdown of your listings"
+  >
+    <ResponsiveContainer
+      width="100%"
+      height={210}
+    >
+      <PieChart>
+
+        <Pie
+          data={propertyTypeData}
+          cx="50%"
+          cy="50%"
+
+          labelLine={false}
+
+          label={({ name, value }) =>
+            `${name}: ${value}`
+          }
+
+          outerRadius={68}
+
+          dataKey="value"
         >
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={trendData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" vertical={false} />
-              <XAxis
-                dataKey="month"
-                stroke="#9ca3af"
-                style={{ fontSize: 12, fontWeight: 500 }}
-                tick={{ fill: "#d1d5db" }}
-              />
-              <YAxis
-                stroke="#9ca3af"
-                style={{ fontSize: 12, fontWeight: 500 }}
-                tick={{ fill: "#d1d5db" }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "1px solid #ffffff30",
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-                }}
-              />
-              <Legend
-                wrapperStyle={{ paddingTop: "20px" }}
-                iconType="line"
-              />
-              <Line
-                type="monotone"
-                dataKey="properties"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6 }}
-                name="Properties"
-              />
-              <Line
-                type="monotone"
-                dataKey="leads"
-                stroke="#10b981"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6 }}
-                name="Leads"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
 
-        <ChartCard
-          title="Property Type Distribution"
-          subtitle="Breakdown of your property listings by category"
+          {propertyTypeData.map(
+            (entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={
+                  COLORS[
+                    index %
+                      COLORS.length
+                  ]
+                }
+              />
+            )
+          )}
+        </Pie>
+
+        <Tooltip
+          contentStyle={{
+            backgroundColor: "#ffffff",
+
+            border:
+              "1px solid #e2e8f0",
+
+            borderRadius: "14px",
+
+            boxShadow:
+              "0 8px 24px rgba(15,23,42,.08)",
+          }}
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  </ChartCard>
+</div>
+
+{/* Tables Section */}
+<div
+  style={{
+    display: "grid",
+
+    gridTemplateColumns:
+      "2fr 1fr",
+
+    gap: "16px",
+
+    marginBottom: "20px",
+
+    alignItems: "start",
+  }}
+>
+
+  {/* Recent Properties */}
+  <div
+    style={{
+      gridColumn: "span 1",
+    }}
+  >
+
+    <DataTableCard
+      title="Recent Properties"
+      subtitle={`${properties.slice(0, 5).length} latest property listings`}
+    >
+
+      <table
+        style={{
+          width: "100%",
+
+          borderCollapse:
+            "collapse",
+        }}
+      >
+
+        <TableHeader
+          columns={[
+            {
+              key: "property",
+              label: "Property",
+            },
+
+            {
+              key: "owner",
+              label: "Owner",
+            },
+
+            {
+              key: "price",
+              label: "Price",
+            },
+
+            {
+              key: "status",
+              label: "Status",
+            },
+
+            {
+              key: "actions",
+              label: "Actions",
+            },
+          ]}
+        />
+
+        <tbody
+          style={{
+            borderTop:
+              "1px solid #f1f5f9",
+          }}
         >
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={propertyTypeData}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, value }) => `${name}: ${value}`}
-                outerRadius={90}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {propertyTypeData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "1px solid #ffffff30",
-                  borderRadius: "12px",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
 
-      {/* Tables Section */}
-      <div className="mb-10 grid grid-cols-1 gap-7 lg:grid-cols-3">
-        {/* Recent Properties */}
-        <div className="lg:col-span-2">
-          <DataTableCard
-            title="Recent Properties"
-            subtitle={`${properties.slice(0, 5).length} latest property listings`}
-          >
-            <table className="w-full">
-              <TableHeader
-                columns={[
-                  { key: "property", label: "Property" },
-                  { key: "owner", label: "Owner" },
-                  { key: "price", label: "Price" },
-                  { key: "status", label: "Status" },
-                  { key: "actions", label: "Actions" },
-                ]}
-              />
-              <tbody className="divide-y divide-white/10">
-                {properties.slice(0, 5).length > 0 ? (
-                  properties.slice(0, 5).map((property, idx) => (
-                    <tr
-                      key={property._id || idx}
-                      className="hover:bg-white/5 transition-all duration-300 group border-b border-white/10"
+          {properties.slice(0, 5)
+            .length > 0 ? (
+
+            properties
+              .slice(0, 5)
+              .map(
+                (
+                  property,
+                  idx
+                ) => (
+
+                  <tr
+                    key={
+                      property._id ||
+                      idx
+                    }
+
+                    style={{
+                      borderBottom:
+                        "1px solid #f1f5f9",
+
+                      background:
+                        "#ffffff",
+                    }}
+                  >
+
+                    {/* Property */}
+                    <td
+                      style={{
+                        padding:
+                          "12px 16px",
+
+                        fontSize:
+                          "13px",
+
+                        fontWeight:
+                          700,
+
+                        color:
+                          "#111827",
+                      }}
                     >
-                      <td className="px-8 py-6 text-sm font-semibold text-white group-hover:text-white transition-colors">
-                        {property.title}
-                      </td>
-                      <td className="px-8 py-6 text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
-                        {property.agentName || "-"}
-                      </td>
-                      <td className="px-8 py-6 text-sm font-medium text-white">
-                        ₹{Number(property.price || 0).toLocaleString("en-IN")}
-                      </td>
-                      <td className="px-8 py-6">
-                        <Badge
-                          label={property.approvalStatus || "pending"}
-                          variant={
-                            property.approvalStatus === "approved"
-                              ? "success"
-                              : property.approvalStatus === "rejected"
-                                ? "error"
-                                : "warning"
-                          }
-                          size="sm"
-                        />
-                      </td>
-                      <td className="px-8 py-6 flex-shrink-0">
-                        <ActionButtons
-                          onView={() =>
-                            (window.location.href = `/x-admin/properties/${property._id}`)
-                          }
-                          onEdit={() =>
-                            (window.location.href = `/x-admin/properties/${property._id}/edit`)
-                          }
-                          onDelete={() =>
-                            handlePropertyStatus(property._id, "rejected")
-                          }
-                          size="sm"
-                        />
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="px-8 py-20 text-center">
-                      <div className="flex flex-col items-center gap-5">
-                        <div className="text-6xl text-gray-400">📦</div>
-                        <p className="text-gray-300 font-semibold text-lg">No properties yet</p>
-                      </div>
+                      {property.title}
+                    </td>
+
+                    {/* Owner */}
+                    <td
+                      style={{
+                        padding:
+                          "12px 16px",
+
+                        fontSize:
+                          "13px",
+
+                        fontWeight:
+                          500,
+
+                        color:
+                          "#6b7280",
+                      }}
+                    >
+                      {property.agentName ||
+                        "-"}
+                    </td>
+
+                    {/* Price */}
+                    <td
+                      style={{
+                        padding:
+                          "12px 16px",
+
+                        fontSize:
+                          "13px",
+
+                        fontWeight:
+                          700,
+
+                        color:
+                          "#111827",
+                      }}
+                    >
+                      ₹
+                      {Number(
+                        property.price ||
+                          0
+                      ).toLocaleString(
+                        "en-IN"
+                      )}
+                    </td>
+
+                   {/* Status */}
+<td
+  style={{
+    padding: "12px 16px",
+  }}
+>
+  <div
+    style={{
+      display: "inline-flex",
+
+      alignItems: "center",
+
+      gap: "8px",
+
+      padding: "7px 12px",
+
+      borderRadius: "999px",
+
+      background:
+        property.approvalStatus ===
+        "approved"
+          ? "#ecfdf5"
+          : property.approvalStatus ===
+              "rejected"
+            ? "#fef2f2"
+            : "#fffbeb",
+
+      border:
+        property.approvalStatus ===
+        "approved"
+          ? "1px solid #bbf7d0"
+          : property.approvalStatus ===
+              "rejected"
+            ? "1px solid #fecaca"
+            : "1px solid #fde68a",
+
+      transition: "all .25s ease",
+    }}
+  >
+
+    {/* Status Dot */}
+    <div
+      style={{
+        width: "8px",
+
+        height: "8px",
+
+        borderRadius: "999px",
+
+        background:
+          property.approvalStatus ===
+          "approved"
+            ? "#22c55e"
+            : property.approvalStatus ===
+                "rejected"
+              ? "#ef4444"
+              : "#f59e0b",
+
+        boxShadow:
+          property.approvalStatus ===
+          "approved"
+            ? "0 0 0 3px rgba(34,197,94,.15)"
+            : property.approvalStatus ===
+                "rejected"
+              ? "0 0 0 3px rgba(239,68,68,.15)"
+              : "0 0 0 3px rgba(245,158,11,.15)",
+      }}
+    />
+
+    {/* Label */}
+    <span
+      style={{
+        fontSize: "12px",
+
+        fontWeight: 700,
+
+        letterSpacing: "-0.01em",
+
+        color:
+          property.approvalStatus ===
+          "approved"
+            ? "#15803d"
+            : property.approvalStatus ===
+                "rejected"
+              ? "#dc2626"
+              : "#b45309",
+
+        textTransform: "capitalize",
+      }}
+    >
+      {property.approvalStatus ||
+        "pending"}
+    </span>
+  </div>
+</td>
+
+                    {/* Actions */}
+                    <td
+                      style={{
+                        padding:
+                          "12px 16px",
+
+                        minWidth:
+                          "140px",
+                      }}
+                    >
+                      <ActionButtons
+                        onView={() =>
+                          (window.location.href =
+                            `/x-admin/properties/${property._id}`)
+                        }
+
+                        onEdit={() =>
+                          (window.location.href =
+                            `/x-admin/properties/${property._id}/edit`)
+                        }
+
+                        onDelete={() =>
+                          handlePropertyStatus(
+                            property._id,
+                            "rejected"
+                          )
+                        }
+
+                        size="sm"
+                      />
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </DataTableCard>
-        </div>
+                )
+              )
+          ) : (
 
+            <tr>
+              <td
+                colSpan={5}
+
+                style={{
+                  padding:
+                    "40px 20px",
+
+                  textAlign:
+                    "center",
+                }}
+              >
+
+                <div
+                  style={{
+                    display:
+                      "flex",
+
+                    flexDirection:
+                      "column",
+
+                    alignItems:
+                      "center",
+
+                    gap: "12px",
+                  }}
+                >
+
+                  <div
+                    style={{
+                      fontSize:
+                        "38px",
+                    }}
+                  >
+                    📦
+                  </div>
+
+                  <p
+                    style={{
+                      color:
+                        "#6b7280",
+
+                      fontWeight:
+                        700,
+
+                      fontSize:
+                        "14px",
+
+                      margin: 0,
+                    }}
+                  >
+                    No properties yet
+                  </p>
+                </div>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </DataTableCard>
+  </div>
         {/* Quick Stats Sidebar */}
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 backdrop-blur-xl p-9 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:border-white/20 min-h-64">
-            <h3 className="text-2xl font-black text-white mb-8 tracking-tight">Property Status</h3>
-            <div className="space-y-5">
-              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-amber-500/20 to-transparent border border-amber-500/30 hover:border-amber-400/50 transition-all duration-300">
-                <span className="text-base font-semibold text-amber-200">Pending</span>
-                <span className="text-3xl font-black text-amber-300">
-                  {analytics?.pendingProperties || 0}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-green-500/20 to-transparent border border-green-500/30 hover:border-green-400/50 transition-all duration-300">
-                <span className="text-base font-semibold text-green-200">Approved</span>
-                <span className="text-3xl font-black text-green-300">
-                  {analytics?.approvedProperties || 0}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-red-500/20 to-transparent border border-red-500/30 hover:border-red-400/50 transition-all duration-300">
-                <span className="text-base font-semibold text-red-200">Rejected</span>
-                <span className="text-3xl font-black text-red-300">
-                  {analytics?.rejectedProperties || 0}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-purple-500/20 to-transparent border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300">
-                <span className="text-base font-semibold text-purple-200">Premium</span>
-                <span className="text-3xl font-black text-purple-300">
-                  {analytics?.premiumProperties || 0}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Quick Stats Sidebar */}
+<div
+  style={{
+    display: "flex",
+
+    flexDirection: "column",
+
+    gap: "12px",
+  }}
+>
+  <div
+    style={{
+      background: "#ffffff",
+
+      border: "1px solid #e5e7eb",
+
+      borderRadius: "20px",
+
+      padding: "16px",
+
+      boxShadow:
+        "0 4px 14px rgba(15,23,42,0.04)",
+
+      minHeight: "auto",
+
+      transition: "all .25s ease",
+    }}
+  >
+
+    {/* Title */}
+    <h3
+      style={{
+        fontSize: "18px",
+
+        fontWeight: 800,
+
+        color: "#111827",
+
+        marginTop: 0,
+
+        marginBottom: "14px",
+
+        letterSpacing: "-0.02em",
+      }}
+    >
+      Property Status
+    </h3>
+
+    {/* Status Wrapper */}
+    <div
+      style={{
+        display: "flex",
+
+        flexDirection: "column",
+
+        gap: "10px",
+      }}
+    >
+
+      {/* Pending */}
+      <div
+        style={{
+          display: "flex",
+
+          alignItems: "center",
+
+          justifyContent: "space-between",
+
+          padding: "10px 14px",
+
+          borderRadius: "14px",
+
+          background:
+            "linear-gradient(135deg,#fffbeb,#fef3c7)",
+
+          border:
+            "1px solid #fde68a",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "12px",
+
+            fontWeight: 700,
+
+            color: "#b45309",
+          }}
+        >
+          Pending
+        </span>
+
+        <span
+          style={{
+            fontSize: "20px",
+
+            fontWeight: 800,
+
+            color: "#d97706",
+          }}
+        >
+          {analytics?.pendingProperties || 0}
+        </span>
       </div>
 
-      {/* Recent Leads Table */}
-      <DataTableCard
-        title="Recent Leads"
-        subtitle="Latest customer inquiries and contact requests"
-        action={
-          <div className="w-full max-w-sm">
-            <SearchBar
-              placeholder="Search leads by name..."
-              value={query}
-              onChange={setQuery}
-            />
-          </div>
-        }
-        footer={
-          paginatedLeads.length > 0 && (
-            <div className="flex items-center justify-between gap-6">
-              <div className="text-sm font-medium text-gray-300">
-                Showing <span className="font-bold text-white">{paginatedLeads.length}</span> of{" "}
-                <span className="font-bold text-white">{filteredLeads.length}</span> leads
-              </div>
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-              />
-            </div>
-          )
-        }
+      {/* Approved */}
+      <div
+        style={{
+          display: "flex",
+
+          alignItems: "center",
+
+          justifyContent: "space-between",
+
+          padding: "10px 14px",
+
+          borderRadius: "14px",
+
+          background:
+            "linear-gradient(135deg,#ecfdf5,#dcfce7)",
+
+          border:
+            "1px solid #bbf7d0",
+        }}
       >
-        <table className="w-full">
-          <TableHeader
-            columns={[
-              { key: "name", label: "Name" },
-              { key: "contact", label: "Contact" },
-              { key: "status", label: "Status" },
-              { key: "date", label: "Date" },
-              { key: "actions", label: "Actions" },
-            ]}
-          />
-          <tbody className="divide-y divide-white/10">
-            {paginatedLeads.length > 0 ? (
-              paginatedLeads.map((lead, idx) => (
-                <tr
-                  key={lead._id || idx}
-                  className={`hover:bg-white/5 transition-all duration-300 group border-b border-white/10 ${!lead.isViewed ? "bg-blue-500/10" : ""}`}
-                >
-                  <td className="px-8 py-6 text-sm font-semibold text-white group-hover:text-white transition-colors">
-                    {lead.name}
-                  </td>
-                  <td className="px-8 py-6 text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
-                    {lead.contact || lead.email || "-"}
-                  </td>
-                  <td className="px-8 py-6">
-                    <Badge
-                      label={lead.isViewed ? "Viewed" : "New"}
-                      variant={lead.isViewed ? "info" : "success"}
-                      size="sm"
-                    />
-                  </td>
-                  <td className="px-8 py-6 text-sm text-gray-300 group-hover:text-gray-200 transition-colors">
-                    {lead.createdAt
-                      ? new Date(lead.createdAt).toLocaleDateString("en-IN", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })
-                      : "-"}
-                  </td>
-                  <td className="px-8 py-6 flex-shrink-0">
-                    <ActionButtons
-                      onView={() => handleViewLead(lead._id)}
-                      onEdit={() =>
-                        (window.location.href = `/x-admin/leads/${lead._id}/edit`)
-                      }
-                      onDelete={() => console.log("Delete:", lead._id)}
-                      size="sm"
-                    />
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="px-8 py-20 text-center">
-                  <div className="flex flex-col items-center gap-5">
-                    <div className="text-6xl text-gray-300">📋</div>
-                    <p className="text-gray-600 font-semibold text-lg">
-                      {query ? "No leads match your search" : "No leads yet"}
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </DataTableCard>
-    </DashboardLayout>
+        <span
+          style={{
+            fontSize: "12px",
+
+            fontWeight: 700,
+
+            color: "#15803d",
+          }}
+        >
+          Approved
+        </span>
+
+        <span
+          style={{
+            fontSize: "20px",
+
+            fontWeight: 800,
+
+            color: "#16a34a",
+          }}
+        >
+          {analytics?.approvedProperties || 0}
+        </span>
+      </div>
+
+      {/* Rejected */}
+      <div
+        style={{
+          display: "flex",
+
+          alignItems: "center",
+
+          justifyContent: "space-between",
+
+          padding: "10px 14px",
+
+          borderRadius: "14px",
+
+          background:
+            "linear-gradient(135deg,#fef2f2,#fee2e2)",
+
+          border:
+            "1px solid #fecaca",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "12px",
+
+            fontWeight: 700,
+
+            color: "#dc2626",
+          }}
+        >
+          Rejected
+        </span>
+
+        <span
+          style={{
+            fontSize: "20px",
+
+            fontWeight: 800,
+
+            color: "#dc2626",
+          }}
+        >
+          {analytics?.rejectedProperties || 0}
+        </span>
+      </div>
+
+      {/* Premium */}
+      <div
+        style={{
+          display: "flex",
+
+          alignItems: "center",
+
+          justifyContent: "space-between",
+
+          padding: "10px 14px",
+
+          borderRadius: "14px",
+
+          background:
+            "linear-gradient(135deg,#faf5ff,#f3e8ff)",
+
+          border:
+            "1px solid #e9d5ff",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "12px",
+
+            fontWeight: 700,
+
+            color: "#7c3aed",
+          }}
+        >
+          Premium
+        </span>
+
+        <span
+          style={{
+            fontSize: "20px",
+
+            fontWeight: 800,
+
+            color: "#9333ea",
+          }}
+        >
+          {analytics?.premiumProperties || 0}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+
+{/* Recent Leads Table */}
+<DataTableCard
+  title="Recent Leads"
+  subtitle="Latest customer inquiries and contact requests"
+
+  action={
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "340px",
+      }}
+    >
+      <SearchBar
+        placeholder="Search leads by name..."
+        value={query}
+        onChange={setQuery}
+      />
+    </div>
+  }
+
+  footer={
+    paginatedLeads.length > 0 && (
+      <div
+        style={{
+          display: "flex",
+
+          alignItems: "center",
+
+          justifyContent: "space-between",
+
+          gap: "24px",
+
+          flexWrap: "wrap",
+        }}
+      >
+
+        {/* Footer Text */}
+        <div
+          style={{
+            fontSize: "14px",
+
+            fontWeight: 600,
+
+            color: "#6b7280",
+          }}
+        >
+          Showing{" "}
+
+          <span
+            style={{
+              fontWeight: 800,
+
+              color: "#111827",
+            }}
+          >
+            {paginatedLeads.length}
+          </span>
+
+          {" "}of{" "}
+
+          <span
+            style={{
+              fontWeight: 800,
+
+              color: "#111827",
+            }}
+          >
+            {filteredLeads.length}
+          </span>
+
+          {" "}leads
+        </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      </div>
+    )
+  }
+>
+
+  <table
+    style={{
+      width: "100%",
+
+      borderCollapse: "collapse",
+    }}
+  >
+
+    {/* Table Header */}
+    <TableHeader
+      columns={[
+        { key: "name", label: "Name" },
+        { key: "contact", label: "Contact" },
+        { key: "status", label: "Status" },
+        { key: "date", label: "Date" },
+        { key: "actions", label: "Actions" },
+      ]}
+    />
+
+    {/* Table Body */}
+    <tbody
+      style={{
+        borderTop:
+          "1px solid #f1f5f9",
+      }}
+    >
+
+      {paginatedLeads.length > 0 ? (
+
+        paginatedLeads.map((lead, idx) => (
+
+          <tr
+            key={lead._id || idx}
+
+            style={{
+              background:
+                !lead.isViewed
+                  ? "#eff6ff"
+                  : "#ffffff",
+
+              borderBottom:
+                "1px solid #f1f5f9",
+
+              transition:
+                "all .25s ease",
+            }}
+          >
+
+            {/* Name */}
+            <td
+              style={{
+                padding: "20px 24px",
+
+                fontSize: "14px",
+
+                fontWeight: 700,
+
+                color: "#111827",
+              }}
+            >
+              {lead.name}
+            </td>
+
+            {/* Contact */}
+            <td
+              style={{
+                padding: "20px 24px",
+
+                fontSize: "14px",
+
+                fontWeight: 500,
+
+                color: "#6b7280",
+              }}
+            >
+              {lead.contact ||
+                lead.email ||
+                "-"}
+            </td>
+{/* Status */}
+<td
+  style={{
+    padding: "12px 16px",
+  }}
+>
+  <div
+    style={{
+      display: "inline-flex",
+
+      alignItems: "center",
+
+      gap: "8px",
+
+      padding: "7px 12px",
+
+      borderRadius: "999px",
+
+      background: lead.isViewed
+        ? "#f3f4f6"
+        : "#ecfdf5",
+
+      border: lead.isViewed
+        ? "1px solid #e5e7eb"
+        : "1px solid #bbf7d0",
+
+      transition: "all .25s ease",
+    }}
+  >
+
+    {/* Status Dot */}
+    <div
+      style={{
+        width: "8px",
+
+        height: "8px",
+
+        borderRadius: "999px",
+
+        background: lead.isViewed
+          ? "#9ca3af"
+          : "#22c55e",
+
+        boxShadow: lead.isViewed
+          ? "0 0 0 3px rgba(156,163,175,.15)"
+          : "0 0 0 3px rgba(34,197,94,.15)",
+      }}
+    />
+
+    {/* Label */}
+    <span
+      style={{
+        fontSize: "12px",
+
+        fontWeight: 700,
+
+        color: lead.isViewed
+          ? "#6b7280"
+          : "#15803d",
+
+        letterSpacing: "-0.01em",
+      }}
+    >
+      {lead.isViewed
+        ? "Viewed"
+        : "New"}
+    </span>
+  </div>
+</td>
+
+            {/* Date */}
+            <td
+              style={{
+                padding: "20px 24px",
+
+                fontSize: "14px",
+
+                fontWeight: 500,
+
+                color: "#6b7280",
+              }}
+            >
+              {lead.createdAt
+                ? new Date(
+                    lead.createdAt
+                  ).toLocaleDateString(
+                    "en-IN",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }
+                  )
+                : "-"}
+            </td>
+
+            {/* Actions */}
+            <td
+              style={{
+                padding: "20px 24px",
+
+                minWidth: "160px",
+              }}
+            >
+              <ActionButtons
+                onView={() =>
+                  handleViewLead(
+                    lead._id
+                  )
+                }
+
+                onEdit={() =>
+                  (window.location.href =
+                    `/x-admin/leads/${lead._id}/edit`)
+                }
+
+                onDelete={() =>
+                  console.log(
+                    "Delete:",
+                    lead._id
+                  )
+                }
+
+                size="sm"
+              />
+            </td>
+          </tr>
+        ))
+      ) : (
+
+        <tr>
+          <td
+            colSpan={5}
+
+            style={{
+              padding: "90px 24px",
+
+              textAlign: "center",
+            }}
+          >
+
+            <div
+              style={{
+                display: "flex",
+
+                flexDirection: "column",
+
+                alignItems: "center",
+
+                gap: "20px",
+              }}
+            >
+
+              {/* Icon */}
+              <div
+                style={{
+                  fontSize: "64px",
+
+                  opacity: 0.9,
+                }}
+              >
+                📋
+              </div>
+
+              {/* Empty Text */}
+              <p
+                style={{
+                  color: "#6b7280",
+
+                  fontWeight: 700,
+
+                  fontSize: "18px",
+
+                  margin: 0,
+                }}
+              >
+                {query
+                  ? "No leads match your search"
+                  : "No leads yet"}
+              </p>
+            </div>
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</DataTableCard>
+
+</DashboardLayout>
   );
 }

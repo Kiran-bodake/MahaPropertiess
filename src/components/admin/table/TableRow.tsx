@@ -5,10 +5,21 @@ import { ReactNode } from "react";
 interface TableRowProps {
   data: any;
   columns: string[];
+
   selectable?: boolean;
+
   isSelected?: boolean;
-  onSelect?: (selected: boolean) => void;
-  renderCell?: (key: string, value: any, row: any) => ReactNode;
+
+  onSelect?: (
+    selected: boolean
+  ) => void;
+
+  renderCell?: (
+    key: string,
+    value: any,
+    row: any
+  ) => ReactNode;
+
   actions?: ReactNode;
 }
 
@@ -21,24 +32,99 @@ export function TableRow({
   renderCell,
   actions,
 }: TableRowProps) {
+
   return (
-    <tr className="border-b border-white/10 hover:bg-white/5 transition-all duration-300 group">
+    <tr
+      style={{
+        borderBottom:
+          "1px solid #f1f5f9",
+
+        transition: "all .25s ease",
+      }}
+    >
+
+      {/* Checkbox */}
       {selectable && (
-        <td className="w-12 px-8 py-6">
+        <td
+          style={{
+            width: "48px",
+
+            padding: "18px 24px",
+
+            verticalAlign: "middle",
+          }}
+        >
+
           <input
             type="checkbox"
+
             checked={isSelected || false}
-            onChange={(e) => onSelect?.(e.target.checked)}
-            className="rounded border-white/30 accent-blue-500 cursor-pointer"
+
+            onChange={(e) =>
+              onSelect?.(e.target.checked)
+            }
+
+            style={{
+              width: "16px",
+              height: "16px",
+
+              cursor: "pointer",
+
+              accentColor: "#2563eb",
+
+              borderRadius: "6px",
+
+              border:
+                "1px solid #d1d5db",
+            }}
           />
         </td>
       )}
+
+      {/* Table Cells */}
       {columns.map((col) => (
-        <td key={col} className="px-8 py-6 text-base font-medium text-gray-200 group-hover:text-white transition-colors duration-300">
-          {renderCell ? renderCell(col, data[col], data) : data[col]}
+
+        <td
+          key={col}
+
+          style={{
+            padding: "18px 24px",
+
+            fontSize: "14px",
+
+            fontWeight: 500,
+
+            color: "#374151",
+
+            verticalAlign: "middle",
+
+            transition: "all .25s ease",
+          }}
+        >
+          {renderCell
+            ? renderCell(
+                col,
+                data[col],
+                data
+              )
+            : data[col]}
         </td>
       ))}
-      {actions && <td className="px-8 py-6 flex-shrink-0">{actions}</td>}
+
+      {/* Actions */}
+      {actions && (
+        <td
+          style={{
+            padding: "18px 24px",
+
+            verticalAlign: "middle",
+
+            whiteSpace: "nowrap",
+          }}
+        >
+          {actions}
+        </td>
+      )}
     </tr>
   );
 }

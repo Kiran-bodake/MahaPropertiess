@@ -17,60 +17,163 @@ export function DataTableCard({
   action,
   footer,
 }: DataTableCardProps) {
+
   return (
-    <div className="
-      overflow-hidden
-      rounded-3xl
-      border border-gray-100
-      bg-white
-      shadow-[0_8px_30px_rgba(0,0,0,0.05)]
-      transition-all duration-300
-      hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]
-    ">
+    <section
+      style={{
+        position: "relative",
+        overflow: "hidden",
 
-      {/* Header */}
-      <div className="border-b border-gray-100 px-7 py-6">
+        borderRadius: "28px",
 
-        <div className="flex items-center justify-between gap-6">
+        border: "1px solid #eef2f7",
 
-          <div className="flex-1 min-w-0">
+        background: "#ffffff",
 
-            <h3 className="text-2xl font-semibold tracking-tight text-gray-900">
+        boxShadow:
+          "0 10px 35px rgba(15,23,42,0.06)",
+
+        transition: "all .3s ease",
+      }}
+    >
+
+      {/* Background Glow */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+
+          background:
+            "linear-gradient(to bottom right,#ffffff,#f9fafb)",
+
+          opacity: 0.8,
+        }}
+      />
+
+      {/* Content */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+
+            gap: "20px",
+
+            padding: "22px 24px",
+
+            borderBottom: "1px solid #f1f5f9",
+
+            flexWrap: "wrap",
+          }}
+        >
+
+          {/* Left */}
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+
+            {/* Title */}
+            <h3
+              style={{
+                margin: 0,
+
+                fontSize: "28px",
+                fontWeight: 700,
+
+                letterSpacing: "-0.03em",
+
+                color: "#111827",
+              }}
+            >
               {title}
             </h3>
 
+            {/* Subtitle */}
             {subtitle && (
-              <p className="mt-2 text-[15px] leading-relaxed text-gray-500">
+              <p
+                style={{
+                  marginTop: "10px",
+
+                  fontSize: "15px",
+                  lineHeight: 1.7,
+
+                  color: "#6b7280",
+                }}
+              >
                 {subtitle}
               </p>
             )}
           </div>
 
+          {/* Action */}
           {action && (
-            <div className="flex-shrink-0">
+            <div
+              style={{
+                flexShrink: 0,
+              }}
+            >
               {action}
             </div>
           )}
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="overflow-x-auto">
+        {/* Table Wrapper */}
+        <div
+          style={{
+            overflowX: "auto",
+          }}
+        >
 
-        <div className="[&_table]:w-full">
-          {children}
-        </div>
-      </div>
-
-      {/* Footer */}
-      {footer && (
-        <div className="border-t border-gray-100 bg-gray-50/50 px-7 py-5">
-
-          <div className="text-sm text-gray-600">
-            {footer}
+          {/* Table Content */}
+          <div
+            style={{
+              width: "100%",
+            }}
+          >
+            {children}
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Footer */}
+        {footer && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+
+              padding: "18px 24px",
+
+              borderTop: "1px solid #f1f5f9",
+
+              background: "#f9fafb",
+            }}
+          >
+
+            <div
+              style={{
+                fontSize: "14px",
+                fontWeight: 500,
+
+                color: "#4b5563",
+              }}
+            >
+              {footer}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

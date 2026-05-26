@@ -1,7 +1,10 @@
 "use client";
 
 import { ReactNode } from "react";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 
 interface StatCardProps {
   label: string;
@@ -11,16 +14,40 @@ interface StatCardProps {
   color?: "blue" | "green" | "purple" | "orange";
 }
 
-const iconBgClasses = {
-  blue: "bg-blue-100 text-blue-600",
-  green: "bg-green-100 text-green-600",
-  purple: "bg-purple-100 text-purple-600",
-  orange: "bg-orange-100 text-orange-600",
+const iconStyles = {
+  blue: {
+    background: "#eff6ff",
+    color: "#2563eb",
+  },
+
+  green: {
+    background: "#ecfdf5",
+    color: "#16a34a",
+  },
+
+  purple: {
+    background: "#f5f3ff",
+    color: "#7c3aed",
+  },
+
+  orange: {
+    background: "#fff7ed",
+    color: "#ea580c",
+  },
 };
 
-const trendClasses = {
-  positive: "bg-green-50 text-green-600 border border-green-100",
-  negative: "bg-red-50 text-red-600 border border-red-100",
+const trendStyles = {
+  positive: {
+    background: "#ecfdf5",
+    color: "#15803d",
+    border: "1px solid #bbf7d0",
+  },
+
+  negative: {
+    background: "#fef2f2",
+    color: "#dc2626",
+    border: "1px solid #fecaca",
+  },
 };
 
 export function StatCard({
@@ -30,42 +57,132 @@ export function StatCard({
   trend,
   color = "blue",
 }: StatCardProps) {
+
   const isPositive = (trend || 0) >= 0;
 
   return (
-    <div className="
-      group
-      rounded-3xl
-      border border-gray-100
-      bg-white
-      p-4
-      shadow-[0_8px_30px_rgba(0,0,0,0.05)]
-      transition-all duration-300
-      hover:-translate-y-1
-      hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]
-      min-h-[125px]
-    ">
+    <div
+      style={{
+        position: "relative",
 
-      {/* Top Section */}
-      <div className="flex items-start justify-between mb-4">
+        overflow: "hidden",
 
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+        background: "#ffffff",
+
+        border: "1px solid #edf2f7",
+
+        borderRadius: "22px",
+
+        padding: "18px 20px",
+
+        minHeight: "118px",
+
+        boxShadow:
+          "0 4px 14px rgba(15,23,42,0.04)",
+
+        transition: "all .25s ease",
+      }}
+    >
+
+      {/* Top Border Glow */}
+      <div
+        style={{
+          position: "absolute",
+
+          top: 0,
+          left: 0,
+          right: 0,
+
+          height: "3px",
+
+          background:
+            "linear-gradient(90deg, transparent, #e2e8f0, transparent)",
+        }}
+      />
+
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+
+          alignItems: "flex-start",
+
+          justifyContent: "space-between",
+
+          position: "relative",
+
+          zIndex: 1,
+        }}
+      >
+
+        {/* Left */}
+        <div
+          style={{
+            paddingRight: "12px",
+          }}
+        >
+
+          {/* Label */}
+          <p
+            style={{
+              margin: 0,
+
+              fontSize: "10px",
+
+              fontWeight: 700,
+
+              letterSpacing: "0.14em",
+
+              textTransform: "uppercase",
+
+              color: "#9ca3af",
+            }}
+          >
             {label}
           </p>
 
-          <h3 className="mt-4 text-4xl font-bold tracking-tight text-gray-900">
+          {/* Value */}
+          <h3
+            style={{
+              marginTop: "14px",
+
+              marginBottom: 0,
+
+              fontSize: "34px",
+
+              lineHeight: 1,
+
+              fontWeight: 700,
+
+              letterSpacing: "-0.04em",
+
+              color: "#0f172a",
+            }}
+          >
             {value}
           </h3>
         </div>
 
+        {/* Icon */}
         {icon && (
           <div
-            className={`
-              flex h-11 w-11 items-center justify-center
-              rounded-2xl
-              ${iconBgClasses[color]}
-            `}
+            style={{
+              width: "46px",
+
+              height: "46px",
+
+              borderRadius: "14px",
+
+              display: "flex",
+
+              alignItems: "center",
+
+              justifyContent: "center",
+
+              flexShrink: 0,
+
+              ...iconStyles[color],
+            }}
           >
             {icon}
           </div>
@@ -75,24 +192,53 @@ export function StatCard({
       {/* Trend */}
       {trend !== undefined && (
         <div
-          className={`
-            inline-flex items-center gap-2
-            rounded-xl px-3 py-2
-            text-sm font-medium
-            ${isPositive ? trendClasses.positive : trendClasses.negative}
-          `}
+          style={{
+            marginTop: "18px",
+          }}
         >
-          {isPositive ? (
-            <TrendingUp className="h-4 w-4" />
-          ) : (
-            <TrendingDown className="h-4 w-4" />
-          )}
 
-          <span>{Math.abs(trend)}%</span>
+          <div
+            style={{
+              display: "inline-flex",
 
-          <span className="text-xs opacity-70">
-            vs last month
-          </span>
+              alignItems: "center",
+
+              gap: "6px",
+
+              padding: "8px 12px",
+
+              borderRadius: "12px",
+
+              fontSize: "12px",
+
+              fontWeight: 600,
+
+              ...(isPositive
+                ? trendStyles.positive
+                : trendStyles.negative),
+            }}
+          >
+
+            {isPositive ? (
+              <TrendingUp size={14} />
+            ) : (
+              <TrendingDown size={14} />
+            )}
+
+            <span>
+              {Math.abs(trend)}%
+            </span>
+
+            <span
+              style={{
+                opacity: 0.7,
+
+                fontSize: "11px",
+              }}
+            >
+              vs last month
+            </span>
+          </div>
         </div>
       )}
     </div>

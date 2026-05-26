@@ -1,5 +1,5 @@
 export * from "./Property";
-export * from "./user";
+export * from "./User";
 export * from "./enquiry";
 
 export interface ApiResponse<T = unknown> {

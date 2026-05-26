@@ -15,44 +15,135 @@ export function ChartCard({
   children,
   action,
 }: ChartCardProps) {
-    return (
-  <div className="
-    rounded-3xl
-    border border-gray-100
-    bg-white
-    p-5
-    shadow-[0_8px_30px_rgba(0,0,0,0.05)]
-    transition-all duration-300
-    hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]
-  ">
 
-    {/* Header */}
-    <div className="mb-8 flex items-start justify-between gap-6">
+  return (
+    <div
+      style={{
+        position: "relative",
+        overflow: "hidden",
 
-      <div className="flex-1 min-w-0">
+        borderRadius: "30px",
 
-        <h3 className="text-2xl font-semibold tracking-tight text-gray-900">
-          {title}
-        </h3>
+        border: "1px solid #f1f5f9",
 
-        {subtitle && (
-          <p className="mt-2 text-[15px] leading-relaxed text-gray-500">
-            {subtitle}
-          </p>
-        )}
-      </div>
+        background:
+          "linear-gradient(to bottom,#ffffff,#f8fafc)",
 
-      {action && (
-        <div className="flex-shrink-0">
-          {action}
+        padding: "24px",
+
+        boxShadow:
+          "0 10px 35px rgba(15,23,42,0.06)",
+
+        transition: "all .3s ease",
+      }}
+    >
+
+      {/* Soft Glow */}
+      <div
+        style={{
+          position: "absolute",
+
+          top: "-40px",
+          right: "-40px",
+
+          width: "140px",
+          height: "140px",
+
+          borderRadius: "999px",
+
+          background: "#dbeafe",
+
+          opacity: 0.5,
+
+          filter: "blur(60px)",
+        }}
+      />
+
+      {/* Content */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+
+            gap: "24px",
+
+            marginBottom: "24px",
+          }}
+        >
+
+          {/* Left */}
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+
+            {/* Title */}
+            <h3
+              style={{
+                margin: 0,
+
+                fontSize: "26px",
+                fontWeight: 700,
+
+                letterSpacing: "-0.03em",
+
+                color: "#111827",
+              }}
+            >
+              {title}
+            </h3>
+
+            {/* Subtitle */}
+            {subtitle && (
+              <p
+                style={{
+                  marginTop: "10px",
+
+                  fontSize: "15px",
+                  lineHeight: 1.7,
+
+                  color: "#6b7280",
+                }}
+              >
+                {subtitle}
+              </p>
+            )}
+          </div>
+
+          {/* Action */}
+          {action && (
+            <div
+              style={{
+                flexShrink: 0,
+              }}
+            >
+              {action}
+            </div>
+          )}
         </div>
-      )}
-    </div>
 
-    {/* Chart Content */}
-    <div className="[&_svg]:rounded-2xl">
-      {children}
+        {/* Chart Content */}
+        <div
+          style={{
+            paddingTop: "16px",
+            borderRadius: "20px",
+            overflow: "hidden",
+          }}
+        >
+          {children}
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
 }
