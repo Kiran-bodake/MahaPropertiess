@@ -7,7 +7,9 @@ import PropertyArea from "@/models/PropertyArea";
 import PropertyFlags from "@/models/PropertyFlags";
 import PropertyAmenity from "@/models/PropertyAmenity";
 import PropertyHighlight from "@/models/PropertyHighlight";
+
 import slugify from "slugify";
+
 import NotificationModel
 from "@/models/Notification";
 
@@ -15,127 +17,150 @@ export const createProperty = async (
   body: any
 ) => {
 
-  const propertyId =
-    body.propertyId;
+  try {
 
-  if (!propertyId) {
-    throw new Error(
-      "propertyId is required"
-    );
-  }
+    /* PROPERTY ID */
+    const propertyId =
+      body.propertyId;
 
-  
+    if (!propertyId) {
 
-  const existingProperty =
-    await Property.findOne({
-      propertyId,
-    });
+      throw new Error(
+        "propertyId is required"
+      );
 
-  if (existingProperty) {
-    throw new Error(
-      `Property already exists with ID: ${propertyId}`
-    );
-  }
+    }
 
+    /* CHECK EXISTING */
+    const existingProperty =
 
- const slug =
-  `${slugify(body.title, {
-    lower: true,
-    strict: true
-  })}-${body.propertyId.toLowerCase()}`;
+      await Property.findOne({
 
-  function generateSlug(title: string) {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-  /* MAIN PROPERTY */
-  const property =
-    await Property.create({
+        propertyId,
 
-      propertyId,
+      });
 
-      slug,
+    if (existingProperty) {
 
-      title:
-        body.title,
+      throw new Error(
 
-      description:
-        body.description || "",
+        `Property already exists with ID: ${propertyId}`
 
-      category:
-        body.category,
+      );
 
-      approvalStatus:
-             "pending",
+    }
 
-      categoryLabel:
-        body.categoryLabel || "",
+    /* SLUG */
+    const slug =
 
-      status:
-        body.status || "available",
+      `${slugify(body.title || "property", {
 
-      constructionStatus:
-        body.constructionStatus || "ready",
+        lower: true,
 
-      postedBy:
-        body.postedBy,
+        strict: true
 
-      agentName:
-        body.agentName,
+      })}-${propertyId.toLowerCase()}`;
 
-      agentPhone:
-        body.agentPhone
-        
+    /* CREATE MAIN PROPERTY */
+    const property =
 
-    });
+      await Property.create({
 
+        propertyId,
 
-await NotificationModel.create({
+        slug,
 
-  type:"property",
+        title:
+          body.title || "",
 
-  title:
-    "New Property Submitted",
+        description:
+          body.description || "",
 
-  message:
-    `${property.title} waiting for approval`,
+        category:
+          body.category || "",
 
-  referenceId:
-    property._id,
+        approvalStatus:
+          "pending",
 
-  isRead:false
+        categoryLabel:
+          body.categoryLabel || "",
 
-});
+        status:
+          body.status || "available",
 
-    
+        constructionStatus:
+          body.constructionStatus || "ready",
 
+        postedBy:
+          body.postedBy || "owner",
 
+        agentName:
+          body.agentName || "",
 
+        agentPhone:
+          body.agentPhone || ""
 
-  /* RELATED COLLECTIONS */
-  await Promise.all([
+      });
+
+    /* NOTIFICATION */
+    try {
+
+      await NotificationModel.create({
+
+        userId:
+          body.userId ||
+
+          property._id.toString(),
+
+        type:
+          "property",
+
+        title:
+          "New Property Submitted",
+
+        message:
+          `${property.title} waiting for approval`,
+
+        referenceId:
+          property._id,
+
+        isRead:
+          false
+
+      });
+
+    }
+
+    catch (notificationError) {
+
+      console.error(
+
+        "Notification Error:",
+
+        notificationError
+
+      );
+
+    }
 
     /* USER */
-    PropertyUser.create({
+    await PropertyUser.create({
 
       propertyId,
 
       postedBy:
-    body.postedBy ||"owner",
+        body.postedBy || "owner",
 
       name:
-        body.agentName,
+        body.agentName || "",
 
       phone:
-        body.agentPhone
+        body.agentPhone || ""
 
-    }),
+    });
 
     /* LOCATION */
-    PropertyLocation.create({
+    await PropertyLocation.create({
 
       propertyId,
 
@@ -169,10 +194,10 @@ await NotificationModel.create({
       longitude:
         body.longitude || ""
 
-    }),
+    });
 
     /* PRICING */
-    PropertyPricing.create({
+    await PropertyPricing.create({
 
       propertyId,
 
@@ -185,10 +210,10 @@ await NotificationModel.create({
       priceNegotiable:
         body.priceNegotiable || false
 
-    }),
+    });
 
     /* AREA */
-    PropertyArea.create({
+    await PropertyArea.create({
 
       propertyId,
 
@@ -201,10 +226,10 @@ await NotificationModel.create({
       convertedSqft:
         Number(body.convertedSqft) || 0
 
-    }),
+    });
 
     /* FLAGS */
-    PropertyFlags.create({
+    await PropertyFlags.create({
 
       propertyId,
 
@@ -226,63 +251,86 @@ await NotificationModel.create({
       isActive:
         true
 
-    })
-
-  ]);
-
-  /* AMENITIES */
-  if (body.amenities?.length) {
-
-    await PropertyAmenity.create({
-
-      propertyId,
-
-      amenities:
-        body.amenities
-
     });
+
+    /* AMENITIES */
+    if (body.amenities?.length) {
+
+      await PropertyAmenity.create({
+
+        propertyId,
+
+        amenities:
+          body.amenities
+
+      });
+
+    }
+
+    /* HIGHLIGHTS */
+    if (body.highlights?.length) {
+
+      await PropertyHighlight.create({
+
+        propertyId,
+
+        highlights:
+          body.highlights
+
+      });
+
+    }
+
+    /* IMAGES */
+    if (body.images?.length) {
+
+      await PropertyImage.create({
+
+        propertyId,
+
+        images:
+
+          body.images.map(
+
+            (
+              url: string,
+
+              index: number
+
+            ) => ({
+
+              url,
+
+              isPrimary:
+                index === 0,
+
+              displayOrder:
+                index
+
+            })
+
+          )
+
+      });
+
+    }
+
+    return property;
 
   }
 
-  /* HIGHLIGHTS */
-  if (body.highlights?.length) {
+  catch (error) {
 
-    await PropertyHighlight.create({
+    console.error(
 
-      propertyId,
+      "CREATE_PROPERTY_ERROR",
 
-      highlights:
-        body.highlights
+      error
 
-    });
+    );
 
-  }
-
-  /* IMAGES */
-  if (body.images?.length) {
-
-    await PropertyImage.create({
-
-      propertyId,
-
-      images:
-        body.images.map(
-          (
-            url: string,
-            index: number
-          ) => ({
-            url,
-            isPrimary:
-              index === 0,
-            displayOrder:
-              index
-          })
-        )
-
-    });
+    throw error;
 
   }
-
-  return property;
 
 };

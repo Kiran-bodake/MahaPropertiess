@@ -14,6 +14,8 @@ import {
   Search,
   Users,
   Phone,
+  ShieldAlert,
+  ChevronDown,
 } from "lucide-react";
 
 const items = [
@@ -36,11 +38,11 @@ const items = [
   },
 
   {
-    href: "/x-admin/leads",
-    label: "Leads",
-    icon: Users,
-  },
-
+  href: "/x-admin/property-reports",
+  label: "Reported Property",
+    icon: ShieldAlert,
+  
+},
   {
     href: "/x-admin/analytics",
     label: "Analytics",
@@ -65,6 +67,9 @@ export function AdminSidebar() {
 
   const [mobile, setMobile] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const [propertyOpen, setPropertyOpen] =
+  useState(false);
 
   useEffect(() => {
     const check = () =>
