@@ -17,53 +17,388 @@ export const metadata = {
 
 export default function NashikPage() {
   return (
-    <main className="bg-[#f6faf7]">
-      <NashikHero />
+    <main
+      style={{
+        background: "#f5f7fb",
+        overflow: "hidden",
+      }}
+    >
+      {/* HERO */}
+      <section
+        style={{
+          position: "relative",
+        }}
+      >
+        <NashikHero />
+      </section>
 
-      <TrustStrip />
+      {/* TRUST STRIP */}
+      <section
+        style={{
+          position: "relative",
+          zIndex: 5,
+          marginTop: "-1px",
+        }}
+      >
+        <TrustStrip />
+      </section>
 
       {/* WHY INVEST */}
-      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
-          <WhyInvestSlider />
+      <section
+        style={{
+          padding: "80px 18px 40px",
+          background: "#f5f7fb",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1320px",
+            margin: "0 auto",
+          }}
+        >
+          {/* SECTION HEADER */}
+          <div
+            style={{
+              marginBottom: "34px",
+            }}
+          >
+            <p
+              style={{
+                color: "#16a34a",
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                marginBottom: "14px",
+              }}
+            >
+              Why Nashik
+            </p>
+
+            <h2
+              style={{
+                fontSize: "clamp(34px,5vw,58px)",
+                lineHeight: "1.02",
+                fontWeight: 900,
+                letterSpacing: "-0.04em",
+                color: "#0f172a",
+                maxWidth: "820px",
+                margin: 0,
+              }}
+            >
+              Reasons Why Investors Are Choosing Nashik
+            </h2>
+
+            <p
+              style={{
+                marginTop: "18px",
+                maxWidth: "760px",
+                color: "#475569",
+                fontSize: "17px",
+                lineHeight: "1.9",
+              }}
+            >
+              From infrastructure expansion to industrial growth and future
+              connectivity projects, Nashik is becoming one of Maharashtra’s
+              strongest emerging real estate markets.
+            </p>
+          </div>
+
+          {/* CARD */}
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              overflow: "hidden",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 15px 45px rgba(15,23,42,0.06)",
+            }}
+          >
+            <WhyInvestSlider />
+          </div>
         </div>
       </section>
 
       {/* INFRASTRUCTURE */}
-      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
-          <InfrastructureSection />
+      <section
+        style={{
+          padding: "40px 18px",
+          background: "#f5f7fb",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1320px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "34px",
+            }}
+          >
+            <p
+              style={{
+                color: "#16a34a",
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                marginBottom: "14px",
+              }}
+            >
+              Infrastructure Growth
+            </p>
+
+            <h2
+              style={{
+                fontSize: "clamp(34px,5vw,58px)",
+                lineHeight: "1.02",
+                fontWeight: 900,
+                letterSpacing: "-0.04em",
+                color: "#0f172a",
+                maxWidth: "850px",
+                margin: 0,
+              }}
+            >
+              Infrastructure Development Driving Appreciation
+            </h2>
+
+            <p
+              style={{
+                marginTop: "18px",
+                maxWidth: "760px",
+                color: "#475569",
+                fontSize: "17px",
+                lineHeight: "1.9",
+              }}
+            >
+              Major projects like ring roads, smart city initiatives, and
+              connectivity upgrades are reshaping Nashik’s long-term real estate
+              value.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              overflow: "hidden",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 15px 45px rgba(15,23,42,0.06)",
+            }}
+          >
+            <InfrastructureSection />
+          </div>
         </div>
       </section>
 
       {/* LOCALITIES */}
-      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
-          <HotLocalities />
+      <section
+        style={{
+          padding: "40px 18px",
+          background: "#f5f7fb",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1320px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "34px",
+            }}
+          >
+            <p
+              style={{
+                color: "#16a34a",
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                marginBottom: "14px",
+              }}
+            >
+              Investment Corridors
+            </p>
+
+            <h2
+              style={{
+                fontSize: "clamp(34px,5vw,58px)",
+                lineHeight: "1.02",
+                fontWeight: 900,
+                letterSpacing: "-0.04em",
+                color: "#0f172a",
+                maxWidth: "850px",
+                margin: 0,
+              }}
+            >
+              Explore Nashik’s High-Growth Localities
+            </h2>
+
+            <p
+              style={{
+                marginTop: "18px",
+                maxWidth: "760px",
+                color: "#475569",
+                fontSize: "17px",
+                lineHeight: "1.9",
+              }}
+            >
+              Discover premium residential and commercial corridors with
+              increasing demand, strong appreciation, and future-ready
+              infrastructure.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              overflow: "hidden",
+              border: "1px solid #e5e7eb",
+              boxShadow:
+                "0 15px 45px rgba(15,23,42,0.06)",
+            }}
+          >
+            <HotLocalities />
+          </div>
         </div>
       </section>
 
       {/* CONSULTATION */}
-      <section className="bg-[#f6faf7] px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px]">
-          <InvestmentConsultationForm />
+      <section
+        style={{
+          padding: "40px 18px",
+          background: "#f5f7fb",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1320px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              background:
+                "linear-gradient(135deg,#0f172a 0%, #111827 100%)",
+              borderRadius: "24px",
+              overflow: "hidden",
+              boxShadow:
+                "0 20px 50px rgba(15,23,42,0.10)",
+            }}
+          >
+            <InvestmentConsultationForm />
+          </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="bg-white px-4 py-16 md:px-8 md:py-24 lg:py-32 mb-16 md:mb-28 lg:mb-40">
-        <div className="mx-auto max-w-7xl">
-          <FAQSection />
+      <section
+        style={{
+          padding: "40px 18px",
+          background: "#ffffff",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1320px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "34px",
+            }}
+          >
+            <p
+              style={{
+                color: "#16a34a",
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                marginBottom: "14px",
+              }}
+            >
+              FAQs
+            </p>
+
+            <h2
+              style={{
+                fontSize: "clamp(34px,5vw,58px)",
+                lineHeight: "1.02",
+                fontWeight: 900,
+                letterSpacing: "-0.04em",
+                color: "#0f172a",
+                maxWidth: "760px",
+                margin: 0,
+              }}
+            >
+              Frequently Asked Questions About Nashik Investment
+            </h2>
+
+            <p
+              style={{
+                marginTop: "18px",
+                maxWidth: "720px",
+                color: "#475569",
+                fontSize: "17px",
+                lineHeight: "1.9",
+              }}
+            >
+              Understand investment potential, infrastructure growth, future
+              appreciation, and the best opportunities available in Nashik.
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              border: "1px solid #e5e7eb",
+              padding: "8px",
+              boxShadow:
+                "0 15px 45px rgba(15,23,42,0.05)",
+            }}
+          >
+            <FAQSection />
+          </div>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className="bg-white px-4 py-16 md:px-8 md:py-24 lg:py-32">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[40px]">
-          <FinalInvestmentCTA />
+      <section
+        style={{
+          padding: "40px 18px 100px",
+          background: "#ffffff",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1320px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              borderRadius: "24px",
+              overflow: "hidden",
+              boxShadow:
+                "0 20px 60px rgba(15,23,42,0.10)",
+            }}
+          >
+            <FinalInvestmentCTA />
+          </div>
         </div>
       </section>
 
+      {/* STICKY CTA */}
       <StickyInvestmentCTA />
     </main>
   );

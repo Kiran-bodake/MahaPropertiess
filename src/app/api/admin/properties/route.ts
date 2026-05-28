@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 import { connectDB }
   from "@/lib/mongodb";
@@ -16,28 +16,42 @@ import PropertyImage
   from "@/models/PropertyImage";
 
 
-export async function GET() {
+import { verifyAccessToken } from "@/lib/jwt";
+
+export async function GET(req: NextRequest) {
 
   try {
 
     await connectDB();
 
 
-    const properties =
-      await Property.find({
+    // Build query from query params: `approval` (pending|approved|rejected|all) and `mine` (true|false)
+    const { searchParams } = req.nextUrl;
 
-        approvalStatus:
-          "pending"
+    const approvalParam = searchParams.get("approval") || "pending";
+    const mineParam = searchParams.get("mine") || "false";
 
-      })
+    const query: any = {};
 
-      .sort({
+    if (approvalParam && approvalParam !== "all") {
+      query.approvalStatus = approvalParam;
+    }
 
-        createdAt:-1
+    // If user requested only their properties, verify access token and filter by postedBy
+    if (mineParam === "true") {
+      const access = req.cookies.get("propvista-access-token")?.value;
+      if (!access) {
+        return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
+      }
+      const payload = verifyAccessToken(access);
+      if (!payload) {
+        return NextResponse.json({ message: "Unauthenticated" }, { status: 401 });
+      }
+      // filter by postedBy (user id)
+      query.postedBy = payload.sub;
+    }
 
-      })
-
-      .lean();
+    const properties = await Property.find(query).sort({ createdAt: -1 }).lean();
 
 
     const finalProperties =

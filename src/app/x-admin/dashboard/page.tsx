@@ -1,4 +1,11 @@
 "use client";
+import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import Lead from "@/models/Lead";
+import Deal from "@/models/Deal";
+import Task from "@/models/Task";
+import Property from "@/models/Property";
+import { requireAdminUser } from "@/lib/admin-auth";
 
 import { useEffect, useState } from "react";
 import {

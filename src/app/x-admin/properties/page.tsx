@@ -30,6 +30,13 @@ export default function PropertiesPage() {
   const [loading, setLoading] =
     useState(true);
 
+  const [filter, setFilter] =
+    useState<"all"|"pending"|"approved"|"rejected">(
+      "pending"
+    );
+
+  const [mine, setMine] = useState(false);
+
   const [showGallery,setShowGallery] =
     useState(false);
 
@@ -46,103 +53,45 @@ export default function PropertiesPage() {
 
 
 
+  async function loadProperties() {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/admin/properties?approval=${filter}&mine=${mine}`
+      );
+      const data = await res.json();
+      setProperties(data.properties ?? []);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-
-    (async () => {
-
-      try {
-
-        const res =
-          await fetch(
-            "/api/admin/properties"
-          );
-
-        const data =
-          await res.json();
-
-        setProperties(
-          data.properties ?? []
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-      }
-
-      finally {
-
-        setLoading(false);
-
-      }
-
-    })();
-
-  }, []);
+    loadProperties();
+  }, [filter, mine]);
 
 
 
 
   const approveProperty =
     async (id: string) => {
-
-      try {
-
-        const res =
-          await fetch(
-
-            "/api/admin/properties/approve",
-
-            {
-
-              method: "POST",
-
-              headers: {
-
-                "Content-Type":
-                  "application/json"
-
-              },
-
-              body: JSON.stringify({
-                id
-              })
-
-            }
-
-          );
-
-        const data =
-          await res.json();
-
-        if (data.success) {
-
-          setProperties(
-
-            prev =>
-
-              prev.filter(
-
-                item =>
-
-                  item._id !== id
-
-              )
-
-          );
-
-        }
-
+    if (!confirm("Approve this property?")) return;
+    try {
+      const res = await fetch("/api/admin/properties/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // reload list to reflect new state
+        await loadProperties();
       }
-
-      catch (error) {
-
-        console.error(error);
-
-      }
-
+    } catch (error) {
+      console.error(error);
+    }
     };
 
 
@@ -150,62 +99,20 @@ export default function PropertiesPage() {
 
   const rejectProperty =
     async (id: string) => {
-
-      try {
-
-        const res =
-          await fetch(
-
-            "/api/admin/properties/reject",
-
-            {
-
-              method: "POST",
-
-              headers: {
-
-                "Content-Type":
-                  "application/json"
-
-              },
-
-              body: JSON.stringify({
-                id
-              })
-
-            }
-
-          );
-
-        const data =
-          await res.json();
-
-        if (data.success) {
-
-          setProperties(
-
-            prev =>
-
-              prev.filter(
-
-                item =>
-
-                  item._id !== id
-
-              )
-
-          );
-
-        }
-
+    if (!confirm("Reject this property?")) return;
+    try {
+      const res = await fetch("/api/admin/properties/reject", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        await loadProperties();
       }
-
-      catch (error) {
-
-        console.error(error);
-
-      }
-
+    } catch (error) {
+      console.error(error);
+    }
     };
 
 
@@ -404,6 +311,23 @@ export default function PropertiesPage() {
 
       </div>
 
+      {/* Filters */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 18 }}>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => setFilter("pending")} style={{ padding: "8px 12px", borderRadius: 10, border: filter === "pending" ? "2px solid #0f172a" : "1px solid #e2e8f0", background: filter === "pending" ? "#0f172a" : "#fff", color: filter === "pending" ? "#fff" : "#0f172a", cursor: "pointer", fontWeight: 700 }}>Pending</button>
+          <button onClick={() => setFilter("approved")} style={{ padding: "8px 12px", borderRadius: 10, border: filter === "approved" ? "2px solid #16a34a" : "1px solid #e2e8f0", background: filter === "approved" ? "#16a34a" : "#fff", color: filter === "approved" ? "#fff" : "#0f172a", cursor: "pointer", fontWeight: 700 }}>Approved</button>
+          <button onClick={() => setFilter("rejected")} style={{ padding: "8px 12px", borderRadius: 10, border: filter === "rejected" ? "2px solid #dc2626" : "1px solid #e2e8f0", background: filter === "rejected" ? "#dc2626" : "#fff", color: filter === "rejected" ? "#fff" : "#0f172a", cursor: "pointer", fontWeight: 700 }}>Rejected</button>
+          <button onClick={() => setFilter("all")} style={{ padding: "8px 12px", borderRadius: 10, border: filter === "all" ? "2px solid #64748b" : "1px solid #e2e8f0", background: filter === "all" ? "#64748b" : "#fff", color: filter === "all" ? "#fff" : "#0f172a", cursor: "pointer", fontWeight: 700 }}>All</button>
+        </div>
+
+        <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+          <label style={{ display: "flex", gap: 8, alignItems: "center", color: "#475569", fontWeight: 600 }}>
+            <input type="checkbox" checked={mine} onChange={() => setMine(prev => !prev)} />
+            My Properties
+          </label>
+        </div>
+      </div>
+
 
 
 
@@ -570,6 +494,14 @@ export default function PropertiesPage() {
                     }
 
                   </h2>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, color: "#64748b" }}>{property.category || "-"}</div>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <div style={{ padding: "6px 10px", borderRadius: 999, fontWeight: 700, fontSize: 12, background: property.approvalStatus === "approved" ? "#dcfce7" : property.approvalStatus === "rejected" ? "#fee2e2" : "#e2e8f0", color: property.approvalStatus === "approved" ? "#166534" : property.approvalStatus === "rejected" ? "#991b1b" : "#0f172a" }}>{property.approvalStatus || "pending"}</div>
+                        <div style={{ fontSize: 12, color: "#94a3b8" }}>{property.createdAt ? new Date(property.createdAt).toLocaleDateString("en-IN") : "-"}</div>
+                      </div>
+                    </div>
 
 
 
