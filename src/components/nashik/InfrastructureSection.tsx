@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 const items = [
@@ -14,6 +16,7 @@ const items = [
     description:
       "Industrial development continues driving workforce migration and residential demand.",
   },
+
   {
     title: "Smart City & Ring Road Development",
     image: "/nashik/ring-road.jpg",
@@ -24,44 +27,103 @@ const items = [
 
 export default function InfrastructureSection() {
   return (
-    <section className="bg-white px-5 py-16 md:px-8 md:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl space-y-20 md:space-y-28 lg:space-y-32">
+    <section
+      style={{
+        background: "#ffffff",
+        padding: "64px 20px 96px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "120px",
+        }}
+      >
         {items.map((item, index) => (
           <div
             key={item.title}
-            className="grid items-center gap-12 xl:grid-cols-[1.05fr_0.95fr] xl:gap-16"
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "1.05fr 0.95fr",
+              alignItems: "center",
+              gap: "64px",
+            }}
           >
-            <div className={index % 2 === 1 ? "lg:order-2" : ""}>
+            {/* IMAGE */}
+            <div
+              style={{
+                order: index % 2 === 1 ? 2 : 1,
+              }}
+            >
               <div
-                className="
-relative
-h-[320px]
-overflow-hidden
-rounded-[40px]
-shadow-[0_30px_80px_rgba(0,0,0,0.14)]
-md:h-[520px]
-"
+                style={{
+                  position: "relative",
+                  height: "520px",
+                  overflow: "hidden",
+                  borderRadius: "40px",
+                  boxShadow:
+                    "0 30px 80px rgba(0,0,0,0.14)",
+                }}
               >
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                  className="object-cover transition duration-700 hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  style={{
+                    objectFit: "cover",
+                    transition:
+                      "transform .7s ease",
+                  }}
                 />
               </div>
             </div>
 
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
+            {/* CONTENT */}
+            <div
+              style={{
+                maxWidth: "720px",
+                order: index % 2 === 1 ? 1 : 2,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.3em",
+                  color: "#16a34a",
+                  marginBottom: "24px",
+                }}
+              >
                 Infrastructure Growth
               </p>
 
-              <h2 className="mt-6 text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-5xl lg:text-6xl">
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "62px",
+                  fontWeight: 900,
+                  lineHeight: 1.05,
+                  letterSpacing: "-0.03em",
+                  color: "#111827",
+                }}
+              >
                 {item.title}
               </h2>
 
-              <p className="mt-8 text-lg leading-9 text-gray-600 md:text-xl md:leading-10">
+              <p
+                style={{
+                  marginTop: "32px",
+                  fontSize: "22px",
+                  lineHeight: 1.9,
+                  color: "#4b5563",
+                }}
+              >
                 {item.description}
               </p>
             </div>

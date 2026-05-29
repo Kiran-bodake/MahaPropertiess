@@ -72,6 +72,11 @@ export async function POST(
         inquiryType:
           body.interest || "Buy",
 
+        /* USER */
+
+        userId:
+          body.userId || "",
+
         /* COMMON */
 
         email:
@@ -82,25 +87,80 @@ export async function POST(
 
       });
 
-    /* CREATE NOTIFICATION */
-    await Notification.create({
 
-      type:
-        "lead",
 
-      title:
-        "New Property Inquiry",
 
-      message:
-        `${body.name} submitted inquiry for ${body.propertyName}`,
+    /* =====================================
+       CREATE NOTIFICATION
+    ===================================== */
 
-      referenceId:
-        propertyInquiry._id,
+    try {
 
-      isRead:
-        false
+      await Notification.create({
 
-    });
+        /* REQUIRED USER ID */
+
+        userId:
+          body.userId || "",
+
+        /* NOTIFICATION TYPE */
+
+        type:
+          "lead",
+
+        /* TITLE */
+
+        title:
+          "New Property Inquiry",
+
+        /* MESSAGE */
+
+        message:
+          `${body.name} submitted inquiry for ${body.propertyName}`,
+
+        /* LEAD REFERENCE */
+
+        referenceId:
+          propertyInquiry._id,
+
+        /* PROPERTY REFERENCE */
+
+        propertyId:
+          body.propertyId || "",
+
+        /* PROPERTY TITLE */
+
+        propertyTitle:
+          body.propertyName || "",
+
+        /* READ STATUS */
+
+        isRead:
+          false,
+
+        /* CREATED */
+
+        createdAt:
+          new Date()
+
+      });
+
+    }
+
+    catch(notificationError){
+
+      console.log(
+
+        "Notification Error:",
+
+        notificationError
+
+      );
+
+    }
+
+
+
 
     /* SUCCESS RESPONSE */
     return NextResponse.json({
@@ -116,7 +176,13 @@ export async function POST(
 
   catch (error) {
 
-    console.error(error);
+    console.error(
+
+      "LEAD API ERROR:",
+
+      error
+
+    );
 
     return NextResponse.json(
 

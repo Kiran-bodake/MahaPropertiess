@@ -3,8 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import {
+  Swiper,
+  SwiperSlide,
+} from "swiper/react";
+
+import {
+  Navigation,
+  Pagination,
+  Autoplay,
+} from "swiper/modules";
 
 import { motion } from "framer-motion";
 
@@ -16,26 +24,68 @@ import "swiper/css/pagination";
 
 export default function WhyInvestSlider() {
   return (
-    <section className="overflow-hidden py-16 md:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+    <section
+      style={{
+        overflow: "hidden",
+        padding: "64px 0 96px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "0 20px",
+        }}
+      >
         {/* HEADER */}
-        <div className="mb-16 max-w-4xl md:mb-20 lg:mb-24">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
+        <div
+          style={{
+            marginBottom: "80px",
+            maxWidth: "850px",
+          }}
+        >
+          <p
+            style={{
+              marginBottom: "12px",
+              fontSize: "14px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.3em",
+              color: "#16a34a",
+            }}
+          >
             Why Invest In Nashik
           </p>
 
-          <h2 className="text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-6xl">
-            A rapidly growing investment destination powered by tourism,
-            industry, education, and infrastructure.
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "64px",
+              fontWeight: 900,
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              color: "#111827",
+            }}
+          >
+            A rapidly growing investment
+            destination powered by tourism,
+            industry, education, and
+            infrastructure.
           </h2>
         </div>
 
         {/* SLIDER */}
         <Swiper
-          className="whyInvestSwiper overflow-hidden"
-          modules={[Navigation, Pagination, Autoplay]}
+          className="whyInvestSwiper"
+          modules={[
+            Navigation,
+            Pagination,
+            Autoplay,
+          ]}
           navigation
-          pagination={{ clickable: true }}
+          pagination={{
+            clickable: true,
+          }}
           autoplay={{
             delay: 5000,
             disableOnInteraction: false,
@@ -45,49 +95,142 @@ export default function WhyInvestSlider() {
         >
           {investmentReasons.map((item) => (
             <SwiperSlide key={item.title}>
-              <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_.95fr] xl:gap-12">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns:
+                    "1.05fr .95fr",
+                  alignItems: "center",
+                  gap: "48px",
+                }}
+              >
                 {/* IMAGE */}
                 <motion.div
-                  initial={{ opacity: 0, x: -40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative h-[320px] overflow-hidden rounded-[40px] shadow-[0_30px_80px_rgba(0,0,0,0.15)] md:h-[520px]"
+                  initial={{
+                    opacity: 0,
+                    x: -40,
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    x: 0,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                  }}
+                  style={{
+                    position: "relative",
+                    height: "520px",
+                    overflow: "hidden",
+                    borderRadius: "40px",
+                    boxShadow:
+                      "0 30px 80px rgba(0,0,0,0.15)",
+                  }}
                 >
                   <Image
                     src={item.image}
                     alt={item.title}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                    className="object-cover transition duration-700 hover:scale-105"
+                    sizes="(max-width:768px) 100vw, 50vw"
+                    style={{
+                      objectFit: "cover",
+                      transition:
+                        "transform .7s ease",
+                    }}
                   />
                 </motion.div>
 
                 {/* CONTENT */}
                 <motion.div
-                  initial={{ opacity: 0, x: 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="pr-1 md:pr-8"
+                  initial={{
+                    opacity: 0,
+                    x: 40,
+                  }}
+                  whileInView={{
+                    opacity: 1,
+                    x: 0,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                  }}
+                  style={{
+                    paddingRight: "10px",
+                  }}
                 >
-                  <div className="inline-flex rounded-full bg-green-100 px-5 py-2 text-sm font-semibold text-green-700">
+                  {/* STAT */}
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      borderRadius: "999px",
+                      background: "#dcfce7",
+                      padding: "10px 20px",
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      color: "#15803d",
+                    }}
+                  >
                     {item.stat}
                   </div>
 
-                  <h3 className="mt-6 text-4xl font-black leading-tight tracking-[-0.03em] text-gray-900">
+                  {/* TITLE */}
+                  <h3
+                    style={{
+                      marginTop: "28px",
+                      marginBottom: 0,
+                      fontSize: "52px",
+                      fontWeight: 900,
+                      lineHeight: 1.1,
+                      letterSpacing: "-0.03em",
+                      color: "#111827",
+                    }}
+                  >
                     {item.title}
                   </h3>
 
-                  <p className="mt-6 text-lg leading-8 text-gray-600">
+                  {/* DESCRIPTION */}
+                  <p
+                    style={{
+                      marginTop: "28px",
+                      fontSize: "20px",
+                      lineHeight: 1.9,
+                      color: "#4b5563",
+                    }}
+                  >
                     {item.description}
                   </p>
 
                   {/* IMPACT CARD */}
-                  <div className="mt-8 rounded-[28px] border border-gray-200 bg-white p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-                    <h4 className="text-lg font-bold text-gray-900">
+                  <div
+                    style={{
+                      marginTop: "36px",
+                      borderRadius: "28px",
+                      border:
+                        "1px solid #e5e7eb",
+                      background: "#ffffff",
+                      padding: "28px",
+                      boxShadow:
+                        "0 10px 30px rgba(0,0,0,0.06)",
+                    }}
+                  >
+                    <h4
+                      style={{
+                        margin: 0,
+                        fontSize: "22px",
+                        fontWeight: 800,
+                        color: "#111827",
+                      }}
+                    >
                       Investment Impact
                     </h4>
 
-                    <p className="mt-3 leading-8 text-gray-600">
+                    <p
+                      style={{
+                        marginTop: "16px",
+                        marginBottom: 0,
+                        lineHeight: 1.9,
+                        color: "#4b5563",
+                        fontSize: "17px",
+                      }}
+                    >
                       {item.impact}
                     </p>
                   </div>
@@ -95,25 +238,26 @@ export default function WhyInvestSlider() {
                   {/* CTA */}
                   <Link
                     href="/properties"
-                    className="
-mt-10
-inline-flex
-h-14
-items-center
-justify-center
-rounded-2xl
-bg-green-600
-px-8
-font-semibold
-text-white
-shadow-[0_15px_40px_rgba(0,0,0,0.05)]
-transition-all
-duration-300
-hover:-translate-y-1
-hover:bg-green-700
-"
+                    style={{
+                      marginTop: "40px",
+                      display: "inline-flex",
+                      height: "56px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "18px",
+                      background: "#16a34a",
+                      padding: "0 32px",
+                      fontWeight: 700,
+                      color: "#ffffff",
+                      textDecoration: "none",
+                      boxShadow:
+                        "0 15px 40px rgba(0,0,0,0.05)",
+                      transition:
+                        "all .3s ease",
+                    }}
                   >
-                    Explore Investment Opportunities
+                    Explore Investment
+                    Opportunities
                   </Link>
                 </motion.div>
               </div>
@@ -122,14 +266,9 @@ hover:bg-green-700
         </Swiper>
       </div>
 
-      {/* SWIPER CUSTOM STYLES */}
+      {/* SWIPER CUSTOM STYLE */}
       <style jsx global>{`
         .whyInvestSwiper {
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        .whyInvestSwiper .swiper {
           overflow: hidden;
         }
 
@@ -140,38 +279,30 @@ hover:bg-green-700
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.96);
           backdrop-filter: blur(18px);
-          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.7);
+          box-shadow: 0 18px 40px
+            rgba(0, 0, 0, 0.1);
+          border: 1px solid
+            rgba(255, 255, 255, 0.7);
           transition: all 0.3s ease;
         }
 
-        .whyInvestSwiper .swiper-button-prev:hover,
-        .whyInvestSwiper .swiper-button-next:hover {
-          transform: translateY(-2px);
-          background: white;
-        }
-
-        .whyInvestSwiper .swiper-button-prev::after,
-        .whyInvestSwiper .swiper-button-next::after {
+        .whyInvestSwiper
+          .swiper-button-prev::after,
+        .whyInvestSwiper
+          .swiper-button-next::after {
           font-size: 18px;
           font-weight: 800;
           color: #16a34a;
         }
 
-        .whyInvestSwiper .swiper-button-prev {
-          left: 12px;
-        }
-
-        .whyInvestSwiper .swiper-button-next {
-          right: 12px;
-        }
-
-        .whyInvestSwiper .swiper-pagination {
+        .whyInvestSwiper
+          .swiper-pagination {
           position: relative;
           margin-top: 42px;
         }
 
-        .whyInvestSwiper .swiper-pagination-bullet {
+        .whyInvestSwiper
+          .swiper-pagination-bullet {
           width: 10px;
           height: 10px;
           opacity: 1;
@@ -179,35 +310,11 @@ hover:bg-green-700
           transition: all 0.3s ease;
         }
 
-        .whyInvestSwiper .swiper-pagination-bullet-active {
+        .whyInvestSwiper
+          .swiper-pagination-bullet-active {
           width: 28px;
           border-radius: 999px;
           background: #16a34a;
-        }
-
-        @media (max-width: 1024px) {
-          .whyInvestSwiper {
-            padding-left: 24px;
-            padding-right: 24px;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .whyInvestSwiper {
-            padding-left: 16px;
-            padding-right: 16px;
-          }
-
-          .whyInvestSwiper .swiper-button-prev,
-          .whyInvestSwiper .swiper-button-next {
-            width: 46px;
-            height: 46px;
-          }
-
-          .whyInvestSwiper .swiper-button-prev::after,
-          .whyInvestSwiper .swiper-button-next::after {
-            font-size: 15px;
-          }
         }
       `}</style>
     </section>

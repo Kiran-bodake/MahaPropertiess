@@ -1,47 +1,73 @@
+"use client";
+
 import Link from "next/link";
 
 export default function FinalInvestmentCTA() {
   return (
-    <section className="px-4 py-0">
-      <div className="mx-auto max-w-7xl">
+    <section
+      style={{
+        padding: "0px 16px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          width: "100%",
+        }}
+      >
         <div
-          className="
-            relative
-            overflow-hidden
-            rounded-[40px]
-            px-8
-            py-20
-            shadow-[0_40px_120px_rgba(0,0,0,0.22)]
-            md:px-12
-            md:py-28
-            lg:px-16
-            lg:py-32
-          "
           style={{
-            backgroundImage: "url('/nashik/hero.jpg')",
+            position: "relative",
+            overflow: "hidden",
+            borderRadius: "40px",
+            padding: "100px 64px",
+            boxShadow:
+              "0 40px 120px rgba(0,0,0,0.22)",
+            backgroundImage:
+              "url('/nashik/hero.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
           {/* OVERLAY */}
-          <div className="absolute inset-0 bg-black/55" />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.55)",
+            }}
+          />
 
           {/* CONTENT */}
-          <div className="relative z-10 flex flex-col items-center justify-between gap-12 lg:flex-row lg:items-end lg:gap-16">
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              gap: "48px",
+            }}
+          >
             {/* LEFT CONTENT */}
-            <div className="max-w-4xl">
+            <div
+              style={{
+                maxWidth: "820px",
+              }}
+            >
               <h2
-                className="
-    max-w-[820px]
-    text-4xl
-    font-black
-    leading-[1.08]
-    tracking-[-0.03em]
-    !text-white
-    drop-shadow-2xl
-    md:text-5xl
-    lg:text-6xl
-  "
+                style={{
+                  maxWidth: "820px",
+                  fontSize: "64px",
+                  fontWeight: 900,
+                  lineHeight: 1.08,
+                  letterSpacing: "-0.03em",
+                  color: "#ffffff",
+                  textShadow:
+                    "0 20px 50px rgba(0,0,0,0.45)",
+                  margin: 0,
+                }}
               >
                 Nashik's Next Growth Phase
                 <br />
@@ -49,66 +75,77 @@ export default function FinalInvestmentCTA() {
               </h2>
 
               <p
-                className="
-                  mt-8
-                  max-w-2xl
-                  text-base
-                  leading-8
-                  text-white/90
-                  md:text-lg
-                  md:leading-9
-                "
+                style={{
+                  marginTop: "32px",
+                  maxWidth: "700px",
+                  fontSize: "18px",
+                  lineHeight: 1.9,
+                  color: "rgba(255,255,255,0.9)",
+                }}
               >
-                Invest before infrastructure, tourism, and connectivity projects
-                significantly increase land values.
+                Invest before infrastructure,
+                tourism, and connectivity
+                projects significantly increase
+                land values.
               </p>
             </div>
 
-            {/* RIGHT BUTTONS */}
-            <div className="mt-4 flex w-full flex-wrap items-center gap-5 lg:w-auto lg:mt-0">
+            {/* BUTTONS */}
+            <div
+              style={{
+                marginTop: "10px",
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              {/* EXPLORE */}
               <Link
                 href="/properties"
-                className="
-    flex
-    h-16
-    min-w-[240px]
-    items-center
-    justify-center
-    rounded-full
-    bg-[#05a336]
-    px-10
-    text-base
-    font-semibold
-    text-black
-    transition-all
-    duration-300
-    hover:scale-[1.03]
-  "
+                style={{
+                  display: "flex",
+                  height: "64px",
+                  minWidth: "240px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "999px",
+                  background: "#05a336",
+                  padding: "0 40px",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  color: "#000000",
+                  textDecoration: "none",
+                  transition: "all .3s ease",
+                  boxShadow:
+                    "0 15px 40px rgba(5,163,54,0.35)",
+                }}
               >
                 Explore Properties
               </Link>
 
+              {/* CONSULTATION */}
               <Link
                 href="/contact"
-                className="
-    flex
-    h-16
-    min-w-[240px]
-    items-center
-    justify-center
-    rounded-full
-    border
-    border-white/30
-    bg-white/10
-    px-10
-    text-base
-    font-semibold
-    text-white
-    backdrop-blur-xl
-    transition-all
-    duration-300
-    hover:bg-white/20
-  "
+                style={{
+                  display: "flex",
+                  height: "64px",
+                  minWidth: "240px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "999px",
+                  border:
+                    "1px solid rgba(255,255,255,0.3)",
+                  background:
+                    "rgba(255,255,255,0.1)",
+                  padding: "0 40px",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  textDecoration: "none",
+                  backdropFilter: "blur(18px)",
+                  transition: "all .3s ease",
+                }}
               >
                 Schedule Consultation
               </Link>

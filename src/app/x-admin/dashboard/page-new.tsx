@@ -29,14 +29,7 @@ import { TableHeader } from "@/components/admin/table/TableHeader";
 import { ActionButtons } from "@/components/admin/common/ActionButtons";
 import { Badge } from "@/components/admin/common/Badge";
 
-const chartData = [
-  { month: "Jan", properties: 40, leads: 24, deals: 24 },
-  { month: "Feb", properties: 30, leads: 13, deals: 22 },
-  { month: "Mar", properties: 20, leads: 98, deals: 29 },
-  { month: "Apr", properties: 27, leads: 39, deals: 20 },
-  { month: "May", properties: 35, leads: 48, deals: 21 },
-  { month: "Jun", properties: 45, leads: 38, deals: 25 },
-];
+
 
 const recentLeads = [
   {
@@ -75,6 +68,8 @@ export default function AdminDashboard() {
 
   const [loading, setLoading] = useState(true);
 
+const [chartData, setChartData] =
+  useState<any[]>([]);
   useEffect(() => {
     const fetchStats = async () => {
       try {

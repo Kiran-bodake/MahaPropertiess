@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -29,112 +31,232 @@ const localities = [
 
 export default function HotLocalities() {
   return (
-    <section className="px-5 py-16 md:px-8 md:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-16 max-w-6xl md:mb-20 lg:mb-24">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-green-600">
+    <section
+      style={{
+        padding: "64px 20px 96px",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          width: "100%",
+        }}
+      >
+        {/* HEADER */}
+        <div
+          style={{
+            marginBottom: "80px",
+            maxWidth: "1000px",
+          }}
+        >
+          <p
+            style={{
+              marginBottom: "12px",
+              fontSize: "14px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.3em",
+              color: "#16a34a",
+            }}
+          >
             Investment Opportunities
           </p>
 
-          <h2 className="text-4xl font-black leading-[1.05] tracking-[-0.03em] text-gray-900 md:text-5xl lg:text-6xl">
-            High-Growth Investment Localities In Nashik
+          <h2
+            style={{
+              fontSize: "62px",
+              fontWeight: 900,
+              lineHeight: 1.05,
+              letterSpacing: "-0.03em",
+              color: "#111827",
+              margin: 0,
+            }}
+          >
+            High-Growth Investment
+            <br />
+            Localities In Nashik
           </h2>
         </div>
 
-        <div className="grid gap-10 md:grid-cols-2 lg:gap-12 xl:grid-cols-3">
+        {/* GRID */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit,minmax(340px,1fr))",
+            gap: "40px",
+          }}
+        >
           {localities.map((item) => (
             <div
               key={item.title}
-              className="
-group
-flex
-flex-col
-overflow-hidden
-rounded-[36px]
-border
-border-gray-100
-bg-white
-shadow-[0_12px_50px_rgba(16,24,40,0.08)]
-transition-all
-duration-500
-hover:-translate-y-2
-hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)]
-"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                borderRadius: "36px",
+                border: "1px solid #f3f4f6",
+                background: "#ffffff",
+                boxShadow:
+                  "0 12px 50px rgba(16,24,40,0.08)",
+                transition: "all .5s ease",
+              }}
             >
-              <div className="relative h-[240px] overflow-hidden md:h-[300px]">
+              {/* IMAGE */}
+              <div
+                style={{
+                  position: "relative",
+                  height: "300px",
+                  overflow: "hidden",
+                }}
+              >
                 <Image
                   src={item.image}
                   alt={item.title}
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover transition duration-700 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{
+                    objectFit: "cover",
+                    transition: "transform .7s ease",
+                  }}
                 />
               </div>
 
-              <div className="flex flex-1 flex-col p-7">
-                <div className="inline-flex rounded-full bg-green-100 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-green-700">
+              {/* CONTENT */}
+              <div
+                style={{
+                  display: "flex",
+                  flex: 1,
+                  flexDirection: "column",
+                  padding: "28px",
+                }}
+              >
+                {/* TAG */}
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignSelf: "flex-start",
+                    borderRadius: "999px",
+                    background: "#dcfce7",
+                    padding: "10px 18px",
+                    fontSize: "11px",
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.15em",
+                    color: "#15803d",
+                  }}
+                >
                   {item.tag}
                 </div>
 
-                <h3 className="mt-5 text-3xl font-black tracking-[-0.03em] text-gray-900">
+                {/* TITLE */}
+                <h3
+                  style={{
+                    marginTop: "24px",
+                    marginBottom: 0,
+                    fontSize: "40px",
+                    fontWeight: 900,
+                    letterSpacing: "-0.03em",
+                    color: "#111827",
+                    lineHeight: 1.1,
+                  }}
+                >
                   {item.title}
                 </h3>
 
+                {/* PRICE CARD */}
                 <div
-                  className="
-mt-7
-flex
-items-center
-justify-between
-rounded-[24px]
-border
-border-green-100
-bg-gradient-to-r
-from-green-50
-to-emerald-50
-p-5
-"
+                  style={{
+                    marginTop: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderRadius: "24px",
+                    border: "1px solid #dcfce7",
+                    background:
+                      "linear-gradient(to right,#f0fdf4,#ecfdf5)",
+                    padding: "22px",
+                  }}
                 >
+                  {/* PRICE */}
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-green-700">
+                    <p
+                      style={{
+                        marginBottom: "8px",
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        color: "#15803d",
+                      }}
+                    >
                       Price
                     </p>
 
-                    <p className="font-bold text-gray-900 text-lg">
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "22px",
+                        fontWeight: 800,
+                        color: "#111827",
+                      }}
+                    >
                       {item.price}
                     </p>
                   </div>
 
-                  <div className="text-right">
-                    <p className="text-xs font-bold uppercase tracking-wide text-green-700">
+                  {/* GROWTH */}
+                  <div
+                    style={{
+                      textAlign: "right",
+                    }}
+                  >
+                    <p
+                      style={{
+                        marginBottom: "8px",
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        color: "#15803d",
+                      }}
+                    >
                       Growth
                     </p>
 
-                    <p className="font-bold text-green-600 text-lg">
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: "22px",
+                        fontWeight: 800,
+                        color: "#16a34a",
+                      }}
+                    >
                       {item.growth}
                     </p>
                   </div>
                 </div>
 
+                {/* BUTTON */}
                 <Link
                   href="/properties"
-                  className="
-    mt-7
-    inline-flex
-    h-14
-    items-center
-    justify-center
-    rounded-2xl
-    bg-green-600
-    px-7
-    font-semibold
-    text-white
-    shadow-[0_15px_40px_rgba(22,163,74,0.24)]
-    transition-all
-    duration-300
-    hover:-translate-y-1
-    hover:bg-green-700
-  "
+                  style={{
+                    marginTop: "28px",
+                    display: "inline-flex",
+                    height: "56px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "18px",
+                    background: "#16a34a",
+                    padding: "0 28px",
+                    fontWeight: 700,
+                    color: "#ffffff",
+                    textDecoration: "none",
+                    boxShadow:
+                      "0 15px 40px rgba(22,163,74,0.24)",
+                    transition: "all .3s ease",
+                  }}
                 >
                   Explore Properties
                 </Link>

@@ -1,71 +1,187 @@
+"use client";
+
 import Link from "next/link";
-import { Building2, MapPinned, Factory, TrendingUp } from "lucide-react";
+
+import {
+  Building2,
+  MapPinned,
+  Factory,
+  TrendingUp,
+} from "lucide-react";
 
 export default function NashikHero() {
   return (
     <section
-      className="relative flex min-h-[78svh] md:min-h-[88svh] items-center overflow-hidden"
       style={{
-        backgroundImage: "url('/nashik/hero.jpg')",
+        position: "relative",
+        display: "flex",
+        minHeight: "88vh",
+        alignItems: "center",
+        overflow: "hidden",
+        backgroundImage:
+          "url('/nashik/hero.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-black/78 via-black/58 to-black/28" />
+      {/* OVERLAY */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to right, rgba(0,0,0,0.78), rgba(0,0,0,0.58), rgba(0,0,0,0.28))",
+        }}
+      />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pt-32 pb-16 md:pt-40 md:pb-28 md:px-8 ">
-        <div className="max-w-4xl space-y-7">
-          <div className="mb-10 inline-flex rounded-full border border-white/20 bg-white/12 px-6 py-3 text-sm font-semibold text-white backdrop-blur-xl shadow-lg">
-            Maharashtra's Emerging Investment Destination
+      {/* CONTENT */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 10,
+          width: "100%",
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "160px 20px 100px",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "850px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "28px",
+          }}
+        >
+          {/* TOP BADGE */}
+          <div
+            style={{
+              marginBottom: "20px",
+              display: "inline-flex",
+              alignSelf: "flex-start",
+              borderRadius: "999px",
+              border:
+                "1px solid rgba(255,255,255,0.2)",
+              background:
+                "rgba(255,255,255,0.12)",
+              padding: "14px 24px",
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "#ffffff",
+              backdropFilter: "blur(20px)",
+              boxShadow:
+                "0 10px 40px rgba(0,0,0,0.25)",
+            }}
+          >
+            Maharashtra's Emerging
+            Investment Destination
           </div>
 
+          {/* TITLE */}
           <h1
-            className="
-    max-w-4xl
-    text-4xl
-    font-black
-    leading-[1]
-    tracking-[-0.04em]
-    !text-white
-    drop-shadow-[0_10px_40px_rgba(0,0,0,0.65)]
-    md:text-6xl
-    lg:text-[72px]
-  "
+            style={{
+              maxWidth: "900px",
+              margin: 0,
+              fontSize: "76px",
+              fontWeight: 900,
+              lineHeight: 1,
+              letterSpacing: "-0.04em",
+              color: "#ffffff",
+              textShadow:
+                "0 10px 40px rgba(0,0,0,0.65)",
+            }}
           >
             Invest In Nashik's Fastest
             <br />
             Growing Corridors
           </h1>
 
+          {/* DESCRIPTION */}
           <p
-            className="
-    max-w-2xl
-    text-base
-    leading-8
-    text-white/90
-    drop-shadow-lg
-    md:text-xl
-  "
+            style={{
+              maxWidth: "720px",
+              fontSize: "21px",
+              lineHeight: 1.9,
+              color:
+                "rgba(255,255,255,0.9)",
+              textShadow:
+                "0 6px 18px rgba(0,0,0,0.35)",
+              margin: 0,
+            }}
           >
-            Discover premium land and property investment opportunities powered
-            by infrastructure growth, industrial expansion, tourism, and future
+            Discover premium land and
+            property investment
+            opportunities powered by
+            infrastructure growth,
+            industrial expansion,
+            tourism, and future
             connectivity.
           </p>
 
-          {/* <div className="mt-12 flex flex-wrap gap-5">
+          {/* BUTTONS */}
+          <div
+            style={{
+              marginTop: "18px",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "20px",
+            }}
+          >
             <Link
               href="/properties"
-              className="inline-flex items-center justify-center rounded-xl bg-green-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-green-600/40 transition-all duration-300 hover:-translate-y-1 hover:bg-green-700"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "18px",
+                background: "#16a34a",
+                padding: "18px 34px",
+                fontWeight: 700,
+                color: "#ffffff",
+                textDecoration: "none",
+                boxShadow:
+                  "0 15px 40px rgba(22,163,74,0.35)",
+                transition:
+                  "all .3s ease",
+              }}
             >
               Explore Properties
             </Link>
 
-            <button className="inline-flex items-center justify-center rounded-xl border border-white/30 bg-white/12 px-8 py-3.5 font-semibold text-white backdrop-blur-lg transition-all duration-300 hover:bg-white/20 hover:border-white/40">
+            <button
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "18px",
+                border:
+                  "1px solid rgba(255,255,255,0.3)",
+                background:
+                  "rgba(255,255,255,0.12)",
+                padding: "18px 34px",
+                fontWeight: 700,
+                color: "#ffffff",
+                backdropFilter:
+                  "blur(18px)",
+                cursor: "pointer",
+                transition:
+                  "all .3s ease",
+              }}
+            >
               Get Free Consultation
             </button>
-          </div> */}
+          </div>
 
-          {/* <div className="mt-20 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          {/* STATS CARDS */}
+          <div
+            style={{
+              marginTop: "70px",
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(220px,1fr))",
+              gap: "20px",
+            }}
+          >
             {[
               {
                 icon: Building2,
@@ -92,19 +208,58 @@ export default function NashikHero() {
               return (
                 <div
                   key={item.text}
-                  className="rounded-[12px] border border-white/15 bg-white/10 p-5 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
+                  style={{
+                    borderRadius: "20px",
+                    border:
+                      "1px solid rgba(255,255,255,0.15)",
+                    background:
+                      "rgba(255,255,255,0.1)",
+                    padding: "24px",
+                    backdropFilter:
+                      "blur(18px)",
+                    boxShadow:
+                      "0 20px 60px rgba(0,0,0,0.18)",
+                    transition:
+                      "all .3s ease",
+                  }}
                 >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
-                    <Icon className="h-6 w-6 text-green-300" />
+                  <div
+                    style={{
+                      marginBottom: "18px",
+                      display: "flex",
+                      height: "52px",
+                      width: "52px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "18px",
+                      background:
+                        "rgba(255,255,255,0.12)",
+                    }}
+                  >
+                    <Icon
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        color: "#86efac",
+                      }}
+                    />
                   </div>
 
-                  <p className="text-sm font-semibold leading-6 text-white">
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "15px",
+                      fontWeight: 700,
+                      lineHeight: 1.7,
+                      color: "#ffffff",
+                    }}
+                  >
                     {item.text}
                   </p>
                 </div>
               );
             })}
-          </div> */}
+          </div>
         </div>
       </div>
     </section>

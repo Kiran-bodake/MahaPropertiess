@@ -74,11 +74,16 @@ export default function AdminDashboard() {
     totalProperties: 0,
     totalDeals: 0,
   });
-  const [leads, setLeads] = useState<any[]>([]);
+  const [propertyInquiries, setPropertyInquiries] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] =
+  useState<any[]>([]);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [propertyPage, setPropertyPage] = useState(1);
+  const [propertyQuery, setPropertyQuery] = useState("");
+  const [propertyFilter, setPropertyFilter] = useState("all");
   const [analytics, setAnalytics] = useState<any>(null);
 
   const perPage = 10;
@@ -89,13 +94,15 @@ export default function AdminDashboard() {
       try {
         const responses = await Promise.allSettled([
           fetch("/api/admin/dashboard").catch(() => null),
-          fetch("/api/admin/leads").catch(() => null),
+          fetch("/api/property-inquiry").catch(() => null),
           fetch("/api/admin/recent-properties").catch(() => null),
           fetch("/api/admin/analytics/leads").catch(() => null),
         ]);
 
-        let dashData = {};
-        let leadsData = { leads: [] };
+        let dashData:any = {};
+        let inquiriesData:any = {
+  inquiries:[]
+};
         let propsData = { properties: [] };
         let analyticsData = {};
 
@@ -104,9 +111,9 @@ export default function AdminDashboard() {
           dashData = await responses[0].value.json().catch(() => ({}));
         }
 
-        // Process leads response
+        // Process property inquiries response
         if (responses[1].status === "fulfilled" && responses[1].value?.ok) {
-          leadsData = await responses[1].value.json().catch(() => ({ leads: [] }));
+          inquiriesData = await responses[1].value.json().catch(() => []);
         }
 
         // Process properties response
@@ -125,8 +132,12 @@ export default function AdminDashboard() {
           totalProperties: dashData?.propertiesCount || 0,
           totalDeals: dashData?.dealsCount || 0,
         });
+setChartData(
 
-        setLeads(Array.isArray(leadsData?.leads) ? leadsData.leads : []);
+  dashData?.chartData || []
+
+);
+        setPropertyInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
         setProperties(Array.isArray(propsData?.properties) ? propsData.properties : []);
         setAnalytics(analyticsData || {});
       } catch (error) {
@@ -138,7 +149,7 @@ export default function AdminDashboard() {
           totalProperties: 0,
           totalDeals: 0,
         });
-        setLeads([]);
+        setPropertyInquiries([]);
         setProperties([]);
         setAnalytics({});
       } finally {
@@ -149,39 +160,63 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  // Filter and paginate leads
-  const filteredLeads = leads.filter(
-    (lead) =>
-      !query || lead.name?.toLowerCase().includes(query.toLowerCase())
+  // Filter and paginate property inquiries
+  const filteredInquiries = propertyInquiries.filter(
+    (inquiry) =>
+      !query || 
+      inquiry.customerName?.toLowerCase().includes(query.toLowerCase()) ||
+      inquiry.name?.toLowerCase().includes(query.toLowerCase()) ||
+      inquiry.propertyName?.toLowerCase().includes(query.toLowerCase()) ||
+      inquiry.propertyTitle?.toLowerCase().includes(query.toLowerCase())
   );
   const totalPages = Math.max(
     1,
-    Math.ceil(filteredLeads.length / perPage)
+    Math.ceil(filteredInquiries.length / perPage)
   );
-  const paginatedLeads = filteredLeads.slice(
+  const paginatedInquiries = filteredInquiries.slice(
     (page - 1) * perPage,
     page * perPage
   );
 
-  // Update lead view status
-  const handleViewLead = async (leadId: string) => {
-    if (!leadId) return;
+  // Update inquiry status
+  const handleUpdateInquiryStatus = async (inquiryId: string, status: string) => {
+    if (!inquiryId || !status) return;
     try {
-      const response = await fetch("/api/admin/leads/view", {
-        method: "POST",
+      const response = await fetch("/api/property-inquiry", {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: leadId }),
+        body: JSON.stringify({ id: inquiryId, status }),
       });
 
       if (response.ok) {
-        setLeads((prev) =>
-          prev.map((lead) =>
-            lead._id === leadId ? { ...lead, isViewed: true } : lead
+        setPropertyInquiries((prev) =>
+          prev.map((inquiry) =>
+            inquiry._id === inquiryId ? { ...inquiry, status } : inquiry
           )
         );
       }
     } catch (error) {
-      console.error("Failed to update lead view:", error);
+      console.error("Failed to update inquiry status:", error);
+    }
+  };
+
+  // Delete inquiry
+  const handleDeleteInquiry = async (inquiryId: string) => {
+    if (!inquiryId || !confirm("Are you sure you want to delete this inquiry?")) return;
+    try {
+      const response = await fetch("/api/property-inquiry", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: inquiryId }),
+      });
+
+      if (response.ok) {
+        setPropertyInquiries((prev) =>
+          prev.filter((inquiry) => inquiry._id !== inquiryId)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to delete inquiry:", error);
     }
   };
 
@@ -208,6 +243,73 @@ export default function AdminDashboard() {
       console.error("Failed to update property status:", error);
     }
   };
+
+  // Delete property
+  const handleDeleteProperty = async (propertyId: string) => {
+    if (!propertyId || !confirm("Are you sure you want to delete this property?")) return;
+    try {
+      const response = await fetch(`/api/admin/properties/${propertyId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        setProperties((prev) =>
+          prev.filter((prop) => prop._id !== propertyId)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to delete property:", error);
+    }
+  };
+
+  // Toggle property featured status
+  const handleToggleFeatured = async (propertyId: string, isFeatured: boolean) => {
+    if (!propertyId) return;
+    try {
+      const response = await fetch(`/api/admin/properties/${propertyId}/featured`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isFeatured: !isFeatured }),
+      });
+
+      if (response.ok) {
+        setProperties((prev) =>
+          prev.map((prop) =>
+            prop._id === propertyId
+              ? { ...prop, isFeatured: !isFeatured }
+              : prop
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to toggle featured:", error);
+    }
+  };
+
+  // Filter properties
+  const filteredProperties = properties
+    .filter((prop) => {
+      if (propertyFilter === "approved") return prop.approvalStatus === "approved";
+      if (propertyFilter === "pending") return prop.approvalStatus === "pending";
+      if (propertyFilter === "rejected") return prop.approvalStatus === "rejected";
+      if (propertyFilter === "featured") return prop.isFeatured;
+      return true;
+    })
+    .filter((prop) =>
+      !propertyQuery ||
+      prop.title?.toLowerCase().includes(propertyQuery.toLowerCase()) ||
+      prop.location?.toLowerCase().includes(propertyQuery.toLowerCase())
+    );
+
+  const totalPropertyPages = Math.max(
+    1,
+    Math.ceil(filteredProperties.length / perPage)
+  );
+  const paginatedProperties = filteredProperties.slice(
+    (propertyPage - 1) * perPage,
+    propertyPage * perPage
+  );
 
   if (loading) {
     return (
@@ -1037,10 +1139,10 @@ export default function AdminDashboard() {
 </div>
       </div>
 
-{/* Recent Leads Table */}
+{/* Property Inquiries Table */}
 <DataTableCard
-  title="Recent Leads"
-  subtitle="Latest customer inquiries and contact requests"
+  title="Property Inquiries"
+  subtitle="Manage customer property inquiry requests"
 
   action={
     <div
@@ -1050,7 +1152,7 @@ export default function AdminDashboard() {
       }}
     >
       <SearchBar
-        placeholder="Search leads by name..."
+        placeholder="Search by name, contact, or property..."
         value={query}
         onChange={setQuery}
       />
@@ -1058,7 +1160,7 @@ export default function AdminDashboard() {
   }
 
   footer={
-    paginatedLeads.length > 0 && (
+    paginatedInquiries.length > 0 && (
       <div
         style={{
           display: "flex",
@@ -1092,7 +1194,7 @@ export default function AdminDashboard() {
               color: "#111827",
             }}
           >
-            {paginatedLeads.length}
+            {paginatedInquiries.length}
           </span>
 
           {" "}of{" "}
@@ -1104,10 +1206,10 @@ export default function AdminDashboard() {
               color: "#111827",
             }}
           >
-            {filteredLeads.length}
+            {filteredInquiries.length}
           </span>
 
-          {" "}leads
+          {" "}inquiries
         </div>
 
         {/* Pagination */}
@@ -1132,7 +1234,8 @@ export default function AdminDashboard() {
     {/* Table Header */}
     <TableHeader
       columns={[
-        { key: "name", label: "Name" },
+        { key: "property", label: "Property" },
+        { key: "customer", label: "Customer Name" },
         { key: "contact", label: "Contact" },
         { key: "status", label: "Status" },
         { key: "date", label: "Date" },
@@ -1148,16 +1251,23 @@ export default function AdminDashboard() {
       }}
     >
 
-      {paginatedLeads.length > 0 ? (
+      {paginatedInquiries.length > 0 ? (
 
-        paginatedLeads.map((lead, idx) => (
+        paginatedInquiries.map((inquiry, idx) => {
+          const statusConfig = {
+            new: { bg: "#ecfdf5", border: "#bbf7d0", dot: "#22c55e", text: "#15803d", label: "New" },
+            contacted: { bg: "#dbeafe", border: "#bfdbfe", dot: "#3b82f6", text: "#1e40af", label: "Contacted" },
+            closed: { bg: "#f3f4f6", border: "#e5e7eb", dot: "#9ca3af", text: "#6b7280", label: "Closed" },
+          };
+          const config = statusConfig[inquiry.status as keyof typeof statusConfig] || statusConfig.new;
 
+          return (
           <tr
-            key={lead._id || idx}
+            key={inquiry._id || idx}
 
             style={{
               background:
-                !lead.isViewed
+                inquiry.status === "new"
                   ? "#eff6ff"
                   : "#ffffff",
 
@@ -1169,130 +1279,107 @@ export default function AdminDashboard() {
             }}
           >
 
-            {/* Name */}
+            {/* Property */}
             <td
               style={{
                 padding: "20px 24px",
-
                 fontSize: "14px",
+                fontWeight: 600,
+                color: "#4b5563",
+              }}
+            >
+              {inquiry.propertyTitle || inquiry.propertyName || "-"}
+            </td>
 
+            {/* Customer Name */}
+            <td
+              style={{
+                padding: "20px 24px",
+                fontSize: "14px",
                 fontWeight: 700,
-
                 color: "#111827",
               }}
             >
-              {lead.name}
+              {inquiry.customerName || inquiry.name || "-"}
             </td>
 
             {/* Contact */}
             <td
               style={{
                 padding: "20px 24px",
-
                 fontSize: "14px",
-
                 fontWeight: 500,
-
                 color: "#6b7280",
               }}
             >
-              {lead.contact ||
-                lead.email ||
-                "-"}
+              {inquiry.phone || inquiry.mobileNumber || inquiry.email || "-"}
             </td>
-{/* Status */}
-<td
-  style={{
-    padding: "12px 16px",
-  }}
->
-  <div
-    style={{
-      display: "inline-flex",
 
-      alignItems: "center",
+            {/* Status */}
+            <td
+              style={{
+                padding: "12px 16px",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "7px 12px",
+                  borderRadius: "999px",
+                  background: config.bg,
+                  border: `1px solid ${config.border}`,
+                  cursor: "pointer",
+                  transition: "all .25s ease",
+                }}
+                onClick={() => {
+                  const statuses = ["new", "contacted", "closed"];
+                  const currentIndex = statuses.indexOf(inquiry.status || "new");
+                  const nextStatus = statuses[(currentIndex + 1) % statuses.length];
+                  handleUpdateInquiryStatus(inquiry._id, nextStatus);
+                }}
+              >
+                {/* Status Dot */}
+                <div
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "999px",
+                    background: config.dot,
+                    boxShadow: `0 0 0 3px ${config.dot}20`,
+                  }}
+                />
 
-      gap: "8px",
-
-      padding: "7px 12px",
-
-      borderRadius: "999px",
-
-      background: lead.isViewed
-        ? "#f3f4f6"
-        : "#ecfdf5",
-
-      border: lead.isViewed
-        ? "1px solid #e5e7eb"
-        : "1px solid #bbf7d0",
-
-      transition: "all .25s ease",
-    }}
-  >
-
-    {/* Status Dot */}
-    <div
-      style={{
-        width: "8px",
-
-        height: "8px",
-
-        borderRadius: "999px",
-
-        background: lead.isViewed
-          ? "#9ca3af"
-          : "#22c55e",
-
-        boxShadow: lead.isViewed
-          ? "0 0 0 3px rgba(156,163,175,.15)"
-          : "0 0 0 3px rgba(34,197,94,.15)",
-      }}
-    />
-
-    {/* Label */}
-    <span
-      style={{
-        fontSize: "12px",
-
-        fontWeight: 700,
-
-        color: lead.isViewed
-          ? "#6b7280"
-          : "#15803d",
-
-        letterSpacing: "-0.01em",
-      }}
-    >
-      {lead.isViewed
-        ? "Viewed"
-        : "New"}
-    </span>
-  </div>
-</td>
+                {/* Label */}
+                <span
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: config.text,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {config.label}
+                </span>
+              </div>
+            </td>
 
             {/* Date */}
             <td
               style={{
                 padding: "20px 24px",
-
                 fontSize: "14px",
-
                 fontWeight: 500,
-
                 color: "#6b7280",
               }}
             >
-              {lead.createdAt
-                ? new Date(
-                    lead.createdAt
-                  ).toLocaleDateString(
-                    "en-IN",
-                    {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    }
-                  )
+              {inquiry.createdAt
+                ? new Date(inquiry.createdAt).toLocaleDateString("en-IN", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
                 : "-"}
             </td>
 
@@ -1300,43 +1387,71 @@ export default function AdminDashboard() {
             <td
               style={{
                 padding: "20px 24px",
-
                 minWidth: "160px",
               }}
             >
-              <ActionButtons
-                onView={() =>
-                  handleViewLead(
-                    lead._id
-                  )
-                }
-
-                onEdit={() =>
-                  (window.location.href =
-                    `/x-admin/leads/${lead._id}/edit`)
-                }
-
-                onDelete={() =>
-                  console.log(
-                    "Delete:",
-                    lead._id
-                  )
-                }
-
-                size="sm"
-              />
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <button
+                  onClick={() => handleUpdateInquiryStatus(inquiry._id, "contacted")}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    color: "#3b82f6",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all .2s ease",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = "#3b82f6";
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = "#ffffff";
+                    e.currentTarget.style.color = "#3b82f6";
+                  }}
+                >
+                  Contact
+                </button>
+                <button
+                  onClick={() => handleDeleteInquiry(inquiry._id)}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    color: "#ef4444",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all .2s ease",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = "#ef4444";
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = "#ffffff";
+                    e.currentTarget.style.color = "#ef4444";
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </td>
           </tr>
-        ))
+        );
+        })
       ) : (
 
         <tr>
           <td
-            colSpan={5}
+            colSpan={6}
 
             style={{
               padding: "90px 24px",
-
               textAlign: "center",
             }}
           >
@@ -1344,11 +1459,8 @@ export default function AdminDashboard() {
             <div
               style={{
                 display: "flex",
-
                 flexDirection: "column",
-
                 alignItems: "center",
-
                 gap: "20px",
               }}
             >
@@ -1357,28 +1469,24 @@ export default function AdminDashboard() {
               <div
                 style={{
                   fontSize: "64px",
-
                   opacity: 0.9,
                 }}
               >
-                📋
+                📧
               </div>
 
               {/* Empty Text */}
               <p
                 style={{
                   color: "#6b7280",
-
                   fontWeight: 700,
-
                   fontSize: "18px",
-
                   margin: 0,
                 }}
               >
                 {query
-                  ? "No leads match your search"
-                  : "No leads yet"}
+                  ? "No inquiries match your search"
+                  : "No property inquiries yet"}
               </p>
             </div>
           </td>
@@ -1387,6 +1495,11 @@ export default function AdminDashboard() {
     </tbody>
   </table>
 </DataTableCard>
+
+{/* Property Management Section */}
+<div style={{ marginTop: "32px" }}>
+ 
+</div>
 
 </DashboardLayout>
   );
