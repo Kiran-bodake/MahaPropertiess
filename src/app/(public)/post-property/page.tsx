@@ -1039,169 +1039,242 @@ export default function PostPropertyPage() {
   };
 
   const TEMP_OTP = "123";
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const handlePincodeChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const pin = e.target.value.replace(/\D/g, "");
+const [errors, setErrors] = useState<Record<string, string>>({});
 
-    set("pincode", pin);
+const set = useCallback(
+  <K extends keyof FormData>(key: K, val: FormData[K]) => {
+    setForm((prev) => ({ ...prev, [key]: val }));
+  },
+  [],
+);
 
-    if (pin.length !== 6) return;
+const handlePincodeChange = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+) => {
+  const pin = e.target.value.replace(/\D/g, "");
 
-    try {
-      // India Post API
-      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+  // Update pincode field
+  set("pincode", pin);
 
-      const data = await res.json();
+  // Clear old location values if pincode incomplete
+  if (pin.length !== 6) {
+    set("state", "");
+    set("city", "");
+    set("locality", "");
+    return;
+  }
 
-      if (data?.[0]?.Status === "Success" && data?.[0]?.PostOffice?.length) {
-        const office = data[0].PostOffice[0];
+  try {
+    const response = await fetch(
+      `https://api.zippopotam.us/in/${pin}`
+    );
 
-        set("state", office.State || "");
-        set("city", office.District || "");
-        set("locality", office.Name || "");
-      }
-    } catch (error) {
-      console.error("Pincode lookup failed:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetch("/api/property-meta")
-      .then((r) => r.json())
-      .then(setMeta);
-  }, []);
-
-  const set = useCallback(
-    <K extends keyof FormData>(key: K, val: FormData[K]) => {
-      setForm((prev) => ({ ...prev, [key]: val }));
-    },
-    [],
-  );
-  const AREA_CONVERSION = {
-    sqft: 1,
-    sqyd: 9,
-    acre: 43560,
-    hectare: 107639,
-  };
-
-  const handleAreaCalculation = (areaValue: string, unit: string) => {
-    set("area", areaValue);
-
-    set("areaUnit", unit);
-
-    if (!areaValue) return;
-
-    const sqft =
-      Number(areaValue) * AREA_CONVERSION[unit as keyof typeof AREA_CONVERSION];
-
-    set("convertedSqft", sqft.toFixed(2));
-
-    if (form.price && Number(form.price) > 0) {
-      const pricePerSqft = Number(form.price) / sqft;
-
-      set("pricePerUnit", pricePerSqft.toFixed(2));
-    }
-  };
-  const handlePriceChange = (value: string) => {
-    set("price", value);
-
-    if (form.convertedSqft && Number(value) > 0) {
-      const pricePerSqft = Number(value) / Number(form.convertedSqft);
-
-      set("pricePerUnit", pricePerSqft.toFixed(2));
-    }
-  };
-  const cities = Array.from(
-    new Map(
-      (meta?.states.find((s) => s.name === form.state)?.cities || []).map(
-        (city) => [city.name, city],
-      ),
-    ).values(),
-  );
-
-  const localities = Array.from(
-    new Set([
-      ...(cities.find((c) => c.name === form.city)?.localities || []),
-
-      ...(form.locality ? [form.locality] : []),
-    ]),
-  );
-  const toggleArr = (key: "highlights" | "amenities", val: string) => {
-    setForm((prev) => {
-      const arr = prev[key];
-      return {
+    // Invalid pincode
+    if (!response.ok) {
+      setErrors((prev) => ({
         ...prev,
-        [key]: arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val],
-      };
-    });
-  };
+        pincode: "Invalid pincode",
+      }));
 
-  /* Generate property ID when leaving step 1 */
-  const generatePropertyId = async () => {
-    if (propertyId || !form.state || !form.city || !form.locality) return;
-    setIdGenerating(true);
-    try {
-      const res = await fetch(
-        `/api/property-id?state=${encodeURIComponent(form.state)}&city=${encodeURIComponent(form.city)}&locality=${encodeURIComponent(form.locality)}`,
-      );
-      const data = await res.json();
-      setPropertyId(data.propertyId ?? "");
-    } finally {
-      setIdGenerating(false);
-    }
-  };
-
-  const handleNext = async () => {
-    const newErrors: Record<string, string> = {};
-
-    if (step === 0) {
-      if (!form.postedBy) {
-        newErrors.postedBy = "Please select who is posting";
-      }
-
-      if (!form.agentName.trim()) {
-        newErrors.agentName = "Name is required";
-      }
-
-      if (!form.agentPhone) {
-        newErrors.agentPhone = "Phone is required";
-      } else if (!/^[6-9]\d{9}$/.test(form.agentPhone)) {
-        newErrors.agentPhone = "Enter valid mobile number";
-      }
-
-      // OTP VALIDATION
-      if (!phoneVerified) {
-        newErrors.phoneVerified =
-          "Please verify your mobile number before continuing";
-      }
-
-      if (!form.title.trim()) {
-        newErrors.title = "Title is required";
-      }
-
-      if (!form.category) {
-        newErrors.category = "Category is required";
-      }
+      set("state", "");
+      set("city", "");
+      set("locality", "");
+      return;
     }
 
-    if (step === 1) {
-      if (!form.state) newErrors.state = "State is required";
-      if (!form.city) newErrors.city = "City is required";
-      if (!form.locality) newErrors.locality = "Locality is required";
+    const data = await response.json();
 
-      if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-      }
+    console.log("Pincode API Response:", data);
 
-      await generatePropertyId();
+    const location = data?.places?.[0];
+
+    if (location) {
+      set("state", location.state || "");
+      set("city", location["place name"] || "");
+      set("locality", location["place name"] || "");
+
+      // Remove pincode error
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated.pincode;
+        return updated;
+      });
+    }
+  } catch (error) {
+    console.error("Pincode lookup failed:", error);
+
+    setErrors((prev) => ({
+      ...prev,
+      pincode: "Failed to fetch location",
+    }));
+  }
+};
+
+useEffect(() => {
+  fetch("/api/property-meta")
+    .then((r) => r.json())
+    .then(setMeta)
+    .catch((err) => console.error(err));
+}, []);
+
+const AREA_CONVERSION = {
+  sqft: 1,
+  sqyd: 9,
+  acre: 43560,
+  hectare: 107639,
+};
+
+const handleAreaCalculation = (
+  areaValue: string,
+  unit: string,
+) => {
+  set("area", areaValue);
+
+  set("areaUnit", unit);
+
+  if (!areaValue) {
+    set("convertedSqft", "");
+    return;
+  }
+
+  const sqft =
+    Number(areaValue) *
+    AREA_CONVERSION[unit as keyof typeof AREA_CONVERSION];
+
+  set("convertedSqft", sqft.toFixed(2));
+
+  if (form.price && Number(form.price) > 0) {
+    const pricePerSqft = Number(form.price) / sqft;
+
+    set("pricePerUnit", pricePerSqft.toFixed(2));
+  }
+};
+
+const handlePriceChange = (value: string) => {
+  set("price", value);
+
+  if (form.convertedSqft && Number(value) > 0) {
+    const pricePerSqft =
+      Number(value) / Number(form.convertedSqft);
+
+    set("pricePerUnit", pricePerSqft.toFixed(2));
+  }
+};
+
+const cities = Array.from(
+  new Map(
+    (meta?.states.find((s) => s.name === form.state)?.cities || []).map(
+      (city) => [city.name, city],
+    ),
+  ).values(),
+);
+
+const localities = Array.from(
+  new Set([
+    ...(cities.find((c) => c.name === form.city)?.localities || []),
+
+    ...(form.locality ? [form.locality] : []),
+  ]),
+);
+
+const toggleArr = (
+  key: "highlights" | "amenities",
+  val: string,
+) => {
+  setForm((prev) => {
+    const arr = prev[key];
+
+    return {
+      ...prev,
+      [key]: arr.includes(val)
+        ? arr.filter((v) => v !== val)
+        : [...arr, val],
+    };
+  });
+};
+
+/* Generate property ID when leaving step 1 */
+const generatePropertyId = async () => {
+  if (
+    propertyId ||
+    !form.state ||
+    !form.city ||
+    !form.locality
+  )
+    return;
+
+  setIdGenerating(true);
+
+  try {
+    const res = await fetch(
+      `/api/property-id?state=${encodeURIComponent(
+        form.state,
+      )}&city=${encodeURIComponent(
+        form.city,
+      )}&locality=${encodeURIComponent(form.locality)}`,
+    );
+
+    const data = await res.json();
+
+    setPropertyId(data.propertyId ?? "");
+  } catch (error) {
+    console.error("Property ID generation failed:", error);
+  } finally {
+    setIdGenerating(false);
+  }
+};
+
+const handleNext = async () => {
+  const newErrors: Record<string, string> = {};
+
+  // STEP 0
+  if (step === 0) {
+    if (!form.postedBy) {
+      newErrors.postedBy = "Please select who is posting";
     }
 
-    if (step === 2) {
-      if (!form.area) newErrors.area = "Area is required";
-      if (!form.price) newErrors.price = "Price is required";
+    if (!form.agentName.trim()) {
+      newErrors.agentName = "Name is required";
+    }
+
+    if (!form.agentPhone) {
+      newErrors.agentPhone = "Phone is required";
+    } else if (!/^[6-9]\d{9}$/.test(form.agentPhone)) {
+      newErrors.agentPhone = "Enter valid mobile number";
+    }
+
+    if (!phoneVerified) {
+      newErrors.phoneVerified =
+        "Please verify your mobile number before continuing";
+    }
+
+    if (!form.title.trim()) {
+      newErrors.title = "Title is required";
+    }
+
+    if (!form.category) {
+      newErrors.category = "Category is required";
+    }
+  }
+
+  // STEP 1
+  if (step === 1) {
+    if (!form.pincode) {
+      newErrors.pincode = "Pincode is required";
+    } else if (!/^\d{6}$/.test(form.pincode)) {
+      newErrors.pincode = "Enter valid 6 digit pincode";
+    }
+
+    if (!form.state) {
+      newErrors.state = "State is required";
+    }
+
+    if (!form.city) {
+      newErrors.city = "City is required";
+    }
+
+    if (!form.locality) {
+      newErrors.locality = "Locality is required";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -1209,11 +1282,31 @@ export default function PostPropertyPage() {
       return;
     }
 
-    setErrors({});
+    await generatePropertyId();
+  }
 
-    setStep((prev) => Math.min(steps.length - 1, prev + 1));
-  };
+  // STEP 2
+  if (step === 2) {
+    if (!form.area) {
+      newErrors.area = "Area is required";
+    }
 
+    if (!form.price) {
+      newErrors.price = "Price is required";
+    }
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({});
+
+  setStep((prev) =>
+    Math.min(steps.length - 1, prev + 1),
+  );
+};
   /* Submit */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
