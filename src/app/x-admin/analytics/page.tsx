@@ -35,10 +35,15 @@ const COLORS = [
   "#9333ea",
 ];
 
+const REFRESH_INTERVAL = 10000;
+
 export default function AnalyticsPage() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [lastUpdated, setLastUpdated] =
+    useState("");
 
   const [stats, setStats] =
     useState({
@@ -63,13 +68,16 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
 
+    let intervalId: ReturnType<typeof setInterval>;
+
     const fetchAnalytics = async () => {
 
       try {
 
         const response =
           await fetch(
-            "/api/admin/dashboard"
+            "/api/admin/dashboard",
+            { cache: "no-store" }
           );
 
         const data =
@@ -131,6 +139,10 @@ export default function AnalyticsPage() {
 
         );
 
+        setLastUpdated(
+          new Date().toLocaleTimeString()
+        );
+
       }
 
       catch (error) {
@@ -150,6 +162,9 @@ export default function AnalyticsPage() {
 
 
     fetchAnalytics();
+    intervalId = setInterval(fetchAnalytics, REFRESH_INTERVAL);
+
+    return () => clearInterval(intervalId);
 
   }, []);
 
@@ -265,6 +280,18 @@ export default function AnalyticsPage() {
     >
 
       {/* KPI CARDS */}
+
+      {lastUpdated ? (
+        <p
+          style={{
+            marginBottom: "18px",
+            color: "#6b7280",
+            fontSize: "13px",
+          }}
+        >
+          Updated at {lastUpdated}
+        </p>
+      ) : null}
 
       <div
         style={{

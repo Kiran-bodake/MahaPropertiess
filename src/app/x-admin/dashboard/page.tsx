@@ -1,11 +1,4 @@
 "use client";
-import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
-import Lead from "@/models/Lead";
-import Deal from "@/models/Deal";
-import Task from "@/models/Task";
-import Property from "@/models/Property";
-import { requireAdminUser } from "@/lib/admin-auth";
 
 import { useEffect, useState } from "react";
 import {
@@ -48,7 +41,7 @@ import { Pagination } from "@/components/admin/common/Pagination";
 
 
 // Chart Data
-const propertyTypeData = [
+const defaultPropertyTypeData = [
   { name: "Plots", value: 45 },
   { name: "Flats", value: 30 },
   { name: "Villas", value: 15 },
@@ -77,34 +70,36 @@ export default function AdminDashboard() {
   const [propertyInquiries, setPropertyInquiries] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] =
-  useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [propertyPage, setPropertyPage] = useState(1);
   const [propertyQuery, setPropertyQuery] = useState("");
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [analytics, setAnalytics] = useState<any>(null);
+  const [lastUpdated, setLastUpdated] = useState("");
+  const [propertyTypeDataState, setPropertyTypeDataState] = useState(defaultPropertyTypeData);
 
   const perPage = 10;
+  const REFRESH_INTERVAL = 10000;
 
   // Fetch dashboard data
   useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval>;
+
     const fetchData = async () => {
       try {
         const responses = await Promise.allSettled([
-          fetch("/api/admin/dashboard").catch(() => null),
+          fetch("/api/admin/dashboard", { cache: "no-store" }).catch(() => null),
           fetch("/api/property-inquiry").catch(() => null),
           fetch("/api/admin/recent-properties").catch(() => null),
           fetch("/api/admin/analytics/leads").catch(() => null),
         ]);
 
         let dashData:any = {};
-        let inquiriesData:any = {
-  inquiries:[]
-};
-        let propsData = { properties: [] };
-        let analyticsData = {};
+        let inquiriesData:any = { inquiries: [] };
+        let propsData: any = { properties: [] };
+        let analyticsData: any = {};
 
         // Process dashboard response
         if (responses[0].status === "fulfilled" && responses[0].value?.ok) {
@@ -132,14 +127,12 @@ export default function AdminDashboard() {
           totalProperties: dashData?.propertiesCount || 0,
           totalDeals: dashData?.dealsCount || 0,
         });
-setChartData(
-
-  dashData?.chartData || []
-
-);
+        setChartData(dashData?.chartData || []);
+        setPropertyTypeDataState(dashData?.propertyTypeData || defaultPropertyTypeData);
         setPropertyInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
         setProperties(Array.isArray(propsData?.properties) ? propsData.properties : []);
         setAnalytics(analyticsData || {});
+        setLastUpdated(new Date().toLocaleTimeString());
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
         // Set default values on error
@@ -158,6 +151,8 @@ setChartData(
     };
 
     fetchData();
+    intervalId = setInterval(fetchData, REFRESH_INTERVAL);
+    return () => clearInterval(intervalId);
   }, []);
 
   // Filter and paginate property inquiries
@@ -329,6 +324,17 @@ setChartData(
       title="Dashboard"
       subtitle="Welcome back! Here's your business overview at a glance."
     >
+      {lastUpdated ? (
+        <p
+          style={{
+            marginBottom: "14px",
+            color: "#6b7280",
+            fontSize: "13px",
+          }}
+        >
+          Updated at {lastUpdated}
+        </p>
+      ) : null}
       {/* KPI Stats Grid */}
    <div
   style={{
@@ -396,7 +402,7 @@ setChartData(
       height={190}
     >
       <LineChart
-        data={trendData}
+        data={chartData && chartData.length ? chartData : trendData}
         margin={{
           top: 5,
           right: 10,
@@ -491,8 +497,7 @@ setChartData(
       <PieChart>
 
         <Pie
-          data={propertyTypeData}
-          cx="50%"
+            data={propertyTypeDataState}
           cy="50%"
 
           labelLine={false}
@@ -506,7 +511,7 @@ setChartData(
           dataKey="value"
         >
 
-          {propertyTypeData.map(
+          {propertyTypeDataState.map(
             (entry, index) => (
               <Cell
                 key={`cell-${index}`}
