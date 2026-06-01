@@ -72,6 +72,7 @@ export default function AdminDashboard() {
   const [propertyQuery, setPropertyQuery] = useState("");
   const [propertyFilter, setPropertyFilter] = useState("all");
   const [analytics, setAnalytics] = useState<any>(null);
+  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
   const perPage = 10;
 
@@ -86,12 +87,10 @@ export default function AdminDashboard() {
           fetch("/api/admin/analytics/leads").catch(() => null),
         ]);
 
-        let dashData:any = {};
-        let inquiriesData:any = {
-  inquiries:[]
-};
-        let propsData = { properties: [] };
-        let analyticsData = {};
+        let dashData: any = {};
+        let inquiriesData: any = { inquiries: [] };
+        let propsData: any = { properties: [] };
+        let analyticsData: any = {};
 
         // Process dashboard response
         if (responses[0].status === "fulfilled" && responses[0].value?.ok) {
@@ -172,10 +171,10 @@ setPropertyTypeData(
   const handleUpdateInquiryStatus = async (inquiryId: string, status: string) => {
     if (!inquiryId || !status) return;
     try {
-      const response = await fetch("/api/property-inquiry", {
-        method: "PUT",
+      const response = await fetch(`/api/property-inquiry/${inquiryId}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: inquiryId, status }),
+        body: JSON.stringify({ status }),
       });
 
       if (response.ok) {
@@ -191,24 +190,34 @@ setPropertyTypeData(
   };
 
   // Delete inquiry
-  const handleDeleteInquiry = async (inquiryId: string) => {
-    if (!inquiryId || !confirm("Are you sure you want to delete this inquiry?")) return;
-    try {
-      const response = await fetch("/api/property-inquiry", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: inquiryId }),
-      });
+ const handleDeleteInquiry = async (inquiryId: string) => {
+  if (!confirm("Are you sure you want to delete this inquiry?")) return;
 
-      if (response.ok) {
-        setPropertyInquiries((prev) =>
-          prev.filter((inquiry) => inquiry._id !== inquiryId)
-        );
-      }
-    } catch (error) {
-      console.error("Failed to delete inquiry:", error);
+  try {
+    const response = await fetch("/api/property-inquiry", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: inquiryId }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message);
     }
-  };
+
+    setPropertyInquiries((prev) =>
+      prev.filter((inquiry) => inquiry._id !== inquiryId)
+    );
+
+    setDeleteMessage("Inquiry deleted successfully");
+    setTimeout(() => setDeleteMessage(null), 3000);
+  } catch (error) {
+    console.error("Failed to delete inquiry:", error);
+  }
+};
 
   // Update property status
   const handlePropertyStatus = async (propertyId: string, status: string) => {
@@ -1065,6 +1074,21 @@ setPropertyTypeData(
       </div>
 
 {/* Property Inquiries Table */}
+{deleteMessage && (
+  <div
+    style={{
+      marginBottom: "16px",
+      padding: "14px 18px",
+      borderRadius: "14px",
+      background: "#ecfdf5",
+      color: "#166534",
+      border: "1px solid #bbf7d0",
+      fontWeight: 600,
+    }}
+  >
+    {deleteMessage}
+  </div>
+)}
 <DataTableCard
   title="Property Inquiries"
   subtitle="Manage customer property inquiry requests"
@@ -1182,9 +1206,15 @@ setPropertyTypeData(
           const statusConfig = {
             new: { bg: "#ecfdf5", border: "#bbf7d0", dot: "#22c55e", text: "#15803d", label: "New" },
             contacted: { bg: "#dbeafe", border: "#bfdbfe", dot: "#3b82f6", text: "#1e40af", label: "Contacted" },
+            interested: { bg: "#ecfdf5", border: "#d1fae5", dot: "#16a34a", text: "#166534", label: "Interested" },
+            "site-visit": { bg: "#fce7f3", border: "#fbcfe8", dot: "#be185d", text: "#831843", label: "Site Visit" },
+            negotiation: { bg: "#ede9fe", border: "#ddd6fe", dot: "#7c3aed", text: "#5b21b6", label: "Negotiation" },
             closed: { bg: "#f3f4f6", border: "#e5e7eb", dot: "#9ca3af", text: "#6b7280", label: "Closed" },
           };
-          const config = statusConfig[inquiry.status as keyof typeof statusConfig] || statusConfig.new;
+          const config =
+            statusConfig[inquiry.status as keyof typeof statusConfig] ||
+            statusConfig.new;
+          const phoneNumber = inquiry.phone || inquiry.mobileNumber || "";
 
           return (
           <tr
@@ -1259,7 +1289,14 @@ setPropertyTypeData(
                   transition: "all .25s ease",
                 }}
                 onClick={() => {
-                  const statuses = ["new", "contacted", "closed"];
+                  const statuses = [
+                    "new",
+                    "contacted",
+                    "interested",
+                    "site-visit",
+                    "negotiation",
+                    "closed",
+                  ];
                   const currentIndex = statuses.indexOf(inquiry.status || "new");
                   const nextStatus = statuses[(currentIndex + 1) % statuses.length];
                   handleUpdateInquiryStatus(inquiry._id, nextStatus);
@@ -1317,7 +1354,11 @@ setPropertyTypeData(
             >
               <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                 <button
-                  onClick={() => handleUpdateInquiryStatus(inquiry._id, "contacted")}
+                  onClick={() => {
+                    const phoneNumber = inquiry.phone || inquiry.mobileNumber || "";
+                    if (!phoneNumber) return;
+                    window.location.href = `tel:${phoneNumber.replace(/\D/g, "")}`;
+                  }}
                   style={{
                     padding: "8px 12px",
                     borderRadius: "8px",
@@ -1326,7 +1367,8 @@ setPropertyTypeData(
                     color: "#3b82f6",
                     fontSize: "12px",
                     fontWeight: 600,
-                    cursor: "pointer",
+                    cursor: phoneNumber ? "pointer" : "not-allowed",
+                    opacity: phoneNumber ? 1 : 0.6,
                     transition: "all .2s ease",
                   }}
                   onMouseOver={(e) => {
@@ -1339,6 +1381,30 @@ setPropertyTypeData(
                   }}
                 >
                   Contact
+                </button>
+                <button
+                  onClick={() => window.location.assign("/x-admin/property-inquiries")}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    color: "#0f172a",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all .2s ease",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = "#0f172a";
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = "#ffffff";
+                    e.currentTarget.style.color = "#0f172a";
+                  }}
+                >
+                  View
                 </button>
                 <button
                   onClick={() => handleDeleteInquiry(inquiry._id)}

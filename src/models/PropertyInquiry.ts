@@ -67,29 +67,20 @@ const PropertyInquirySchema =
       },
 
       status: {
-
         type: String,
-
         enum: [
-
           "new",
-
           "contacted",
-
-          "closed"
-
+          "interested",
+          "site-visit",
+          "negotiation",
+          "closed",
         ],
-
         default: "new",
-
       },
-
     },
-
     {
-
       timestamps: true,
-
     }
 
   );

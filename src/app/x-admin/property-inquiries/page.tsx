@@ -1,1360 +1,718 @@
 "use client";
 
-import React, {
+import React, { useEffect, useState } from "react";
 
-  useEffect,
+type InquiryStatus =
+  | "new"
+  | "contacted"
+  | "interested"
+  | "site-visit"
+  | "negotiation"
+  | "closed";
 
-  useState
+type Inquiry = {
+  _id: string;
+  customerName?: string;
+  name?: string;
+  phone?: string;
+  mobileNumber?: string;
+  email?: string;
+  propertyTitle?: string;
+  propertyName?: string;
+  inquiryType?: string;
+  message?: string;
+  notes?: string;
+  status: InquiryStatus;
+  isRead: boolean;
+  createdAt: string;
+};
 
-} from "react";
+const statusLabels: Record<InquiryStatus, string> = {
+  new: "New",
+  contacted: "Contacted",
+  interested: "Interested",
+  "site-visit": "Site Visit",
+  negotiation: "Negotiation",
+  closed: "Closed",
+};
 
-
+const statusStyles: Record<InquiryStatus, { bg: string; color: string }> = {
+  new: { bg: "#eff6ff", color: "#1d4ed8" },
+  contacted: { bg: "#fef3c7", color: "#92400e" },
+  interested: { bg: "#ecfdf5", color: "#166534" },
+  "site-visit": { bg: "#fce7f3", color: "#831843" },
+  negotiation: { bg: "#ede9fe", color: "#6d28d9" },
+  closed: { bg: "#f3e8ff", color: "#6b21a8" },
+};
 
 export default function PropertyInquiriesPage() {
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedLead, setSelectedLead] = useState<Inquiry | null>(null);
 
-  const [data,setData] =
-
-    useState<any[]>([]);
-
-  const [loading,setLoading] =
-
-    useState(true);
-
-  const [selectedLead,setSelectedLead] =
-
-    useState<any>(null);
+  // Drawer form state
+  const [drawerStatus, setDrawerStatus] = useState<InquiryStatus>("new");
+  const [drawerNotes, setDrawerNotes] = useState("");
+  const [drawerSaving, setDrawerSaving] = useState(false);
+  const [drawerError, setDrawerError] = useState<string | null>(null);
+  const [drawerSuccess, setDrawerSuccess] = useState(false);
 
 
 
 
-  useEffect(()=>{
-
+  useEffect(() => {
     fetchInquiries();
+  }, []);
 
-  },[]);
-
-
-
-
-  const fetchInquiries = async()=>{
-
-    try{
-
-      const res =
-
-        await fetch(
-
-          "/api/property-inquiry"
-
-        );
-
-
-
-      const result =
-
-        await res.json();
-
-
-
-      setData(
-
-        Array.isArray(result)
-
-        ?
-
-        result
-
-        :
-
-        result.inquiries || []
-
-      );
-
-    }
-
-    catch(error){
-
-      console.log(error);
-
-    }
-
-    finally{
-
+  const fetchInquiries = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/property-inquiry");
+      const result = await res.json();
+      setInquiries(Array.isArray(result) ? result : result.inquiries || []);
+    } catch (error) {
+      console.error(error);
+    } finally {
       setLoading(false);
-
     }
-
   };
 
+  const openLead = async (lead: Inquiry) => {
+    setSelectedLead(lead);
+    setDrawerStatus(lead.status);
+    setDrawerNotes(lead.notes || "");
+    setDrawerError(null);
+    setDrawerSuccess(false);
+
+    // Mark as read
+    if (!lead.isRead) {
+      try {
+        await fetch(`/api/property-inquiry/${lead._id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isRead: true }),
+        });
+        setInquiries((prev) =>
+          prev.map((item) =>
+            item._id === lead._id ? { ...item, isRead: true } : item
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const closeLead = () => {
+    setSelectedLead(null);
+    setDrawerStatus("new");
+    setDrawerNotes("");
+    setDrawerError(null);
+    setDrawerSuccess(false);
+  };
+
+  const saveLeadChanges = async () => {
+    if (!selectedLead) return;
+
+    setDrawerSaving(true);
+    setDrawerError(null);
+    setDrawerSuccess(false);
+
+    try {
+      const response = await fetch(`/api/property-inquiry/${selectedLead._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: drawerStatus,
+          notes: drawerNotes,
+        }),
+      });
+
+      let result: { success?: boolean; message?: string } | null = null;
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        try {
+          result = await response.json();
+        } catch (parseError) {
+          console.error("Failed to parse response JSON", parseError);
+        }
+      }
+
+      if (!response.ok || result?.success === false) {
+        const errorMessage =
+          result?.message ||
+          `Failed to save changes${response.status ? ` (${response.status})` : ""}. Please try again.`;
+        setDrawerError(errorMessage);
+        return;
+      }
+
+      // Update local state
+      const updatedLead: Inquiry = {
+        ...selectedLead,
+        status: drawerStatus,
+        notes: drawerNotes,
+      };
+
+      setInquiries((prev) =>
+        prev.map((item) => (item._id === selectedLead._id ? updatedLead : item))
+      );
+
+      setSelectedLead(updatedLead);
+      setDrawerSuccess(true);
+
+      // Clear success message after 2 seconds
+      setTimeout(() => {
+        setDrawerSuccess(false);
+      }, 2000);
+    } catch (error) {
+      console.error(error);
+      setDrawerError("Failed to save changes. Please try again.");
+    } finally {
+      setDrawerSaving(false);
+    }
+  };
+
+  const getCustomerName = (lead: Inquiry) =>
+    lead.customerName || lead.name || "-";
+  const getPhone = (lead: Inquiry) => lead.phone || lead.mobileNumber || "-";
+  const getProperty = (lead: Inquiry) =>
+    lead.propertyTitle || lead.propertyName || "-";
 
 
 
-  /* LOADING */
-  if(loading){
 
-    return(
-
-      <div
-        style={{
-
-          display:"flex",
-
-          alignItems:"center",
-
-          justifyContent:"center",
-
-          height:"100vh",
-
-          fontSize:18,
-
-          fontWeight:700,
-
-          color:"#64748b"
-
-        }}
-      >
-
-        Loading inquiries...
-
+  if (loading) {
+    return (
+      <div style={loadingContainerStyle}>
+        <p style={{ fontSize: 18, color: "#64748b" }}>Loading inquiries...</p>
       </div>
-
     );
-
   }
 
-
-
-
-  return(
-
-    <div
-      style={{
-
-        padding:24,
-
-        background:"#f1f5f9",
-
-        minHeight:"100vh"
-
-      }}
-    >
-
+  return (
+    <div style={containerStyle}>
       {/* HEADER */}
-      <div
-        style={{
-
-          display:"flex",
-
-          justifyContent:
-            "space-between",
-
-          alignItems:"center",
-
-          marginBottom:24,
-
-          flexWrap:"wrap",
-
-          gap:16
-
-        }}
-      >
-
+      <div style={headerStyle}>
         <div>
-
-          <h1
-            style={{
-
-              margin:0,
-
-              fontSize:32,
-
-              fontWeight:800,
-
-              color:"#0f172a"
-
-            }}
-          >
-
-            Property Inquiries
-
-          </h1>
-
-          <p
-            style={{
-
-              marginTop:6,
-
-              color:"#64748b"
-
-            }}
-          >
-
-            Manage customer leads
-            professionally.
-
-          </p>
-
+          <h1 style={titleStyle}>Property Inquiries</h1>
+          <p style={subtitleStyle}>Manage customer inquiries professionally</p>
         </div>
-
+        <button onClick={fetchInquiries} style={refreshButtonStyle}>
+          🔄 Refresh
+        </button>
       </div>
 
-
-
-
-      {/* EMPTY */}
-      {
-
-        data.length === 0
-
-        ?
-
-        (
-
-          <div
-            style={{
-
-              background:"#fff",
-
-              borderRadius:24,
-
-              padding:50,
-
-              textAlign:"center",
-
-              border:
-                "1px solid #e2e8f0"
-
-            }}
-          >
-
-            <div
-              style={{
-                fontSize:50
-              }}
-            >
-              📭
-            </div>
-
-            <div
-              style={{
-
-                marginTop:14,
-
-                fontSize:18,
-
-                fontWeight:700
-
-              }}
-            >
-
-              No inquiries found
-
-            </div>
-
-          </div>
-
-        )
-
-        :
-
-        (
-
-          <div
-            style={{
-
-              overflowX:"auto",
-
-              background:"#fff",
-
-              borderRadius:28,
-
-              border:
-                "1px solid #e2e8f0",
-
-              boxShadow:
-                "0 10px 30px rgba(15,23,42,.04)"
-
-            }}
-          >
-
-            <table
-              style={{
-
-                width:"100%",
-
-                borderCollapse:"collapse"
-
-              }}
-            >
-
-              <thead>
-
-                <tr
-                  style={{
-                    background:"#f8fafc"
-                  }}
-                >
-
-                  <th style={th}>
-                    Customer
-                  </th>
-
-                  <th style={th}>
-                    Phone
-                  </th>
-
-                  <th style={th}>
-                    Email
-                  </th>
-
-                  <th style={th}>
-                    Property
-                  </th>
-
-                  <th style={th}>
-                    Type
-                  </th>
-
-                  <th style={th}>
-                    Message
-                  </th>
-
-                  <th style={th}>
-                    Status
-                  </th>
-
-                  <th style={th}>
-                    Date
-                  </th>
-
-                  <th style={th}>
-                    Actions
-                  </th>
-
-                </tr>
-
-              </thead>
-
-
-
-
-              <tbody>
-
-                {
-
-                  data.map((item)=>(
-
-                    <tr
-                      key={item._id}
-
-                      style={{
-
-                        borderBottom:
-                          "1px solid #e2e8f0",
-
-                        transition:
-                          "all .2s ease"
-
-                      }}
-                    >
-
-                      {/* CUSTOMER */}
-                      <td style={td}>
-
-                        {
-
-                          item.customerName ||
-
-                          item.name ||
-
-                          "-"
-
-                        }
-
-                      </td>
-
-
-
-                      {/* PHONE */}
-                      <td style={td}>
-
-                        {
-
-                          item.phone ||
-
-                          item.mobileNumber ||
-
-                          "-"
-
-                        }
-
-                      </td>
-
-
-
-                      {/* EMAIL */}
-                      <td style={td}>
-
-                        {item.email || "-"}
-
-                      </td>
-
-
-
-                      {/* PROPERTY */}
-                      <td style={td}>
-
-                        {
-
-                          item.propertyTitle ||
-
-                          item.propertyName ||
-
-                          "-"
-
-                        }
-
-                      </td>
-
-
-
-                      {/* TYPE */}
-                      <td style={td}>
-
-                        <span
-                          style={badge}
-                        >
-
-                          {
-
-                            item.inquiryType ||
-
-                            "General"
-
-                          }
-
-                        </span>
-
-                      </td>
-
-
-
-                      {/* MESSAGE */}
-                      <td
+      {/* EMPTY STATE */}
+      {inquiries.length === 0 ? (
+        <div style={emptyStateStyle}>
+          <div style={{ fontSize: 50 }}>📭</div>
+          <p>No inquiries found</p>
+        </div>
+      ) : (
+        <div style={tableContainerStyle}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Customer</th>
+                <th style={thStyle}>Phone</th>
+                <th style={thStyle}>Email</th>
+                <th style={thStyle}>Property</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}>Date</th>
+                <th style={thStyle}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {inquiries.map((inquiry) => {
+                const statusStyle = statusStyles[inquiry.status];
+                return (
+                  <tr
+                    key={inquiry._id}
+                    style={{
+                      ...rowStyle,
+                      backgroundColor: inquiry.isRead ? "#ffffff" : "#e0f2fe",
+                    }}
+                  >
+                    <td style={tdStyle}>{getCustomerName(inquiry)}</td>
+                    <td style={tdStyle}>{getPhone(inquiry)}</td>
+                    <td style={tdStyle}>{inquiry.email || "-"}</td>
+                    <td style={tdStyle}>{getProperty(inquiry)}</td>
+                    <td style={tdStyle}>
+                      <span
                         style={{
-
-                          ...td,
-
-                          maxWidth:220,
-
-                          whiteSpace:"nowrap",
-
-                          overflow:"hidden",
-
-                          textOverflow:
-                            "ellipsis"
-
+                          ...statusBadgeStyle,
+                          backgroundColor: statusStyle.bg,
+                          color: statusStyle.color,
                         }}
                       >
-
-                        {
-
-                          item.message ||
-
-                          "-"
-
-                        }
-
-                      </td>
-
-
-
-                      {/* STATUS */}
-                      <td style={td}>
-
-                        <StatusBadge
-                          status={
-                            item.status
-                          }
-                        />
-
-                      </td>
-
-
-
-                      {/* DATE */}
-                      <td style={td}>
-
-                        {
-
-                          item.createdAt
-
-                          ?
-
-                          new Date(
-
-                            item.createdAt
-
-                          )
-
-                          .toLocaleDateString(
-
-                            "en-IN"
-
-                          )
-
-                          :
-
-                          "-"
-
-                        }
-
-                      </td>
-
-
-
-                      {/* ACTIONS */}
-                      <td style={td}>
-
-                        <div
-                          style={{
-
-                            display:"flex",
-
-                            gap:8,
-
-                            flexWrap:"wrap"
-
-                          }}
-                        >
-
-                          {/* VIEW */}
-                          <button
-
-                            style={viewBtn}
-
-                            onClick={()=>{
-
-                              setSelectedLead(
-
-                                item
-
-                              );
-
-                            }}
-
-                          >
-
-                            View
-
-                          </button>
-
-
-
-                          {/* CALL */}
-                          <a
-                            href={`tel:${
-                              item.phone
-                              ||
-                              item.mobileNumber
-                            }`}
-                            style={callBtn}
-                          >
-
-                            Call
-
-                          </a>
-
-
-
-                          {/* WHATSAPP */}
-                          <a
-
-                            href={`https://wa.me/91${
-                              item.phone
-                              ||
-                              item.mobileNumber
-                            }`}
-
-                            target="_blank"
-
-                            style={waBtn}
-
-                          >
-
-                            WhatsApp
-
-                          </a>
-
-                        </div>
-
-                      </td>
-
-                    </tr>
-
-                  ))
-
-                }
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        )
-
-      }
+                        {statusLabels[inquiry.status]}
+                      </span>
+                    </td>
+                    <td style={tdStyle}>
+                      {new Date(inquiry.createdAt).toLocaleDateString()}
+                    </td>
+                    <td style={tdStyle}>
+                      <button
+                        onClick={() => openLead(inquiry)}
+                        style={viewButtonStyle}
+                      >
+                        👁️ View
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
 
 
 
       {/* LEAD DRAWER */}
-      {
-
-        selectedLead && (
-
+      {selectedLead && (
+        <div style={overlayStyle} onClick={closeLead}>
           <div
-            style={overlay}
+            style={drawerStyle}
+            onClick={(e) => e.stopPropagation()}
           >
-
-            <div
-              style={drawer}
-            >
-
-              {/* HEADER */}
-              <div
-                style={{
-
-                  display:"flex",
-
-                  justifyContent:
-                    "space-between",
-
-                  alignItems:"center",
-
-                  marginBottom:24
-
-                }}
-              >
-
-                <h2
-                  style={{
-                    margin:0
-                  }}
-                >
-
-                  Lead Details
-
-                </h2>
-
-                <button
-
-                  style={closeBtn}
-
-                  onClick={()=>{
-
-                    setSelectedLead(
-
-                      null
-
-                    );
-
-                  }}
-
-                >
-
-                  ✕
-
-                </button>
-
+            {/* DRAWER HEADER */}
+            <div style={drawerHeaderStyle}>
+              <div>
+                <h2 style={drawerTitleStyle}>Lead Details</h2>
+                <p style={drawerSubtitleStyle}>{getCustomerName(selectedLead)}</p>
               </div>
-
-
-
-
-              {/* CUSTOMER */}
-              <SectionTitle
-                title="Customer Info"
-              />
-
-              <InfoRow
-                label="Name"
-                value={
-                  selectedLead.customerName
-                }
-              />
-
-              <InfoRow
-                label="Phone"
-                value={
-                  selectedLead.phone
-                }
-              />
-
-              <InfoRow
-                label="Email"
-                value={
-                  selectedLead.email
-                }
-              />
-
-
-
-
-              {/* PROPERTY */}
-              <SectionTitle
-                title="Property Info"
-              />
-
-              <InfoRow
-                label="Property"
-                value={
-                  selectedLead.propertyTitle
-                }
-              />
-
-              <InfoRow
-                label="Inquiry Type"
-                value={
-                  selectedLead.inquiryType
-                }
-              />
-
-
-
-
-              {/* STATUS */}
-              <SectionTitle
-                title="Lead Status"
-              />
-
-              <select
-                style={statusSelect}
-                defaultValue={
-                  selectedLead.status
-                }
-              >
-
-                <option>
-                  new
-                </option>
-
-                <option>
-                  contacted
-                </option>
-
-                <option>
-                  interested
-                </option>
-
-                <option>
-                  site visit
-                </option>
-
-                <option>
-                  negotiation
-                </option>
-
-                <option>
-                  closed
-                </option>
-
-              </select>
-
-
-
-
-              {/* NOTES */}
-              <SectionTitle
-                title="Notes"
-              />
-
-              <textarea
-                placeholder=
-                  "Add notes here..."
-
-                style={notesStyle}
-              />
-
-
-
-
-              {/* MESSAGE */}
-              <SectionTitle
-                title="Message"
-              />
-
-              <div
-                style={messageBox}
-              >
-
-                {
-
-                  selectedLead.message ||
-
-                  "No message"
-
-                }
-
-              </div>
-
-
-
-
-              {/* ACTIONS */}
-              <div
-                style={{
-                  marginTop:24
-                }}
-              >
-
-                <a
-
-                  href={`tel:${
-                    selectedLead.phone
-                  }`}
-
-                  style={callLargeBtn}
-
-                >
-
-                  📞 Call Customer
-
-                </a>
-
-
-
-                <a
-
-                  href={`https://wa.me/91${
-                    selectedLead.phone
-                  }`}
-
-                  target="_blank"
-
-                  style={waLargeBtn}
-
-                >
-
-                  💬 WhatsApp
-
-                </a>
-
-
-
-               {
-
-  selectedLead.propertyId && (
-
-    <a
-
-      href={`/x-admin/properties/${
-        selectedLead.propertyId
-      }`}
-
-      target="_blank"
-
-      style={propertyBtn}
-
-    >
-
-      🏠 View Property
-
-    </a>
-
-  )
-
-}
-
-              </div>
-
+              <button onClick={closeLead} style={closeButtonStyle}>
+                ✕
+              </button>
             </div>
 
+            {/* CUSTOMER INFO */}
+            <div style={sectionStyle}>
+              <h3 style={sectionTitleStyle}>Customer Information</h3>
+              <div style={infoGridStyle}>
+                <div style={infoItemStyle}>
+                  <label style={labelStyle}>Name</label>
+                  <p style={valueStyle}>{getCustomerName(selectedLead)}</p>
+                </div>
+                <div style={infoItemStyle}>
+                  <label style={labelStyle}>Phone</label>
+                  <p style={valueStyle}>{getPhone(selectedLead)}</p>
+                </div>
+                <div style={infoItemStyle}>
+                  <label style={labelStyle}>Email</label>
+                  <p style={valueStyle}>{selectedLead.email || "-"}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* PROPERTY INFO */}
+            <div style={sectionStyle}>
+              <h3 style={sectionTitleStyle}>Property Information</h3>
+              <div style={infoGridStyle}>
+                <div style={infoItemStyle}>
+                  <label style={labelStyle}>Property</label>
+                  <p style={valueStyle}>{getProperty(selectedLead)}</p>
+                </div>
+                <div style={infoItemStyle}>
+                  <label style={labelStyle}>Inquiry Type</label>
+                  <p style={valueStyle}>{selectedLead.inquiryType || "-"}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* STATUS */}
+            <div style={sectionStyle}>
+              <h3 style={sectionTitleStyle}>Status</h3>
+              <select
+                value={drawerStatus}
+                onChange={(e) => setDrawerStatus(e.target.value as InquiryStatus)}
+                style={selectStyle}
+              >
+                <option value="new">{statusLabels.new}</option>
+                <option value="contacted">{statusLabels.contacted}</option>
+                <option value="interested">{statusLabels.interested}</option>
+                <option value="site-visit">{statusLabels["site-visit"]}</option>
+                <option value="negotiation">{statusLabels.negotiation}</option>
+                <option value="closed">{statusLabels.closed}</option>
+              </select>
+            </div>
+
+            {/* NOTES */}
+            <div style={sectionStyle}>
+              <h3 style={sectionTitleStyle}>Notes</h3>
+              <textarea
+                value={drawerNotes}
+                onChange={(e) => setDrawerNotes(e.target.value)}
+                placeholder="Add notes about this inquiry..."
+                style={textareaStyle}
+              />
+            </div>
+
+            {/* MESSAGE */}
+            {selectedLead.message && (
+              <div style={sectionStyle}>
+                <h3 style={sectionTitleStyle}>Customer Message</h3>
+                <div style={messageBoxStyle}>{selectedLead.message}</div>
+              </div>
+            )}
+
+            {/* ERROR/SUCCESS */}
+            {drawerError && (
+              <div style={errorBoxStyle}>{drawerError}</div>
+            )}
+            {drawerSuccess && (
+              <div style={successBoxStyle}>✓ Changes saved successfully</div>
+            )}
+
+            {/* ACTIONS */}
+            <div style={actionsContainerStyle}>
+              <button
+                onClick={saveLeadChanges}
+                disabled={drawerSaving}
+                style={{
+                  ...saveButtonStyle,
+                  opacity: drawerSaving ? 0.7 : 1,
+                }}
+              >
+                {drawerSaving ? "💾 Saving..." : "💾 Save Changes"}
+              </button>
+              <a
+                href={`tel:${getPhone(selectedLead)}`}
+                style={callButtonStyle}
+              >
+                📞 Call
+              </a>
+              <a
+                href={`https://wa.me/91${getPhone(selectedLead).replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={whatsappButtonStyle}
+              >
+                💬 WhatsApp
+              </a>
+            </div>
           </div>
-
-        )
-
-      }
-
+        </div>
+      )}
     </div>
-
   );
-
 }
 
 
-
-
-/* SECTION TITLE */
-function SectionTitle({
-
-  title
-
-}:any){
-
-  return(
-
-    <div
-      style={{
-
-        marginTop:20,
-
-        marginBottom:12,
-
-        fontSize:15,
-
-        fontWeight:700,
-
-        color:"#0f172a"
-
-      }}
-    >
-
-      {title}
-
-    </div>
-
-  );
-
-}
-
-
-
-
-/* INFO ROW */
-function InfoRow({
-
-  label,
-
-  value
-
-}:any){
-
-  return(
-
-    <div
-      style={{
-
-        display:"flex",
-
-        justifyContent:
-          "space-between",
-
-        marginBottom:10
-
-      }}
-    >
-
-      <div
-        style={{
-          color:"#64748b"
-        }}
-      >
-
-        {label}
-
-      </div>
-
-      <div
-        style={{
-          fontWeight:600
-        }}
-      >
-
-        {value || "-"}
-
-      </div>
-
-    </div>
-
-  );
-
-}
-
-
-
-
-/* STATUS BADGE */
-function StatusBadge({
-
-  status
-
-}:any){
-
-  return(
-
-    <span
-      style={{
-
-        padding:"6px 12px",
-
-        borderRadius:999,
-
-        fontSize:12,
-
-        fontWeight:700,
-
-        background:
-
-          status === "closed"
-
-          ?
-
-          "#dcfce7"
-
-          :
-
-          status === "contacted"
-
-          ?
-
-          "#dbeafe"
-
-          :
-
-          "#fef9c3",
-
-        color:
-
-          status === "closed"
-
-          ?
-
-          "#166534"
-
-          :
-
-          status === "contacted"
-
-          ?
-
-          "#1d4ed8"
-
-          :
-
-          "#854d0e"
-
-      }}
-    >
-
-      {status || "new"}
-
-    </span>
-
-  );
-
-}
-
-
-
-
-/* TABLE */
-const th:React.CSSProperties = {
-
-  padding:"16px",
-
-  textAlign:"left",
-
-  fontSize:14,
-
-  fontWeight:700,
-
-  color:"#0f172a"
-
+/* STYLES */
+const containerStyle: React.CSSProperties = {
+  minHeight: "100vh",
+  padding: "24px",
+  background: "#f1f5f9",
 };
 
-
-
-const td:React.CSSProperties = {
-
-  padding:"16px",
-
-  fontSize:14,
-
-  color:"#334155"
-
+const headerStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "24px",
+  flexWrap: "wrap",
+  gap: "16px",
 };
 
-
-
-/* BADGE */
-const badge:React.CSSProperties = {
-
-  padding:"6px 12px",
-
-  borderRadius:999,
-
-  background:"#dbeafe",
-
-  color:"#1d4ed8",
-
-  fontSize:12,
-
-  fontWeight:700
-
+const titleStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: "32px",
+  fontWeight: "800",
+  color: "#0f172a",
 };
 
-
-
-/* ACTION BUTTONS */
-const viewBtn:React.CSSProperties = {
-
-  height:36,
-
-  padding:"0 14px",
-
-  border:"none",
-
-  borderRadius:10,
-
-  background:"#dbeafe",
-
-  color:"#1d4ed8",
-
-  fontWeight:700,
-
-  cursor:"pointer"
-
+const subtitleStyle: React.CSSProperties = {
+  margin: "6px 0 0",
+  fontSize: "14px",
+  color: "#64748b",
 };
 
-
-
-const callBtn:React.CSSProperties = {
-
-  height:36,
-
-  padding:"0 14px",
-
-  borderRadius:10,
-
-  background:"#dcfce7",
-
-  color:"#166534",
-
-  fontWeight:700,
-
-  textDecoration:"none",
-
-  display:"flex",
-
-  alignItems:"center"
-
+const refreshButtonStyle: React.CSSProperties = {
+  padding: "10px 18px",
+  borderRadius: "10px",
+  border: "none",
+  background: "#2563eb",
+  color: "#fff",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "14px",
+  transition: "all 0.2s ease",
 };
 
-
-
-const waBtn:React.CSSProperties = {
-
-  height:36,
-
-  padding:"0 14px",
-
-  borderRadius:10,
-
-  background:"#dcfce7",
-
-  color:"#166534",
-
-  fontWeight:700,
-
-  textDecoration:"none",
-
-  display:"flex",
-
-  alignItems:"center"
-
+const tableContainerStyle: React.CSSProperties = {
+  background: "#ffffff",
+  borderRadius: "20px",
+  border: "1px solid #e2e8f0",
+  overflow: "auto",
+  boxShadow: "0 10px 30px rgba(15,23,42,0.04)",
 };
 
-
-
-/* DRAWER */
-const overlay:React.CSSProperties = {
-
-  position:"fixed",
-
-  top:0,
-
-  left:0,
-
-  right:0,
-
-  bottom:0,
-
-  background:
-    "rgba(15,23,42,.45)",
-
-  display:"flex",
-
-  justifyContent:"flex-end",
-
-  zIndex:999
-
+const tableStyle: React.CSSProperties = {
+  width: "100%",
+  borderCollapse: "collapse",
 };
 
-
-
-const drawer:React.CSSProperties = {
-
-  width:420,
-
-  height:"100vh",
-
-  background:"#fff",
-
-  padding:24,
-
-  overflowY:"auto",
-
-  boxShadow:
-    "-10px 0 30px rgba(0,0,0,.1)"
-
+const thStyle: React.CSSProperties = {
+  padding: "14px 16px",
+  textAlign: "left",
+  fontSize: "13px",
+  fontWeight: "700",
+  color: "#0f172a",
+  background: "#f8fafc",
+  borderBottom: "1px solid #e2e8f0",
 };
 
-
-
-const closeBtn:React.CSSProperties = {
-
-  width:40,
-
-  height:40,
-
-  border:"none",
-
-  borderRadius:12,
-
-  cursor:"pointer",
-
-  fontWeight:700
-
+const rowStyle: React.CSSProperties = {
+  borderBottom: "1px solid #e2e8f0",
+  transition: "all 0.2s ease",
 };
 
-
-
-const statusSelect:React.CSSProperties = {
-
-  width:"100%",
-
-  height:50,
-
-  borderRadius:14,
-
-  border:"1px solid #cbd5e1",
-
-  padding:"0 14px",
-
-  outline:"none"
-
+const tdStyle: React.CSSProperties = {
+  padding: "14px 16px",
+  fontSize: "14px",
+  color: "#334155",
 };
 
-
-
-const notesStyle:React.CSSProperties = {
-
-  width:"100%",
-
-  height:120,
-
-  borderRadius:14,
-
-  border:"1px solid #cbd5e1",
-
-  padding:14,
-
-  resize:"none",
-
-  outline:"none"
-
+const statusBadgeStyle: React.CSSProperties = {
+  display: "inline-block",
+  padding: "6px 12px",
+  borderRadius: "999px",
+  fontSize: "12px",
+  fontWeight: "700",
 };
 
-
-
-const messageBox:React.CSSProperties = {
-
-  background:"#f8fafc",
-
-  padding:16,
-
-  borderRadius:14,
-
-  border:"1px solid #e2e8f0",
-
-  color:"#334155"
-
+const viewButtonStyle: React.CSSProperties = {
+  padding: "6px 12px",
+  borderRadius: "8px",
+  border: "none",
+  background: "#dbeafe",
+  color: "#1d4ed8",
+  fontWeight: "600",
+  cursor: "pointer",
+  fontSize: "12px",
+  transition: "all 0.2s ease",
 };
 
-
-
-const callLargeBtn:React.CSSProperties = {
-
-  height:50,
-
-  borderRadius:14,
-
-  background:"#dcfce7",
-
-  color:"#166534",
-
-  display:"flex",
-
-  alignItems:"center",
-
-  justifyContent:"center",
-
-  fontWeight:700,
-
-  textDecoration:"none",
-
-  marginBottom:12
-
+const emptyStateStyle: React.CSSProperties = {
+  background: "#ffffff",
+  borderRadius: "24px",
+  padding: "50px",
+  textAlign: "center",
+  border: "1px solid #e2e8f0",
 };
 
-
-
-const waLargeBtn:React.CSSProperties = {
-
-  height:50,
-
-  borderRadius:14,
-
-  background:"#22c55e",
-
-  color:"#fff",
-
-  display:"flex",
-
-  alignItems:"center",
-
-  justifyContent:"center",
-
-  fontWeight:700,
-
-  textDecoration:"none",
-
-  marginBottom:12
-
+const loadingContainerStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: "100vh",
+  color: "#64748b",
 };
 
+/* DRAWER STYLES */
+const overlayStyle: React.CSSProperties = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  background: "rgba(15, 23, 42, 0.5)",
+  display: "flex",
+  justifyContent: "flex-end",
+  zIndex: 999,
+};
 
+const drawerStyle: React.CSSProperties = {
+  width: "450px",
+  height: "100vh",
+  background: "#ffffff",
+  padding: "24px",
+  overflowY: "auto",
+  boxShadow: "-10px 0 30px rgba(15, 23, 42, 0.1)",
+};
 
-const propertyBtn:React.CSSProperties = {
+const drawerHeaderStyle: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  marginBottom: "24px",
+  paddingBottom: "16px",
+  borderBottom: "2px solid #e2e8f0",
+};
 
-  height:50,
+const drawerTitleStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: "24px",
+  fontWeight: "800",
+  color: "#0f172a",
+};
 
-  borderRadius:14,
+const drawerSubtitleStyle: React.CSSProperties = {
+  margin: "6px 0 0",
+  fontSize: "13px",
+  color: "#64748b",
+};
 
-  background:"#2563eb",
+const closeButtonStyle: React.CSSProperties = {
+  width: "40px",
+  height: "40px",
+  border: "none",
+  borderRadius: "12px",
+  background: "#f1f5f9",
+  color: "#0f172a",
+  fontSize: "20px",
+  cursor: "pointer",
+  fontWeight: "700",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
 
-  color:"#fff",
+const sectionStyle: React.CSSProperties = {
+  marginBottom: "24px",
+};
 
-  display:"flex",
+const sectionTitleStyle: React.CSSProperties = {
+  margin: "0 0 12px",
+  fontSize: "14px",
+  fontWeight: "700",
+  color: "#0f172a",
+  textTransform: "uppercase",
+  letterSpacing: "0.5px",
+};
 
-  alignItems:"center",
+const infoGridStyle: React.CSSProperties = {
+  display: "grid",
+  gap: "12px",
+};
 
-  justifyContent:"center",
+const infoItemStyle: React.CSSProperties = {
+  display: "grid",
+  gap: "4px",
+};
 
-  fontWeight:700,
+const labelStyle: React.CSSProperties = {
+  fontSize: "12px",
+  fontWeight: "600",
+  color: "#64748b",
+};
 
-  textDecoration:"none"
+const valueStyle: React.CSSProperties = {
+  margin: 0,
+  fontSize: "14px",
+  fontWeight: "600",
+  color: "#0f172a",
+};
 
+const selectStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  border: "1px solid #cbd5e1",
+  fontSize: "14px",
+  color: "#0f172a",
+  background: "#ffffff",
+  cursor: "pointer",
+  fontWeight: "600",
+};
+
+const textareaStyle: React.CSSProperties = {
+  width: "100%",
+  minHeight: "120px",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  border: "1px solid #cbd5e1",
+  fontSize: "14px",
+  color: "#0f172a",
+  fontFamily: "inherit",
+  resize: "vertical",
+};
+
+const messageBoxStyle: React.CSSProperties = {
+  padding: "14px",
+  borderRadius: "12px",
+  background: "#f8fafc",
+  border: "1px solid #e2e8f0",
+  color: "#334155",
+  fontSize: "14px",
+  whiteSpace: "pre-wrap",
+  wordBreak: "break-word",
+};
+
+const errorBoxStyle: React.CSSProperties = {
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "#fee2e2",
+  color: "#991b1b",
+  fontSize: "13px",
+  fontWeight: "600",
+  marginBottom: "12px",
+  border: "1px solid #fca5a5",
+};
+
+const successBoxStyle: React.CSSProperties = {
+  padding: "12px 14px",
+  borderRadius: "12px",
+  background: "#dcfce7",
+  color: "#166534",
+  fontSize: "13px",
+  fontWeight: "600",
+  marginBottom: "12px",
+  border: "1px solid #86efac",
+};
+
+const actionsContainerStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "12px",
+  marginTop: "24px",
+  paddingTop: "24px",
+  borderTop: "2px solid #e2e8f0",
+};
+
+const saveButtonStyle: React.CSSProperties = {
+  padding: "12px 18px",
+  borderRadius: "12px",
+  border: "none",
+  background: "#2563eb",
+  color: "#ffffff",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "14px",
+  transition: "all 0.2s ease",
+};
+
+const callButtonStyle: React.CSSProperties = {
+  padding: "12px 18px",
+  borderRadius: "12px",
+  border: "none",
+  background: "#dcfce7",
+  color: "#166534",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "14px",
+  textDecoration: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "all 0.2s ease",
+};
+
+const whatsappButtonStyle: React.CSSProperties = {
+  padding: "12px 18px",
+  borderRadius: "12px",
+  border: "none",
+  background: "#25d366",
+  color: "#ffffff",
+  fontWeight: "700",
+  cursor: "pointer",
+  fontSize: "14px",
+  textDecoration: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  transition: "all 0.2s ease",
 };
