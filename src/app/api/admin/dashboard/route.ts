@@ -51,61 +51,51 @@ export async function GET(
     /* ================================
        BASIC COUNTS
     ================================ */
+const [
 
-    const [
+  leadsCount,
 
-      leadsCount,
+  dealsCount,
 
-      dealsCount,
+  tasksCount,
 
-      tasksCount,
+  propertiesCount,
 
-      propertiesCount,
+  activeProperties,
 
-      pendingProperties,
+  featuredProperties,
 
-      approvedProperties,
+  verifiedProperties,
 
-      rejectedProperties,
+  saleProperties,
 
-      premiumProperties,
+] = await Promise.all([
 
-    ] = await Promise.all([
+  Lead.countDocuments(),
 
-      Lead.countDocuments(),
+  Deal.countDocuments(),
 
-      Deal.countDocuments(),
+  Task.countDocuments(),
 
-      Task.countDocuments(),
+  Property.countDocuments(),
 
-      Property.countDocuments(),
+  Property.countDocuments({
+    listingStatus: "ACTIVE",
+  }),
 
-      Property.countDocuments({
+  Property.countDocuments({
+    featured: true,
+  }),
 
-        status:"pending"
+  Property.countDocuments({
+    verified: true,
+  }),
 
-      }),
+  Property.countDocuments({
+    listingType: "SALE",
+  }),
 
-      Property.countDocuments({
-
-        status:"approved"
-
-      }),
-
-      Property.countDocuments({
-
-        status:"rejected"
-
-      }),
-
-      Property.countDocuments({
-
-        isPremium:true
-
-      }),
-
-    ]);
-
+]);
 
 
     /* ================================
@@ -245,11 +235,9 @@ export async function GET(
 
     ] = await Promise.all([
 
-      Property.countDocuments({
-
-        propertyType:"Plot"
-
-      }),
+   Property.countDocuments({
+  propertyType: "NA Plot",
+}),
 
       Property.countDocuments({
 
@@ -365,15 +353,15 @@ export async function GET(
 
 
 
-      /* PROPERTY STATUS */
+     /* PROPERTY STATUS */
 
-      pendingProperties,
+activeProperties,
 
-      approvedProperties,
+featuredProperties,
 
-      rejectedProperties,
+verifiedProperties,
 
-      premiumProperties,
+saleProperties,
 
 
 

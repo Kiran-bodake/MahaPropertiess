@@ -48,21 +48,8 @@ import { Pagination } from "@/components/admin/common/Pagination";
 
 
 // Chart Data
-const propertyTypeData = [
-  { name: "Plots", value: 45 },
-  { name: "Flats", value: 30 },
-  { name: "Villas", value: 15 },
-  { name: "Commercial", value: 10 },
-];
 
-const trendData = [
-  { month: "Jan", properties: 12, leads: 24 },
-  { month: "Feb", properties: 18, leads: 13 },
-  { month: "Mar", properties: 9, leads: 98 },
-  { month: "Apr", properties: 22, leads: 39 },
-  { month: "May", properties: 16, leads: 48 },
-  { month: "Jun", properties: 28, leads: 38 },
-];
+
 
 const COLORS = ["#3b82f6", "#10b981", "#a855f7", "#f59e0b"];
 
@@ -77,8 +64,8 @@ export default function AdminDashboard() {
   const [propertyInquiries, setPropertyInquiries] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [chartData, setChartData] =
-  useState<any[]>([]);
+  const [trendData, setTrendData] = useState<any[]>([]);
+  const [propertyTypeData, setPropertyTypeData] = useState<any[]>([]);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [propertyPage, setPropertyPage] = useState(1);
@@ -109,6 +96,8 @@ export default function AdminDashboard() {
         // Process dashboard response
         if (responses[0].status === "fulfilled" && responses[0].value?.ok) {
           dashData = await responses[0].value.json().catch(() => ({}));
+          console.log("Dashboard API:", dashData);
+console.log("Analytics State:", analytics);
         }
 
         // Process property inquiries response
@@ -132,14 +121,15 @@ export default function AdminDashboard() {
           totalProperties: dashData?.propertiesCount || 0,
           totalDeals: dashData?.dealsCount || 0,
         });
-setChartData(
-
+setTrendData(
   dashData?.chartData || []
-
+);
+setPropertyTypeData(
+  dashData?.propertyTypeData || []
 );
         setPropertyInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
         setProperties(Array.isArray(propsData?.properties) ? propsData.properties : []);
-        setAnalytics(analyticsData || {});
+        setAnalytics(dashData || {});
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
         // Set default values on error
@@ -897,47 +887,33 @@ setChartData(
   </div>
         {/* Quick Stats Sidebar */}
         {/* Quick Stats Sidebar */}
+{/* Quick Stats Sidebar */}
 <div
   style={{
     display: "flex",
-
     flexDirection: "column",
-
     gap: "12px",
   }}
 >
   <div
     style={{
       background: "#ffffff",
-
       border: "1px solid #e5e7eb",
-
       borderRadius: "20px",
-
       padding: "16px",
-
-      boxShadow:
-        "0 4px 14px rgba(15,23,42,0.04)",
-
+      boxShadow: "0 4px 14px rgba(15,23,42,0.04)",
       minHeight: "auto",
-
       transition: "all .25s ease",
     }}
   >
-
     {/* Title */}
     <h3
       style={{
         fontSize: "18px",
-
         fontWeight: 800,
-
         color: "#111827",
-
         marginTop: 0,
-
         marginBottom: "14px",
-
         letterSpacing: "-0.02em",
       }}
     >
@@ -948,190 +924,139 @@ setChartData(
     <div
       style={{
         display: "flex",
-
         flexDirection: "column",
-
         gap: "10px",
       }}
     >
-
-      {/* Pending */}
+      {/* Active */}
       <div
         style={{
           display: "flex",
-
           alignItems: "center",
-
           justifyContent: "space-between",
-
           padding: "10px 14px",
-
           borderRadius: "14px",
-
-          background:
-            "linear-gradient(135deg,#fffbeb,#fef3c7)",
-
-          border:
-            "1px solid #fde68a",
+          background: "linear-gradient(135deg,#fffbeb,#fef3c7)",
+          border: "1px solid #fde68a",
         }}
       >
         <span
           style={{
             fontSize: "12px",
-
             fontWeight: 700,
-
             color: "#b45309",
           }}
         >
-          Pending
+          Active
         </span>
 
         <span
           style={{
             fontSize: "20px",
-
             fontWeight: 800,
-
             color: "#d97706",
           }}
         >
-          {analytics?.pendingProperties || 0}
+          {analytics?.activeProperties || 0}
         </span>
       </div>
 
-      {/* Approved */}
+      {/* Featured */}
       <div
         style={{
           display: "flex",
-
           alignItems: "center",
-
           justifyContent: "space-between",
-
           padding: "10px 14px",
-
           borderRadius: "14px",
-
-          background:
-            "linear-gradient(135deg,#ecfdf5,#dcfce7)",
-
-          border:
-            "1px solid #bbf7d0",
+          background: "linear-gradient(135deg,#ecfdf5,#dcfce7)",
+          border: "1px solid #bbf7d0",
         }}
       >
         <span
           style={{
             fontSize: "12px",
-
             fontWeight: 700,
-
             color: "#15803d",
           }}
         >
-          Approved
+          Featured
         </span>
 
         <span
           style={{
             fontSize: "20px",
-
             fontWeight: 800,
-
             color: "#16a34a",
           }}
         >
-          {analytics?.approvedProperties || 0}
+          {analytics?.featuredProperties || 0}
         </span>
       </div>
 
-      {/* Rejected */}
+      {/* Verified */}
       <div
         style={{
           display: "flex",
-
           alignItems: "center",
-
           justifyContent: "space-between",
-
           padding: "10px 14px",
-
           borderRadius: "14px",
-
-          background:
-            "linear-gradient(135deg,#fef2f2,#fee2e2)",
-
-          border:
-            "1px solid #fecaca",
+          background: "linear-gradient(135deg,#fef2f2,#fee2e2)",
+          border: "1px solid #fecaca",
         }}
       >
         <span
           style={{
             fontSize: "12px",
-
             fontWeight: 700,
-
             color: "#dc2626",
           }}
         >
-          Rejected
+          Verified
         </span>
 
         <span
           style={{
             fontSize: "20px",
-
             fontWeight: 800,
-
             color: "#dc2626",
           }}
         >
-          {analytics?.rejectedProperties || 0}
+          {analytics?.verifiedProperties || 0}
         </span>
       </div>
 
-      {/* Premium */}
+      {/* For Sale */}
       <div
         style={{
           display: "flex",
-
           alignItems: "center",
-
           justifyContent: "space-between",
-
           padding: "10px 14px",
-
           borderRadius: "14px",
-
-          background:
-            "linear-gradient(135deg,#faf5ff,#f3e8ff)",
-
-          border:
-            "1px solid #e9d5ff",
+          background: "linear-gradient(135deg,#faf5ff,#f3e8ff)",
+          border: "1px solid #e9d5ff",
         }}
       >
         <span
           style={{
             fontSize: "12px",
-
             fontWeight: 700,
-
             color: "#7c3aed",
           }}
         >
-          Premium
+          For Sale
         </span>
 
         <span
           style={{
             fontSize: "20px",
-
             fontWeight: 800,
-
             color: "#9333ea",
           }}
         >
-          {analytics?.premiumProperties || 0}
+          {analytics?.saleProperties || 0}
         </span>
       </div>
     </div>

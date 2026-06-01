@@ -42,6 +42,8 @@ export function PropertyActions({
 const [user,setUser] =
   useState<any>(null);
 
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const propertyUrl =
     typeof window !== "undefined"
       ? window.location.href
@@ -236,28 +238,22 @@ useEffect(() => {
 
       const data =
         await res.json();
+if(data.success){
 
-      if(data.success){
+  setShowReport(false);
 
-        alert(
-          "Report submitted successfully"
-        );
+  setReportReason("");
 
-        setShowReport(false);
+  setShowSuccess(true);
 
-        setReportReason("");
+  setTimeout(() => {
+    setShowSuccess(false);
+  }, 3500);
 
-      }
-
+}
       else{
 
-        alert(
-
-          data.message ||
-
-          "Failed to submit report"
-
-        );
+       console.error(data.message);
 
       }
 
@@ -267,9 +263,7 @@ useEffect(() => {
 
       console.error(error);
 
-      alert(
-        "Something went wrong"
-      );
+      console.error("Something went wrong");
 
     }
 
@@ -659,6 +653,120 @@ useEffect(() => {
         </div>
 
       )}
+      {/* SUCCESS MODAL */}
+{showSuccess && (
+
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(15,23,42,.55)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 10000,
+      backdropFilter: "blur(6px)",
+    }}
+  >
+
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "420px",
+        background: "#ffffff",
+        borderRadius: "28px",
+        padding: "32px",
+        textAlign: "center",
+        boxShadow:
+          "0 30px 80px rgba(15,23,42,.25)",
+        animation:
+          "successPop .35s ease-out",
+      }}
+    >
+
+      <div
+        style={{
+          width: "90px",
+          height: "90px",
+          margin: "0 auto 18px",
+          borderRadius: "50%",
+          background:
+            "linear-gradient(135deg,#22c55e,#16a34a)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          fontSize: "42px",
+          fontWeight: 800,
+        }}
+      >
+        ✓
+      </div>
+
+      <h2
+        style={{
+          margin: 0,
+          fontSize: "24px",
+          fontWeight: 800,
+          color: "#111827",
+        }}
+      >
+        Report Submitted
+      </h2>
+
+      <p
+        style={{
+          marginTop: "12px",
+          color: "#6b7280",
+          lineHeight: 1.7,
+          fontSize: "14px",
+        }}
+      >
+        Thank you for helping improve
+        MahaProperties.
+        <br />
+        Our moderation team will review
+        this property shortly.
+      </p>
+
+      <button
+        onClick={() =>
+          setShowSuccess(false)
+        }
+        style={{
+          marginTop: "22px",
+          height: "48px",
+          padding: "0 24px",
+          border: "none",
+          borderRadius: "14px",
+          background: "#16a34a",
+          color: "#fff",
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        Done
+      </button>
+
+    </div>
+
+  </div>
+
+)}
+  {/* ANIMATION */}
+    <style jsx global>{`
+      @keyframes successPop {
+        from {
+          opacity: 0;
+          transform: scale(.85) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+    `}</style>
+
 
     </>
 

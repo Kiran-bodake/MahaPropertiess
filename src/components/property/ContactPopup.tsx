@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
+import toast from "react-hot-toast";
 
 type Props = {
   open: boolean;
@@ -48,6 +49,7 @@ export default function ContactPopup({
   const [email, setEmail] = useState("");
   const [whatsappConsent, setWhatsappConsent] = useState(true);
   const [loading, setLoading] = useState(false);
+const [showSuccess, setShowSuccess] = useState(false);
 
   const goNext = useCallback(() => {
     setActiveSlide((p) =>
@@ -96,19 +98,20 @@ export default function ContactPopup({
       });
 
       const data = await res.json();
+if (data.success) {
+  setShowSuccess(true);
 
-      if (data.success) {
-        alert("Information saved successfully");
+  setName("");
+  setPhone("");
+  setEmail("");
+  setSelected("Buy");
+  setWhatsappConsent(true);
 
-        // RESET FORM
-        setName("");
-        setPhone("");
-        setEmail("");
-        setSelected("Buy");
-        setWhatsappConsent(true);
-
-        onClose();
-      } else {
+  setTimeout(() => {
+    setShowSuccess(false);
+    onClose();
+  }, 2500);
+} else {
         alert(data.message || "Failed to save information");
       }
     } catch (error) {
@@ -324,6 +327,23 @@ export default function ContactPopup({
           </div>
         </div>
       </div>
+
+      {/* SUCCESS MESSAGE */}
+{showSuccess && (
+  <div className="successToast">
+    <div className="successIcon">✓</div>
+
+    <div>
+      <div className="successTitle">
+        Request Submitted
+      </div>
+
+      <div className="successText">
+        Our property expert will contact you shortly.
+      </div>
+    </div>
+  </div>
+)}
 
       <style jsx>{`
         .overlay {
@@ -556,6 +576,75 @@ export default function ContactPopup({
           color: #64748b;
           font-size: 12px;
         }
+          .successToast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+
+  min-width: 320px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 18px 22px;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  border: 1px solid #dcfce7;
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.15);
+
+  z-index: 999999;
+
+  animation: successPop .35s ease;
+}
+
+.successIcon {
+  width: 50px;
+  height: 50px;
+
+  border-radius: 50%;
+
+  background: #16a34a;
+
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.successTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.successText {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+@keyframes successPop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
       `}</style>
     </>
   );

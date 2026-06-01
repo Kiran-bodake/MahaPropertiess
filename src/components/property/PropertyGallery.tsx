@@ -223,10 +223,7 @@ export function PropertyGallery({
 
             fontSize: "clamp(.95rem,3vw,1.2rem)",
 
-            padding:
-              typeof window !== "undefined" && window.innerWidth < 768
-                ? "9px 14px"
-                : "12px 20px",
+          padding: "clamp(9px,2vw,12px) clamp(14px,3vw,20px)",
 
             borderRadius: 14,
 
