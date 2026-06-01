@@ -53,6 +53,9 @@ export async function GET(req: Request) {
           propertyId,
         });
 
+        const validImages =
+          imageDoc?.images?.map((img: any) => img?.url)?.filter(Boolean) || [];
+
         return {
           id: property._id,
 
@@ -74,9 +77,9 @@ export async function GET(req: Request) {
 
           rera: flags?.isRERA || false,
 
-          img: imageDoc?.images?.[0]?.url || "/maha.png",
+          img: validImages[0] || "/maha.png",
 
-          images: imageDoc?.images?.map((img: any) => img.url) || ["/maha.png"],
+          images: validImages.length > 0 ? validImages : ["/maha.png"],
 
           views: property.views || 100,
 

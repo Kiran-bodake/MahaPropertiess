@@ -17,18 +17,14 @@ export default function PropertyImageSlider({
     e.preventDefault();
     e.stopPropagation();
 
-    setCurrent((prev) =>
-      prev === images.length - 1 ? 0 : prev + 1
-    );
+    setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    setCurrent((prev) =>
-      prev === 0 ? images.length - 1 : prev - 1
-    );
+    setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
   const openFullscreen = (e: React.MouseEvent) => {
@@ -54,9 +50,12 @@ export default function PropertyImageSlider({
         }}
       >
         <img
-          src={images[current]}
+          src={images[current] || "/maha.png"}
           alt={title}
           onClick={openFullscreen}
+          onError={(e) => {
+            e.currentTarget.src = "/maha.png";
+          }}
           style={{
             width: "100%",
             height: "100%",
@@ -122,8 +121,11 @@ export default function PropertyImageSlider({
           }}
         >
           <img
-            src={images[current]}
+            src={images[current] || "/maha.png"}
             alt={title}
+            onError={(e) => {
+              e.currentTarget.src = "/maha.png";
+            }}
             style={{
               maxWidth: "95vw",
               maxHeight: "95vh",
@@ -158,18 +160,12 @@ export default function PropertyImageSlider({
           </button>
 
           {/* FULLSCREEN LEFT */}
-          <button
-            onClick={prevImage}
-            style={fullscreenLeft}
-          >
+          <button onClick={prevImage} style={fullscreenLeft}>
             ❮
           </button>
 
           {/* FULLSCREEN RIGHT */}
-          <button
-            onClick={nextImage}
-            style={fullscreenRight}
-          >
+          <button onClick={nextImage} style={fullscreenRight}>
             ❯
           </button>
         </div>

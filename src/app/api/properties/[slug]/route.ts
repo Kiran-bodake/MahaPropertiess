@@ -72,6 +72,7 @@ export async function GET(
     const images = await PropertyImage.findOne({
       propertyId,
     });
+    console.log("DETAIL IMAGE", property.title, images);
 
     const amenities = await PropertyAmenity.findOne({
       propertyId,
