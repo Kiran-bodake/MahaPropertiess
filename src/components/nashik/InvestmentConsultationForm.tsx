@@ -26,11 +26,7 @@ export default function InvestmentConsultationForm() {
   };
 
   return (
-    <section
-      style={{
-        padding: "64px 20px 96px",
-      }}
-    >
+    <section className="consultationSection">
       <div
         style={{
           maxWidth: "1280px",
@@ -38,27 +34,14 @@ export default function InvestmentConsultationForm() {
           width: "100%",
         }}
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "0.95fr 1.05fr",
-            alignItems: "stretch",
-            overflow: "hidden",
-            borderRadius: "40px",
-            background:
-              "linear-gradient(135deg,#08150d,#102318,#173924)",
-            boxShadow:
-              "0 30px 100px rgba(0,0,0,0.25)",
-          }}
-        >
+        <div className="consultationGrid">
           {/* LEFT CONTENT */}
           <div
+            className="consultationContent"
             style={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              padding: "96px 64px",
             }}
           >
             <p
@@ -75,9 +58,9 @@ export default function InvestmentConsultationForm() {
             </p>
 
             <h2
+              className="consultationTitle"
               style={{
                 margin: 0,
-                fontSize: "64px",
                 fontWeight: 900,
                 lineHeight: 1.05,
                 letterSpacing: "-0.04em",
@@ -98,22 +81,20 @@ export default function InvestmentConsultationForm() {
                 maxWidth: "540px",
               }}
             >
-              Get personalized investment
-              opportunities based on your
-              budget and preferred
-              localities.
+              Get personalized investment opportunities based on your budget and
+              preferred localities.
             </p>
           </div>
 
           {/* FORM */}
           <form
+            className="consultationForm"
             onSubmit={handleSubmit(onSubmit)}
             style={{
               display: "flex",
               flexDirection: "column",
               gap: "20px",
               background: "#ffffff",
-              padding: "56px",
             }}
           >
             {/* NAME */}
@@ -125,15 +106,13 @@ export default function InvestmentConsultationForm() {
                   height: "56px",
                   width: "100%",
                   borderRadius: "18px",
-                  border:
-                    "2px solid #e5e7eb",
+                  border: "2px solid #e5e7eb",
                   background: "#ffffff",
                   padding: "0 20px",
                   fontSize: "16px",
                   color: "#111827",
                   outline: "none",
-                  transition:
-                    "all .3s ease",
+                  transition: "all .3s ease",
                 }}
               />
 
@@ -145,10 +124,7 @@ export default function InvestmentConsultationForm() {
                     color: "#ef4444",
                   }}
                 >
-                  {
-                    errors.name
-                      .message as string
-                  }
+                  {errors.name.message as string}
                 </p>
               )}
             </div>
@@ -162,18 +138,16 @@ export default function InvestmentConsultationForm() {
                 maxLength={10}
                 placeholder="Phone Number"
                 onInput={(e) => {
-                  e.currentTarget.value =
-                    e.currentTarget.value.replace(
-                      /\D/g,
-                      ""
-                    );
+                  e.currentTarget.value = e.currentTarget.value.replace(
+                    /\D/g,
+                    "",
+                  );
                 }}
                 style={{
                   height: "56px",
                   width: "100%",
                   borderRadius: "18px",
-                  border:
-                    "2px solid #e5e7eb",
+                  border: "2px solid #e5e7eb",
                   background: "#ffffff",
                   padding: "0 20px",
                   fontSize: "16px",
@@ -190,10 +164,7 @@ export default function InvestmentConsultationForm() {
                     color: "#ef4444",
                   }}
                 >
-                  {
-                    errors.phone
-                      .message as string
-                  }
+                  {errors.phone.message as string}
                 </p>
               )}
             </div>
@@ -207,8 +178,7 @@ export default function InvestmentConsultationForm() {
                   height: "56px",
                   width: "100%",
                   borderRadius: "18px",
-                  border:
-                    "2px solid #e5e7eb",
+                  border: "2px solid #e5e7eb",
                   background: "#ffffff",
                   padding: "0 20px",
                   fontSize: "16px",
@@ -225,10 +195,7 @@ export default function InvestmentConsultationForm() {
                     color: "#ef4444",
                   }}
                 >
-                  {
-                    errors.email
-                      .message as string
-                  }
+                  {errors.email.message as string}
                 </p>
               )}
             </div>
@@ -241,8 +208,7 @@ export default function InvestmentConsultationForm() {
                   height: "56px",
                   width: "100%",
                   borderRadius: "18px",
-                  border:
-                    "2px solid #e5e7eb",
+                  border: "2px solid #e5e7eb",
                   background: "#ffffff",
                   padding: "0 20px",
                   fontSize: "16px",
@@ -251,21 +217,13 @@ export default function InvestmentConsultationForm() {
                   cursor: "pointer",
                 }}
               >
-                <option value="">
-                  Select Investment Budget
-                </option>
+                <option value="">Select Investment Budget</option>
 
-                <option value="10-25L">
-                  ₹10L - ₹25L
-                </option>
+                <option value="10-25L">₹10L - ₹25L</option>
 
-                <option value="25-50L">
-                  ₹25L - ₹50L
-                </option>
+                <option value="25-50L">₹25L - ₹50L</option>
 
-                <option value="50L+">
-                  ₹50L+
-                </option>
+                <option value="50L+">₹50L+</option>
               </select>
 
               {errors.budget && (
@@ -276,10 +234,7 @@ export default function InvestmentConsultationForm() {
                     color: "#ef4444",
                   }}
                 >
-                  {
-                    errors.budget
-                      .message as string
-                  }
+                  {errors.budget.message as string}
                 </p>
               )}
             </div>
@@ -293,8 +248,7 @@ export default function InvestmentConsultationForm() {
                   height: "56px",
                   width: "100%",
                   borderRadius: "18px",
-                  border:
-                    "2px solid #e5e7eb",
+                  border: "2px solid #e5e7eb",
                   background: "#ffffff",
                   padding: "0 20px",
                   fontSize: "16px",
@@ -311,10 +265,7 @@ export default function InvestmentConsultationForm() {
                     color: "#ef4444",
                   }}
                 >
-                  {
-                    errors.locality
-                      .message as string
-                  }
+                  {errors.locality.message as string}
                 </p>
               )}
             </div>
@@ -336,10 +287,8 @@ export default function InvestmentConsultationForm() {
                 fontSize: "16px",
                 fontWeight: 700,
                 cursor: "pointer",
-                boxShadow:
-                  "0 15px 40px rgba(5,163,54,0.25)",
-                transition:
-                  "all .3s ease",
+                boxShadow: "0 15px 40px rgba(5,163,54,0.25)",
+                transition: "all .3s ease",
               }}
             >
               Get Consultation
@@ -347,6 +296,65 @@ export default function InvestmentConsultationForm() {
           </form>
         </div>
       </div>
+      <style jsx>{`
+        .consultationGrid {
+          display: grid;
+          grid-template-columns: 0.95fr 1.05fr;
+          align-items: stretch;
+          overflow: hidden;
+          border-radius: 40px;
+          background: linear-gradient(135deg, #08150d, #102318, #173924);
+          box-shadow: 0 30px 100px rgba(0, 0, 0, 0.25);
+        }
+
+        .consultationContent {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 96px 64px;
+        }
+
+        .consultationForm {
+          padding: 56px;
+        }
+
+        .consultationTitle {
+          font-size: 64px;
+        }
+
+        .consultationSection {
+          padding: 64px 20px 96px;
+        }
+
+        @media (max-width: 768px) {
+          .consultationGrid {
+            grid-template-columns: 1fr;
+          }
+
+          .consultationContent {
+            padding: 32px 20px !important;
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+          }
+
+          .consultationSection {
+            padding: 32px 8px 80px;
+          }
+
+          .consultationForm {
+            padding: 24px !important;
+          }
+
+          .consultationTitle {
+            font-size: 34px;
+            line-height: 1.1;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-break: break-word;
+          }
+        }
+      `}</style>
     </section>
   );
 }

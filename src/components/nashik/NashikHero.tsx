@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 
-import {
-  Building2,
-  MapPinned,
-  Factory,
-  TrendingUp,
-} from "lucide-react";
+import { Building2, MapPinned, Factory, TrendingUp } from "lucide-react";
 
 export default function NashikHero() {
   return (
@@ -15,11 +10,10 @@ export default function NashikHero() {
       style={{
         position: "relative",
         display: "flex",
-        minHeight: "88vh",
+        minHeight: "70vh",
         alignItems: "center",
         overflow: "hidden",
-        backgroundImage:
-          "url('/nashik/hero.jpg')",
+        backgroundImage: "url('/nashik/hero.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -42,12 +36,12 @@ export default function NashikHero() {
           width: "100%",
           maxWidth: "1280px",
           margin: "0 auto",
-          padding: "160px 20px 100px",
+          padding: "100px 20px 60px",
         }}
       >
         <div
           style={{
-            maxWidth: "850px",
+            maxWidth: "900px",
             display: "flex",
             flexDirection: "column",
             gap: "28px",
@@ -60,35 +54,30 @@ export default function NashikHero() {
               display: "inline-flex",
               alignSelf: "flex-start",
               borderRadius: "999px",
-              border:
-                "1px solid rgba(255,255,255,0.2)",
-              background:
-                "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              background: "rgba(255,255,255,0.12)",
               padding: "14px 24px",
               fontSize: "14px",
               fontWeight: 700,
               color: "#ffffff",
               backdropFilter: "blur(20px)",
-              boxShadow:
-                "0 10px 40px rgba(0,0,0,0.25)",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.25)",
             }}
           >
-            Maharashtra's Emerging
-            Investment Destination
+            Maharashtra's Emerging Investment Destination
           </div>
 
           {/* TITLE */}
           <h1
+            className="heroTitle"
             style={{
               maxWidth: "900px",
               margin: 0,
-              fontSize: "76px",
               fontWeight: 900,
               lineHeight: 1,
               letterSpacing: "-0.04em",
               color: "#ffffff",
-              textShadow:
-                "0 10px 40px rgba(0,0,0,0.65)",
+              textShadow: "0 10px 40px rgba(0,0,0,0.65)",
             }}
           >
             Invest In Nashik's Fastest
@@ -102,19 +91,13 @@ export default function NashikHero() {
               maxWidth: "720px",
               fontSize: "21px",
               lineHeight: 1.9,
-              color:
-                "rgba(255,255,255,0.9)",
-              textShadow:
-                "0 6px 18px rgba(0,0,0,0.35)",
+              color: "rgba(255,255,255,0.9)",
+              textShadow: "0 6px 18px rgba(0,0,0,0.35)",
               margin: 0,
             }}
           >
-            Discover premium land and
-            property investment
-            opportunities powered by
-            infrastructure growth,
-            industrial expansion,
-            tourism, and future
+            Discover premium land and property investment opportunities powered
+            by infrastructure growth, industrial expansion, tourism, and future
             connectivity.
           </p>
 
@@ -139,10 +122,8 @@ export default function NashikHero() {
                 fontWeight: 700,
                 color: "#ffffff",
                 textDecoration: "none",
-                boxShadow:
-                  "0 15px 40px rgba(22,163,74,0.35)",
-                transition:
-                  "all .3s ease",
+                boxShadow: "0 15px 40px rgba(22,163,74,0.35)",
+                transition: "all .3s ease",
               }}
             >
               Explore Properties
@@ -154,25 +135,21 @@ export default function NashikHero() {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "18px",
-                border:
-                  "1px solid rgba(255,255,255,0.3)",
-                background:
-                  "rgba(255,255,255,0.12)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                background: "rgba(255,255,255,0.12)",
                 padding: "18px 34px",
                 fontWeight: 700,
                 color: "#ffffff",
-                backdropFilter:
-                  "blur(18px)",
+                backdropFilter: "blur(18px)",
                 cursor: "pointer",
-                transition:
-                  "all .3s ease",
+                transition: "all .3s ease",
               }}
             >
               Get Free Consultation
             </button>
           </div>
 
-          {/* STATS CARDS */}
+          {/* STATS CARDS
           <div
             style={{
               marginTop: "70px",
@@ -259,9 +236,34 @@ export default function NashikHero() {
                 </div>
               );
             })}
-          </div>
+          </div> */}
         </div>
       </div>
+      <style jsx>{`
+        .heroTitle {
+          font-size: 64px;
+        }
+
+        @media (max-width: 1024px) {
+          .heroTitle {
+            font-size: 58px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .heroTitle {
+            font-size: 42px;
+            line-height: 1.05;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .heroTitle {
+            font-size: 34px;
+            line-height: 1.08;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -3,16 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import {
-  Swiper,
-  SwiperSlide,
-} from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
-import {
-  Navigation,
-  Pagination,
-  Autoplay,
-} from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import { motion } from "framer-motion";
 
@@ -41,7 +34,7 @@ export default function WhyInvestSlider() {
         <div
           style={{
             marginBottom: "80px",
-            maxWidth: "850px",
+            maxWidth: "1000px",
           }}
         >
           <p
@@ -54,34 +47,44 @@ export default function WhyInvestSlider() {
               color: "#16a34a",
             }}
           >
-            Why Invest In Nashik
+            WHY INVEST TODAY
           </p>
 
           <h2
             style={{
               margin: 0,
-              fontSize: "64px",
+              fontSize: "56px",
               fontWeight: 900,
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
               color: "#111827",
+              maxWidth: "900px",
             }}
           >
-            A rapidly growing investment
-            destination powered by tourism,
-            industry, education, and
-            infrastructure.
+            The Economic Forces
+            <br />
+            Powering Nashik's Future
           </h2>
+
+          {/* ADD HERE */}
+          <p
+            style={{
+              marginTop: "24px",
+              maxWidth: "800px",
+              fontSize: "20px",
+              lineHeight: 1.8,
+              color: "#4b5563",
+            }}
+          >
+            Discover the key industries, infrastructure projects, and growth
+            drivers shaping Nashik's long-term real estate potential.
+          </p>
         </div>
 
         {/* SLIDER */}
         <Swiper
           className="whyInvestSwiper"
-          modules={[
-            Navigation,
-            Pagination,
-            Autoplay,
-          ]}
+          modules={[Navigation, Pagination, Autoplay]}
           navigation
           pagination={{
             clickable: true,
@@ -95,17 +98,10 @@ export default function WhyInvestSlider() {
         >
           {investmentReasons.map((item) => (
             <SwiperSlide key={item.title}>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "1.05fr .95fr",
-                  alignItems: "center",
-                  gap: "48px",
-                }}
-              >
+              <div className="investSlide">
                 {/* IMAGE */}
                 <motion.div
+                  className="investImage"
                   initial={{
                     opacity: 0,
                     x: -40,
@@ -119,11 +115,9 @@ export default function WhyInvestSlider() {
                   }}
                   style={{
                     position: "relative",
-                    height: "520px",
                     overflow: "hidden",
                     borderRadius: "40px",
-                    boxShadow:
-                      "0 30px 80px rgba(0,0,0,0.15)",
+                    boxShadow: "0 30px 80px rgba(0,0,0,0.15)",
                   }}
                 >
                   <Image
@@ -133,14 +127,14 @@ export default function WhyInvestSlider() {
                     sizes="(max-width:768px) 100vw, 50vw"
                     style={{
                       objectFit: "cover",
-                      transition:
-                        "transform .7s ease",
+                      transition: "transform .7s ease",
                     }}
                   />
                 </motion.div>
 
                 {/* CONTENT */}
                 <motion.div
+                  className="investContent"
                   initial={{
                     opacity: 0,
                     x: 40,
@@ -173,10 +167,10 @@ export default function WhyInvestSlider() {
 
                   {/* TITLE */}
                   <h3
+                    className="investTitle"
                     style={{
                       marginTop: "28px",
                       marginBottom: 0,
-                      fontSize: "52px",
                       fontWeight: 900,
                       lineHeight: 1.1,
                       letterSpacing: "-0.03em",
@@ -188,10 +182,9 @@ export default function WhyInvestSlider() {
 
                   {/* DESCRIPTION */}
                   <p
+                    className="investDescription"
                     style={{
                       marginTop: "28px",
-                      fontSize: "20px",
-                      lineHeight: 1.9,
                       color: "#4b5563",
                     }}
                   >
@@ -200,15 +193,13 @@ export default function WhyInvestSlider() {
 
                   {/* IMPACT CARD */}
                   <div
+                    className="impactCard"
                     style={{
                       marginTop: "36px",
                       borderRadius: "28px",
-                      border:
-                        "1px solid #e5e7eb",
+                      border: "1px solid #e5e7eb",
                       background: "#ffffff",
-                      padding: "28px",
-                      boxShadow:
-                        "0 10px 30px rgba(0,0,0,0.06)",
+                      boxShadow: "0 10px 30px rgba(0,0,0,0.06)",
                     }}
                   >
                     <h4
@@ -250,14 +241,11 @@ export default function WhyInvestSlider() {
                       fontWeight: 700,
                       color: "#ffffff",
                       textDecoration: "none",
-                      boxShadow:
-                        "0 15px 40px rgba(0,0,0,0.05)",
-                      transition:
-                        "all .3s ease",
+                      boxShadow: "0 15px 40px rgba(0,0,0,0.05)",
+                      transition: "all .3s ease",
                     }}
                   >
-                    Explore Investment
-                    Opportunities
+                    Explore Investment Opportunities
                   </Link>
                 </motion.div>
               </div>
@@ -268,6 +256,93 @@ export default function WhyInvestSlider() {
 
       {/* SWIPER CUSTOM STYLE */}
       <style jsx global>{`
+        .investSlide {
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          align-items: center;
+          gap: 48px;
+        }
+
+        .investImage {
+          height: 520px;
+        }
+
+        .investTitle {
+          font-size: 52px;
+        }
+
+        .investDescription {
+          font-size: 20px;
+          line-height: 1.9;
+        }
+
+        .impactCard {
+          padding: 28px;
+        }
+
+        .sectionTitle {
+          font-size: 64px;
+        }
+
+        @media (max-width: 1024px) {
+          .investSlide {
+            gap: 32px;
+          }
+
+          .investImage {
+            height: 420px;
+          }
+
+          .investTitle {
+            font-size: 42px;
+          }
+
+          .sectionTitle {
+            font-size: 44px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .investSlide {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+
+          .investImage {
+            height: 280px;
+            order: 1;
+          }
+
+          .investContent {
+            order: 2;
+          }
+
+          .investTitle {
+            font-size: 34px;
+          }
+
+          .investDescription {
+            font-size: 16px;
+            line-height: 1.7;
+          }
+
+          .impactCard {
+            padding: 20px;
+          }
+
+          .sectionTitle {
+            font-size: 32px;
+            line-height: 1.2;
+          }
+
+          @media (max-width: 768px) {
+            .whyInvestSwiper .swiper-button-prev,
+            .whyInvestSwiper .swiper-button-next {
+              display: none;
+            }
+          }
+        }
+
         .whyInvestSwiper {
           overflow: hidden;
         }
@@ -279,30 +354,24 @@ export default function WhyInvestSlider() {
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.96);
           backdrop-filter: blur(18px);
-          box-shadow: 0 18px 40px
-            rgba(0, 0, 0, 0.1);
-          border: 1px solid
-            rgba(255, 255, 255, 0.7);
+          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.7);
           transition: all 0.3s ease;
         }
 
-        .whyInvestSwiper
-          .swiper-button-prev::after,
-        .whyInvestSwiper
-          .swiper-button-next::after {
+        .whyInvestSwiper .swiper-button-prev::after,
+        .whyInvestSwiper .swiper-button-next::after {
           font-size: 18px;
           font-weight: 800;
           color: #16a34a;
         }
 
-        .whyInvestSwiper
-          .swiper-pagination {
+        .whyInvestSwiper .swiper-pagination {
           position: relative;
           margin-top: 42px;
         }
 
-        .whyInvestSwiper
-          .swiper-pagination-bullet {
+        .whyInvestSwiper .swiper-pagination-bullet {
           width: 10px;
           height: 10px;
           opacity: 1;
@@ -310,8 +379,7 @@ export default function WhyInvestSlider() {
           transition: all 0.3s ease;
         }
 
-        .whyInvestSwiper
-          .swiper-pagination-bullet-active {
+        .whyInvestSwiper .swiper-pagination-bullet-active {
           width: 28px;
           border-radius: 999px;
           background: #16a34a;

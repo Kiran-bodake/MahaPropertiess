@@ -17,15 +17,13 @@ export default function FinalInvestmentCTA() {
         }}
       >
         <div
+          className="ctaWrapper"
           style={{
             position: "relative",
             overflow: "hidden",
             borderRadius: "40px",
-            padding: "100px 64px",
-            boxShadow:
-              "0 40px 120px rgba(0,0,0,0.22)",
-            backgroundImage:
-              "url('/nashik/hero.jpg')",
+            boxShadow: "0 40px 120px rgba(0,0,0,0.22)",
+            backgroundImage: "url('/nashik/hero.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -56,19 +54,7 @@ export default function FinalInvestmentCTA() {
                 maxWidth: "820px",
               }}
             >
-              <h2
-                style={{
-                  maxWidth: "820px",
-                  fontSize: "64px",
-                  fontWeight: 900,
-                  lineHeight: 1.08,
-                  letterSpacing: "-0.03em",
-                  color: "#ffffff",
-                  textShadow:
-                    "0 20px 50px rgba(0,0,0,0.45)",
-                  margin: 0,
-                }}
-              >
+              <h2 className="ctaTitle">
                 Nashik's Next Growth Phase
                 <br />
                 Has Already Started
@@ -83,10 +69,8 @@ export default function FinalInvestmentCTA() {
                   color: "rgba(255,255,255,0.9)",
                 }}
               >
-                Invest before infrastructure,
-                tourism, and connectivity
-                projects significantly increase
-                land values.
+                Invest before infrastructure, tourism, and connectivity projects
+                significantly increase land values.
               </p>
             </div>
 
@@ -117,8 +101,7 @@ export default function FinalInvestmentCTA() {
                   color: "#000000",
                   textDecoration: "none",
                   transition: "all .3s ease",
-                  boxShadow:
-                    "0 15px 40px rgba(5,163,54,0.35)",
+                  boxShadow: "0 15px 40px rgba(5,163,54,0.35)",
                 }}
               >
                 Explore Properties
@@ -134,10 +117,8 @@ export default function FinalInvestmentCTA() {
                   alignItems: "center",
                   justifyContent: "center",
                   borderRadius: "999px",
-                  border:
-                    "1px solid rgba(255,255,255,0.3)",
-                  background:
-                    "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  background: "rgba(255,255,255,0.1)",
                   padding: "0 40px",
                   fontSize: "16px",
                   fontWeight: 700,
@@ -153,6 +134,41 @@ export default function FinalInvestmentCTA() {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .ctaTitle {
+          max-width: 820px;
+          font-size: 64px;
+          font-weight: 900;
+          line-height: 1.08;
+          letter-spacing: -0.03em;
+          color: #ffffff;
+          text-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+          margin: 0;
+        }
+
+        .ctaWrapper {
+          padding: 100px 64px;
+        }
+
+        @media (max-width: 768px) {
+          .ctaTitle {
+            font-size: 38px;
+            line-height: 1.1;
+          }
+
+          .ctaWrapper {
+            padding: 48px 24px;
+            border-radius: 28px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .ctaTitle {
+            font-size: 32px;
+            line-height: 1.1;
+          }
+        }
+      `}</style>
     </section>
   );
 }

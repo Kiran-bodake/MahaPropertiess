@@ -4,7 +4,7 @@ export const investmentReasons = [
     image: "/nashik/grapes.jpg",
     stat: "India’s leading grape production region",
     description:
-      "Nashik’s agricultural economy continues to drive warehousing, logistics, and land demand.",
+      "Nashik's thriving grape industry drives demand for warehousing, logistics, and agricultural infrastructure. Strong export activity continues to attract long-term business investments.",
     impact:
       "Agricultural exports and food-processing industries are creating long-term appreciation opportunities.",
   },
@@ -14,7 +14,7 @@ export const investmentReasons = [
     image: "/nashik/wine.jpg",
     stat: "India’s premium wine tourism destination",
     description:
-      "Wine tourism has transformed Nashik into a premium lifestyle destination with rising hospitality demand.",
+      "Home to some of India's most renowned vineyards, Nashik attracts tourists from across the country. The growing hospitality ecosystem supports demand for lifestyle and tourism-focused properties.",
     impact:
       "Farmhouse investments and tourism-driven properties continue to appreciate rapidly.",
   },
@@ -24,7 +24,7 @@ export const investmentReasons = [
     image: "/nashik/industrial.jpg",
     stat: "MIDC-driven employment growth",
     description:
-      "Industrial corridors and manufacturing zones are increasing workforce migration and residential demand.",
+      "Major industrial zones such as Satpur and Ambad continue to generate employment and economic activity. Industrial expansion fuels demand for residential, retail, and commercial developments.",
     impact:
       "Industrial expansion boosts nearby residential and commercial property demand.",
   },
@@ -34,7 +34,7 @@ export const investmentReasons = [
     image: "/nashik/kumbh.jpg",
     stat: "Millions visit during Kumbh Mela",
     description:
-      "One of India’s major spiritual destinations with large-scale tourism infrastructure growth.",
+      "As one of India's most important spiritual destinations, Nashik attracts visitors throughout the year. Tourism growth encourages investments in hospitality, retail, and supporting infrastructure.",
     impact:
       "Tourism increases hospitality and commercial investment opportunities.",
   },
@@ -44,7 +44,7 @@ export const investmentReasons = [
     image: "/nashik/bullet-train.jpg",
     stat: "Future connectivity growth",
     description:
-      "Infrastructure and future connectivity projects can accelerate appreciation in emerging corridors.",
+      "Upcoming transportation and infrastructure projects can strengthen Nashik's connectivity with major economic centers. Improved accessibility often acts as a catalyst for long-term real estate growth.",
     impact:
       "Connectivity-driven development historically creates major appreciation cycles.",
   },
@@ -54,7 +54,7 @@ export const investmentReasons = [
     image: "/nashik/education.jpg",
     stat: "Thousands of student migrations yearly",
     description:
-      "Institutions like Sandip Foundation and MET Bhujbal Knowledge City drive continuous residential demand.",
+      "Leading institutions attract students, faculty, and professionals from across the region. This steady influx supports rental demand and creates a stable residential market.",
     impact:
       "Educational migration creates stable rental and residential demand.",
   },

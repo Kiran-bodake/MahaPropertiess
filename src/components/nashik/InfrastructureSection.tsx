@@ -43,16 +43,7 @@ export default function InfrastructureSection() {
         }}
       >
         {items.map((item, index) => (
-          <div
-            key={item.title}
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "1.05fr 0.95fr",
-              alignItems: "center",
-              gap: "64px",
-            }}
-          >
+          <div key={item.title} className="infraRow">
             {/* IMAGE */}
             <div
               style={{
@@ -60,13 +51,12 @@ export default function InfrastructureSection() {
               }}
             >
               <div
+                className="infraImage"
                 style={{
                   position: "relative",
-                  height: "520px",
                   overflow: "hidden",
                   borderRadius: "40px",
-                  boxShadow:
-                    "0 30px 80px rgba(0,0,0,0.14)",
+                  boxShadow: "0 30px 80px rgba(0,0,0,0.14)",
                 }}
               >
                 <Image
@@ -76,8 +66,7 @@ export default function InfrastructureSection() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                   style={{
                     objectFit: "cover",
-                    transition:
-                      "transform .7s ease",
+                    transition: "transform .7s ease",
                   }}
                 />
               </div>
@@ -85,8 +74,8 @@ export default function InfrastructureSection() {
 
             {/* CONTENT */}
             <div
+              className="infraContent"
               style={{
-                maxWidth: "720px",
                 order: index % 2 === 1 ? 1 : 2,
               }}
             >
@@ -104,9 +93,9 @@ export default function InfrastructureSection() {
               </p>
 
               <h2
+                className="infraTitle"
                 style={{
                   margin: 0,
-                  fontSize: "62px",
                   fontWeight: 900,
                   lineHeight: 1.05,
                   letterSpacing: "-0.03em",
@@ -117,10 +106,9 @@ export default function InfrastructureSection() {
               </h2>
 
               <p
+                className="infraDescription"
                 style={{
                   marginTop: "32px",
-                  fontSize: "22px",
-                  lineHeight: 1.9,
                   color: "#4b5563",
                 }}
               >
@@ -130,6 +118,107 @@ export default function InfrastructureSection() {
           </div>
         ))}
       </div>
+
+      <style jsx>{`
+        .infraRow {
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          align-items: center;
+          gap: 64px;
+        }
+
+        .infraImage {
+          height: 520px;
+        }
+
+        .infraContent {
+          max-width: 720px;
+        }
+
+        .infraTitle {
+          font-size: 62px;
+        }
+
+        .infraDescription {
+          font-size: 22px;
+          line-height: 1.9;
+        }
+
+        /* Tablet */
+        @media (max-width: 1024px) {
+          .infraRow {
+            gap: 40px;
+          }
+
+          .infraImage {
+            height: 420px;
+          }
+
+          .infraTitle {
+            font-size: 48px;
+          }
+
+          .infraDescription {
+            font-size: 18px;
+            line-height: 1.8;
+          }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+          .infraRow {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+
+          .infraRow > div:first-child {
+            order: 1 !important;
+          }
+
+          .infraRow > div:last-child {
+            order: 2 !important;
+          }
+
+          .infraImage {
+            height: 260px;
+            border-radius: 24px;
+          }
+
+          .infraContent {
+            max-width: 100%;
+          }
+
+          .infraTitle {
+            font-size: 38px;
+            line-height: 1.1;
+          }
+
+          .infraDescription {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-top: 20px !important;
+          }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+          section {
+            padding: 48px 16px 72px;
+          }
+
+          .infraImage {
+            height: 220px;
+          }
+
+          .infraTitle {
+            font-size: 34px;
+          }
+
+          .infraDescription {
+            font-size: 15px;
+          }
+        }
+      `}</style>
     </section>
   );
 }
