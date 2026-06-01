@@ -2,19 +2,19 @@ import { Schema, model, models } from "mongoose";
 
 const PropertySchema = new Schema(
   {
-   propertyId: {
-  type: String,
-  required: true,
-  unique: true,
-  index: true,
-},
+    propertyId: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
 
-slug: {
-  type: String,
-  required: true,
-  unique: true,
-  index: true,
-},
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
 
     title: {
       type: String,
@@ -37,23 +37,18 @@ slug: {
       default: "available",
     },
 
-  approvalStatus: {
+    views: {
+      type: Number,
+      default: 100,
+    },
 
-     type: String,
+    approvalStatus: {
+      type: String,
 
-       enum: [
+      enum: ["pending", "approved", "rejected"],
 
-       "pending",
-
-       "approved",
-
-        "rejected"
-
-               ],
-
-  default: "pending"
-
-},
+      default: "pending",
+    },
 
     constructionStatus: {
       type: String,
@@ -69,8 +64,7 @@ slug: {
     agentName: String,
     agentPhone: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default models.Property ||
-  model("Property", PropertySchema);
+export default models.Property || model("Property", PropertySchema);

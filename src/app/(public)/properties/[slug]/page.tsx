@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
+import ViewTracker from "@/components/property/ViewTracker";
 
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
 import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
@@ -38,12 +39,11 @@ import {
 } from "lucide-react";
 
 type PropertyType = {
- id:string;
+  id: string;
   slug: string;
   title: string;
   description: string;
   propertyId?: string;
-  
 
   locality: string;
   city: string;
@@ -279,6 +279,7 @@ export default async function PropertyDetailPage({
 
   return (
     <>
+      <ViewTracker slug={property.slug} />
       <Navbar />
       <script
         type="application/ld+json"
@@ -422,15 +423,11 @@ export default async function PropertyDetailPage({
                       flexShrink: 0,
                     }}
                   >
-          <PropertyActions
-
-  propertyMongoId={property.id || ""}
-
-  propertyId={property.propertyId || ""}
-
-  propertyTitle={property.title || ""}
-
-/>
+                    <PropertyActions
+                      propertyMongoId={property.id || ""}
+                      propertyId={property.propertyId || ""}
+                      propertyTitle={property.title || ""}
+                    />
                   </div>
                 </div>
 
@@ -925,7 +922,7 @@ function RelatedCard({ item }: any) {
 
   return (
     <Link
-      href={`/properties/${item.slug}`}
+      href={`/property/${item.propertyId || item.id || item._id}/${item.slug}`}
       style={{
         textDecoration: "none",
         color: "inherit",

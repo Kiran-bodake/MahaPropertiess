@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 
     let properties = await Property.find({
       approvalStatus: "approved",
-    });
+    }).sort({ createdAt: -1 });
 
     /* Category Filter */
     if (category && category !== "All") {
@@ -78,7 +78,9 @@ export async function GET(req: Request) {
 
           images: imageDoc?.images?.map((img: any) => img.url) || ["/maha.png"],
 
-          views: property.views || 0,
+          views: property.views || 100,
+
+          createdAt: property.createdAt,
         };
       }),
     );
