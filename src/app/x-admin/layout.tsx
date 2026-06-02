@@ -21,7 +21,7 @@ export default function AdminRootLayout({
         {/* Main Content */}
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Navbar */}
-          <AdminNavbar />
+          {/* <AdminNavbar /> */}
 
           {/* Page Content */}
           <main className="flex-1 overflow-y-auto px-6 py-6 lg:px-10">
