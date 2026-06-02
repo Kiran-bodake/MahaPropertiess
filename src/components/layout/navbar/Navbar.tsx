@@ -1315,7 +1315,169 @@ export function Navbar() {
                 >
                   <Search size={16} />
                 </button>
-                {/* NOTIFICATION BELL */}
+               
+                {/* Phone */}
+                {/* <a
+                  href="tel:+919876543210"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "7px",
+                    padding: "8px 14px",
+                    borderRadius: "9px",
+                    border: onDark
+                      ? "1.5px solid rgba(255,255,255,0.22)"
+                      : "1.5px solid #e5e7eb",
+                    background: onDark ? "rgba(255,255,255,0.1)" : "white",
+                    color: onDark ? "white" : "#374151",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    transition: "all 0.18s",
+                  }}
+                  className="hide-sm"
+                >
+                  <Phone size={14} /> +91 98765 43210
+                </a> */}
+
+                {/* Post CTA */}
+                <Link
+                  href="/post-property"
+                  style={{
+                    padding: "9px 18px",
+                    borderRadius: "9px",
+                    background: "linear-gradient(135deg,#16a34a,#22c55e)",
+                    color: "white",
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    boxShadow: "0 4px 12px rgba(22,163,74,0.35)",
+                    whiteSpace: "nowrap",
+                  }}
+                  className="hide-xs"
+                >
+                  List your property
+                  <span
+                    style={{
+                      background: "#d1fae5",
+                      color: "#065f46",
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      borderRadius: "999px",
+                      padding: "1px 7px",
+                    }}
+                  >
+                    FREE
+                  </span>
+                </Link>
+
+                {/* ✅ ADD HERE — Auth Buttons */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                >
+                  {user ? (
+                    <div
+                      ref={profileRef}
+                      style={{
+                        position: "relative",
+                      }}
+                    >
+                      {/* PROFILE BUTTON */}
+                      <button
+                        onClick={() => setShowProfileMenu(!showProfileMenu)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          border: "1px solid #e5e7eb",
+                          background: "#fff",
+                          padding: "8px 14px",
+                          borderRadius: "999px",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                          boxShadow: "0 1px 2px rgba(0,0,0,.05)",
+                        }}
+                      >
+                        {/* AVATAR */}
+                        <div
+                          style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: "50%",
+                            background: "#f59e0b",
+                            color: "#fff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: 800,
+                            fontSize: "14px",
+                          }}
+                        >
+                          {user?.name?.charAt(0) || "U"}
+                        </div>
+
+                        {/* USER NAME */}
+                        <span
+                          style={{
+                            color: "#111827",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {user?.name || user?.phone}
+                        </span>
+                      </button>
+
+                      {/* DROPDOWN */}
+                      {showProfileMenu && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "110%",
+                            right: 0,
+                            width: 240,
+                            background: "#fff",
+                            borderRadius: 16,
+                            border: "1px solid #e5e7eb",
+                            boxShadow: "0 10px 40px rgba(0,0,0,.08)",
+                            overflow: "hidden",
+                            zIndex: 999,
+                          }}
+                        >
+                          {/* USER INFO */}
+                          <div
+                            style={{
+                              padding: "14px",
+                              borderBottom: "1px solid #f3f4f6",
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: 700,
+                                color: "#111827",
+                              }}
+                            >
+                              {user?.name || "User"}
+                            </div>
+
+                            <div
+                              style={{
+                                fontSize: ".85rem",
+                                color: "#64748b",
+                                marginTop: "2px",
+                              }}
+                            >
+                              {user?.phone}
+                            </div>
+                          </div>
+
+                          {/* MENU ITEMS */}
+
+                           {/* NOTIFICATION BELL */}
                 <div
                   style={{
                     position: "relative",
@@ -1526,166 +1688,6 @@ export function Navbar() {
                   )}
                 </div>
 
-                {/* Phone */}
-                {/* <a
-                  href="tel:+919876543210"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    padding: "8px 14px",
-                    borderRadius: "9px",
-                    border: onDark
-                      ? "1.5px solid rgba(255,255,255,0.22)"
-                      : "1.5px solid #e5e7eb",
-                    background: onDark ? "rgba(255,255,255,0.1)" : "white",
-                    color: onDark ? "white" : "#374151",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    transition: "all 0.18s",
-                  }}
-                  className="hide-sm"
-                >
-                  <Phone size={14} /> +91 98765 43210
-                </a> */}
-
-                {/* Post CTA */}
-                <Link
-                  href="/post-property"
-                  style={{
-                    padding: "9px 18px",
-                    borderRadius: "9px",
-                    background: "linear-gradient(135deg,#16a34a,#22c55e)",
-                    color: "white",
-                    fontSize: "13px",
-                    fontWeight: 700,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    boxShadow: "0 4px 12px rgba(22,163,74,0.35)",
-                    whiteSpace: "nowrap",
-                  }}
-                  className="hide-xs"
-                >
-                  List your property
-                  <span
-                    style={{
-                      background: "#d1fae5",
-                      color: "#065f46",
-                      fontSize: "10px",
-                      fontWeight: 700,
-                      borderRadius: "999px",
-                      padding: "1px 7px",
-                    }}
-                  >
-                    FREE
-                  </span>
-                </Link>
-
-                {/* ✅ ADD HERE — Auth Buttons */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  {user ? (
-                    <div
-                      ref={profileRef}
-                      style={{
-                        position: "relative",
-                      }}
-                    >
-                      {/* PROFILE BUTTON */}
-                      <button
-                        onClick={() => setShowProfileMenu(!showProfileMenu)}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "10px",
-                          border: "1px solid #e5e7eb",
-                          background: "#fff",
-                          padding: "8px 14px",
-                          borderRadius: "999px",
-                          cursor: "pointer",
-                          fontWeight: 700,
-                          boxShadow: "0 1px 2px rgba(0,0,0,.05)",
-                        }}
-                      >
-                        {/* AVATAR */}
-                        <div
-                          style={{
-                            width: 34,
-                            height: 34,
-                            borderRadius: "50%",
-                            background: "#f59e0b",
-                            color: "#fff",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontWeight: 800,
-                            fontSize: "14px",
-                          }}
-                        >
-                          {user?.name?.charAt(0) || "U"}
-                        </div>
-
-                        {/* USER NAME */}
-                        <span
-                          style={{
-                            color: "#111827",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {user?.name || user?.phone}
-                        </span>
-                      </button>
-
-                      {/* DROPDOWN */}
-                      {showProfileMenu && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: "110%",
-                            right: 0,
-                            width: 240,
-                            background: "#fff",
-                            borderRadius: 16,
-                            border: "1px solid #e5e7eb",
-                            boxShadow: "0 10px 40px rgba(0,0,0,.08)",
-                            overflow: "hidden",
-                            zIndex: 999,
-                          }}
-                        >
-                          {/* USER INFO */}
-                          <div
-                            style={{
-                              padding: "14px",
-                              borderBottom: "1px solid #f3f4f6",
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontWeight: 700,
-                                color: "#111827",
-                              }}
-                            >
-                              {user?.name || "User"}
-                            </div>
-
-                            <div
-                              style={{
-                                fontSize: ".85rem",
-                                color: "#64748b",
-                                marginTop: "2px",
-                              }}
-                            >
-                              {user?.phone}
-                            </div>
-                          </div>
-
-                          {/* MENU ITEMS */}
                           <Link
                             href="/favorites"
                             style={menuBtn as React.CSSProperties}
@@ -1694,6 +1696,8 @@ export function Navbar() {
                           <Link href="/favorites" style={menuBtn}>
                             ❤️ Favorite Properties
                           </Link>
+
+                          
 
                           {/* LOGOUT */}
                           <button
