@@ -14,19 +14,25 @@ export default function AdminRootLayout({
 }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 text-slate-900">
+      
       <div className="flex min-h-screen">
+
         {/* Sidebar */}
         <AdminSidebar />
 
-        {/* Main Content */}
+        {/* Main Section */}
         <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Navbar */}
-          {/* <AdminNavbar /> */}
+
+          {/* ✅ Navbar (FIXED - NOW ENABLED) */}
+          <AdminNavbar />
 
           {/* Page Content */}
           <main className="flex-1 overflow-y-auto px-6 py-6 lg:px-10">
-            <div className="mx-auto max-w-[1600px]">{children}</div>
+            <div className="mx-auto max-w-[1600px]">
+              {children}
+            </div>
           </main>
+
         </div>
       </div>
     </div>

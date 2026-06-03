@@ -2,505 +2,278 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, LogOut, Search, Settings, UserCircle2 } from "lucide-react";
+import {
+  Bell,
+  LogOut,
+  Search,
+  Settings,
+  UserCircle2,
+} from "lucide-react";
 
-const crumbs={
-  "/x-admin":["Dashboard"],
-  "/x-admin/leads":["Dashboard","Leads"],
-  "/x-admin/deals":["DashboaSrd","Deals"],
-  "/x-admin/tasks":["Dashboard","Tasks"],
-  "/x-admin/properties":["Dashboard","Properties"]
+const crumbs: Record<string, string[]> = {
+  "/x-admin": ["Dashboard"],
+  "/x-admin/leads": ["Dashboard", "Leads"],
+  "/x-admin/deals": ["Dashboard", "Deals"],
+  "/x-admin/tasks": ["Dashboard", "Tasks"],
+  "/x-admin/properties": ["Dashboard", "Properties"],
 };
 
-const btn={
-  border:"1px solid #e2e8f0",
-  background:"#fff",
-  borderRadius:14,
-  cursor:"pointer"
-};
+export function AdminNavbar() {
+  const path = usePathname();
+  const router = useRouter();
 
-const dropBtn={
-  width:"100%",
-  padding:12,
-  border:"none",
-  background:"transparent",
-  textAlign:"left" as const,
-  borderRadius:12,
-  cursor:"pointer"
-};
+  const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
-export function AdminNavbar(){
-
-  const path=usePathname(),
-        router=useRouter();
-
-  const [query,setQuery]=useState(""),
-      [open,setOpen]=useState(false),
-      [mobile,setMobile]=useState(false),
-      [showNotifications,setShowNotifications]=useState(false),
-      [notifications,setNotifications]=useState<any[]>([]);
-
-    const unreadNotifications =
-  notifications.filter(
-    x => !x.isRead
-  );
-
-  const breadcrumb=useMemo(
-    ()=>crumbs[path as keyof typeof crumbs]||["Dashboard"],
+  const breadcrumb = useMemo(
+    () => crumbs[path] || ["Dashboard"],
     [path]
   );
 
-  // Screen detect
-  useEffect(()=>{
-    const check=()=>setMobile(window.innerWidth<768);
-    check();
-    window.addEventListener("resize",check);
-    return()=>window.removeEventListener("resize",check);
-  },[]);
+  const unreadNotifications = notifications.filter((x) => !x.isRead);
 
-  useEffect(()=>{
-
-  const fetchNotifications =
-    async()=>{
-
-      const res =
-        await fetch(
-          "/api/admin/notifications"
-        );
-
-      const data =
-        await res.json();
-
-      setNotifications(
-        data.notifications || []
-      );
-
+  // ✅ FETCH NOTIFICATIONS
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch("/api/admin/notifications");
+        const data = await res.json();
+        setNotifications(data.notifications || []);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-  fetchNotifications();
+    fetchNotifications();
+  }, []);
 
-},[]);
-
-
-  // Auth check
-  useEffect(()=>{
-    if(path==="/x-admin/login") return;
-
-    (async()=>{
-      const res=await fetch("/api/admin/auth/me");
-
-      if(res.status===401){
-        const refresh=await fetch("/api/admin/auth/refresh",{method:"POST"});
-
-        if(!refresh.ok){
-          router.push("/x-admin/login");
-        }
-      }
-    })();
-
-  },[path,router]);
-
-  if(path==="/x-admin/login") return null;
-
-  const logout=async()=>{
-    await fetch("/api/admin/auth/logout",{method:"POST"});
-    router.push("/x-admin/login");
-  };
-
-  const search=()=>{
-    if(!query.trim()) return;
+  // ✅ SEARCH
+  const search = () => {
+    if (!query.trim()) return;
     router.push(`/x-admin/search?q=${encodeURIComponent(query)}`);
   };
 
-const openNotification =
-  async (item:any) => {
-
-    console.log(
-      "Clicked:",
-      item
-    );
-
-
-    const res =
-      await fetch(
-        "/api/admin/notifications",
-        {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            referenceId:
-              item.referenceId
-          })
-        }
-      );
-
-    const data =
-      await res.json();
-
-    console.log(
-      "Backend response:",
-      data
-    );
-
-    setNotifications(
-      prev =>
-        prev.map(
-          x =>
-            x.referenceId ===
-            item.referenceId
-
-              ? {
-                  ...x,
-                  isRead:true
-                }
-
-              : x
-        )
-    );
-      setShowNotifications(false);
-     if(item.type === "lead"){
-
-  router.push(
-    `/x-admin/leads?id=${item.referenceId}`
-  );
-
-}
-
-else if(
-  item.type === "property"
-){
-
-  router.push(
-    `/x-admin/properties/${item.referenceId}`
-  );
-
-}
-
+  // ✅ LOGOUT
+  const logout = async () => {
+    await fetch("/api/admin/auth/logout", { method: "POST" });
+    router.push("/x-admin/login");
   };
 
+  // ✅ OPEN NOTIFICATION
+  const openNotification = async (item: any) => {
+    await fetch("/api/admin/notifications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ referenceId: item.referenceId }),
+    });
 
-
-  return(
-    <div style={{
-      position:"sticky",
-      top:0,
-      zIndex:100,
-      background:"#fff",
-      borderBottom:"1px solid #e2e8f0",
-      padding:mobile?"14px":"18px 28px"
-    }}>
-
-      <div style={{
-        display:"flex",
-        flexDirection:mobile?"column":"row",
-        justifyContent:"space-between",
-        alignItems:mobile?"stretch":"center",
-        gap:mobile?14:0
-      }}>
-
-        {/* Left */}
-        <div style={{
-          display:"flex",
-          flexDirection:mobile?"column":"row",
-          alignItems:mobile?"flex-start":"center",
-          gap:12
-        }}>
-
-          <div style={{
-            background:"#eef2ff",
-            color:"#4338ca",
-            padding:"10px 16px",
-            borderRadius:14,
-            fontWeight:700,
-            fontSize:13
-          }}>
-            Analytics
-          </div>
-
-          <div style={{
-            color:"#64748b",
-            fontSize:12
-          }}>
-            {breadcrumb.map((x,i)=>(
-              <span key={x}>
-                {i>0 && " › "} {x}
-              </span>
-            ))}
-          </div>
-
-        </div>
-
-        {/* Right */}
-        <div style={{
-          display:"flex",
-          flexDirection:mobile?"column":"row",
-          alignItems:mobile?"stretch":"center",
-          gap:10
-        }}>
-
-          {/* Search */}
-          <div style={{
-            position:"relative",
-            width:mobile?"100%":320
-          }}>
-            <input
-              value={query}
-              onChange={e=>setQuery(e.target.value)}
-              onKeyDown={e=>e.key==="Enter" && search()}
-              placeholder="Search..."
-              style={{
-                width:"100%",
-                height:44,
-                border:"1px solid #e2e8f0",
-                borderRadius:16,
-                padding:"0 18px 0 42px",
-                outline:"none",
-                fontSize:13
-              }}
-            />
-
-            <button
-              onClick={search}
-              style={{
-                position:"absolute",
-                left:14,
-                top:13,
-                border:"none",
-                background:"none",
-                cursor:"pointer"
-              }}
-            >
-              <Search size={15} color="#64748b"/>
-            </button>
-          </div>
-
-          {/* Hide preferences on mobile */}
-          {!mobile && (
-            <button style={{
-              ...btn,
-              padding:"10px 14px",
-              display:"flex",
-              alignItems:"center",
-              gap:8
-            }}>
-              <Settings size={16}/>
-              Preferences
-            </button>
-          )}
-
-          {/* Notifications */}
-         <div
-  style={{
-    position:"relative"
-  }}
->
-
-  <button
-    onClick={()=>
-      setShowNotifications(
-        !showNotifications
+    setNotifications((prev) =>
+      prev.map((x) =>
+        x.referenceId === item.referenceId
+          ? { ...x, isRead: true }
+          : x
       )
-    }
-    style={{
-      ...btn,
-      position:"relative",
-      padding:10
-    }}
-  >
+    );
 
-    <Bell size={18}/>
+    setShowNotifications(false);
 
-    {
-      unreadNotifications.length > 0 && (
-
-        <span
-          style={{
-            position:"absolute",
-            top:5,
-            right:5,
-            minWidth:18,
-            height:18,
-            borderRadius:"50%",
-            background:"#ef4444",
-            color:"#fff",
-            fontSize:10,
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center",
-            fontWeight:700
-          }}
-        >
-
-          {
-            unreadNotifications.length
-          }
-
-        </span>
-
-      )
+    if (item.type === "lead") {
+      router.push(`/x-admin/leads?id=${item.referenceId}`);
     }
 
-  </button>
-  {
-  showNotifications && (
+    if (item.type === "property") {
+      router.push(`/x-admin/properties/${item.referenceId}`);
+    }
+  };
 
-    <div
+  return (
+    <header
       style={{
-        position:"absolute",
-        top:55,
-        right:0,
-        width:320,
-        background:"#fff",
-        border:"1px solid #e2e8f0",
-        borderRadius:16,
-        padding:12,
-        boxShadow:
-          "0 20px 40px rgba(0,0,0,.08)",
-        zIndex:999
+        position: "sticky",
+        top: 0,
+        zIndex: 9999,
+        background: "#ffffff",
+        borderBottom: "1px solid #e5e7eb",
+        padding: "14px 20px",
       }}
     >
-
-      {
-
-        notifications.length ?
-
-          notifications.map(
-
-            (item,index)=>(
-
-              <div
-  key={index}
-
-  onClick={()=>
-    openNotification(item)
-  }
-
-  style={{
-    cursor:"pointer",
-    padding:"12px 0",
-    borderBottom:
-      "1px solid #f1f5f9"
-  }}
->
-
-                <div
-                  style={{
-                    fontWeight:700,
-                    fontSize:13
-                  }}
-                >
-                  {
-                    item.title
-                  }
-                </div>
-
-                <div
-                  style={{
-                    fontSize:12,
-                    color:"#64748b"
-                  }}
-                >
-                  {
-                    item.message
-                  }
-                </div>
-
-              </div>
-
-            )
-
-          )
-
-        :
-
-          <div>
-            No notifications
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 16,
+        }}
+      >
+        {/* LEFT */}
+        <div>
+          <div style={{ fontWeight: 700, color: "#4f46e5" }}>
+            Admin Panel
           </div>
 
-      }
-
-    </div>
-
-  )  
-}     
-
-
-</div>
-
-          {/* Profile */}
-          <div style={{position:"relative"}}>
-
-            <button
-              onClick={()=>setOpen(!open)}
-              style={{
-                display:"flex",
-                alignItems:"center",
-                justifyContent:"center",
-                gap:8,
-                border:"none",
-                borderRadius:14,
-                padding:"10px 14px",
-                color:"#fff",
-                fontWeight:600,
-                cursor:"pointer",
-                background:"linear-gradient(135deg,#4f46e5,#312e81)"
-              }}
-            >
-              <UserCircle2 size={18}/>
-              {!mobile && "Admin"}
-            </button>
-
-            {open && (
-
-              <div style={{
-                position:"absolute",
-                top:58,
-                right:0,
-                width:180,
-                background:"#fff",
-                border:"1px solid #e2e8f0",
-                borderRadius:16,
-                padding:8,
-                boxShadow:"0 20px 40px rgba(0,0,0,.08)"
-              }}>
-
-                <button style={dropBtn}>
-                  Profile
-                </button>
-
-                <button style={dropBtn}>
-                  Settings
-                </button>
-
-                <button
-                  onClick={logout}
-                  style={{
-                    ...dropBtn,
-                    color:"#dc2626",
-                    display:"flex",
-                    alignItems:"center",
-                    gap:8
-                  }}
-                >
-                  <LogOut size={15}/>
-                  Logout
-                </button>
-
-              </div>
-
-            )}
-
+          <div style={{ fontSize: 12, color: "#6b7280" }}>
+            {breadcrumb.join(" › ")}
           </div>
-
         </div>
 
-      </div>
+        {/* CENTER SEARCH */}
+        <div style={{ flex: 1, maxWidth: 400, position: "relative" }}>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && search()}
+            placeholder="Search..."
+            style={{
+              width: "100%",
+              padding: "10px 40px 10px 12px",
+              border: "1px solid #e5e7eb",
+              borderRadius: 10,
+              outline: "none",
+            }}
+          />
 
-    </div>
+          <Search
+            onClick={search}
+            size={16}
+            style={{
+              position: "absolute",
+              right: 10,
+              top: 10,
+              cursor: "pointer",
+              color: "#6b7280",
+            }}
+          />
+        </div>
+
+        {/* RIGHT */}
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          {/* NOTIFICATIONS */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              style={{
+                padding: 8,
+                border: "1px solid #e5e7eb",
+                borderRadius: 10,
+                background: "white",
+                cursor: "pointer",
+                position: "relative",
+              }}
+            >
+              <Bell size={18} />
+
+              {unreadNotifications.length > 0 && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: -5,
+                    right: -5,
+                    background: "red",
+                    color: "white",
+                    fontSize: 10,
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {unreadNotifications.length}
+                </span>
+              )}
+            </button>
+
+            {showNotifications && (
+              <div
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 45,
+                  width: 300,
+                  background: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 12,
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+                  zIndex: 9999,
+                }}
+              >
+                {notifications.length === 0 ? (
+                  <div style={{ padding: 12 }}>No notifications</div>
+                ) : (
+                  notifications.map((item) => (
+                    <div
+                      key={item.referenceId}
+                      onClick={() => openNotification(item)}
+                      style={{
+                        padding: 10,
+                        borderBottom: "1px solid #f3f4f6",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div style={{ fontWeight: 600 }}>
+                        {item.title}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#6b7280" }}>
+                        {item.message}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* SETTINGS */}
+          <button
+            style={{
+              padding: 8,
+              border: "1px solid #e5e7eb",
+              borderRadius: 10,
+              background: "white",
+            }}
+          >
+            <Settings size={18} />
+          </button>
+
+          {/* PROFILE */}
+          <button
+            onClick={() => setOpen(!open)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 12px",
+              background: "#4f46e5",
+              color: "white",
+              borderRadius: 10,
+              border: "none",
+            }}
+          >
+            <UserCircle2 size={18} />
+            Admin
+          </button>
+
+          {open && (
+            <div
+              style={{
+                position: "absolute",
+                top: 60,
+                right: 20,
+                background: "white",
+                border: "1px solid #e5e7eb",
+                borderRadius: 12,
+                padding: 10,
+                zIndex: 9999,
+              }}
+            >
+              <button onClick={logout}>Logout</button>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
   );
 }
