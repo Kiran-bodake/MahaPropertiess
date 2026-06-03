@@ -14,6 +14,7 @@ import { PropertyActions } from "@/components/property/PropertyActions";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
 import {
   ShieldCheck,
+  BadgeCheck,
   FileCheck,
   Landmark,
   Building2,
@@ -600,7 +601,7 @@ export default async function PropertyDetailPage({
                   style={{
                     background: "#fff",
                     borderRadius: 24,
-                    padding: 24,
+                    padding: 16,
                     boxShadow: "0 10px 30px rgba(0,0,0,.06)",
                   }}
                 >
@@ -627,7 +628,7 @@ export default async function PropertyDetailPage({
                         marginTop: 6,
                         color: "#64748b",
                         fontSize: ".92rem",
-                        lineHeight: 1.5,
+                        lineHeight: 1.4,
                       }}
                     >
                       Get complete details, site visit assistance and best
@@ -636,18 +637,40 @@ export default async function PropertyDetailPage({
                   </div>
 
                   {/* TRUST */}
-                  <div
-                    style={{
-                      marginTop: 20,
-                      display: "grid",
-                      gap: 8,
-                      color: "#475569",
-                      fontSize: ".92rem",
-                    }}
-                  >
-                    <div>✓ Verified Agent</div>
-                    <div>⚡ Fast Response</div>
-                    {/* <div>👁 High Buyer Interest</div> */}
+                  {/* TRUST MARQUEE */}
+                  <div className="trustMarquee">
+                    <div className="trustTrack">
+                      <div className="trustItem">
+                        <BadgeCheck size={18} />
+                        <span>Verified Agent</span>
+                      </div>
+
+                      <div className="trustItem">
+                        <Zap size={18} />
+                        <span>Fast Response</span>
+                      </div>
+
+                      <div className="trustItem">
+                        <ShieldCheck size={18} />
+                        <span>Trusted Properties</span>
+                      </div>
+
+                      {/* duplicate for seamless loop */}
+                      <div className="trustItem">
+                        <BadgeCheck size={18} />
+                        <span>Verified Agent</span>
+                      </div>
+
+                      <div className="trustItem">
+                        <Zap size={18} />
+                        <span>Fast Response</span>
+                      </div>
+
+                      <div className="trustItem">
+                        <ShieldCheck size={18} />
+                        <span>Trusted Properties</span>
+                      </div>
+                    </div>
                   </div>
 
                   <div
@@ -717,8 +740,58 @@ export default async function PropertyDetailPage({
   will-change: transform;
 }
 
-        .stickyFormWrapper::-webkit-scrollbar {
+ .stickyFormWrapper::-webkit-scrollbar {
   display: none;
+}
+
+
+  .trustMarquee {
+  overflow: hidden;
+  width: 100%;
+  margin: 10px 0 12px;
+}
+
+.trustTrack {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: max-content;
+  white-space: nowrap;
+  animation: trustScroll 18s linear infinite;
+}
+
+.trustTrack:hover {
+  animation-play-state: paused;
+}
+
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+   white-space: nowrap;
+
+  color: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.trustItem svg {
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 3px;
+  border-radius: 999px;
+}
+ 
+
+@keyframes trustScroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
   @media (max-width: 1024px) {
@@ -771,6 +844,15 @@ export default async function PropertyDetailPage({
 
 .titleRow button{
   flex: 1;
+}
+
+ .trustTrack {
+  gap: 22px;
+  animation-duration: 12s;
+}
+
+.trustItem {
+  font-size: 13px;
 }
   }
 

@@ -106,11 +106,11 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
   const getInputStyle = (hasError: boolean): React.CSSProperties => ({
     width: "100%",
     marginBottom: "6px",
-    padding: "14px 16px",
+    padding: "12px 14px",
 
-    borderRadius: "16px",
+    borderRadius: "14px",
 
-    border: hasError ? "1px solid #ef4444" : "1px solid #dbeafe",
+    border: hasError ? "1px solid #ef4444" : "1px solid #bfd3f2",
 
     fontSize: "0.95rem",
 
@@ -124,7 +124,7 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
 
     color: "#334155",
 
-    boxShadow: "inset 0 1px 2px rgba(255,255,255,.8)",
+    boxShadow: "none",
 
     transition: "0.2s ease",
   });
@@ -179,7 +179,7 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
         style={{
           display: "flex",
           alignItems: "center",
-          border: errors.phone ? "1px solid #ef4444" : "1px solid #dbe2ea",
+          border: errors.phone ? "1px solid #ef4444" : "1px solid #bfd3f2",
           borderRadius: "14px",
           background: "#ffffff",
           marginBottom: "6px",
@@ -189,9 +189,9 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
         {/* COUNTRY CODE */}
         <div
           style={{
-            padding: "14px 12px",
+            padding: "12px 12px",
             background: "#ffffff",
-            borderRight: "1px solid #dbe2ea",
+            borderRight: "1px solid #bfd3f2",
             fontWeight: 700,
             color: "#0f172a",
             fontSize: ".95rem",
@@ -210,7 +210,7 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
           maxLength={10}
           style={{
             width: "100%",
-            padding: "14px 16px",
+            padding: "12px 14px",
             border: "none",
             outline: "none",
             fontSize: "0.95rem",
@@ -241,7 +241,7 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
         placeholder="Message (optional)"
         style={{
           ...getInputStyle(false),
-          minHeight: "100px",
+          minHeight: "80px",
           resize: "vertical",
           marginBottom: "14px",
         }}
@@ -252,7 +252,7 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
         type="submit"
         style={{
           width: "100%",
-          height: 54,
+          height: 48,
           background: "linear-gradient(135deg,#166534,#16a34a)",
           color: "#fff",
           border: "none",
