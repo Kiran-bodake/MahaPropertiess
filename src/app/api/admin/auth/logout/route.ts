@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/User";
+import User from "@/models/user";
 import { setupDatabase } from "@/lib/db-init";
 import { verifyAccessToken } from "@/lib/jwt";
 

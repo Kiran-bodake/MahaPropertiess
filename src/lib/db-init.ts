@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
-import User from "@/models/User";
+import User from "@/models/user";
 import Lead from "@/models/Lead";
 import Deal from "@/models/Deal";
 import Task from "@/models/Task";

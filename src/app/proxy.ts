@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setupDatabase } from "@/lib/db-init";
-import User from "@/models/User";
+import User from "@/models/user";
 import { hashToken, verifyAccessToken, signAccessToken, signRefreshToken } from "@/lib/jwt";
 
 const openPaths = ["/x-admin/login", "/x-admin/logout", "/x-admin/assets", "/x-admin/auth/refresh", "/x-admin/auth/login"];

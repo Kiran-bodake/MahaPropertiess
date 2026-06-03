@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setupDatabase } from "@/lib/db-init";
-import User from "@/models/User";
+import User from "@/models/user";
 import { hashPassword, verifyPassword } from "@/lib/auth";
 import { signAccessToken, signRefreshToken } from "@/lib/jwt";
 
@@ -15,6 +15,7 @@ async function initializeAdminUsers() {
     await User.create({
       name: "Super Admin",
       email: superEmail,
+      phone: "8855445788",
       role: "super-admin",
       passwordHash: hashPassword(process.env.ADMIN_SUPER_PASSWORD),
       isVerified: true,
@@ -27,6 +28,7 @@ async function initializeAdminUsers() {
       await User.create({
         name: "Sub Admin",
         email: subEmail,
+        phone: "8855445588",
         role: "admin",
         passwordHash: hashPassword(process.env.ADMIN_SUB_PASSWORD),
         isVerified: true,

@@ -25,6 +25,7 @@ type Inquiry = {
   status: InquiryStatus;
   isRead: boolean;
   createdAt: string;
+  nextFollowUp?: string | Date | null;
 };
 
 const statusLabels: Record<InquiryStatus, string> = {
@@ -57,7 +58,18 @@ export default function PropertyInquiriesPage() {
   const [drawerError, setDrawerError] = useState<string | null>(null);
   const [drawerSuccess, setDrawerSuccess] = useState(false);
 
+const [nextFollowUp, setNextFollowUp] = useState<string>("");
+  // Search
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const [sortOrder, setSortOrder] =
+  useState("newest");
+
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+const leadsPerPage = 10;
 
 
   useEffect(() => {
@@ -76,32 +88,58 @@ export default function PropertyInquiriesPage() {
       setLoading(false);
     }
   };
+const openLead = async (lead: Inquiry) => {
+  console.log("OPEN LEAD:", lead);
+  console.log("LEAD ID:", lead._id);
+  console.log("FOLLOWUP FROM DB:", lead.nextFollowUp);
 
-  const openLead = async (lead: Inquiry) => {
-    setSelectedLead(lead);
-    setDrawerStatus(lead.status);
-    setDrawerNotes(lead.notes || "");
-    setDrawerError(null);
-    setDrawerSuccess(false);
+  setSelectedLead(lead);
 
-    // Mark as read
-    if (!lead.isRead) {
-      try {
-        await fetch(`/api/property-inquiry/${lead._id}`, {
+  setDrawerStatus(lead.status);
+  setDrawerNotes(lead.notes || "");
+
+  // Load follow-up date from database into datetime picker
+  setNextFollowUp(
+    lead.nextFollowUp
+      ? new Date(lead.nextFollowUp)
+          .toISOString()
+          .slice(0, 16)
+      : ""
+  );
+
+  setDrawerError(null);
+  setDrawerSuccess(false);
+
+  // Mark lead as read
+  if (!lead.isRead) {
+    try {
+      const response = await fetch(
+        `/api/property-inquiry/${lead._id}`,
+        {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isRead: true }),
-        });
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            isRead: true,
+          }),
+        }
+      );
+
+      if (response.ok) {
         setInquiries((prev) =>
           prev.map((item) =>
-            item._id === lead._id ? { ...item, isRead: true } : item
+            item._id === lead._id
+              ? { ...item, isRead: true }
+              : item
           )
         );
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error("MARK READ ERROR:", error);
     }
-  };
+  }
+};
 
   const closeLead = () => {
     setSelectedLead(null);
@@ -110,71 +148,149 @@ export default function PropertyInquiriesPage() {
     setDrawerError(null);
     setDrawerSuccess(false);
   };
+const saveLeadChanges = async () => {
+  if (!selectedLead?._id) {
+    console.error("No lead ID found!");
+    setDrawerError("Missing inquiry ID. Please reopen the lead.");
+    return;
+  }
 
-  const saveLeadChanges = async () => {
-    if (!selectedLead) return;
+  setDrawerSaving(true);
+  setDrawerError(null);
+  setDrawerSuccess(false);
 
-    setDrawerSaving(true);
-    setDrawerError(null);
-    setDrawerSuccess(false);
+  try {
+    console.log("FOLLOWUP STATE:", nextFollowUp);
 
-    try {
-      const response = await fetch(`/api/property-inquiry/${selectedLead._id}`, {
+    const payload = {
+      status: drawerStatus,
+      notes: drawerNotes,
+      nextFollowUp: nextFollowUp || null,
+    };
+
+    console.log("PAYLOAD:", payload);
+
+    const response = await fetch(
+      `/api/property-inquiry/${selectedLead._id}`,
+      {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: drawerStatus,
-          notes: drawerNotes,
-        }),
-      });
-
-      let result: { success?: boolean; message?: string } | null = null;
-      const contentType = response.headers.get("content-type") || "";
-      if (contentType.includes("application/json")) {
-        try {
-          result = await response.json();
-        } catch (parseError) {
-          console.error("Failed to parse response JSON", parseError);
-        }
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       }
+    );
 
-      if (!response.ok || result?.success === false) {
-        const errorMessage =
-          result?.message ||
-          `Failed to save changes${response.status ? ` (${response.status})` : ""}. Please try again.`;
-        setDrawerError(errorMessage);
-        return;
-      }
+    const result = await response.json();
 
-      // Update local state
-      const updatedLead: Inquiry = {
-        ...selectedLead,
-        status: drawerStatus,
-        notes: drawerNotes,
-      };
+    console.log("SERVER RESPONSE:", result);
 
-      setInquiries((prev) =>
-        prev.map((item) => (item._id === selectedLead._id ? updatedLead : item))
+    if (!response.ok || !result.success) {
+      setDrawerError(
+        result.message || "Failed to save changes."
       );
-
-      setSelectedLead(updatedLead);
-      setDrawerSuccess(true);
-
-      // Clear success message after 2 seconds
-      setTimeout(() => {
-        setDrawerSuccess(false);
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-      setDrawerError("Failed to save changes. Please try again.");
-    } finally {
-      setDrawerSaving(false);
+      return;
     }
-  };
+
+    const updatedLead: Inquiry = {
+      ...selectedLead,
+      status: drawerStatus,
+      notes: drawerNotes,
+      nextFollowUp: payload.nextFollowUp,
+    };
+
+    setInquiries((prev) =>
+      prev.map((item) =>
+        item._id === selectedLead._id
+          ? updatedLead
+          : item
+      )
+    );
+
+    setSelectedLead(updatedLead);
+
+    setDrawerSuccess(true);
+
+    setTimeout(() => {
+      setDrawerSuccess(false);
+    }, 2000);
+  } catch (error) {
+    console.error("SAVE ERROR:", error);
+    setDrawerError(
+      "Failed to save changes. Please try again."
+    );
+  } finally {
+    setDrawerSaving(false);
+  }
+};
 
   const getCustomerName = (lead: Inquiry) =>
     lead.customerName || lead.name || "-";
   const getPhone = (lead: Inquiry) => lead.phone || lead.mobileNumber || "-";
+  const totalLeads = inquiries.length;
+
+const newLeads =
+  inquiries.filter(
+    (lead) => lead.status === "new"
+  ).length;
+
+const interestedLeads =
+  inquiries.filter(
+    (lead) => lead.status === "interested"
+  ).length;
+
+const closedLeads =
+  inquiries.filter(
+    (lead) => lead.status === "closed"
+  ).length;
+const filteredInquiries = inquiries
+  .filter((lead) => {
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      (lead.customerName || lead.name || "")
+        .toLowerCase()
+        .includes(search) ||
+      (lead.phone || lead.mobileNumber || "")
+        .toLowerCase()
+        .includes(search) ||
+      (lead.email || "")
+        .toLowerCase()
+        .includes(search) ||
+      (lead.propertyTitle || lead.propertyName || "")
+        .toLowerCase()
+        .includes(search);
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      lead.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  })
+
+  .sort((a, b) => {
+    if (sortOrder === "newest") {
+      return (
+        new Date(b.createdAt).getTime() -
+        new Date(a.createdAt).getTime()
+      );
+    }
+
+    return (
+      new Date(a.createdAt).getTime() -
+      new Date(b.createdAt).getTime()
+    );
+  });
+  const totalPages = Math.ceil(
+  filteredInquiries.length / leadsPerPage
+);
+
+const paginatedInquiries =
+  filteredInquiries.slice(
+    (currentPage - 1) * leadsPerPage,
+    currentPage * leadsPerPage
+  );
+
   const getProperty = (lead: Inquiry) =>
     lead.propertyTitle || lead.propertyName || "-";
 
@@ -189,10 +305,13 @@ export default function PropertyInquiriesPage() {
     );
   }
 
+
+
   return (
     <div style={containerStyle}>
       {/* HEADER */}
       <div style={headerStyle}>
+       
         <div>
           <h1 style={titleStyle}>Property Inquiries</h1>
           <p style={subtitleStyle}>Manage customer inquiries professionally</p>
@@ -201,9 +320,101 @@ export default function PropertyInquiriesPage() {
           🔄 Refresh
         </button>
       </div>
+      {/* STATISTICS CARDS */}
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit,minmax(220px,1fr))",
+    gap: "16px",
+    marginBottom: "24px",
+  }}
+>
+  <div style={statCardStyle}>
+    <h4>Total Leads</h4>
+    <h2>{totalLeads}</h2>
+  </div>
+
+  <div style={statCardStyle}>
+    <h4>New Leads</h4>
+    <h2>{newLeads}</h2>
+  </div>
+
+  <div style={statCardStyle}>
+    <h4>Interested</h4>
+    <h2>{interestedLeads}</h2>
+  </div>
+
+  <div style={statCardStyle}>
+    <h4>Closed</h4>
+    <h2>{closedLeads}</h2>
+  </div>
+</div>
+<div
+  style={{
+    display: "flex",
+    gap: "12px",
+    marginBottom: "20px",
+    alignItems: "center",
+  }}
+>
+  {/* SEARCH */}
+  <div
+    style={{
+      flex: 1,
+      background: "#fff",
+      border: "1px solid #e2e8f0",
+      borderRadius: "12px",
+      padding: "0 14px",
+      display: "flex",
+      alignItems: "center",
+      height: "48px",
+    }}
+  >
+    <span style={{ marginRight: "10px" }}>🔍</span>
+
+    <input
+      type="text"
+      placeholder="Search name, phone, property..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      style={{
+        border: "none",
+        outline: "none",
+        width: "100%",
+        fontSize: "14px",
+        background: "transparent",
+      }}
+    />
+  </div>
+
+  {/* STATUS FILTER */}
+  <select
+    value={statusFilter}
+    onChange={(e) => setStatusFilter(e.target.value)}
+    style={{
+      height: "48px",
+      minWidth: "180px",
+      padding: "0 14px",
+      borderRadius: "12px",
+      border: "1px solid #e2e8f0",
+      background: "#fff",
+      fontSize: "14px",
+      cursor: "pointer",
+    }}
+  >
+    <option value="all">All Status</option>
+    <option value="new">New</option>
+    <option value="contacted">Contacted</option>
+    <option value="interested">Interested</option>
+    <option value="site-visit">Site Visit</option>
+    <option value="negotiation">Negotiation</option>
+    <option value="closed">Closed</option>
+  </select>
+</div>
 
       {/* EMPTY STATE */}
-      {inquiries.length === 0 ? (
+      {filteredInquiries.length === 0 ? (
         <div style={emptyStateStyle}>
           <div style={{ fontSize: 50 }}>📭</div>
           <p>No inquiries found</p>
@@ -223,7 +434,7 @@ export default function PropertyInquiriesPage() {
               </tr>
             </thead>
             <tbody>
-              {inquiries.map((inquiry) => {
+             {paginatedInquiries.map((inquiry) => {
                 const statusStyle = statusStyles[inquiry.status];
                 return (
                   <tr
@@ -248,9 +459,16 @@ export default function PropertyInquiriesPage() {
                         {statusLabels[inquiry.status]}
                       </span>
                     </td>
-                    <td style={tdStyle}>
-                      {new Date(inquiry.createdAt).toLocaleDateString()}
-                    </td>
+                  <td style={tdStyle}>
+  {new Date(inquiry.createdAt).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  })}
+</td>
                     <td style={tdStyle}>
                       <button
                         onClick={() => openLead(inquiry)}
@@ -338,6 +556,25 @@ export default function PropertyInquiriesPage() {
                 <option value="closed">{statusLabels.closed}</option>
               </select>
             </div>
+{/* NEXT FOLLOW UP */}
+<div style={sectionStyle}>
+  <h3 style={sectionTitleStyle}>Next Follow Up</h3>
+
+  <input
+    type="datetime-local"
+    value={nextFollowUp}
+    onChange={(e) => {
+      console.log(
+        "SELECTED FOLLOWUP:",
+        e.target.value
+      );
+
+      setNextFollowUp(e.target.value);
+    }}
+    style={inputStyle}
+  />
+</div>
+
 
             {/* NOTES */}
             <div style={sectionStyle}>
@@ -715,4 +952,19 @@ const whatsappButtonStyle: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   transition: "all 0.2s ease",
+};
+const statCardStyle: React.CSSProperties = {
+  background: "#ffffff",
+  padding: "20px",
+  borderRadius: "16px",
+  border: "1px solid #e2e8f0",
+  boxShadow: "0 4px 10px rgba(15,23,42,0.04)",
+};
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  border: "1px solid #cbd5e1",
+  fontSize: "14px",
+  color: "#0f172a",
 };

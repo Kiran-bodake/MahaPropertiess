@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/db";
 
 import Otp from "@/models/Otp";
 
-import User from "@/models/User";
+import User from "@/models/user";
 
 import bcrypt from "bcryptjs";
 
