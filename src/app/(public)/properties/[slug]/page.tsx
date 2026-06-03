@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import PropertyEMIBadge from "@/components/property/PropertyEMIBadge";
 import AreaConversion from "@/components/property/AreaConversion";
+import PropertyMap from "@/components/property/PropertyMapWrapper";
 
 type PropertyType = {
   id: string;
@@ -70,6 +71,9 @@ type PropertyType = {
 
   status?: string;
   constructionStatus?: string;
+
+  latitude?: number;
+  longitude?: number;
 };
 
 const highlightIcons: Record<string, React.ReactNode> = {
@@ -223,6 +227,7 @@ export default async function PropertyDetailPage({
   if (!property) notFound();
 
   const relatedProperties = await getRelatedProperties(property.city);
+
   const jsonLd = {
     "@context": "https://schema.org",
 
@@ -309,6 +314,16 @@ export default async function PropertyDetailPage({
             overflow: "visible",
           }}
         >
+          {/* Breadcrumbs */}
+          <div
+            style={{
+              paddingLeft: 18,
+              marginBottom: 10,
+            }}
+          >
+            <Breadcrumbs property={property} />
+          </div>
+
           {/* MAIN GRID */}
           <div
             className="mainGrid"
@@ -489,7 +504,7 @@ export default async function PropertyDetailPage({
 
                 {/* DESCRIPTION */}
                 <div id="description">
-                  <SectionTitle title="Description" />
+                  <SectionTitle title="Property Details" />
                 </div>
 
                 <div
@@ -546,17 +561,28 @@ export default async function PropertyDetailPage({
                     overflow: "hidden",
                   }}
                 >
-                  <iframe
-                    title="Location"
-                    width="100%"
-                    height="320"
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                      `${property.locality}, ${property.city}`,
-                    )}&output=embed`}
-                    style={{
-                      border: 0,
-                    }}
-                  />
+                  {property.latitude && property.longitude ? (
+                    <PropertyMap
+                      latitude={property.latitude}
+                      longitude={property.longitude}
+                      locality={property.locality}
+                      city={property.city}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        height: 360,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: 18,
+                        color: "#64748b",
+                      }}
+                    >
+                      Location not available
+                    </div>
+                  )}
                 </div>
 
                 {/* LEAD */}
@@ -688,7 +714,6 @@ export default async function PropertyDetailPage({
               </div>
             </aside>
           </div>
-
           {/* RELATED */}
           {relatedProperties?.length > 0 && (
             <div
@@ -872,6 +897,49 @@ export default async function PropertyDetailPage({
   );
 }
 
+function Breadcrumbs({ property }: { property: any }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        flexWrap: "wrap",
+        fontSize: ".85rem",
+        color: "#64748b",
+      }}
+    >
+      <Link href="/">Home</Link>
+
+      <span>›</span>
+
+      <Link href="/properties">Properties</Link>
+
+      <span>›</span>
+
+      <Link href={`/properties?city=${property.city}`}>{property.city}</Link>
+
+      <span>›</span>
+
+      <span>{property.locality}</span>
+
+      <span>›</span>
+
+      <span
+        style={{
+          fontWeight: 600,
+          color: "#0f172a",
+        }}
+      >
+        {property.category
+          ?.split("-")
+          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ")}
+      </span>
+    </div>
+  );
+}
+
 function SectionTitle({ title }: { title: string }) {
   return (
     <h3
@@ -1003,12 +1071,17 @@ function ChipList({
   );
 }
 
+function parsePrice(price: any) {
+  if (typeof price === "number") return price;
+
+  return Number(String(price).replace(/[^\d]/g, "")) || 0;
+}
+
 function RelatedCard({ item }: any) {
   const image = item.images?.[0] || item.img || "/maha.png";
-
   return (
     <Link
-      href={`/property/${item.propertyId || item.id || item._id}/${item.slug}`}
+      href={`/properties/${item.slug}`}
       style={{
         textDecoration: "none",
         color: "inherit",
@@ -1118,7 +1191,7 @@ function RelatedCard({ item }: any) {
                 color: "#0f766e",
               }}
             >
-              {item.price}
+              ₹{parsePrice(item.price).toLocaleString("en-IN")}
             </span>
 
             <button

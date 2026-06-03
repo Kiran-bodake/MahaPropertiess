@@ -593,3 +593,13 @@ img[data-loading] {
   padding-left: max(20px, env(safe-area-inset-left));
   padding-right: max(20px, env(safe-area-inset-right));
 }
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.property-map {
+  width: 100%;
+  height: 360px;
+}

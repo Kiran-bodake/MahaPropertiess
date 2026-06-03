@@ -1,13 +1,16 @@
 "use client";
+import { useState } from "react";
 
 export function PropertySectionTabs() {
   const tabs = [
     ["overview", "Overview"],
-    ["description", "Description"],
+    ["description", "Property Details"],
     ["amenities", "Amenities"],
     ["highlights", "Highlights"],
     ["location", "Location"],
   ];
+
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div
@@ -17,81 +20,86 @@ export function PropertySectionTabs() {
         zIndex: 40,
 
         background: "rgba(255,255,255,.88)",
-        width: "100%",
-        marginLeft: 0,
-        marginRight: 0,
 
         backdropFilter: "blur(14px)",
 
         borderBottom: "1px solid #e2e8f0",
         boxShadow: "0 6px 20px rgba(15,23,42,.04)",
         padding: "14px 18px",
-
-        overflowX: "auto",
       }}
     >
       <div
         style={{
-          display: "grid",
-
-          gridTemplateColumns: "repeat(5,minmax(0,1fr))",
-
-          gap: 12,
-
-          width: "100%",
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         }}
       >
-        {tabs.map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => {
-              const element = document.getElementById(id);
+        <div
+          style={{
+            display: "flex",
+            gap: 10,
+            width: "max-content",
+          }}
+        >
+          {tabs.map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => {
+                setActiveTab(id);
+                const element = document.getElementById(id);
 
-              if (element) {
-                const offset = 190;
+                if (element) {
+                  const offset = 190;
 
-                const top =
-                  element.getBoundingClientRect().top +
-                  window.pageYOffset -
-                  offset;
+                  const top =
+                    element.getBoundingClientRect().top +
+                    window.pageYOffset -
+                    offset;
 
-                window.scrollTo({
-                  top,
-                  behavior: "smooth",
-                });
-              }
-            }}
-            style={{
-              height: 34,
+                  window.scrollTo({
+                    top,
+                    behavior: "smooth",
+                  });
+                }
+              }}
+              style={{
+                height: 34,
 
-              padding: "0 14px",
+                padding: "0 14px",
 
-              borderRadius: 999,
+                borderRadius: 999,
 
-              border: "1px solid #e2e8f0",
+                border:
+                  activeTab === id ? "1px solid #16a34a" : "1px solid #e2e8f0",
 
-              background: "#f8fafc",
+                background: activeTab === id ? "#16a34a" : "#f8fafc",
 
-              color: "#334155",
+                color: activeTab === id ? "#fff" : "#334155",
 
-              fontWeight: 700,
+                boxShadow: "none",
 
-              fontSize: ".82rem",
+                transition: "all .25s ease",
 
-              cursor: "pointer",
+                fontWeight: 700,
 
-              whiteSpace: "nowrap",
+                fontSize: ".82rem",
 
-              flexShrink: 0,
-              minWidth: 118,
-              justifyContent: "center",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {label}
-          </button>
-        ))}
+                cursor: "pointer",
+
+                whiteSpace: "nowrap",
+                minWidth: 120,
+                flexShrink: 0,
+
+                justifyContent: "center",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

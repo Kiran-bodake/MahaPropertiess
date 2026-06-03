@@ -129,6 +129,10 @@ export async function GET(
       amenities: amenities?.amenities || [],
 
       highlights: highlights?.highlights || [],
+
+      latitude: Number(location?.latitude) || null,
+
+      longitude: Number(location?.longitude) || null,
     };
 
     return NextResponse.json(result);
