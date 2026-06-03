@@ -37,6 +37,8 @@ import {
   BriefcaseBusiness,
   Shield,
 } from "lucide-react";
+import PropertyEMIBadge from "@/components/property/PropertyEMIBadge";
+import AreaConversion from "@/components/property/AreaConversion";
 
 type PropertyType = {
   id: string;
@@ -415,6 +417,7 @@ export default async function PropertyDetailPage({
                         {property.locality}, {property.city}
                       </span>
                     </div>
+                    <PropertyEMIBadge price={property.price} />
                   </div>
 
                   {/* RIGHT */}
@@ -481,6 +484,7 @@ export default async function PropertyDetailPage({
                     value={property.agentName}
                   />
                 </div>
+                <AreaConversion area={property.area} />
 
                 {/* DESCRIPTION */}
                 <div id="description">

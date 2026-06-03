@@ -377,6 +377,32 @@ const NAV_LINKS: NavLinkDef[] = [
       },
     ],
   },
+  {
+    label: "Tools",
+    icon: Landmark,
+    mega: [
+      {
+        group: "Property Tools",
+        items: [
+          {
+            label: "EMI Calculator",
+            sub: "Calculate home loan EMI",
+            href: "/tools/emi-calculator",
+          },
+          {
+            label: "Area Converter",
+            sub: "Sq.Ft, Guntha, Acre conversion",
+            href: "/tools/area-converter",
+          },
+          {
+            label: "Stamp Duty Calculator",
+            sub: "Maharashtra property charges",
+            href: "/tools/stamp-duty-calculator",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 /* ─── Component ─────────────────────────────────────────── */
@@ -1315,7 +1341,7 @@ export function Navbar() {
                 >
                   <Search size={16} />
                 </button>
-               
+
                 {/* Phone */}
                 {/* <a
                   href="tel:+919876543210"
@@ -1477,216 +1503,220 @@ export function Navbar() {
 
                           {/* MENU ITEMS */}
 
-                           {/* NOTIFICATION BELL */}
-                <div
-                  style={{
-                    position: "relative",
-                  }}
-                >
-                  {/* BELL BUTTON */}
-                  <button
-                    onClick={() => setShowNotifications(!showNotifications)}
-                    style={{
-                      width: "45px",
-
-                      height: "38px",
-
-                      borderRadius: "12px",
-
-                      display: "flex",
-
-                      alignItems: "center",
-
-                      justifyContent: "center",
-
-                      border: "1.5px solid #e5e7eb",
-
-                      background: "#fff",
-
-                      color: "#374151",
-
-                      transition: "all .2s ease",
-
-                      cursor: "pointer",
-
-                      position: "relative",
-
-                      boxShadow: "0 1px 2px rgba(0,0,0,.04)",
-                    }}
-                  >
-                    <Bell size={18} />
-
-                    {/* RED BADGE */}
-                    {unreadCount > 0 && (
-                      <div
-                        style={{
-                          position: "absolute",
-
-                          top: -5,
-
-                          right: -5,
-
-                          minWidth: 20,
-
-                          height: 20,
-
-                          borderRadius: "50%",
-
-                          background: "#ef4444",
-
-                          color: "#fff",
-
-                          fontSize: 11,
-
-                          fontWeight: 700,
-
-                          display: "flex",
-
-                          alignItems: "center",
-
-                          justifyContent: "center",
-
-                          padding: "0 5px",
-
-                          boxShadow: "0 4px 10px rgba(239,68,68,.3)",
-                        }}
-                      >
-                        {unreadCount}
-                      </div>
-                    )}
-                  </button>
-
-                  {/* NOTIFICATION DROPDOWN */}
-                  {showNotifications && (
-                    <div
-                      style={{
-                        position: "absolute",
-
-                        top: "52px",
-
-                        right: 0,
-
-                        width: "340px",
-
-                        maxHeight: "420px",
-
-                        overflowY: "auto",
-
-                        background: "#fff",
-
-                        borderRadius: "18px",
-
-                        border: "1px solid #e5e7eb",
-
-                        boxShadow: "0 20px 60px rgba(0,0,0,.12)",
-
-                        padding: "16px",
-
-                        zIndex: 9999,
-                      }}
-                    >
-                      {/* HEADER */}
-                      <div
-                        style={{
-                          display: "flex",
-
-                          justifyContent: "space-between",
-
-                          alignItems: "center",
-
-                          marginBottom: "14px",
-                        }}
-                      >
-                        <h3
-                          style={{
-                            fontSize: "16px",
-
-                            fontWeight: 800,
-
-                            color: "#111827",
-                          }}
-                        >
-                          Notifications
-                        </h3>
-
-                        <div
-                          style={{
-                            fontSize: "12px",
-
-                            color: "#6b7280",
-
-                            fontWeight: 600,
-                          }}
-                        >
-                          {notifications.length} Total
-                        </div>
-                      </div>
-
-                      {/* EMPTY */}
-                      {notifications.length === 0 && (
-                        <div
-                          style={{
-                            textAlign: "center",
-
-                            padding: "30px 10px",
-
-                            color: "#9ca3af",
-
-                            fontSize: "14px",
-                          }}
-                        >
-                          No notifications
-                        </div>
-                      )}
-
-                      {/* LIST */}
-                      {notifications.map((item: any) => (
-                        <div
-                          key={item._id}
-                          style={{
-                            padding: "14px",
-
-                            borderRadius: "14px",
-
-                            marginBottom: "10px",
-
-                            background: item.isRead ? "#fff" : "#f0fdf4",
-
-                            border: item.isRead
-                              ? "1px solid #f3f4f6"
-                              : "1px solid #bbf7d0",
-                          }}
-                        >
+                          {/* NOTIFICATION BELL */}
                           <div
                             style={{
-                              fontWeight: 700,
-
-                              fontSize: "14px",
-
-                              color: "#111827",
-
-                              marginBottom: "4px",
+                              position: "relative",
                             }}
                           >
-                            {item.title}
+                            {/* BELL BUTTON */}
+                            <button
+                              onClick={() =>
+                                setShowNotifications(!showNotifications)
+                              }
+                              style={{
+                                width: "45px",
+
+                                height: "38px",
+
+                                borderRadius: "12px",
+
+                                display: "flex",
+
+                                alignItems: "center",
+
+                                justifyContent: "center",
+
+                                border: "1.5px solid #e5e7eb",
+
+                                background: "#fff",
+
+                                color: "#374151",
+
+                                transition: "all .2s ease",
+
+                                cursor: "pointer",
+
+                                position: "relative",
+
+                                boxShadow: "0 1px 2px rgba(0,0,0,.04)",
+                              }}
+                            >
+                              <Bell size={18} />
+
+                              {/* RED BADGE */}
+                              {unreadCount > 0 && (
+                                <div
+                                  style={{
+                                    position: "absolute",
+
+                                    top: -5,
+
+                                    right: -5,
+
+                                    minWidth: 20,
+
+                                    height: 20,
+
+                                    borderRadius: "50%",
+
+                                    background: "#ef4444",
+
+                                    color: "#fff",
+
+                                    fontSize: 11,
+
+                                    fontWeight: 700,
+
+                                    display: "flex",
+
+                                    alignItems: "center",
+
+                                    justifyContent: "center",
+
+                                    padding: "0 5px",
+
+                                    boxShadow: "0 4px 10px rgba(239,68,68,.3)",
+                                  }}
+                                >
+                                  {unreadCount}
+                                </div>
+                              )}
+                            </button>
+
+                            {/* NOTIFICATION DROPDOWN */}
+                            {showNotifications && (
+                              <div
+                                style={{
+                                  position: "absolute",
+
+                                  top: "52px",
+
+                                  right: 0,
+
+                                  width: "340px",
+
+                                  maxHeight: "420px",
+
+                                  overflowY: "auto",
+
+                                  background: "#fff",
+
+                                  borderRadius: "18px",
+
+                                  border: "1px solid #e5e7eb",
+
+                                  boxShadow: "0 20px 60px rgba(0,0,0,.12)",
+
+                                  padding: "16px",
+
+                                  zIndex: 9999,
+                                }}
+                              >
+                                {/* HEADER */}
+                                <div
+                                  style={{
+                                    display: "flex",
+
+                                    justifyContent: "space-between",
+
+                                    alignItems: "center",
+
+                                    marginBottom: "14px",
+                                  }}
+                                >
+                                  <h3
+                                    style={{
+                                      fontSize: "16px",
+
+                                      fontWeight: 800,
+
+                                      color: "#111827",
+                                    }}
+                                  >
+                                    Notifications
+                                  </h3>
+
+                                  <div
+                                    style={{
+                                      fontSize: "12px",
+
+                                      color: "#6b7280",
+
+                                      fontWeight: 600,
+                                    }}
+                                  >
+                                    {notifications.length} Total
+                                  </div>
+                                </div>
+
+                                {/* EMPTY */}
+                                {notifications.length === 0 && (
+                                  <div
+                                    style={{
+                                      textAlign: "center",
+
+                                      padding: "30px 10px",
+
+                                      color: "#9ca3af",
+
+                                      fontSize: "14px",
+                                    }}
+                                  >
+                                    No notifications
+                                  </div>
+                                )}
+
+                                {/* LIST */}
+                                {notifications.map((item: any) => (
+                                  <div
+                                    key={item._id}
+                                    style={{
+                                      padding: "14px",
+
+                                      borderRadius: "14px",
+
+                                      marginBottom: "10px",
+
+                                      background: item.isRead
+                                        ? "#fff"
+                                        : "#f0fdf4",
+
+                                      border: item.isRead
+                                        ? "1px solid #f3f4f6"
+                                        : "1px solid #bbf7d0",
+                                    }}
+                                  >
+                                    <div
+                                      style={{
+                                        fontWeight: 700,
+
+                                        fontSize: "14px",
+
+                                        color: "#111827",
+
+                                        marginBottom: "4px",
+                                      }}
+                                    >
+                                      {item.title}
+                                    </div>
+
+                                    <div
+                                      style={{
+                                        fontSize: "13px",
+
+                                        color: "#6b7280",
+
+                                        lineHeight: 1.5,
+                                      }}
+                                    >
+                                      {item.message}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
-
-                          <div
-                            style={{
-                              fontSize: "13px",
-
-                              color: "#6b7280",
-
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {item.message}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
 
                           <Link
                             href="/favorites"
@@ -1696,8 +1726,6 @@ export function Navbar() {
                           <Link href="/favorites" style={menuBtn}>
                             ❤️ Favorite Properties
                           </Link>
-
-                          
 
                           {/* LOGOUT */}
                           <button
