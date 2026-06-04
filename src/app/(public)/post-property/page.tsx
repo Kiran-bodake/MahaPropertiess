@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import Select from "react-select";
 import {
   ShieldCheck,
   FileCheck,
@@ -958,6 +959,70 @@ function formatPriceShort(amount: number) {
 
   return `₹ ${(amount / 10000000).toFixed(2)} Crore`;
 }
+
+const selectStyles = {
+  control: (base: any, state: any) => ({
+    ...base,
+    minHeight: 46,
+    borderRadius: 10,
+    border: `1.5px solid ${state.isFocused ? "#16a34a" : "#d1d5db"}`,
+    boxShadow: "none",
+    backgroundColor: "#fff",
+    "&:hover": {
+      borderColor: "#16a34a",
+    },
+  }),
+
+  valueContainer: (base: any) => ({
+    ...base,
+    padding: "0 12px",
+  }),
+
+  placeholder: (base: any) => ({
+    ...base,
+    color: "#9ca3af",
+    fontSize: "0.93rem",
+  }),
+
+  singleValue: (base: any) => ({
+    ...base,
+    color: "#111827",
+    fontSize: "0.93rem",
+  }),
+
+  menu: (base: any) => ({
+    ...base,
+    borderRadius: 10,
+    overflow: "hidden",
+    zIndex: 9999,
+  }),
+
+  menuPortal: (base: any) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "#16a34a"
+      : state.isFocused
+        ? "#f0fdf4"
+        : "#fff",
+    color: state.isSelected ? "#fff" : "#111827",
+    cursor: "pointer",
+    fontSize: "0.93rem",
+  }),
+
+  dropdownIndicator: (base: any) => ({
+    ...base,
+    color: "#6b7280",
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+};
 
 /* ─── Main Component ──────────────────────────────────── */
 export default function PostPropertyPage() {
@@ -2438,48 +2503,60 @@ Perfect for ${
                       <Field>
                         {lbl("State", true)}
 
-                        <select
-                          style={sel()}
-                          value={form.state}
-                          onChange={(e) => {
-                            set("state", e.target.value);
+                        <Select
+                          styles={selectStyles}
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
+                          placeholder="Search state..."
+                          value={
+                            form.state
+                              ? {
+                                  value: form.state,
+                                  label: form.state,
+                                }
+                              : null
+                          }
+                          options={meta.states.map((s) => ({
+                            value: s.name,
+                            label: s.name,
+                          }))}
+                          onChange={(option) => {
+                            set("state", option?.value || "");
                             set("city", "");
                             set("locality", "");
                             setPropertyId("");
                           }}
-                        >
-                          <option value="">Select state</option>
-
-                          {meta.states.map((s) => (
-                            <option key={s.name} value={s.name}>
-                              {s.name}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </Field>
 
                       {/* CITY */}
                       <Field>
                         {lbl("City", true)}
 
-                        <select
-                          style={sel()}
-                          value={form.city}
-                          disabled={!form.state}
-                          onChange={(e) => {
-                            set("city", e.target.value);
+                        <Select
+                          styles={selectStyles}
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
+                          isDisabled={!form.state}
+                          placeholder="Search city..."
+                          value={
+                            form.city
+                              ? {
+                                  value: form.city,
+                                  label: form.city,
+                                }
+                              : null
+                          }
+                          options={cities.map((c) => ({
+                            value: c.name,
+                            label: c.name,
+                          }))}
+                          onChange={(option) => {
+                            set("city", option?.value || "");
                             set("locality", "");
                             setPropertyId("");
                           }}
-                        >
-                          <option value="">Select city</option>
-
-                          {cities.map((c) => (
-                            <option key={c.name} value={c.name}>
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </Field>
 
                       {/* LOCALITY */}
@@ -2487,23 +2564,29 @@ Perfect for ${
                         {lbl("Locality / Area", true)}
 
                         {localities.length > 0 ? (
-                          <select
-                            style={sel()}
-                            value={form.locality}
-                            disabled={!form.city}
-                            onChange={(e) => {
-                              set("locality", e.target.value);
+                          <Select
+                            styles={selectStyles}
+                            menuPortalTarget={document.body}
+                            menuPosition="fixed"
+                            isDisabled={!form.city}
+                            placeholder="Search locality..."
+                            value={
+                              form.locality
+                                ? {
+                                    value: form.locality,
+                                    label: form.locality,
+                                  }
+                                : null
+                            }
+                            options={localities.map((l) => ({
+                              value: l,
+                              label: l,
+                            }))}
+                            onChange={(option) => {
+                              set("locality", option?.value || "");
                               setPropertyId("");
                             }}
-                          >
-                            <option value="">Select locality</option>
-
-                            {localities.map((l) => (
-                              <option key={l} value={l}>
-                                {l}
-                              </option>
-                            ))}
-                          </select>
+                          />
                         ) : (
                           <input
                             style={inp()}
