@@ -126,7 +126,7 @@ setTrendData(
 setPropertyTypeData(
   dashData?.propertyTypeData || []
 );
-        setPropertyInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
+      setPropertyInquiries(inquiriesData?.inquiries || []);
         setProperties(Array.isArray(propsData?.properties) ? propsData.properties : []);
         setAnalytics(dashData || {});
       } catch (error) {

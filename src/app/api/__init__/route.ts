@@ -1,4 +1,4 @@
-import { initFollowUpSystem } from "@/server/followup-runner";
+import { initFollowUpSystem } from "../../../../server/followup-runner";
 
 export async function GET() {
   initFollowUpSystem();

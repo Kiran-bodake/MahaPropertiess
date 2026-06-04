@@ -145,7 +145,7 @@ export function AdminSidebar() {
                 lineHeight: 1.6,
               }}
             >
-              Premium Real Estate CRM
+
             </div>
           </>
         )}

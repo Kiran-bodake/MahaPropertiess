@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Bell,
-  LogOut,
-  Search,
-  Settings,
-  UserCircle2,
-} from "lucide-react";
+import { io, Socket } from "socket.io-client";
+import { Bell, Search, Settings, UserCircle2 } from "lucide-react";
 
 const crumbs: Record<string, string[]> = {
   "/x-admin": ["Dashboard"],
@@ -22,19 +17,21 @@ export function AdminNavbar() {
   const path = usePathname();
   const router = useRouter();
 
+  const socketRef = useRef<Socket | null>(null);
+  const hasConnected = useRef(false);
+
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
 
-  const breadcrumb = useMemo(
-    () => crumbs[path] || ["Dashboard"],
-    [path]
-  );
+  const breadcrumb = useMemo(() => crumbs[path] || ["Dashboard"], [path]);
 
   const unreadNotifications = notifications.filter((x) => !x.isRead);
 
-  // ✅ FETCH NOTIFICATIONS
+  // =========================
+  // FETCH INITIAL NOTIFICATIONS
+  // =========================
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -49,19 +46,57 @@ export function AdminNavbar() {
     fetchNotifications();
   }, []);
 
-  // ✅ SEARCH
+  // =========================
+  // SOCKET CONNECTION (REAL-TIME SAFE)
+  // =========================
+  useEffect(() => {
+    if (hasConnected.current) return; // prevent duplicate connections
+    hasConnected.current = true;
+
+    socketRef.current = io("http://localhost:4000", {
+      transports: ["websocket"],
+    });
+
+    socketRef.current.on("connect", () => {
+      console.log("Socket connected:", socketRef.current?.id);
+
+      socketRef.current?.emit("join", "admin");
+    });
+
+    socketRef.current.on("new-notification", (data: any) => {
+      setNotifications((prev) => [data, ...prev]);
+    });
+
+    socketRef.current.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
+    return () => {
+      socketRef.current?.disconnect();
+      socketRef.current = null;
+      hasConnected.current = false;
+    };
+  }, []);
+
+  // =========================
+  // SEARCH
+  // =========================
   const search = () => {
     if (!query.trim()) return;
     router.push(`/x-admin/search?q=${encodeURIComponent(query)}`);
   };
 
-  // ✅ LOGOUT
+  // =========================
+  // LOGOUT
+  // =========================
   const logout = async () => {
     await fetch("/api/admin/auth/logout", { method: "POST" });
     router.push("/x-admin/login");
   };
 
-  // ✅ OPEN NOTIFICATION
+  // =========================
+  // OPEN NOTIFICATION
+  // =========================
   const openNotification = async (item: any) => {
     await fetch("/api/admin/notifications", {
       method: "POST",
@@ -71,9 +106,7 @@ export function AdminNavbar() {
 
     setNotifications((prev) =>
       prev.map((x) =>
-        x.referenceId === item.referenceId
-          ? { ...x, isRead: true }
-          : x
+        x.referenceId === item.referenceId ? { ...x, isRead: true } : x
       )
     );
 
@@ -112,13 +145,12 @@ export function AdminNavbar() {
           <div style={{ fontWeight: 700, color: "#4f46e5" }}>
             Admin Panel
           </div>
-
           <div style={{ fontSize: 12, color: "#6b7280" }}>
             {breadcrumb.join(" › ")}
           </div>
         </div>
 
-        {/* CENTER SEARCH */}
+        {/* SEARCH */}
         <div style={{ flex: 1, maxWidth: 400, position: "relative" }}>
           <input
             value={query}
@@ -133,7 +165,6 @@ export function AdminNavbar() {
               outline: "none",
             }}
           />
-
           <Search
             onClick={search}
             size={16}
@@ -149,7 +180,7 @@ export function AdminNavbar() {
 
         {/* RIGHT */}
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {/* NOTIFICATIONS */}
+          {/* BELL */}
           <div style={{ position: "relative" }}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
@@ -158,7 +189,6 @@ export function AdminNavbar() {
                 border: "1px solid #e5e7eb",
                 borderRadius: 10,
                 background: "white",
-                cursor: "pointer",
                 position: "relative",
               }}
             >
@@ -197,7 +227,6 @@ export function AdminNavbar() {
                   border: "1px solid #e5e7eb",
                   borderRadius: 12,
                   boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-                  zIndex: 9999,
                 }}
               >
                 {notifications.length === 0 ? (
@@ -211,11 +240,10 @@ export function AdminNavbar() {
                         padding: 10,
                         borderBottom: "1px solid #f3f4f6",
                         cursor: "pointer",
+                        background: item.isRead ? "#fff" : "#f0f9ff",
                       }}
                     >
-                      <div style={{ fontWeight: 600 }}>
-                        {item.title}
-                      </div>
+                      <div style={{ fontWeight: 600 }}>{item.title}</div>
                       <div style={{ fontSize: 12, color: "#6b7280" }}>
                         {item.message}
                       </div>
@@ -266,7 +294,6 @@ export function AdminNavbar() {
                 border: "1px solid #e5e7eb",
                 borderRadius: 12,
                 padding: 10,
-                zIndex: 9999,
               }}
             >
               <button onClick={logout}>Logout</button>
