@@ -6,7 +6,7 @@ import Deal from "@/models/Deal";
 import Task from "@/models/Task";
 import Property from "@/models/Property";
 import { requireAdminUser } from "@/lib/admin-auth";
-
+import PropertyInquiryModule from "@/components/admin/inquiries/PropertyInquiryModule";
 import { useEffect, useState } from "react";
 import {
   Home,
@@ -562,337 +562,301 @@ setPropertyTypeData(
   >
 
     <DataTableCard
-      title="Recent Properties"
-      subtitle={`${properties.slice(0, 5).length} latest property listings`}
-    >
-
-      <table
-        style={{
-          width: "100%",
-
-          borderCollapse:
-            "collapse",
-        }}
-      >
-
-        <TableHeader
-          columns={[
-            {
-              key: "property",
-              label: "Property",
-            },
-
-            {
-              key: "owner",
-              label: "Owner",
-            },
-
-            {
-              key: "price",
-              label: "Price",
-            },
-
-            {
-              key: "status",
-              label: "Status",
-            },
-
-            {
-              key: "actions",
-              label: "Actions",
-            },
-          ]}
-        />
-
-        <tbody
-          style={{
-            borderTop:
-              "1px solid #f1f5f9",
-          }}
-        >
-
-          {properties.slice(0, 5)
-            .length > 0 ? (
-
-            properties
-              .slice(0, 5)
-              .map(
-                (
-                  property,
-                  idx
-                ) => (
-
-                  <tr
-                    key={
-                      property._id ||
-                      idx
-                    }
-
-                    style={{
-                      borderBottom:
-                        "1px solid #f1f5f9",
-
-                      background:
-                        "#ffffff",
-                    }}
-                  >
-
-                    {/* Property */}
-                    <td
-                      style={{
-                        padding:
-                          "12px 16px",
-
-                        fontSize:
-                          "13px",
-
-                        fontWeight:
-                          700,
-
-                        color:
-                          "#111827",
-                      }}
-                    >
-                      {property.title}
-                    </td>
-
-                    {/* Owner */}
-                    <td
-                      style={{
-                        padding:
-                          "12px 16px",
-
-                        fontSize:
-                          "13px",
-
-                        fontWeight:
-                          500,
-
-                        color:
-                          "#6b7280",
-                      }}
-                    >
-                      {property.agentName ||
-                        "-"}
-                    </td>
-
-                    {/* Price */}
-                    <td
-                      style={{
-                        padding:
-                          "12px 16px",
-
-                        fontSize:
-                          "13px",
-
-                        fontWeight:
-                          700,
-
-                        color:
-                          "#111827",
-                      }}
-                    >
-                      ₹
-                      {Number(
-                        property.price ||
-                          0
-                      ).toLocaleString(
-                        "en-IN"
-                      )}
-                    </td>
-
-                   {/* Status */}
-<td
-  style={{
-    padding: "12px 16px",
-  }}
+  title="Recent Properties"
+  subtitle={`${properties.slice(0, 5).length} latest property listings`}
 >
-  <div
-    style={{
-      display: "inline-flex",
-
-      alignItems: "center",
-
-      gap: "8px",
-
-      padding: "7px 12px",
-
-      borderRadius: "999px",
-
-      background:
-        property.approvalStatus ===
-        "approved"
-          ? "#ecfdf5"
-          : property.approvalStatus ===
-              "rejected"
-            ? "#fef2f2"
-            : "#fffbeb",
-
-      border:
-        property.approvalStatus ===
-        "approved"
-          ? "1px solid #bbf7d0"
-          : property.approvalStatus ===
-              "rejected"
-            ? "1px solid #fecaca"
-            : "1px solid #fde68a",
-
-      transition: "all .25s ease",
-    }}
-  >
-
-    {/* Status Dot */}
-    <div
-      style={{
-        width: "8px",
-
-        height: "8px",
-
-        borderRadius: "999px",
-
-        background:
-          property.approvalStatus ===
-          "approved"
-            ? "#22c55e"
-            : property.approvalStatus ===
-                "rejected"
-              ? "#ef4444"
-              : "#f59e0b",
-
-        boxShadow:
-          property.approvalStatus ===
-          "approved"
-            ? "0 0 0 3px rgba(34,197,94,.15)"
-            : property.approvalStatus ===
-                "rejected"
-              ? "0 0 0 3px rgba(239,68,68,.15)"
-              : "0 0 0 3px rgba(245,158,11,.15)",
-      }}
+  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+    <TableHeader
+      columns={[
+        { key: "property", label: "Property" },
+        { key: "owner", label: "Owner" },
+        { key: "price", label: "Price" },
+        { key: "status", label: "Status" },
+        { key: "actions", label: "Actions" },
+      ]}
     />
 
-    {/* Label */}
-    <span
-      style={{
-        fontSize: "12px",
-
-        fontWeight: 700,
-
-        letterSpacing: "-0.01em",
-
-        color:
-          property.approvalStatus ===
-          "approved"
-            ? "#15803d"
-            : property.approvalStatus ===
-                "rejected"
-              ? "#dc2626"
-              : "#b45309",
-
-        textTransform: "capitalize",
-      }}
-    >
-      {property.approvalStatus ||
-        "pending"}
-    </span>
-  </div>
-</td>
-
-                    {/* Actions */}
-                    <td
-                      style={{
-                        padding:
-                          "12px 16px",
-
-                        minWidth:
-                          "140px",
-                      }}
-                    >
-                      <ActionButtons
-                        onView={() =>
-                          (window.location.href =
-                            `/x-admin/properties/${property._id}`)
-                        }
-
-                        onEdit={() =>
-                          (window.location.href =
-                            `/x-admin/properties/${property._id}/edit`)
-                        }
-
-                        onDelete={() =>
-                          handlePropertyStatus(
-                            property._id,
-                            "rejected"
-                          )
-                        }
-
-                        size="sm"
-                      />
-                    </td>
-                  </tr>
-                )
-              )
-          ) : (
-
-            <tr>
-              <td
-                colSpan={5}
-
-                style={{
-                  padding:
-                    "40px 20px",
-
-                  textAlign:
-                    "center",
-                }}
-              >
-
+    <tbody style={{ borderTop: "1px solid #f1f5f9" }}>
+      {properties.slice(0, 5).length > 0 ? (
+        properties.slice(0, 5).map((property, idx) => (
+          <tr
+            key={property._id || idx}
+            style={{
+              borderBottom: "1px solid #f1f5f9",
+              background: "#ffffff",
+              transition: "background 0.2s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "#f8fafc")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "#ffffff")
+            }
+          >
+            {/* PROPERTY (with thumbnail) */}
+            <td style={{ padding: "14px 16px", minWidth: "220px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                {/* Thumbnail */}
                 <div
                   style={{
-                    display:
-                      "flex",
-
-                    flexDirection:
-                      "column",
-
-                    alignItems:
-                      "center",
-
-                    gap: "12px",
+                    width: "44px",
+                    height: "44px",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    background: "#e2e8f0",
+                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "18px",
+                    color: "#94a3b8",
                   }}
                 >
+                  {property.images?.[0] ? (
+                    <img
+                      src={property.images[0]}
+                      alt=""
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    "🏠"
+                  )}
+                </div>
 
+                {/* Title & Location */}
+                <div>
                   <div
                     style={{
-                      fontSize:
-                        "38px",
+                      fontSize: "14px",
+                      fontWeight: 700,
+                      color: "#0f172a",
+                      marginBottom: "2px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "180px",
                     }}
                   >
-                    📦
+                    {property.title}
                   </div>
-
-                  <p
-                    style={{
-                      color:
-                        "#6b7280",
-
-                      fontWeight:
-                        700,
-
-                      fontSize:
-                        "14px",
-
-                      margin: 0,
-                    }}
-                  >
-                    No properties yet
-                  </p>
+                  {property.location && (
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: "#64748b",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      📍 {property.location}
+                    </div>
+                  )}
                 </div>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </DataTableCard>
+              </div>
+            </td>
+
+            {/* OWNER */}
+            <td
+              style={{
+                padding: "14px 16px",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#334155",
+              }}
+            >
+              {property.agentName || "—"}
+            </td>
+
+            {/* PRICE */}
+            <td
+              style={{
+                padding: "14px 16px",
+                fontSize: "14px",
+                fontWeight: 700,
+                color: "#0f172a",
+              }}
+            >
+              ₹{Number(property.price || 0).toLocaleString("en-IN")}
+            </td>
+
+            {/* STATUS */}
+            <td style={{ padding: "14px 16px" }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "6px 12px",
+                  borderRadius: "999px",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
+                  textTransform: "capitalize",
+                  background:
+                    property.approvalStatus === "approved"
+                      ? "#ecfdf5"
+                      : property.approvalStatus === "rejected"
+                      ? "#fef2f2"
+                      : "#fffbeb",
+                  border: `1px solid ${
+                    property.approvalStatus === "approved"
+                      ? "#bbf7d0"
+                      : property.approvalStatus === "rejected"
+                      ? "#fecaca"
+                      : "#fde68a"
+                  }`,
+                  color:
+                    property.approvalStatus === "approved"
+                      ? "#15803d"
+                      : property.approvalStatus === "rejected"
+                      ? "#dc2626"
+                      : "#b45309",
+                }}
+              >
+                {/* Status dot */}
+                <span
+                  style={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor:
+                      property.approvalStatus === "approved"
+                        ? "#22c55e"
+                        : property.approvalStatus === "rejected"
+                        ? "#ef4444"
+                        : "#f59e0b",
+                    boxShadow: `0 0 0 2px ${
+                      property.approvalStatus === "approved"
+                        ? "rgba(34,197,94,0.2)"
+                        : property.approvalStatus === "rejected"
+                        ? "rgba(239,68,68,0.2)"
+                        : "rgba(245,158,11,0.2)"
+                    }`,
+                  }}
+                />
+                {property.approvalStatus || "pending"}
+              </span>
+            </td>
+
+            {/* ACTIONS */}
+            <td style={{ padding: "14px 16px", minWidth: "160px" }}>
+              <div style={{ display: "flex", gap: "8px" }}>
+                {/* View button */}
+                <button
+                  onClick={() =>
+                    (window.location.href = `/x-admin/properties/${property._id}`)
+                  }
+                  style={{
+                    padding: "8px 14px",
+                    borderRadius: "8px",
+                    border: "1px solid #e2e8f0",
+                    background: "#ffffff",
+                    color: "#334155",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#f1f5f9";
+                    e.currentTarget.style.borderColor = "#cbd5e1";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "#ffffff";
+                    e.currentTarget.style.borderColor = "#e2e8f0";
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  View
+                </button>
+
+               
+
+                {/* Delete button */}
+                <button
+                  onClick={() => handleDeleteProperty(property._id)}
+                  style={{
+                    padding: "8px 14px",
+                    borderRadius: "8px",
+                    border: "1px solid #fecaca",
+                    background: "#ffffff",
+                    color: "#dc2626",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#fef2f2";
+                    e.currentTarget.style.borderColor = "#fca5a5";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "#ffffff";
+                    e.currentTarget.style.borderColor = "#fecaca";
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td colSpan={5} style={{ padding: "60px 20px", textAlign: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              <div style={{ fontSize: "48px", opacity: 0.8 }}>🏘️</div>
+              <p
+                style={{
+                  color: "#64748b",
+                  fontWeight: 700,
+                  fontSize: "16px",
+                  margin: 0,
+                }}
+              >
+                No properties yet
+              </p>
+              <p
+                style={{
+                  color: "#94a3b8",
+                  fontSize: "13px",
+                  margin: 0,
+                }}
+              >
+                Properties you add will appear here.
+              </p>
+            </div>
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</DataTableCard>
   </div>
         {/* Quick Stats Sidebar */}
         {/* Quick Stats Sidebar */}
@@ -1089,403 +1053,7 @@ setPropertyTypeData(
     {deleteMessage}
   </div>
 )}
-<DataTableCard
-  title="Property Inquiries"
-  subtitle="Manage customer property inquiry requests"
-
-  action={
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "340px",
-      }}
-    >
-      <SearchBar
-        placeholder="Search by name, contact, or property..."
-        value={query}
-        onChange={setQuery}
-      />
-    </div>
-  }
-
-  footer={
-    paginatedInquiries.length > 0 && (
-      <div
-        style={{
-          display: "flex",
-
-          alignItems: "center",
-
-          justifyContent: "space-between",
-
-          gap: "24px",
-
-          flexWrap: "wrap",
-        }}
-      >
-
-        {/* Footer Text */}
-        <div
-          style={{
-            fontSize: "14px",
-
-            fontWeight: 600,
-
-            color: "#6b7280",
-          }}
-        >
-          Showing{" "}
-
-          <span
-            style={{
-              fontWeight: 800,
-
-              color: "#111827",
-            }}
-          >
-            {paginatedInquiries.length}
-          </span>
-
-          {" "}of{" "}
-
-          <span
-            style={{
-              fontWeight: 800,
-
-              color: "#111827",
-            }}
-          >
-            {filteredInquiries.length}
-          </span>
-
-          {" "}inquiries
-        </div>
-
-        {/* Pagination */}
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
-      </div>
-    )
-  }
->
-
-  <table
-    style={{
-      width: "100%",
-
-      borderCollapse: "collapse",
-    }}
-  >
-
-    {/* Table Header */}
-    <TableHeader
-      columns={[
-        { key: "property", label: "Property" },
-        { key: "customer", label: "Customer Name" },
-        { key: "contact", label: "Contact" },
-        { key: "status", label: "Status" },
-        { key: "date", label: "Date" },
-        { key: "actions", label: "Actions" },
-      ]}
-    />
-
-    {/* Table Body */}
-    <tbody
-      style={{
-        borderTop:
-          "1px solid #f1f5f9",
-      }}
-    >
-
-      {paginatedInquiries.length > 0 ? (
-
-        paginatedInquiries.map((inquiry, idx) => {
-          const statusConfig = {
-            new: { bg: "#ecfdf5", border: "#bbf7d0", dot: "#22c55e", text: "#15803d", label: "New" },
-            contacted: { bg: "#dbeafe", border: "#bfdbfe", dot: "#3b82f6", text: "#1e40af", label: "Contacted" },
-            interested: { bg: "#ecfdf5", border: "#d1fae5", dot: "#16a34a", text: "#166534", label: "Interested" },
-            "site-visit": { bg: "#fce7f3", border: "#fbcfe8", dot: "#be185d", text: "#831843", label: "Site Visit" },
-            negotiation: { bg: "#ede9fe", border: "#ddd6fe", dot: "#7c3aed", text: "#5b21b6", label: "Negotiation" },
-            closed: { bg: "#f3f4f6", border: "#e5e7eb", dot: "#9ca3af", text: "#6b7280", label: "Closed" },
-          };
-          const config =
-            statusConfig[inquiry.status as keyof typeof statusConfig] ||
-            statusConfig.new;
-          const phoneNumber = inquiry.phone || inquiry.mobileNumber || "";
-
-          return (
-          <tr
-            key={inquiry._id || idx}
-
-            style={{
-              background:
-                inquiry.status === "new"
-                  ? "#eff6ff"
-                  : "#ffffff",
-
-              borderBottom:
-                "1px solid #f1f5f9",
-
-              transition:
-                "all .25s ease",
-            }}
-          >
-
-            {/* Property */}
-            <td
-              style={{
-                padding: "20px 24px",
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#4b5563",
-              }}
-            >
-              {inquiry.propertyTitle || inquiry.propertyName || "-"}
-            </td>
-
-            {/* Customer Name */}
-            <td
-              style={{
-                padding: "20px 24px",
-                fontSize: "14px",
-                fontWeight: 700,
-                color: "#111827",
-              }}
-            >
-              {inquiry.customerName || inquiry.name || "-"}
-            </td>
-
-            {/* Contact */}
-            <td
-              style={{
-                padding: "20px 24px",
-                fontSize: "14px",
-                fontWeight: 500,
-                color: "#6b7280",
-              }}
-            >
-              {inquiry.phone || inquiry.mobileNumber || inquiry.email || "-"}
-            </td>
-
-            {/* Status */}
-            <td
-              style={{
-                padding: "12px 16px",
-              }}
-            >
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "7px 12px",
-                  borderRadius: "999px",
-                  background: config.bg,
-                  border: `1px solid ${config.border}`,
-                  cursor: "pointer",
-                  transition: "all .25s ease",
-                }}
-                onClick={() => {
-                  const statuses = [
-                    "new",
-                    "contacted",
-                    "interested",
-                    "site-visit",
-                    "negotiation",
-                    "closed",
-                  ];
-                  const currentIndex = statuses.indexOf(inquiry.status || "new");
-                  const nextStatus = statuses[(currentIndex + 1) % statuses.length];
-                  handleUpdateInquiryStatus(inquiry._id, nextStatus);
-                }}
-              >
-                {/* Status Dot */}
-                <div
-                  style={{
-                    width: "8px",
-                    height: "8px",
-                    borderRadius: "999px",
-                    background: config.dot,
-                    boxShadow: `0 0 0 3px ${config.dot}20`,
-                  }}
-                />
-
-                {/* Label */}
-                <span
-                  style={{
-                    fontSize: "12px",
-                    fontWeight: 700,
-                    color: config.text,
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {config.label}
-                </span>
-              </div>
-            </td>
-
-            {/* Date */}
-            <td
-              style={{
-                padding: "20px 24px",
-                fontSize: "14px",
-                fontWeight: 500,
-                color: "#6b7280",
-              }}
-            >
-              {inquiry.createdAt
-                ? new Date(inquiry.createdAt).toLocaleDateString("en-IN", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })
-                : "-"}
-            </td>
-
-            {/* Actions */}
-            <td
-              style={{
-                padding: "20px 24px",
-                minWidth: "160px",
-              }}
-            >
-              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                <button
-                  onClick={() => {
-                    const phoneNumber = inquiry.phone || inquiry.mobileNumber || "";
-                    if (!phoneNumber) return;
-                    window.location.href = `tel:${phoneNumber.replace(/\D/g, "")}`;
-                  }}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    border: "1px solid #e5e7eb",
-                    background: "#ffffff",
-                    color: "#3b82f6",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: phoneNumber ? "pointer" : "not-allowed",
-                    opacity: phoneNumber ? 1 : 0.6,
-                    transition: "all .2s ease",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = "#3b82f6";
-                    e.currentTarget.style.color = "#ffffff";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = "#ffffff";
-                    e.currentTarget.style.color = "#3b82f6";
-                  }}
-                >
-                  Contact
-                </button>
-                <button
-                  onClick={() => window.location.assign("/x-admin/property-inquiries")}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    border: "1px solid #e5e7eb",
-                    background: "#ffffff",
-                    color: "#0f172a",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    transition: "all .2s ease",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = "#0f172a";
-                    e.currentTarget.style.color = "#ffffff";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = "#ffffff";
-                    e.currentTarget.style.color = "#0f172a";
-                  }}
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => handleDeleteInquiry(inquiry._id)}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    border: "1px solid #e5e7eb",
-                    background: "#ffffff",
-                    color: "#ef4444",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    transition: "all .2s ease",
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = "#ef4444";
-                    e.currentTarget.style.color = "#ffffff";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = "#ffffff";
-                    e.currentTarget.style.color = "#ef4444";
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </td>
-          </tr>
-        );
-        })
-      ) : (
-
-        <tr>
-          <td
-            colSpan={6}
-
-            style={{
-              padding: "90px 24px",
-              textAlign: "center",
-            }}
-          >
-
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "20px",
-              }}
-            >
-
-              {/* Icon */}
-              <div
-                style={{
-                  fontSize: "64px",
-                  opacity: 0.9,
-                }}
-              >
-                📧
-              </div>
-
-              {/* Empty Text */}
-              <p
-                style={{
-                  color: "#6b7280",
-                  fontWeight: 700,
-                  fontSize: "18px",
-                  margin: 0,
-                }}
-              >
-                {query
-                  ? "No inquiries match your search"
-                  : "No property inquiries yet"}
-              </p>
-            </div>
-          </td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-</DataTableCard>
+<PropertyInquiryModule />
 
 {/* Property Management Section */}
 <div style={{ marginTop: "32px" }}>
