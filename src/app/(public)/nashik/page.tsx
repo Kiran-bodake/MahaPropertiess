@@ -6,13 +6,11 @@ import HotLocalities from "@/components/nashik/HotLocalities";
 import InvestmentConsultationForm from "@/components/nashik/InvestmentConsultationForm";
 import FAQSection from "@/components/nashik/FAQSection";
 import FinalInvestmentCTA from "@/components/nashik/FinalInvestmentCTA";
-import StickyInvestmentCTA from "@/components/nashik/StickyInvestmentCTA";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 
 export const metadata = {
   title: "Why Invest in Nashik | Nashik Real Estate Investment",
-
   description:
     "Discover Nashik investment opportunities driven by industrial growth, wine tourism, education hubs, bullet train connectivity, and infrastructure expansion.",
 };
@@ -28,11 +26,7 @@ export default function NashikPage() {
         }}
       >
         {/* HERO */}
-        <section
-          style={{
-            position: "relative",
-          }}
-        >
+        <section style={{ position: "relative" }}>
           <NashikHero />
         </section>
 
@@ -50,7 +44,7 @@ export default function NashikPage() {
         {/* WHY INVEST */}
         <section
           style={{
-            padding: "80px 18px 40px",
+            padding: "80px 0 40px 0",
             background: "#f5f7fb",
           }}
         >
@@ -58,14 +52,11 @@ export default function NashikPage() {
             style={{
               maxWidth: "1320px",
               margin: "0 auto",
+              paddingLeft: "18px",
+              paddingRight: "18px",
             }}
           >
-            {/* SECTION HEADER */}
-            <div
-              style={{
-                marginBottom: "34px",
-              }}
-            >
+            <div style={{ marginBottom: "34px" }}>
               <p
                 style={{
                   color: "#16a34a",
@@ -74,12 +65,14 @@ export default function NashikPage() {
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
                   marginBottom: "14px",
+                  marginTop: 0,
+                  textAlign: "left",
                 }}
               >
                 Why Nashik
               </p>
 
-              <h2
+              <h1
                 style={{
                   fontSize: "clamp(34px,5vw,58px)",
                   lineHeight: "1.02",
@@ -88,10 +81,11 @@ export default function NashikPage() {
                   color: "#0f172a",
                   maxWidth: "820px",
                   margin: 0,
+                  textAlign: "left",
                 }}
               >
                 Reasons Why Investors Are Choosing Nashik
-              </h2>
+              </h1>
 
               <p
                 style={{
@@ -100,15 +94,15 @@ export default function NashikPage() {
                   color: "#475569",
                   fontSize: "17px",
                   lineHeight: "1.9",
+                  textAlign: "left",
                 }}
               >
                 From infrastructure expansion to industrial growth and future
-                connectivity projects, Nashik is becoming one of Maharashtra’s
+                connectivity projects, Nashik is becoming one of Maharashtra's
                 strongest emerging real estate markets.
               </p>
             </div>
 
-            {/* CARD */}
             <div
               style={{
                 background: "#ffffff",
@@ -126,7 +120,7 @@ export default function NashikPage() {
         {/* INFRASTRUCTURE */}
         <section
           style={{
-            padding: "40px 18px",
+            padding: "40px 0",
             background: "#f5f7fb",
           }}
         >
@@ -134,13 +128,11 @@ export default function NashikPage() {
             style={{
               maxWidth: "1320px",
               margin: "0 auto",
+              paddingLeft: "18px",
+              paddingRight: "18px",
             }}
           >
-            <div
-              style={{
-                marginBottom: "34px",
-              }}
-            >
+            <div style={{ marginBottom: "34px" }}>
               <p
                 style={{
                   color: "#16a34a",
@@ -149,12 +141,14 @@ export default function NashikPage() {
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
                   marginBottom: "14px",
+                  marginTop: 0,
+                  textAlign: "left",
                 }}
               >
                 Infrastructure Growth
               </p>
 
-              <h2
+              <h1
                 style={{
                   fontSize: "clamp(34px,5vw,58px)",
                   lineHeight: "1.02",
@@ -163,10 +157,11 @@ export default function NashikPage() {
                   color: "#0f172a",
                   maxWidth: "850px",
                   margin: 0,
+                  textAlign: "left",
                 }}
               >
                 Infrastructure Development Driving Appreciation
-              </h2>
+              </h1>
 
               <p
                 style={{
@@ -175,10 +170,11 @@ export default function NashikPage() {
                   color: "#475569",
                   fontSize: "17px",
                   lineHeight: "1.9",
+                  textAlign: "left",
                 }}
               >
                 Major projects like ring roads, smart city initiatives, and
-                connectivity upgrades are reshaping Nashik’s long-term real
+                connectivity upgrades are reshaping Nashik's long-term real
                 estate value.
               </p>
             </div>
@@ -200,7 +196,7 @@ export default function NashikPage() {
         {/* LOCALITIES */}
         <section
           style={{
-            padding: "40px 18px",
+            padding: "40px 0",
             background: "#f5f7fb",
           }}
         >
@@ -208,13 +204,11 @@ export default function NashikPage() {
             style={{
               maxWidth: "1320px",
               margin: "0 auto",
+              paddingLeft: "18px",
+              paddingRight: "18px",
             }}
           >
-            <div
-              style={{
-                marginBottom: "34px",
-              }}
-            >
+            <div style={{ marginBottom: "34px" }}>
               <p
                 style={{
                   color: "#16a34a",
@@ -223,12 +217,14 @@ export default function NashikPage() {
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
                   marginBottom: "14px",
+                  marginTop: 0,
+                  textAlign: "left",
                 }}
               >
                 Investment Corridors
               </p>
 
-              <h2
+              <h1
                 style={{
                   fontSize: "clamp(34px,5vw,58px)",
                   lineHeight: "1.02",
@@ -237,10 +233,11 @@ export default function NashikPage() {
                   color: "#0f172a",
                   maxWidth: "850px",
                   margin: 0,
+                  textAlign: "left",
                 }}
               >
-                Explore Nashik’s High-Growth Localities
-              </h2>
+                Explore Nashik's High-Growth Localities
+              </h1>
 
               <p
                 style={{
@@ -249,6 +246,7 @@ export default function NashikPage() {
                   color: "#475569",
                   fontSize: "17px",
                   lineHeight: "1.9",
+                  textAlign: "left",
                 }}
               >
                 Discover premium residential and commercial corridors with
@@ -274,7 +272,7 @@ export default function NashikPage() {
         {/* CONSULTATION */}
         <section
           style={{
-            padding: "40px 18px",
+            padding: "40px 0",
             background: "#f5f7fb",
           }}
         >
@@ -282,6 +280,8 @@ export default function NashikPage() {
             style={{
               maxWidth: "1320px",
               margin: "0 auto",
+              paddingLeft: "18px",
+              paddingRight: "18px",
             }}
           >
             <div
@@ -300,7 +300,7 @@ export default function NashikPage() {
         {/* FAQ */}
         <section
           style={{
-            padding: "40px 18px",
+            padding: "40px 0",
             background: "#ffffff",
           }}
         >
@@ -308,13 +308,11 @@ export default function NashikPage() {
             style={{
               maxWidth: "1320px",
               margin: "0 auto",
+              paddingLeft: "18px",
+              paddingRight: "18px",
             }}
           >
-            <div
-              style={{
-                marginBottom: "34px",
-              }}
-            >
+            <div style={{ marginBottom: "34px" }}>
               <p
                 style={{
                   color: "#16a34a",
@@ -323,12 +321,14 @@ export default function NashikPage() {
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
                   marginBottom: "14px",
+                  marginTop: 0,
+                  textAlign: "left",
                 }}
               >
                 FAQs
               </p>
 
-              <h2
+              <h1
                 style={{
                   fontSize: "clamp(34px,5vw,58px)",
                   lineHeight: "1.02",
@@ -337,10 +337,11 @@ export default function NashikPage() {
                   color: "#0f172a",
                   maxWidth: "760px",
                   margin: 0,
+                  textAlign: "left",
                 }}
               >
                 Frequently Asked Questions About Nashik Investment
-              </h2>
+              </h1>
 
               <p
                 style={{
@@ -349,6 +350,7 @@ export default function NashikPage() {
                   color: "#475569",
                   fontSize: "17px",
                   lineHeight: "1.9",
+                  textAlign: "left",
                 }}
               >
                 Understand investment potential, infrastructure growth, future
@@ -373,7 +375,7 @@ export default function NashikPage() {
         {/* FINAL CTA */}
         <section
           style={{
-            padding: "40px 18px 100px",
+            padding: "40px 0 100px 0",
             background: "#ffffff",
           }}
         >
@@ -381,6 +383,8 @@ export default function NashikPage() {
             style={{
               maxWidth: "1320px",
               margin: "0 auto",
+              paddingLeft: "18px",
+              paddingRight: "18px",
             }}
           >
             <div
@@ -394,9 +398,6 @@ export default function NashikPage() {
             </div>
           </div>
         </section>
-
-        {/* STICKY CTA
-      <StickyInvestmentCTA /> */}
       </main>
       <Footer />
     </>
