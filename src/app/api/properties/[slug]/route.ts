@@ -121,6 +121,29 @@ export async function GET(
       areaUnit: area?.areaUnit || "sqft",
 
       rera: flags?.isRERA || false,
+      // Residential
+      carpetArea: property.carpetArea || "",
+      builtUpArea: property.builtUpArea || "",
+
+      bedrooms: property.bedrooms || "",
+      bathrooms: property.bathrooms || "",
+
+      furnishedStatus: property.furnishedStatus || "",
+
+      // Commercial
+      shopType: property.shopType || "",
+      mainRoadFacing: property.mainRoadFacing || false,
+
+      // Agriculture
+      borewellAvailable: property.borewellAvailable || false,
+      roadWidth: property.roadWidth || "",
+      waterSource: property.waterSource || "",
+      documentationStatus: property.documentationStatus || "",
+
+      // Warehouse
+      powerLoad: property.powerLoad || "",
+      truckAccess: property.truckAccess || false,
+      industrialApproved: property.industrialApproved || false,
 
       badge: flags?.isFeatured ? "Featured" : null,
 

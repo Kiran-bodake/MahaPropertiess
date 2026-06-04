@@ -60,6 +60,30 @@ const PropertySchema = new Schema(
       default: "",
     },
 
+    // Residential
+    carpetArea: String,
+    builtUpArea: String,
+
+    bedrooms: String,
+    bathrooms: String,
+
+    furnishedStatus: String,
+
+    // Commercial
+    shopType: String,
+    mainRoadFacing: Boolean,
+
+    // Agriculture
+    borewellAvailable: Boolean,
+    roadWidth: String,
+    waterSource: String,
+    documentationStatus: String,
+
+    // Warehouse
+    powerLoad: String,
+    truckAccess: Boolean,
+    industrialApproved: Boolean,
+
     postedBy: String,
     agentName: String,
     agentPhone: String,

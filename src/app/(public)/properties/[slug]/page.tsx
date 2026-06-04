@@ -74,6 +74,30 @@ type PropertyType = {
 
   latitude?: number;
   longitude?: number;
+
+  // Residential
+  carpetArea?: string;
+  builtUpArea?: string;
+
+  bedrooms?: string;
+  bathrooms?: string;
+
+  furnishedStatus?: string;
+
+  // Commercial
+  shopType?: string;
+  mainRoadFacing?: boolean;
+
+  // Agriculture
+  borewellAvailable?: boolean;
+  roadWidth?: string;
+  waterSource?: string;
+  documentationStatus?: string;
+
+  // Warehouse
+  powerLoad?: string;
+  truckAccess?: boolean;
+  industrialApproved?: boolean;
 };
 
 const highlightIcons: Record<string, React.ReactNode> = {
@@ -225,6 +249,7 @@ export default async function PropertyDetailPage({
   const property = await getProperty(slug);
 
   if (!property) notFound();
+  console.log("DETAIL PAGE PROPERTY", property);
 
   const relatedProperties = await getRelatedProperties(property.city);
 
@@ -499,6 +524,26 @@ export default async function PropertyDetailPage({
                     label="Agent"
                     value={property.agentName}
                   />
+
+                  {property.bedrooms && (
+                    <InfoCard label="Bedrooms" value={property.bedrooms} />
+                  )}
+
+                  {property.bathrooms && (
+                    <InfoCard label="Bathrooms" value={property.bathrooms} />
+                  )}
+
+                  {property.carpetArea && (
+                    <InfoCard label="Carpet Area" value={property.carpetArea} />
+                  )}
+
+                  {property.roadWidth && (
+                    <InfoCard label="Road Width" value={property.roadWidth} />
+                  )}
+
+                  {property.powerLoad && (
+                    <InfoCard label="Power Load" value={property.powerLoad} />
+                  )}
                 </div>
                 <AreaConversion area={property.area} />
 

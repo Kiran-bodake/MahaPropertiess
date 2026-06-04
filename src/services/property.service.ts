@@ -10,327 +10,237 @@ import PropertyHighlight from "@/models/PropertyHighlight";
 
 import slugify from "slugify";
 
-import NotificationModel
-from "@/models/Notification";
+import NotificationModel from "@/models/Notification";
 
-export const createProperty = async (
-  body: any
-) => {
-
+export const createProperty = async (body: any) => {
   try {
-
     /* PROPERTY ID */
-    const propertyId =
-      body.propertyId;
+    const propertyId = body.propertyId;
 
     if (!propertyId) {
-
-      throw new Error(
-        "propertyId is required"
-      );
-
+      throw new Error("propertyId is required");
     }
 
     /* CHECK EXISTING */
-    const existingProperty =
-
-      await Property.findOne({
-
-        propertyId,
-
-      });
+    const existingProperty = await Property.findOne({
+      propertyId,
+    });
 
     if (existingProperty) {
-
-      throw new Error(
-
-        `Property already exists with ID: ${propertyId}`
-
-      );
-
+      throw new Error(`Property already exists with ID: ${propertyId}`);
     }
 
     /* SLUG */
-    const slug =
+    const slug = `${slugify(body.title || "property", {
+      lower: true,
 
-      `${slugify(body.title || "property", {
-
-        lower: true,
-
-        strict: true
-
-      })}-${propertyId.toLowerCase()}`;
+      strict: true,
+    })}-${propertyId.toLowerCase()}`;
 
     /* CREATE MAIN PROPERTY */
-    const property =
+    const property = await Property.create({
+      propertyId,
 
-      await Property.create({
+      slug,
 
-        propertyId,
+      title: body.title || "",
 
-        slug,
+      description: body.description || "",
 
-        title:
-          body.title || "",
+      category: body.category || "",
 
-        description:
-          body.description || "",
+      approvalStatus: "pending",
 
-        category:
-          body.category || "",
+      categoryLabel: body.categoryLabel || "",
 
-        approvalStatus:
-          "pending",
+      status: body.status || "available",
 
-        categoryLabel:
-          body.categoryLabel || "",
+      constructionStatus: body.constructionStatus || "ready",
 
-        status:
-          body.status || "available",
+      postedBy: body.postedBy || "owner",
 
-        constructionStatus:
-          body.constructionStatus || "ready",
+      agentName: body.agentName || "",
 
-        postedBy:
-          body.postedBy || "owner",
+      agentPhone: body.agentPhone || "",
 
-        agentName:
-          body.agentName || "",
+      // Residential
+      carpetArea: body.carpetArea || "",
 
-        agentPhone:
-          body.agentPhone || ""
+      builtUpArea: body.builtUpArea || "",
 
-      });
+      bedrooms: body.bedrooms || "",
+
+      bathrooms: body.bathrooms || "",
+
+      furnishedStatus: body.furnishedStatus || "",
+
+      // Commercial
+      shopType: body.shopType || "",
+
+      mainRoadFacing: body.mainRoadFacing || false,
+
+      // Agriculture
+      borewellAvailable: body.borewellAvailable || false,
+
+      roadWidth: body.roadWidth || "",
+
+      waterSource: body.waterSource || "",
+
+      documentationStatus: body.documentationStatus || "",
+
+      // Warehouse
+      powerLoad: body.powerLoad || "",
+
+      truckAccess: body.truckAccess || false,
+
+      industrialApproved: body.industrialApproved || false,
+    });
 
     /* NOTIFICATION */
     try {
-
       await NotificationModel.create({
+        userId: body.userId || property._id.toString(),
 
-        userId:
-          body.userId ||
+        type: "property",
 
-          property._id.toString(),
+        title: "New Property Submitted",
 
-        type:
-          "property",
+        message: `${property.title} waiting for approval`,
 
-        title:
-          "New Property Submitted",
+        referenceId: property._id,
 
-        message:
-          `${property.title} waiting for approval`,
-
-        referenceId:
-          property._id,
-
-        isRead:
-          false
-
+        isRead: false,
       });
-
-    }
-
-    catch (notificationError) {
-
+    } catch (notificationError) {
       console.error(
-
         "Notification Error:",
 
-        notificationError
-
+        notificationError,
       );
-
     }
 
     /* USER */
     await PropertyUser.create({
-
       propertyId,
 
-      postedBy:
-        body.postedBy || "owner",
+      postedBy: body.postedBy || "owner",
 
-      name:
-        body.agentName || "",
+      name: body.agentName || "",
 
-      phone:
-        body.agentPhone || ""
-
+      phone: body.agentPhone || "",
     });
 
     /* LOCATION */
     await PropertyLocation.create({
-
       propertyId,
 
-      state:
-        body.state || "",
+      state: body.state || "",
 
-      city:
-        body.city || "",
+      city: body.city || "",
 
-      locality:
-        body.locality || "",
+      locality: body.locality || "",
 
-      pincode:
-        body.pincode || "",
+      pincode: body.pincode || "",
 
-      houseNo:
-        body.houseNo || "",
+      houseNo: body.houseNo || "",
 
-      street:
-        body.street || "",
+      street: body.street || "",
 
-      landmark:
-        body.landmark || "",
+      landmark: body.landmark || "",
 
-      address:
-        body.address || "",
+      address: body.address || "",
 
-      latitude:
-        body.latitude || "",
+      latitude: body.latitude || "",
 
-      longitude:
-        body.longitude || ""
-
+      longitude: body.longitude || "",
     });
 
     /* PRICING */
     await PropertyPricing.create({
-
       propertyId,
 
-      price:
-        Number(body.price) || 0,
+      price: Number(body.price) || 0,
 
-      pricePerUnit:
-        Number(body.pricePerUnit) || 0,
+      pricePerUnit: Number(body.pricePerUnit) || 0,
 
-      priceNegotiable:
-        body.priceNegotiable || false
-
+      priceNegotiable: body.priceNegotiable || false,
     });
 
     /* AREA */
     await PropertyArea.create({
-
       propertyId,
 
-      area:
-        Number(body.area) || 0,
+      area: Number(body.area) || 0,
 
-      areaUnit:
-        body.areaUnit || "sqft",
+      areaUnit: body.areaUnit || "sqft",
 
-      convertedSqft:
-        Number(body.convertedSqft) || 0
-
+      convertedSqft: Number(body.convertedSqft) || 0,
     });
 
     /* FLAGS */
     await PropertyFlags.create({
-
       propertyId,
 
-      isRERA:
-        body.isRERA || false,
+      isRERA: body.isRERA || false,
 
-      reraNumber:
-        body.reraNumber || "",
+      reraNumber: body.reraNumber || "",
 
-      isZeroBrokerage:
-        body.isZeroBrokerage || false,
+      isZeroBrokerage: body.isZeroBrokerage || false,
 
-      isFeatured:
-        body.isFeatured || false,
+      isFeatured: body.isFeatured || false,
 
-      isVerified:
-        false,
+      isVerified: false,
 
-      isActive:
-        true
-
+      isActive: true,
     });
 
     /* AMENITIES */
     if (body.amenities?.length) {
-
       await PropertyAmenity.create({
-
         propertyId,
 
-        amenities:
-          body.amenities
-
+        amenities: body.amenities,
       });
-
     }
 
     /* HIGHLIGHTS */
     if (body.highlights?.length) {
-
       await PropertyHighlight.create({
-
         propertyId,
 
-        highlights:
-          body.highlights
-
+        highlights: body.highlights,
       });
-
     }
 
     /* IMAGES */
     if (body.images?.length) {
-
       await PropertyImage.create({
-
         propertyId,
 
-        images:
+        images: body.images.map(
+          (
+            url: string,
 
-          body.images.map(
+            index: number,
+          ) => ({
+            url,
 
-            (
-              url: string,
+            isPrimary: index === 0,
 
-              index: number
-
-            ) => ({
-
-              url,
-
-              isPrimary:
-                index === 0,
-
-              displayOrder:
-                index
-
-            })
-
-          )
-
+            displayOrder: index,
+          }),
+        ),
       });
-
     }
 
     return property;
-
-  }
-
-  catch (error) {
-
+  } catch (error) {
     console.error(
-
       "CREATE_PROPERTY_ERROR",
 
-      error
-
+      error,
     );
 
     throw error;
-
   }
-
 };

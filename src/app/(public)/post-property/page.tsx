@@ -73,6 +73,27 @@ type FormData = {
   isZeroBrokerage: boolean;
   isFeatured: boolean;
   description: string;
+  // Residential
+  carpetArea: string;
+  builtUpArea: string;
+  bedrooms: string;
+  bathrooms: string;
+  furnishedStatus: string;
+
+  // Commercial
+  shopType: string;
+  mainRoadFacing: boolean;
+
+  // Agriculture
+  borewellAvailable: boolean;
+  roadWidth: string;
+  waterSource: string;
+  documentationStatus: string;
+
+  // Warehouse
+  powerLoad: string;
+  truckAccess: boolean;
+  industrialApproved: boolean;
   highlights: string[];
   amenities: string[];
   houseNo: string;
@@ -120,6 +141,32 @@ const INITIAL: FormData = {
 
   isZeroBrokerage: false,
   isFeatured: false,
+
+  carpetArea: "",
+  builtUpArea: "",
+
+  bedrooms: "",
+  bathrooms: "",
+
+  furnishedStatus: "",
+
+  shopType: "",
+
+  mainRoadFacing: false,
+
+  borewellAvailable: false,
+
+  roadWidth: "",
+
+  waterSource: "",
+
+  documentationStatus: "",
+
+  powerLoad: "",
+
+  truckAccess: false,
+
+  industrialApproved: false,
 
   description: "",
   highlights: [],
@@ -958,6 +1005,14 @@ export default function PostPropertyPage() {
     Record<string, string>
   >({});
 
+  const [dynamicAnswers, setDynamicAnswers] = useState({
+    borewellDepth: "",
+    waterAvailability: "",
+    roadWidth: "",
+    sourceType: "",
+    waterStorage: "",
+  });
+
   const getCategoryQuestions = () => {
     const cat = form.categoryLabel.toLowerCase();
 
@@ -1039,242 +1094,298 @@ export default function PostPropertyPage() {
   };
 
   const TEMP_OTP = "123";
-const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-const set = useCallback(
-  <K extends keyof FormData>(key: K, val: FormData[K]) => {
-    setForm((prev) => ({ ...prev, [key]: val }));
-  },
-  [],
-);
+  const set = useCallback(
+    <K extends keyof FormData>(key: K, val: FormData[K]) => {
+      setForm((prev) => ({ ...prev, [key]: val }));
+    },
+    [],
+  );
 
-const handlePincodeChange = async (
-  e: React.ChangeEvent<HTMLInputElement>,
-) => {
-  const pin = e.target.value.replace(/\D/g, "");
+  const handlePincodeChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const pin = e.target.value.replace(/\D/g, "");
 
-  // Update pincode field
-  set("pincode", pin);
+    // Update pincode field
+    set("pincode", pin);
 
-  // Clear old location values if pincode incomplete
-  if (pin.length !== 6) {
-    set("state", "");
-    set("city", "");
-    set("locality", "");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      `https://api.zippopotam.us/in/${pin}`
-    );
-
-    // Invalid pincode
-    if (!response.ok) {
-      setErrors((prev) => ({
-        ...prev,
-        pincode: "Invalid pincode",
-      }));
-
+    // Clear old location values if pincode incomplete
+    if (pin.length !== 6) {
       set("state", "");
       set("city", "");
       set("locality", "");
       return;
     }
 
-    const data = await response.json();
+    try {
+      const response = await fetch(`https://api.zippopotam.us/in/${pin}`);
 
-    console.log("Pincode API Response:", data);
+      // Invalid pincode
+      if (!response.ok) {
+        setErrors((prev) => ({
+          ...prev,
+          pincode: "Invalid pincode",
+        }));
 
-    const location = data?.places?.[0];
+        set("state", "");
+        set("city", "");
+        set("locality", "");
+        return;
+      }
 
-    if (location) {
-      set("state", location.state || "");
-      set("city", location["place name"] || "");
-      set("locality", location["place name"] || "");
+      const data = await response.json();
 
-      // Remove pincode error
-      setErrors((prev) => {
-        const updated = { ...prev };
-        delete updated.pincode;
-        return updated;
-      });
+      console.log("Pincode API Response:", data);
+
+      const location = data?.places?.[0];
+
+      if (location) {
+        set("state", location.state || "");
+        set("city", location["place name"] || "");
+        set("locality", location["place name"] || "");
+
+        // Remove pincode error
+        setErrors((prev) => {
+          const updated = { ...prev };
+          delete updated.pincode;
+          return updated;
+        });
+      }
+    } catch (error) {
+      console.error("Pincode lookup failed:", error);
+
+      setErrors((prev) => ({
+        ...prev,
+        pincode: "Failed to fetch location",
+      }));
     }
-  } catch (error) {
-    console.error("Pincode lookup failed:", error);
+  };
 
-    setErrors((prev) => ({
-      ...prev,
-      pincode: "Failed to fetch location",
-    }));
-  }
-};
+  useEffect(() => {
+    fetch("/api/property-meta")
+      .then((r) => r.json())
+      .then(setMeta)
+      .catch((err) => console.error(err));
+  }, []);
 
-useEffect(() => {
-  fetch("/api/property-meta")
-    .then((r) => r.json())
-    .then(setMeta)
-    .catch((err) => console.error(err));
-}, []);
+  const AREA_CONVERSION = {
+    sqft: 1,
+    sqyd: 9,
+    acre: 43560,
+    hectare: 107639,
+  };
 
-const AREA_CONVERSION = {
-  sqft: 1,
-  sqyd: 9,
-  acre: 43560,
-  hectare: 107639,
-};
+  const handleAreaCalculation = (areaValue: string, unit: string) => {
+    set("area", areaValue);
 
-const handleAreaCalculation = (
-  areaValue: string,
-  unit: string,
-) => {
-  set("area", areaValue);
+    set("areaUnit", unit);
 
-  set("areaUnit", unit);
-
-  if (!areaValue) {
-    set("convertedSqft", "");
-    return;
-  }
-
-  const sqft =
-    Number(areaValue) *
-    AREA_CONVERSION[unit as keyof typeof AREA_CONVERSION];
-
-  set("convertedSqft", sqft.toFixed(2));
-
-  if (form.price && Number(form.price) > 0) {
-    const pricePerSqft = Number(form.price) / sqft;
-
-    set("pricePerUnit", pricePerSqft.toFixed(2));
-  }
-};
-
-const handlePriceChange = (value: string) => {
-  set("price", value);
-
-  if (form.convertedSqft && Number(value) > 0) {
-    const pricePerSqft =
-      Number(value) / Number(form.convertedSqft);
-
-    set("pricePerUnit", pricePerSqft.toFixed(2));
-  }
-};
-
-const cities = Array.from(
-  new Map(
-    (meta?.states.find((s) => s.name === form.state)?.cities || []).map(
-      (city) => [city.name, city],
-    ),
-  ).values(),
-);
-
-const localities = Array.from(
-  new Set([
-    ...(cities.find((c) => c.name === form.city)?.localities || []),
-
-    ...(form.locality ? [form.locality] : []),
-  ]),
-);
-
-const toggleArr = (
-  key: "highlights" | "amenities",
-  val: string,
-) => {
-  setForm((prev) => {
-    const arr = prev[key];
-
-    return {
-      ...prev,
-      [key]: arr.includes(val)
-        ? arr.filter((v) => v !== val)
-        : [...arr, val],
-    };
-  });
-};
-
-/* Generate property ID when leaving step 1 */
-const generatePropertyId = async () => {
-  if (
-    propertyId ||
-    !form.state ||
-    !form.city ||
-    !form.locality
-  )
-    return;
-
-  setIdGenerating(true);
-
-  try {
-    const res = await fetch(
-      `/api/property-id?state=${encodeURIComponent(
-        form.state,
-      )}&city=${encodeURIComponent(
-        form.city,
-      )}&locality=${encodeURIComponent(form.locality)}`,
-    );
-
-    const data = await res.json();
-
-    setPropertyId(data.propertyId ?? "");
-  } catch (error) {
-    console.error("Property ID generation failed:", error);
-  } finally {
-    setIdGenerating(false);
-  }
-};
-
-const handleNext = async () => {
-  const newErrors: Record<string, string> = {};
-
-  // STEP 0
-  if (step === 0) {
-    if (!form.postedBy) {
-      newErrors.postedBy = "Please select who is posting";
+    if (!areaValue) {
+      set("convertedSqft", "");
+      return;
     }
 
-    if (!form.agentName.trim()) {
-      newErrors.agentName = "Name is required";
+    const sqft =
+      Number(areaValue) * AREA_CONVERSION[unit as keyof typeof AREA_CONVERSION];
+
+    set("convertedSqft", sqft.toFixed(2));
+
+    if (form.price && Number(form.price) > 0) {
+      const pricePerSqft = Number(form.price) / sqft;
+
+      set("pricePerUnit", pricePerSqft.toFixed(2));
+    }
+  };
+
+  const handlePriceChange = (value: string) => {
+    set("price", value);
+
+    if (form.convertedSqft && Number(value) > 0) {
+      const pricePerSqft = Number(value) / Number(form.convertedSqft);
+
+      set("pricePerUnit", pricePerSqft.toFixed(2));
+    }
+  };
+
+  const cities = Array.from(
+    new Map(
+      (meta?.states.find((s) => s.name === form.state)?.cities || []).map(
+        (city) => [city.name, city],
+      ),
+    ).values(),
+  );
+
+  const localities = Array.from(
+    new Set([
+      ...(cities.find((c) => c.name === form.city)?.localities || []),
+
+      ...(form.locality ? [form.locality] : []),
+    ]),
+  );
+
+  const category = form.categoryLabel.toLowerCase();
+
+  const isResidential =
+    category.includes("residential") ||
+    category.includes("flat") ||
+    category.includes("apartment") ||
+    category.includes("villa") ||
+    category.includes("row house");
+
+  const isCommercial =
+    category.includes("commercial") ||
+    category.includes("shop") ||
+    category.includes("showroom") ||
+    category.includes("office");
+
+  const isAgriculture =
+    category.includes("agriculture") ||
+    category.includes("farm") ||
+    category.includes("farmhouse");
+
+  const isWarehouse =
+    category.includes("warehouse") || category.includes("industrial");
+
+  const isNAPlot = category.includes("na");
+
+  const isInvestment = category.includes("investment");
+
+  const toggleArr = (key: "highlights" | "amenities", val: string) => {
+    setForm((prev) => {
+      const arr = prev[key];
+
+      return {
+        ...prev,
+        [key]: arr.includes(val) ? arr.filter((v) => v !== val) : [...arr, val],
+      };
+    });
+  };
+
+  /* Generate property ID when leaving step 1 */
+  const generatePropertyId = async () => {
+    if (propertyId || !form.state || !form.city || !form.locality) return;
+
+    setIdGenerating(true);
+
+    try {
+      const res = await fetch(
+        `/api/property-id?state=${encodeURIComponent(
+          form.state,
+        )}&city=${encodeURIComponent(
+          form.city,
+        )}&locality=${encodeURIComponent(form.locality)}`,
+      );
+
+      const data = await res.json();
+
+      setPropertyId(data.propertyId ?? "");
+    } catch (error) {
+      console.error("Property ID generation failed:", error);
+    } finally {
+      setIdGenerating(false);
+    }
+  };
+
+  const validateStep = (currentStep: number) => {
+    const newErrors: Record<string, string> = {};
+
+    if (currentStep === 0) {
+      if (!form.agentName.trim()) newErrors.agentName = "Name required";
+
+      if (!form.category) newErrors.category = "Category required";
     }
 
-    if (!form.agentPhone) {
-      newErrors.agentPhone = "Phone is required";
-    } else if (!/^[6-9]\d{9}$/.test(form.agentPhone)) {
-      newErrors.agentPhone = "Enter valid mobile number";
+    if (currentStep === 1) {
+      if (!form.state) newErrors.state = "State required";
+
+      if (!form.city) newErrors.city = "City required";
+
+      if (!form.locality) newErrors.locality = "Locality required";
     }
 
-    if (!phoneVerified) {
-      newErrors.phoneVerified =
-        "Please verify your mobile number before continuing";
+    if (currentStep === 2) {
+      if (!form.area) newErrors.area = "Area required";
+
+      if (!form.price) newErrors.price = "Price required";
     }
 
-    if (!form.title.trim()) {
-      newErrors.title = "Title is required";
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = async () => {
+    const newErrors: Record<string, string> = {};
+
+    // STEP 0
+    if (step === 0) {
+      if (!form.postedBy) {
+        newErrors.postedBy = "Please select who is posting";
+      }
+
+      if (!form.agentName.trim()) {
+        newErrors.agentName = "Name is required";
+      }
+
+      if (!form.agentPhone) {
+        newErrors.agentPhone = "Phone is required";
+      } else if (!/^[6-9]\d{9}$/.test(form.agentPhone)) {
+        newErrors.agentPhone = "Enter valid mobile number";
+      }
+
+      if (!phoneVerified) {
+        newErrors.phoneVerified =
+          "Please verify your mobile number before continuing";
+      }
+
+      if (!form.title.trim()) {
+        newErrors.title = "Title is required";
+      }
+
+      if (!form.category) {
+        newErrors.category = "Category is required";
+      }
     }
 
-    if (!form.category) {
-      newErrors.category = "Category is required";
-    }
-  }
+    // STEP 1
+    if (step === 1) {
+      if (!form.pincode) {
+        newErrors.pincode = "Pincode is required";
+      } else if (!/^\d{6}$/.test(form.pincode)) {
+        newErrors.pincode = "Enter valid 6 digit pincode";
+      }
 
-  // STEP 1
-  if (step === 1) {
-    if (!form.pincode) {
-      newErrors.pincode = "Pincode is required";
-    } else if (!/^\d{6}$/.test(form.pincode)) {
-      newErrors.pincode = "Enter valid 6 digit pincode";
+      if (!form.state) {
+        newErrors.state = "State is required";
+      }
+
+      if (!form.city) {
+        newErrors.city = "City is required";
+      }
+
+      if (!form.locality) {
+        newErrors.locality = "Locality is required";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+
+      await generatePropertyId();
     }
 
-    if (!form.state) {
-      newErrors.state = "State is required";
-    }
+    // STEP 2
+    if (step === 2) {
+      if (!form.area) {
+        newErrors.area = "Area is required";
+      }
 
-    if (!form.city) {
-      newErrors.city = "City is required";
-    }
-
-    if (!form.locality) {
-      newErrors.locality = "Locality is required";
+      if (!form.price) {
+        newErrors.price = "Price is required";
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -1282,31 +1393,10 @@ const handleNext = async () => {
       return;
     }
 
-    await generatePropertyId();
-  }
+    setErrors({});
 
-  // STEP 2
-  if (step === 2) {
-    if (!form.area) {
-      newErrors.area = "Area is required";
-    }
-
-    if (!form.price) {
-      newErrors.price = "Price is required";
-    }
-  }
-
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
-
-  setErrors({});
-
-  setStep((prev) =>
-    Math.min(steps.length - 1, prev + 1),
-  );
-};
+    setStep((prev) => Math.min(steps.length - 1, prev + 1));
+  };
   /* Submit */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1384,6 +1474,10 @@ const handleNext = async () => {
     }
   };
   const generateDescription = () => {
+    if (!form.city && !form.locality) {
+      alert("Please complete Property Location section first.");
+      return;
+    }
     const category = form.category || "property";
 
     let template = "";
@@ -1425,6 +1519,36 @@ ${
 ${
   questionAnswers["Water source available?"] === "yes"
     ? "Reliable water availability makes it suitable for agricultural activities."
+    : ""
+}
+
+${
+  dynamicAnswers.borewellDepth
+    ? `The borewell depth is approximately ${dynamicAnswers.borewellDepth} ft.`
+    : ""
+}
+
+${
+  dynamicAnswers.waterAvailability
+    ? `Water availability is ${dynamicAnswers.waterAvailability}.`
+    : ""
+}
+
+${
+  dynamicAnswers.roadWidth
+    ? `The property has ${dynamicAnswers.roadWidth} ft wide road frontage.`
+    : ""
+}
+
+${
+  dynamicAnswers.sourceType
+    ? `Water source type: ${dynamicAnswers.sourceType}.`
+    : ""
+}
+
+${
+  dynamicAnswers.waterStorage
+    ? `Water storage capacity: ${dynamicAnswers.waterStorage}.`
     : ""
 }
 
@@ -1755,46 +1879,14 @@ Perfect for ${
         <div
           className="heroSection"
           style={{
-            background: "linear-gradient(135deg,#052e16,#166534,#16a34a)",
-            padding: "36px 24px 32px",
-            textAlign: "center",
+            backgroundImage: `url('/nashik/post-property-banner.png')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            minHeight: "350px",
+            borderRadius: "0 0 12px 12px",
           }}
-        >
-          <div
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              opacity: 0.8,
-              marginBottom: "8px",
-              color: "#fff",
-            }}
-          >
-            Free Listing
-          </div>
-          <h1
-            style={{
-              margin: "0 0 8px",
-              fontSize: "clamp(1.5rem,4vw,2.2rem)",
-              fontWeight: 900,
-              color: "#fff",
-            }}
-          >
-            Post Your Property
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              opacity: 0.85,
-              fontSize: "1rem",
-              color: "#fff",
-            }}
-          >
-            Reach thousands of verified buyers across Maharashtra — 100% Free
-          </p>
-        </div>
-
+        />
         {/* Step Indicator */}
         <div
           className="stepScroller"
@@ -1826,7 +1918,18 @@ Perfect for ${
                 <button
                   key={s}
                   type="button"
-                  onClick={() => setStep(i)}
+                  onClick={() => {
+                    if (i <= step) {
+                      setStep(i);
+                      return;
+                    }
+
+                    const valid = validateStep(step);
+
+                    if (valid) {
+                      setStep(i);
+                    }
+                  }}
                   style={{
                     flex: 1,
                     minWidth: "140px",
@@ -2731,6 +2834,165 @@ Perfect for ${
                         )}
                       </Field>
                     </Row>
+                    {isResidential && (
+                      <>
+                        <Row cols={2}>
+                          <Field>
+                            {lbl("Carpet Area")}
+                            <input
+                              style={inp()}
+                              value={form.carpetArea}
+                              onChange={(e) =>
+                                set("carpetArea", e.target.value)
+                              }
+                            />
+                          </Field>
+
+                          <Field>
+                            {lbl("Built-up Area")}
+                            <input
+                              style={inp()}
+                              value={form.builtUpArea}
+                              onChange={(e) =>
+                                set("builtUpArea", e.target.value)
+                              }
+                            />
+                          </Field>
+                        </Row>
+
+                        <Row cols={3}>
+                          <Field>
+                            {lbl("Bedrooms")}
+                            <input
+                              style={inp()}
+                              value={form.bedrooms}
+                              onChange={(e) => set("bedrooms", e.target.value)}
+                            />
+                          </Field>
+
+                          <Field>
+                            {lbl("Bathrooms")}
+                            <input
+                              style={inp()}
+                              value={form.bathrooms}
+                              onChange={(e) => set("bathrooms", e.target.value)}
+                            />
+                          </Field>
+
+                          <Field>
+                            {lbl("Furnished Status")}
+                            <select
+                              style={sel()}
+                              value={form.furnishedStatus}
+                              onChange={(e) =>
+                                set("furnishedStatus", e.target.value)
+                              }
+                            >
+                              <option value="">Select</option>
+                              <option>Fully Furnished</option>
+                              <option>Semi Furnished</option>
+                              <option>Unfurnished</option>
+                            </select>
+                          </Field>
+                        </Row>
+                      </>
+                    )}
+
+                    {isCommercial && (
+                      <Row cols={2}>
+                        <Field>
+                          {lbl("Shop Type")}
+                          <select
+                            style={sel()}
+                            value={form.shopType}
+                            onChange={(e) => set("shopType", e.target.value)}
+                          >
+                            <option value="">Select</option>
+                            <option>Shop</option>
+                            <option>Office</option>
+                            <option>Showroom</option>
+                          </select>
+                        </Field>
+
+                        <Field>
+                          <Toggle
+                            checked={form.mainRoadFacing}
+                            onChange={() =>
+                              set("mainRoadFacing", !form.mainRoadFacing)
+                            }
+                            labelText="Main Road Facing"
+                          />
+                        </Field>
+                      </Row>
+                    )}
+
+                    {isAgriculture && (
+                      <Row cols={3}>
+                        <Field>
+                          <Toggle
+                            checked={form.borewellAvailable}
+                            onChange={() =>
+                              set("borewellAvailable", !form.borewellAvailable)
+                            }
+                            labelText="Borewell Available"
+                          />
+                        </Field>
+
+                        <Field>
+                          {lbl("Road Width")}
+                          <input
+                            style={inp()}
+                            value={form.roadWidth}
+                            onChange={(e) => set("roadWidth", e.target.value)}
+                          />
+                        </Field>
+
+                        <Field>
+                          {lbl("Water Source")}
+                          <input
+                            style={inp()}
+                            value={form.waterSource}
+                            onChange={(e) => set("waterSource", e.target.value)}
+                          />
+                        </Field>
+                      </Row>
+                    )}
+
+                    {isWarehouse && (
+                      <Row cols={3}>
+                        <Field>
+                          {lbl("Power Load")}
+                          <input
+                            style={inp()}
+                            value={form.powerLoad}
+                            onChange={(e) => set("powerLoad", e.target.value)}
+                          />
+                        </Field>
+
+                        <Field>
+                          <Toggle
+                            checked={form.truckAccess}
+                            onChange={() =>
+                              set("truckAccess", !form.truckAccess)
+                            }
+                            labelText="Truck Access"
+                          />
+                        </Field>
+
+                        <Field>
+                          <Toggle
+                            checked={form.industrialApproved}
+                            onChange={() =>
+                              set(
+                                "industrialApproved",
+                                !form.industrialApproved,
+                              )
+                            }
+                            labelText="Industrial Approved"
+                          />
+                        </Field>
+                      </Row>
+                    )}
 
                     <Row>
                       <Field>
@@ -2955,69 +3217,215 @@ Perfect for ${
                           style={{
                             position: "fixed",
                             inset: 0,
-                            background: "rgba(0,0,0,0.45)",
+                            background: "rgba(0,0,0,0.55)",
                             display: "flex",
-                            alignItems: "center",
+                            alignItems: "flex-start",
                             justifyContent: "center",
                             zIndex: 9999,
                             padding: "20px",
+                            paddingTop: "120px",
                           }}
                         >
                           <div
                             style={{
-                              width: "100%",
-                              maxWidth: "620px",
+                              position: "relative",
+                              width: "95%",
+                              maxWidth: "900px",
                               background: "#fff",
                               borderRadius: "20px",
-                              padding: "24px",
-                              maxHeight: "85vh",
+                              padding: "28px",
+                              maxHeight: "80vh",
                               overflowY: "auto",
                             }}
                           >
+                            {/* CLOSE BUTTON */}
+                            <button
+                              type="button"
+                              onClick={() => setShowDescPopup(false)}
+                              style={{
+                                position: "absolute",
+                                top: "16px",
+                                right: "16px",
+                                width: "36px",
+                                height: "36px",
+                                borderRadius: "50%",
+                                border: "none",
+                                background: "#f3f4f6",
+                                cursor: "pointer",
+                                fontWeight: 700,
+                                fontSize: "16px",
+                              }}
+                            >
+                              ✕
+                            </button>
+
                             <h3
                               style={{
                                 marginTop: 0,
-                                marginBottom: "18px",
-                                fontSize: "1.2rem",
+                                marginBottom: "24px",
+                                fontSize: "1.3rem",
                                 fontWeight: 800,
                               }}
                             >
                               Smart Property Questions ✨
                             </h3>
 
-                            {getCategoryQuestions().map((q, i) => (
-                              <div key={i} style={{ marginBottom: "16px" }}>
-                                <label
-                                  style={{
-                                    display: "block",
-                                    marginBottom: "6px",
-                                    fontWeight: 600,
-                                    fontSize: "0.9rem",
-                                  }}
-                                >
-                                  {q}
-                                </label>
+                            {/* TWO COLUMN QUESTIONS */}
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "1fr 1fr",
+                                gap: "18px",
+                              }}
+                            >
+                              {getCategoryQuestions().map((q, i) => (
+                                <div key={i}>
+                                  <label
+                                    style={{
+                                      display: "block",
+                                      marginBottom: "6px",
+                                      fontWeight: 600,
+                                      fontSize: "0.9rem",
+                                    }}
+                                  >
+                                    {q}
+                                  </label>
 
-                                <input
-                                  style={inp()}
-                                  placeholder="Your answer"
-                                  value={questionAnswers[q] || ""}
-                                  onChange={(e) =>
-                                    setQuestionAnswers((prev) => ({
-                                      ...prev,
-                                      [q]: e.target.value,
-                                    }))
-                                  }
-                                />
-                              </div>
-                            ))}
+                                  {q.includes("?") ? (
+                                    <select
+                                      style={sel()}
+                                      value={questionAnswers[q] || ""}
+                                      onChange={(e) =>
+                                        setQuestionAnswers((prev) => ({
+                                          ...prev,
+                                          [q]: e.target.value,
+                                        }))
+                                      }
+                                    >
+                                      <option value="">Select</option>
+                                      <option value="yes">Yes</option>
+                                      <option value="no">No</option>
+                                    </select>
+                                  ) : (
+                                    <input
+                                      style={inp()}
+                                      placeholder="Your answer"
+                                      value={questionAnswers[q] || ""}
+                                      onChange={(e) =>
+                                        setQuestionAnswers((prev) => ({
+                                          ...prev,
+                                          [q]: e.target.value,
+                                        }))
+                                      }
+                                    />
+                                  )}
 
+                                  {/* BOREWELL FOLLOWUPS */}
+                                  {q === "Is borewell available?" &&
+                                    questionAnswers[q]?.toLowerCase() ===
+                                      "yes" && (
+                                      <>
+                                        <input
+                                          style={{
+                                            ...inp(),
+                                            marginTop: "8px",
+                                          }}
+                                          placeholder="Borewell Depth (ft)"
+                                          value={dynamicAnswers.borewellDepth}
+                                          onChange={(e) =>
+                                            setDynamicAnswers((prev) => ({
+                                              ...prev,
+                                              borewellDepth: e.target.value,
+                                            }))
+                                          }
+                                        />
+
+                                        <input
+                                          style={{
+                                            ...inp(),
+                                            marginTop: "8px",
+                                          }}
+                                          placeholder="Water Availability"
+                                          value={
+                                            dynamicAnswers.waterAvailability
+                                          }
+                                          onChange={(e) =>
+                                            setDynamicAnswers((prev) => ({
+                                              ...prev,
+                                              waterAvailability: e.target.value,
+                                            }))
+                                          }
+                                        />
+                                      </>
+                                    )}
+
+                                  {/* ROAD FOLLOWUPS */}
+                                  {q === "Road touch property?" &&
+                                    questionAnswers[q]?.toLowerCase() ===
+                                      "yes" && (
+                                      <input
+                                        style={{
+                                          ...inp(),
+                                          marginTop: "8px",
+                                        }}
+                                        placeholder="Road Width (ft)"
+                                        value={dynamicAnswers.roadWidth}
+                                        onChange={(e) =>
+                                          setDynamicAnswers((prev) => ({
+                                            ...prev,
+                                            roadWidth: e.target.value,
+                                          }))
+                                        }
+                                      />
+                                    )}
+
+                                  {/* WATER SOURCE FOLLOWUPS */}
+                                  {q === "Water source available?" &&
+                                    questionAnswers[q]?.toLowerCase() ===
+                                      "yes" && (
+                                      <>
+                                        <input
+                                          style={{
+                                            ...inp(),
+                                            marginTop: "8px",
+                                          }}
+                                          placeholder="Source Type"
+                                          value={dynamicAnswers.sourceType}
+                                          onChange={(e) =>
+                                            setDynamicAnswers((prev) => ({
+                                              ...prev,
+                                              sourceType: e.target.value,
+                                            }))
+                                          }
+                                        />
+
+                                        <input
+                                          style={{
+                                            ...inp(),
+                                            marginTop: "8px",
+                                          }}
+                                          placeholder="Water Storage Capacity"
+                                          value={dynamicAnswers.waterStorage}
+                                          onChange={(e) =>
+                                            setDynamicAnswers((prev) => ({
+                                              ...prev,
+                                              waterStorage: e.target.value,
+                                            }))
+                                          }
+                                        />
+                                      </>
+                                    )}
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* ACTION BUTTONS */}
                             <div
                               style={{
                                 display: "flex",
                                 justifyContent: "flex-end",
                                 gap: "10px",
-                                marginTop: "20px",
+                                marginTop: "24px",
                               }}
                             >
                               <button
@@ -3037,6 +3445,19 @@ Perfect for ${
                               <button
                                 type="button"
                                 onClick={() => {
+                                  if (
+                                    !form.state ||
+                                    !form.city ||
+                                    !form.locality ||
+                                    !form.area ||
+                                    !form.price
+                                  ) {
+                                    alert(
+                                      "Please complete Location and Property Details first.",
+                                    );
+                                    return;
+                                  }
+
                                   generateDescription();
                                   setShowDescPopup(false);
                                 }}
@@ -3503,6 +3924,9 @@ Perfect for ${
             padding: 18px !important;
             border-radius: 14px !important;
           }
+
+          grid-template-columns: 1fr;
+}
 
           /* HERO */
           .heroSection {
