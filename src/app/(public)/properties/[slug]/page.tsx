@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 import ViewTracker from "@/components/property/ViewTracker";
-
+import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
 import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
 import { PropertySectionTabs } from "@/components/property/PropertySectionTabs";
@@ -37,6 +37,9 @@ import {
   UserRound,
   BriefcaseBusiness,
   Shield,
+  BedDouble,
+  Bath,
+  Ruler,
 } from "lucide-react";
 import PropertyEMIBadge from "@/components/property/PropertyEMIBadge";
 import AreaConversion from "@/components/property/AreaConversion";
@@ -526,15 +529,27 @@ export default async function PropertyDetailPage({
                   />
 
                   {property.bedrooms && (
-                    <InfoCard label="Bedrooms" value={property.bedrooms} />
+                    <InfoCard
+                      icon={<BedDouble size={18} strokeWidth={2.2} />}
+                      label="Bedrooms"
+                      value={property.bedrooms}
+                    />
                   )}
 
                   {property.bathrooms && (
-                    <InfoCard label="Bathrooms" value={property.bathrooms} />
+                    <InfoCard
+                      icon={<Bath size={18} strokeWidth={2.2} />}
+                      label="Bathrooms"
+                      value={property.bathrooms}
+                    />
                   )}
 
                   {property.carpetArea && (
-                    <InfoCard label="Carpet Area" value={property.carpetArea} />
+                    <InfoCard
+                      icon={<Ruler size={18} strokeWidth={2.2} />}
+                      label="Carpet Area"
+                      value={property.carpetArea}
+                    />
                   )}
 
                   {property.roadWidth && (
@@ -936,6 +951,7 @@ export default async function PropertyDetailPage({
 
 `}</style>
       </main>
+      <FloatingWhatsapp />
 
       <Footer />
     </>

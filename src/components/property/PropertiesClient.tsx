@@ -12,7 +12,7 @@ import {
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocationStore } from "@/store/useLocationStore";
-
+import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import PropertyImageSlider from "@/components/property/PropertyImageSlider";
 import ContactPopup from "@/components/property/ContactPopup";
@@ -2156,6 +2156,9 @@ function PropertiesContent() {
           }
         `}</style>
       </main>
+
+      <FloatingWhatsapp />
+
       <Footer />
     </>
   );
