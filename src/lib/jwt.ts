@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
 const JWT_SECRET = process.env.ADMIN_JWT_SECRET || "please-set-ADMIN_JWT_SECRET";
-const ACCESS_TOKEN_EXP = 15 * 60; // 15 min
+const ACCESS_TOKEN_EXP = 24 * 60 * 60; // 24 hours
 const REFRESH_TOKEN_EXP = 7 * 24 * 60 * 60; // 7 days
 
 function base64UrlEncode(input: string | Buffer) {

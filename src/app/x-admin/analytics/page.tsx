@@ -169,7 +169,7 @@ export default function AnalyticsPage() {
 
       color: "#2563eb",
 
-      growth: "+12%",
+      growth: "+15%",
     },
 
     {

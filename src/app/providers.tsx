@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, ReactNode } from "react";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
-    fetch("/api/__init__");
+    // safe initialization place
+    console.log("App initialized");
   }, []);
 
-  return children;
+  return <>{children}</>;
 }

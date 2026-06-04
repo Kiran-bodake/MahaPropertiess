@@ -1,11 +1,4 @@
 "use client";
-import { NextRequest, NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
-import Lead from "@/models/Lead";
-import Deal from "@/models/Deal";
-import Task from "@/models/Task";
-import Property from "@/models/Property";
-import { requireAdminUser } from "@/lib/admin-auth";
 import PropertyInquiryModule from "@/components/admin/inquiries/PropertyInquiryModule";
 import { useEffect, useState } from "react";
 import {
@@ -55,12 +48,17 @@ const COLORS = ["#3b82f6", "#10b981", "#a855f7", "#f59e0b"];
 
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalLeads: 0,
-    newLeads: 0,
-    totalProperties: 0,
-    totalDeals: 0,
-  });
+ const [stats, setStats] = useState({
+  totalInquiries: 0,
+  newInquiries: 0,
+  totalProperties: 0,
+  totalDeals: 0,
+
+  // NEW
+  inquiriesGrowth: 0,
+  propertiesGrowth: 0,
+  dealsGrowth: 0,
+});
   const [propertyInquiries, setPropertyInquiries] = useState<any[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,83 +69,134 @@ export default function AdminDashboard() {
   const [propertyPage, setPropertyPage] = useState(1);
   const [propertyQuery, setPropertyQuery] = useState("");
   const [propertyFilter, setPropertyFilter] = useState("all");
-  const [analytics, setAnalytics] = useState<any>(null);
+ const [analytics, setAnalytics] = useState({
+  activeProperties: 0,
+  featuredProperties: 0,
+  verifiedProperties: 0,
+  saleProperties: 0,
+});
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
   const perPage = 10;
 
-  // Fetch dashboard data
+  // Fetch dashboard data with SSE for real-time updates
   useEffect(() => {
-    const fetchData = async () => {
+    let eventSource: EventSource | null = null;
+
+    // Fetch other data (inquiries, properties, analytics)
+    const fetchOtherData = async () => {
       try {
         const responses = await Promise.allSettled([
-          fetch("/api/admin/dashboard").catch(() => null),
           fetch("/api/property-inquiry").catch(() => null),
           fetch("/api/admin/recent-properties").catch(() => null),
           fetch("/api/admin/analytics/leads").catch(() => null),
         ]);
 
-        let dashData: any = {};
         let inquiriesData: any = { inquiries: [] };
         let propsData: any = { properties: [] };
         let analyticsData: any = {};
 
-        // Process dashboard response
         if (responses[0].status === "fulfilled" && responses[0].value?.ok) {
-          dashData = await responses[0].value.json().catch(() => ({}));
-          console.log("Dashboard API:", dashData);
-console.log("Analytics State:", analytics);
+          inquiriesData = await responses[0].value.json().catch(() => []);
         }
 
-        // Process property inquiries response
         if (responses[1].status === "fulfilled" && responses[1].value?.ok) {
-          inquiriesData = await responses[1].value.json().catch(() => []);
+          propsData = await responses[1].value.json().catch(() => ({ properties: [] }));
         }
 
-        // Process properties response
         if (responses[2].status === "fulfilled" && responses[2].value?.ok) {
-          propsData = await responses[2].value.json().catch(() => ({ properties: [] }));
+          analyticsData = await responses[2].value.json().catch(() => ({}));
         }
 
-        // Process analytics response
-        if (responses[3].status === "fulfilled" && responses[3].value?.ok) {
-          analyticsData = await responses[3].value.json().catch(() => ({}));
-        }
-
-        setStats({
-          totalLeads: dashData?.leadsCount || 0,
-          newLeads: analyticsData?.newLeads || 0,
-          totalProperties: dashData?.propertiesCount || 0,
-          totalDeals: dashData?.dealsCount || 0,
-        });
-setTrendData(
-  dashData?.chartData || []
-);
-setPropertyTypeData(
-  dashData?.propertyTypeData || []
-);
-      setPropertyInquiries(inquiriesData?.inquiries || []);
+        setPropertyInquiries(inquiriesData?.inquiries || []);
         setProperties(Array.isArray(propsData?.properties) ? propsData.properties : []);
-        setAnalytics(dashData || {});
+        
+        setStats(prev => ({
+          ...prev,
+          newInquiries: analyticsData?.newLeads || 0,
+        }));
       } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-        // Set default values on error
-        setStats({
-          totalLeads: 0,
-          newLeads: 0,
-          totalProperties: 0,
-          totalDeals: 0,
-        });
-        setPropertyInquiries([]);
-        setProperties([]);
-        setAnalytics({});
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch other data:", error);
       }
     };
 
-    fetchData();
+    // Connect to SSE for real-time dashboard data
+    const connectSSE = () => {
+      eventSource = new EventSource("/api/admin/dashboard/stream");
+
+     eventSource.onmessage = (event) => {
+  try {
+    const data = JSON.parse(event.data);
+
+    console.log("SSE:", data);
+
+    if (data.type === "connected") return;
+    if (data.heartbeat) return;
+
+   if (data.success) {
+  const current = data.currentPeriod;
+  const previous = data.previousPeriod;
+
+  const calcGrowth = (curr: number, prev: number) => {
+    if (!prev) return 100;
+    return Math.round(((curr - prev) / prev) * 100);
+  };
+
+  setStats((prev) => ({
+    ...prev,
+    totalInquiries: data.inquiriesCount ?? 0,
+    totalProperties: data.propertiesCount ?? 0,
+    totalDeals: data.dealsCount ?? 0,
+
+    // NEW → 7-day based values (optional but better)
+    newInquiries: current?.inquiries ?? 0,
+
+    // 🔥 GROWTH VALUES (NEW)
+    inquiriesGrowth: calcGrowth(current?.inquiries, previous?.inquiries),
+    propertiesGrowth: calcGrowth(current?.properties, previous?.properties),
+    dealsGrowth: calcGrowth(current?.deals, previous?.deals),
+  }));
+
+  setTrendData(data.chartData || []);
+  setPropertyTypeData(data.propertyTypeData || []);
+
+  setAnalytics({
+    activeProperties: data.activeProperties ?? 0,
+    featuredProperties: data.featuredProperties ?? 0,
+    verifiedProperties: data.verifiedProperties ?? 0,
+    saleProperties: data.saleProperties ?? 0,
+  });
+
+  setLoading(false);
+}
+  } catch (error) {
+    console.error("Error parsing SSE data:", error);
+  }
+};
+
+      eventSource.onerror = (error) => {
+        console.error("SSE error:", error);
+        if (eventSource) {
+          eventSource.close();
+        }
+        // Reconnect after 5 seconds
+        setTimeout(connectSSE, 5000);
+      };
+    };
+
+    // Initial fetch
+    fetchOtherData();
+    connectSSE();
+
+    // Cleanup
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
+
+
 
   // Filter and paginate property inquiries
   const filteredInquiries = propertyInquiries.filter(
@@ -341,35 +390,35 @@ setPropertyTypeData(
     marginBottom: "16px",
   }}
 >
-      
+      <StatCard
+  label="Total Inquiries"
+  value={stats.totalInquiries}
+  icon={<Users className="h-7 w-7" />}
+  trend={stats.inquiriesGrowth}
+  color="blue"
+/>
+
+<StatCard
+  label="New Inquiries"
+  value={stats.newInquiries}
+  icon={<TrendingUp className="h-6 w-6" />}
+  trend={stats.inquiriesGrowth}
+  color="green"
+/>
         <StatCard
-          label="Total Leads"
-          value={stats.totalLeads}
-          icon={<Users className="h-7 w-7" />}
-          trend={12}
-          color="blue"
-        />
+  label="Properties"
+  value={stats.totalProperties}
+  icon={<Home className="h-6 w-6" />}
+  trend={stats.propertiesGrowth}
+  color="purple"
+/>
         <StatCard
-          label="New Leads"
-          value={stats.newLeads}
-          icon={<TrendingUp className="h-6 w-6" />}
-          trend={8}
-          color="green"
-        />
-        <StatCard
-          label="Properties"
-          value={stats.totalProperties}
-          icon={<Home className="h-6 w-6" />}
-          trend={15}
-          color="purple"
-        />
-        <StatCard
-          label="Deals"
-          value={stats.totalDeals}
-          icon={<ListChecks className="h-6 w-6" />}
-          trend={-3}
-          color="orange"
-        />
+  label="Deals"
+  value={stats.totalDeals}
+  icon={<ListChecks className="h-6 w-6" />}
+  trend={stats.dealsGrowth}
+  color="orange"
+/>
       </div>
 {/* Charts Section */}
 <div
@@ -467,7 +516,7 @@ setPropertyTypeData(
 
         <Line
           type="monotone"
-          dataKey="leads"
+        dataKey="inquiries"
           stroke="#10b981"
           strokeWidth={2.5}
           dot={false}
@@ -1019,7 +1068,7 @@ setPropertyTypeData(
             color: "#7c3aed",
           }}
         >
-          For Sale
+           Zero Brokerage
         </span>
 
         <span

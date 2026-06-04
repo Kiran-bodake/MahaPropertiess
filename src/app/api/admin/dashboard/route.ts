@@ -29,20 +29,6 @@ export async function GET(
 
   try {
 
-    /* ADMIN AUTH */
-    const auth =
-      await requireAdminUser(req);
-
-    if (
-      auth instanceof NextResponse
-    ) {
-
-      return auth;
-
-    }
-
-
-
     /* CONNECT DATABASE */
     await connectDB();
 

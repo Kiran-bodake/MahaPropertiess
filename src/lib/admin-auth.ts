@@ -9,6 +9,7 @@ export async function requireAdminUser(
 ) {
   await setupDatabase();
   const access = req.cookies.get("propvista-access-token")?.value;
+  
   if (!access) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
@@ -19,11 +20,6 @@ export async function requireAdminUser(
   }
 
   const user = await User.findById(payload.sub);
-  console.log(
-    "USER ROLE:",
-
-    user?.role,
-  );
 
   if (!user || !allowedRoles.includes(user.role)) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
