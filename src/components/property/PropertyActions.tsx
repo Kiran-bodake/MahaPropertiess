@@ -1,944 +1,645 @@
 "use client";
 
-import {
-  useEffect,
-  useState
-}
-from "react";
-
+import { useEffect, useState } from "react";
 
 export function PropertyActions({
-
   propertyMongoId,
 
   propertyId,
 
-  propertyTitle
+  propertyTitle,
+}: {
+  propertyMongoId: string;
 
-}:{
+  propertyId: string;
 
-  propertyMongoId:string;
+  propertyTitle: string;
+}) {
+  const [saved, setSaved] = useState(false);
 
-  propertyId:string;
+  const [showShare, setShowShare] = useState(false);
 
-  propertyTitle:string;
+  const [showReport, setShowReport] = useState(false);
 
-}){
+  const [reportReason, setReportReason] = useState("");
+  const [reportComment, setReportComment] = useState("");
 
-  const [saved,setSaved] =
-    useState(false);
-
-  const [showShare,setShowShare] =
-    useState(false);
-
-  const [showReport,setShowReport] =
-    useState(false);
-
-  const [reportReason,setReportReason] =
-    useState("");
-
-  const [reporting,setReporting] =
-    useState(false);
-const [user,setUser] =
-  useState<any>(null);
+  const [reporting, setReporting] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const propertyUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : "";
+  const reportReasons = [
+    "Incorrect Price",
+    "Property Already Sold",
+    "Fake Listing",
+    "Wrong Location",
+    "Duplicate Property",
+    "Spam Listing",
+    "Other",
+  ];
 
+  const propertyUrl = typeof window !== "undefined" ? window.location.href : "";
 
   /* CHECK SAVED */
   useEffect(() => {
+    const old = JSON.parse(localStorage.getItem("savedProperties") || "[]");
 
-    const old =
-      JSON.parse(
-
-        localStorage.getItem(
-          "savedProperties"
-        ) || "[]"
-
-      );
-
-    setSaved(
-
-      old.includes(
-        propertyId
-      )
-
-    );
-
+    setSaved(old.includes(propertyId));
   }, [propertyId]);
 
-
   /* SAVE PROPERTY */
-  function handleSave(){
+  function handleSave() {
+    const key = "savedProperties";
 
-    const key =
-      "savedProperties";
+    const old = JSON.parse(localStorage.getItem(key) || "[]");
 
-    const old =
-      JSON.parse(
+    let updated = old;
 
-        localStorage.getItem(
-          key
-        ) || "[]"
-
-      );
-
-    let updated =
-      old;
-
-    if(
-
-      old.includes(
-        propertyId
-      )
-
-    ){
-
-      updated =
-        old.filter(
-
-          (
-            x:string
-          ) =>
-
-            x !== propertyId
-
-        );
+    if (old.includes(propertyId)) {
+      updated = old.filter((x: string) => x !== propertyId);
 
       setSaved(false);
-
-    }
-
-    else{
-
-      updated = [
-
-        ...old,
-
-        propertyId
-
-      ];
+    } else {
+      updated = [...old, propertyId];
 
       setSaved(true);
-
     }
 
     localStorage.setItem(
-
       key,
 
-      JSON.stringify(
-        updated
-      )
-
+      JSON.stringify(updated),
     );
-
   }
 
-useEffect(() => {
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
 
-  const savedUser =
-
-    localStorage.getItem(
-      "user"
-    );
-
-  if(savedUser){
-
-    setUser(
-
-      JSON.parse(savedUser)
-
-    );
-
-  }
-
-},[]);
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
   /* REPORT PROPERTY */
-  async function handleReport(){
-
+  async function handleReport() {
     // VALIDATION
-    if(
-
-      !reportReason.trim()
-
-    ){
-
-      alert(
-        "Please explain the issue"
-      );
-
+    if (!reportReason || (reportReason === "Other" && !reportComment.trim())) {
+      alert("Please select or explain the issue");
       return;
-
     }
 
-    try{
-
+    try {
       setReporting(true);
 
       console.log({
-
         propertyMongoId,
 
         propertyId,
 
         propertyTitle,
 
-        reason:
-          reportReason
-
+        reason: reportReason === "Other" ? reportComment : reportReason,
       });
 
-      const res =
-        await fetch(
+      const res = await fetch(
+        "/api/property-report",
 
-          "/api/property-report",
+        {
+          method: "POST",
 
-          {
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-            method:"POST",
+          body: JSON.stringify({
+            propertyMongoId,
 
-            headers:{
+            propertyId,
 
-              "Content-Type":
-                "application/json"
+            propertyTitle,
 
-            },
+            reason: reportReason === "Other" ? reportComment : reportReason,
+            reportedByUserId: user?._id || "",
 
-          body:JSON.stringify({
+            reportedByName: user?.name || "",
 
-  propertyMongoId,
+            reportedByPhone: user?.phone || "",
+          }),
+        },
+      );
 
-  propertyId,
+      const data = await res.json();
+      if (data.success) {
+        setShowReport(false);
 
-  propertyTitle,
+        setReportReason("");
+        setReportComment("");
 
-  reason:
-    reportReason,
+        setShowSuccess(true);
 
-  reportedByUserId:
-    user?._id || "",
-
-  reportedByName:
-    user?.name || "",
-
-  reportedByPhone:
-    user?.phone || ""
-
-})
-          }
-
-        );
-
-      const data =
-        await res.json();
-if(data.success){
-
-  setShowReport(false);
-
-  setReportReason("");
-
-  setShowSuccess(true);
-
-  setTimeout(() => {
-    setShowSuccess(false);
-  }, 3500);
-
-}
-      else{
-
-       console.error(data.message);
-
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 3500);
+      } else {
+        console.error(data.message);
       }
-
-    }
-
-    catch(error){
-
+    } catch (error) {
       console.error(error);
 
       console.error("Something went wrong");
-
-    }
-
-    finally{
-
+    } finally {
       setReporting(false);
-
     }
-
   }
 
-
-
   return (
-
     <>
-
       {/* ACTION BUTTONS */}
       <div
         style={{
-          display:"flex",
-          flexWrap:"wrap",
-          gap:10
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 10,
         }}
       >
-
         {/* SAVE */}
         <ActionBtn
-
-          label={
-
-            saved
-
-              ? "❤️ Saved"
-
-              : "🤍 Save"
-
-          }
-
-          onClick={
-            handleSave
-          }
-
+          label={saved ? "❤️ Saved" : "🤍 Save"}
+          onClick={handleSave}
         />
-
 
         {/* SHARE */}
-        <ActionBtn
-
-          label="🔗 Share"
-
-          onClick={() =>
-            setShowShare(true)
-          }
-
-        />
-
+        <ActionBtn label="🔗 Share" onClick={() => setShowShare(true)} />
 
         {/* REPORT */}
         <ActionBtn
-
           label="🚩 Report"
-
           danger
-
-          onClick={() =>
-            setShowReport(true)
-          }
-
+          onClick={() => setShowReport(true)}
         />
-
       </div>
-
-
 
       {/* SHARE MODAL */}
       {showShare && (
-
         <div style={overlayStyle}>
-
           <div style={modalStyle}>
-
             <h3
               style={{
-                margin:0,
-                marginBottom:8
+                margin: 0,
+                marginBottom: 8,
               }}
             >
               Share Property
             </h3>
 
-
             {/* WHATSAPP */}
             <a
-
               href={`https://wa.me/?text=${encodeURIComponent(
-
-                propertyTitle +
-                " " +
-                propertyUrl
-
+                propertyTitle + " " + propertyUrl,
               )}`}
-
               target="_blank"
-
               style={shareBtn}
-
             >
               WhatsApp
             </a>
 
-
             {/* TELEGRAM */}
             <a
-
               href={`https://t.me/share/url?url=${encodeURIComponent(
-
-                propertyUrl
-
-              )}&text=${encodeURIComponent(
-
-                propertyTitle
-
-              )}`}
-
+                propertyUrl,
+              )}&text=${encodeURIComponent(propertyTitle)}`}
               target="_blank"
-
               style={shareBtn}
-
             >
               Telegram
             </a>
 
-
             {/* FACEBOOK */}
             <a
-
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-
-                propertyUrl
-
+                propertyUrl,
               )}`}
-
               target="_blank"
-
               style={shareBtn}
-
             >
               Facebook
             </a>
 
-
             {/* COPY LINK */}
             <button
-
               onClick={() => {
+                navigator.clipboard.writeText(propertyUrl);
 
-                navigator.clipboard.writeText(
-                  propertyUrl
-                );
-
-                alert(
-                  "Link copied"
-                );
-
+                alert("Link copied");
               }}
-
               style={shareBtn}
-
             >
               Copy Link
             </button>
 
-
             {/* MOBILE SHARE */}
             <button
-
               onClick={async () => {
-
-                if(
-                  navigator.share
-                ){
-
+                if (navigator.share) {
                   await navigator.share({
+                    title: propertyTitle,
 
-                    title:
-                      propertyTitle,
+                    text: "Check this property",
 
-                    text:
-                      "Check this property",
-
-                    url:
-                      propertyUrl,
-
+                    url: propertyUrl,
                   });
-
                 }
-
               }}
-
               style={shareBtn}
-
             >
               More Options
             </button>
 
-
             {/* CLOSE */}
-            <button
-
-              onClick={() =>
-                setShowShare(false)
-              }
-
-              style={closeBtn}
-
-            >
+            <button onClick={() => setShowShare(false)} style={closeBtn}>
               Close
             </button>
-
           </div>
-
         </div>
-
       )}
-
-
 
       {/* REPORT MODAL */}
       {showReport && (
-
         <div style={overlayStyle}>
-
-          <div style={modalStyle}>
+          <div style={reportSheetStyle}>
+            <div
+              style={{
+                width: 40,
+                height: 4,
+                margin: "0 auto 2px",
+                background: "#cbd5e1",
+                borderRadius: 999,
+              }}
+            />
 
             <h3
               style={{
-                margin:0
+                margin: 0,
+                marginTop: 0,
+                fontSize: "1.05rem",
+                fontWeight: 700,
               }}
             >
               Report Property
             </h3>
 
-
             <p
               style={{
-                margin:0,
-                color:"#64748b",
-                fontSize:".92rem",
-                lineHeight:1.5
+                margin: 0,
+                color: "#64748b",
+                fontSize: ".82rem",
               }}
             >
-              Please explain the issue
-              with this property listing.
+              What's wrong with this listing?
             </p>
-
-
-            <textarea
-
-              value={reportReason}
-
-              onChange={(e) =>
-                setReportReason(
-                  e.target.value
-                )
-              }
-
-              placeholder="Explain the issue with this property..."
-
-              style={{
-
-                minHeight:140,
-
-                borderRadius:16,
-
-                border:
-                  "1px solid #e2e8f0",
-
-                padding:16,
-
-                resize:"none",
-
-                outline:"none",
-
-                fontFamily:"inherit",
-
-                fontSize:14,
-
-                lineHeight:1.6,
-
-                background:"#f8fafc"
-
-              }}
-            />
-
 
             <div
               style={{
-                display:"flex",
-                gap:10
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 8,
               }}
             >
+              {reportReasons.map((reason) => (
+                <button
+                  key={reason}
+                  onClick={() => setReportReason(reason)}
+                  style={{
+                    padding: "8px 12px",
+                    minHeight: 34,
+                    fontWeight: 600,
+                    fontSize: ".82rem",
+                    borderRadius: 9999,
 
-              {/* CANCEL */}
-              <button
+                    cursor: "pointer",
 
-                onClick={() =>
-                  setShowReport(false)
-                }
+                    whiteSpace: "nowrap",
 
+                    border:
+                      reportReason === reason
+                        ? "2px solid #dc2626"
+                        : "1px solid #e2e8f0",
+
+                    background: reportReason === reason ? "#fef2f2" : "#fff",
+
+                    color: reportReason === reason ? "#dc2626" : "#475569",
+
+                    transition: "all .2s ease",
+                  }}
+                >
+                  {reason}
+                </button>
+              ))}
+            </div>
+
+            {reportReason === "Other" && (
+              <textarea
+                value={reportComment}
+                onChange={(e) => setReportComment(e.target.value)}
+                placeholder="Describe the issue..."
                 style={{
-
-                  flex:1,
-
-                  height:48,
-
-                  borderRadius:12,
-
-                  border:"1px solid #e5e7eb",
-
-                  background:"#fff",
-
-                  cursor:"pointer",
-
-                  fontWeight:700
-
+                  minHeight: 90,
+                  borderRadius: 12,
+                  border: "1px solid #e2e8f0",
+                  padding: 14,
+                  resize: "none",
+                  fontSize: ".9rem",
                 }}
+              />
+            )}
 
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                marginTop: 8,
+              }}
+            >
+              <button
+                onClick={() => setShowReport(false)}
+                style={{
+                  flex: 1,
+                  height: 40,
+                  borderRadius: 12,
+                  border: "1px solid #e2e8f0",
+                  background: "#fff",
+                  fontWeight: 700,
+                  fontSize: ".85rem",
+                }}
               >
                 Cancel
               </button>
 
-
-              {/* SUBMIT */}
               <button
-
-                onClick={
-                  handleReport
-                }
-
+                onClick={handleReport}
                 disabled={reporting}
-
                 style={{
-
-                  flex:1,
-
-                  height:48,
-
-                  border:"none",
-
-                  borderRadius:12,
-
-                  background:"#dc2626",
-
-                  color:"#fff",
-
-                  cursor:"pointer",
-
-                  fontWeight:700,
-
-                  opacity:
-
-                    reporting
-
-                      ? .7
-
-                      : 1
-
+                  flex: 1,
+                  height: 40,
+                  border: "none",
+                  borderRadius: 12,
+                  background: "#dc2626",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: ".85rem",
                 }}
-
               >
-                {
-
-                  reporting
-
-                    ? "Submitting..."
-
-                    : "Submit Report"
-
-                }
+                {reporting ? "Submitting..." : "Submit"}
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       )}
       {/* SUCCESS MODAL */}
-{showSuccess && (
+      {showSuccess && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,.55)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10000,
+            backdropFilter: "blur(6px)",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "420px",
+              background: "#ffffff",
+              borderRadius: "28px",
+              padding: "32px",
+              textAlign: "center",
+              boxShadow: "0 30px 80px rgba(15,23,42,.25)",
+              animation: "successPop .35s ease-out",
+            }}
+          >
+            <div
+              style={{
+                width: "90px",
+                height: "90px",
+                margin: "0 auto 18px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg,#22c55e,#16a34a)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: "42px",
+                fontWeight: 800,
+              }}
+            >
+              ✓
+            </div>
 
-  <div
-    style={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(15,23,42,.55)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 10000,
-      backdropFilter: "blur(6px)",
-    }}
-  >
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "24px",
+                fontWeight: 800,
+                color: "#111827",
+              }}
+            >
+              Report Submitted
+            </h2>
 
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "420px",
-        background: "#ffffff",
-        borderRadius: "28px",
-        padding: "32px",
-        textAlign: "center",
-        boxShadow:
-          "0 30px 80px rgba(15,23,42,.25)",
-        animation:
-          "successPop .35s ease-out",
-      }}
-    >
+            <p
+              style={{
+                marginTop: "12px",
+                color: "#6b7280",
+                lineHeight: 1.7,
+                fontSize: "14px",
+              }}
+            >
+              Thank you for helping improve MahaProperties.
+              <br />
+              Our moderation team will review this property shortly.
+            </p>
 
-      <div
-        style={{
-          width: "90px",
-          height: "90px",
-          margin: "0 auto 18px",
-          borderRadius: "50%",
-          background:
-            "linear-gradient(135deg,#22c55e,#16a34a)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#fff",
-          fontSize: "42px",
-          fontWeight: 800,
-        }}
-      >
-        ✓
-      </div>
-
-      <h2
-        style={{
-          margin: 0,
-          fontSize: "24px",
-          fontWeight: 800,
-          color: "#111827",
-        }}
-      >
-        Report Submitted
-      </h2>
-
-      <p
-        style={{
-          marginTop: "12px",
-          color: "#6b7280",
-          lineHeight: 1.7,
-          fontSize: "14px",
-        }}
-      >
-        Thank you for helping improve
-        MahaProperties.
-        <br />
-        Our moderation team will review
-        this property shortly.
-      </p>
-
-      <button
-        onClick={() =>
-          setShowSuccess(false)
+            <button
+              onClick={() => setShowSuccess(false)}
+              style={{
+                marginTop: "22px",
+                height: "48px",
+                padding: "0 24px",
+                border: "none",
+                borderRadius: "14px",
+                background: "#16a34a",
+                color: "#fff",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+      {/* ANIMATION */}
+      <style jsx global>{`
+        @keyframes successPop {
+          from {
+            opacity: 0;
+            transform: scale(0.85) translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
         }
-        style={{
-          marginTop: "22px",
-          height: "48px",
-          padding: "0 24px",
-          border: "none",
-          borderRadius: "14px",
-          background: "#16a34a",
-          color: "#fff",
-          fontWeight: 700,
-          cursor: "pointer",
-        }}
-      >
-        Done
-      </button>
+        @keyframes reportSlide {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
 
-    </div>
-
-  </div>
-
-)}
-  {/* ANIMATION */}
-    <style jsx global>{`
-      @keyframes successPop {
-        from {
-          opacity: 0;
-          transform: scale(.85) translateY(20px);
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
-        to {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
-      }
-    `}</style>
-
-
+      `}</style>
     </>
-
   );
-
 }
 
-
-
-
 function ActionBtn({
-
   label,
 
   onClick,
 
-  danger
-
-}:any){
-
+  danger,
+}: any) {
   return (
-
     <button
-
-      onClick={
-        onClick
-      }
-
+      onClick={onClick}
       style={{
+        padding: "10px 16px",
 
-        padding:
-          "10px 16px",
+        border: "none",
 
-        border:"none",
+        borderRadius: 12,
 
-        borderRadius:
-          12,
+        cursor: "pointer",
 
-        cursor:
-          "pointer",
+        background: danger ? "#fef2f2" : "#f8fafc",
 
-        background:
+        color: danger ? "#dc2626" : "#334155",
 
-          danger
+        fontWeight: 700,
 
-            ? "#fef2f2"
+        fontSize: ".9rem",
 
-            : "#f8fafc",
-
-        color:
-
-          danger
-
-            ? "#dc2626"
-
-            : "#334155",
-
-        fontWeight:
-          700,
-
-        fontSize:
-          ".9rem",
-
-        boxShadow:
-          "0 2px 8px rgba(0,0,0,.05)"
-
+        boxShadow: "0 2px 8px rgba(0,0,0,.05)",
       }}
-
     >
       {label}
     </button>
-
   );
-
 }
-
-
 
 /* COMMON STYLES */
 
-const overlayStyle:
-React.CSSProperties = {
+const overlayStyle: React.CSSProperties = {
+  position: "fixed",
 
-  position:"fixed",
+  inset: 0,
 
-  inset:0,
+  background: "rgba(0,0,0,.45)",
 
-  background:
-    "rgba(0,0,0,.45)",
+  display: "flex",
 
-  display:"flex",
+  alignItems: "center",
 
-  alignItems:"center",
+  justifyContent: "center",
 
-  justifyContent:"center",
-
-  zIndex:9999,
-
+  zIndex: 9999,
 };
 
+const modalStyle: React.CSSProperties = {
+  width: "100%",
 
-const modalStyle:
-React.CSSProperties = {
+  maxWidth: 420,
 
-  width:"100%",
+  background: "#fff",
 
-  maxWidth:420,
+  borderRadius: 24,
 
-  background:"#fff",
+  padding: 24,
 
-  borderRadius:24,
+  display: "flex",
 
-  padding:24,
+  flexDirection: "column",
 
-  display:"flex",
+  gap: 14,
 
-  flexDirection:"column",
-
-  gap:14,
-
-  boxShadow:
-    "0 20px 50px rgba(0,0,0,.18)"
-
+  boxShadow: "0 20px 50px rgba(0,0,0,.18)",
 };
 
+const reportSheetStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: 520, // instead of 600
 
-const shareBtn:
-React.CSSProperties = {
+  background: "#fff",
 
-  height:48,
+  borderRadius: 24,
 
-  borderRadius:12,
+  padding: "14px 20px 20px",
 
-  border:
-    "1px solid #e5e7eb",
+  display: "flex",
+  flexDirection: "column",
 
-  display:"flex",
+  gap: 10,
 
-  alignItems:"center",
-
-  justifyContent:"center",
-
-  textDecoration:"none",
-
-  color:"#111827",
-
-  fontWeight:700,
-
-  cursor:"pointer",
-
-  background:"#fff",
-
+  boxShadow: "0 20px 60px rgba(0,0,0,.18)",
 };
 
+const shareBtn: React.CSSProperties = {
+  height: 48,
 
-const closeBtn:
-React.CSSProperties = {
+  borderRadius: 12,
 
-  marginTop:10,
+  border: "1px solid #e5e7eb",
 
-  height:44,
+  display: "flex",
 
-  border:"none",
+  alignItems: "center",
 
-  borderRadius:12,
+  justifyContent: "center",
 
-  background:"#111827",
+  textDecoration: "none",
 
-  color:"#fff",
+  color: "#111827",
 
-  fontWeight:700,
+  fontWeight: 700,
 
-  cursor:"pointer",
+  cursor: "pointer",
 
+  background: "#fff",
+};
+
+const closeBtn: React.CSSProperties = {
+  marginTop: 10,
+
+  height: 44,
+
+  border: "none",
+
+  borderRadius: 12,
+
+  background: "#111827",
+
+  color: "#fff",
+
+  fontWeight: 700,
+
+  cursor: "pointer",
 };
