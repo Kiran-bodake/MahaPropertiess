@@ -36,15 +36,36 @@ export default function AnalyticsPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
-  const [stats, setStats] = useState({
-    totalProperties: 0,
-    totalLeads: 0,
-    totalRevenue: 0,
-    conversionRate: 0,
-  });
+ const [stats, setStats] = useState({
+  totalProperties: 0,
+  totalLeads: 0,
+  totalRevenue: 0,
+  conversionRate: 0,
+
+  currentPeriod: {
+    properties: 0,
+    inquiries: 0,
+    deals: 0,
+  },
+
+  previousPeriod: {
+    properties: 0,
+    inquiries: 0,
+    deals: 0,
+  },
+});
 
   const [chartData, setChartData] = useState<any[]>([]);
   const [propertyTypeData, setPropertyTypeData] = useState<any[]>([]);
+  const calcGrowth = (current: number, previous: number) => {
+  if (previous === 0) {
+    return current === 0 ? 0 : 100;
+  }
+  return ((current - previous) / previous) * 100;
+};
+
+const formatGrowth = (value: number) =>
+  `${value >= 0 ? "+" : ""}${value.toFixed(0)}%`;
 
   const connectSSE = () => {
     if (eventSource) {
@@ -64,6 +85,16 @@ export default function AnalyticsPage() {
           totalLeads: data.inquiriesCount ?? 0,
           totalRevenue: data.totalRevenue ?? 0,
           conversionRate: data.conversionRate ?? 0,
+          currentPeriod: {
+            properties: data.currentPeriod?.properties ?? 0,
+            inquiries: data.currentPeriod?.inquiries ?? 0,
+            deals: data.currentPeriod?.deals ?? 0,
+          },
+          previousPeriod: {
+            properties: data.previousPeriod?.properties ?? 0,
+            inquiries: data.previousPeriod?.inquiries ?? 0,
+            deals: data.previousPeriod?.deals ?? 0,
+          },
         });
 
         if (data.chartData && Array.isArray(data.chartData)) {
@@ -102,39 +133,49 @@ export default function AnalyticsPage() {
   }, []);
 
   const cards = [
-    {
-      title: "Properties",
-      value: stats.totalProperties,
-      icon: Building2,
-      bg: "#eff6ff",
-      color: "#2563eb",
-      growth: "+15%",
-    },
-    {
-      title: "Leads",
-      value: stats.totalLeads,
-      icon: Users,
-      bg: "#f0fdf4",
-      color: "#16a34a",
-      growth: "+18%",
-    },
-    {
-      title: "Revenue",
-      value: `₹${stats.totalRevenue.toLocaleString()}`,
-      icon: IndianRupee,
-      bg: "#fff7ed",
-      color: "#ea580c",
-      growth: "+22%",
-    },
-    {
-      title: "Conversion",
-      value: `${stats.conversionRate}%`,
-      icon: TrendingUp,
-      bg: "#faf5ff",
-      color: "#9333ea",
-      growth: "+9%",
-    },
-  ];
+     {
+    title: "Properties",
+    value: stats.totalProperties,
+    icon: Building2,
+    bg: "#eff6ff",
+    color: "#2563eb",
+    growth: formatGrowth(
+      calcGrowth(
+        stats.currentPeriod.properties,
+        stats.previousPeriod.properties
+      )
+    ),
+  },
+   {
+    title: "Leads",
+    value: stats.totalLeads,
+    icon: Users,
+    bg: "#f0fdf4",
+    color: "#16a34a",
+    growth: formatGrowth(
+      calcGrowth(
+        stats.currentPeriod.inquiries,
+        stats.previousPeriod.inquiries
+      )
+    ),
+  },
+  //   {
+  //     title: "Revenue",
+  //     value: `₹${stats.totalRevenue.toLocaleString()}`,
+  //     icon: IndianRupee,
+  //     bg: "#fff7ed",
+  //     color: "#ea580c",
+  //     growth: "+22%",
+  //   },
+  //   {
+  //     title: "Conversion",
+  //     value: `${stats.conversionRate}%`,
+  //     icon: TrendingUp,
+  //     bg: "#faf5ff",
+  //     color: "#9333ea",
+  //     growth: "+9%",
+  //   },
+   ];
 
   if (loading && chartData.length === 0) {
     return (
