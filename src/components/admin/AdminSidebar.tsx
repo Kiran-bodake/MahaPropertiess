@@ -93,8 +93,8 @@ export function AdminSidebar() {
           flexDirection: "column",
           alignItems: "center",
           textAlign: "center",
-          paddingBottom: collapsed ? "16px" : "24px",
-          marginBottom: collapsed ? "16px" : "24px",
+          paddingBottom: collapsed ? "10px" : "14px",
+          marginBottom: collapsed ? "10px" : "14px",
           borderBottom: "1px solid #dcfce7",
           transition: "all 0.3s ease",
         }}
@@ -107,34 +107,34 @@ export function AdminSidebar() {
           }}
         >
           <Image
-            src="/maha.png"
-            alt="Maha"
-            width={collapsed ? 48 : 100}
-            height={collapsed ? 48 : 100}
-            style={{
-              objectFit: "contain",
-              borderRadius: collapsed ? "12px" : "24px",
-              background: "#ffffff",
-              padding: collapsed ? "8px" : "12px",
-              border: "1px solid #dcfce7",
-              boxShadow: "0 10px 25px rgba(34,197,94,.08)",
-              transition: "all 0.3s ease",
-            }}
-          />
+  src="/maha.png"
+  alt="Maha"
+  width={collapsed ? 60 : 120}
+  height={collapsed ? 60 : 120}
+  style={{
+    objectFit: "contain",
+    borderRadius: collapsed ? "14px" : "26px",
+    background: "#ffffff",
+    padding: collapsed ? "6px" : "14px",
+    border: "1px solid #dcfce7",
+    boxShadow: "0 10px 25px rgba(34,197,94,.08)",
+    transition: "all 0.3s ease",
+  }}
+/>
         </div>
 
         {/* Brand - Hidden when collapsed */}
         {!collapsed && (
           <>
-            <div
-              style={{
-                marginTop: "16px",
-                fontSize: "24px",
-                fontWeight: 800,
-                color: "#14532d",
-                letterSpacing: "-0.03em",
-              }}
-            >
+           <div
+  style={{
+    marginTop: "14px",
+    fontSize: "18px",   // ↓ smaller
+    fontWeight: 700,
+    color: "#14532d",
+    letterSpacing: "-0.02em",
+  }}
+>
               MahaProperties
             </div>
             <div

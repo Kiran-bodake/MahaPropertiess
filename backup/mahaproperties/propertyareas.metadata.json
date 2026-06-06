@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"propertyId":{"$numberInt":"1"}},"name":"propertyId_1"}],"uuid":"a3f5802ab348466883b3d81fd966a2d6","collectionName":"propertyareas","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"propertyId":{"$numberInt":"1"}},"name":"propertyId_1"}],"uuid":"b43377032c564d209b3814423316832d","collectionName":"propertyareas","type":"collection"}

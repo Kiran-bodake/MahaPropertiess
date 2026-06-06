@@ -178,6 +178,35 @@ export default function PropertyInquiriesPage() {
       setDrawerSaving(false);
     }
   };
+  const convertToDeal = async (
+  inquiryId: string
+) => {
+  try {
+    const res = await fetch(
+      "/api/admin/deals/convert",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inquiryId,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Deal created successfully");
+    } else {
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Failed to create deal");
+  }
+};
 
   const getCustomerName = (lead: Inquiry) => lead.customerName || lead.name || "-";
   const getPhone = (lead: Inquiry) => lead.phone || lead.mobileNumber || "-";
@@ -388,11 +417,39 @@ export default function PropertyInquiriesPage() {
                         })}
                       </div>
                     </td>
-                    <td style={tdStyle}>
-                      <button onClick={() => openLead(inquiry)} style={viewButtonStyle}>
-                        👁️ View Details
-                      </button>
-                    </td>
+                   <td style={tdStyle}>
+  <div
+    style={{
+      display: "flex",
+      gap: "8px",
+      flexWrap: "wrap",
+    }}
+  >
+    <button
+      onClick={() => openLead(inquiry)}
+      style={viewButtonStyle}
+    >
+      👁️ View
+    </button>
+
+    <button
+      onClick={() =>
+        convertToDeal(inquiry._id)
+      }
+      style={{
+        padding: "8px 12px",
+        border: "none",
+        borderRadius: "8px",
+        background: "#16a34a",
+        color: "#fff",
+        cursor: "pointer",
+        fontWeight: 600,
+      }}
+    >
+      💼 Convert
+    </button>
+  </div>
+</td>
                   </tr>
                 );
               })}

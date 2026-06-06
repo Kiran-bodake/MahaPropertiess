@@ -29,32 +29,37 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+
   return (
     <html lang="en" className={dmSans.variable}>
       <body style={{ fontFamily: "var(--font-dm, 'DM Sans', sans-serif)" }}>
 
-        {/* Google Analytics */}
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${
-            process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ?? "G-XXXXXXX"
-          }`}
-        ></script>
+        {/* Google Analytics (Production Safe) */}
+        {GA_ID && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            />
 
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${
-                process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ?? "G-XXXXXXX"
-              }', { page_path: window.location.pathname });
-            `,
-          }}
-        />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
 
-        {/* ✅ FOLLOW-UP SYSTEM INIT + CLIENT HOOKS */}
+                  gtag('config', '${GA_ID}', {
+                    page_path: window.location.pathname,
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
+
+        {/* App Providers */}
         <Providers>
           <ScrollReveal />
           <LocationProvider>
