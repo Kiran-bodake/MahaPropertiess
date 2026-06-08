@@ -1,7 +1,6 @@
+// src/app/api/properties/route.ts
 import { NextResponse } from "next/server";
-
 import { connectDB } from "@/lib/mongodb";
-
 import Property from "@/models/Property";
 import PropertyLocation from "@/models/PropertyLocation";
 import PropertyPricing from "@/models/PropertyPricing";
@@ -14,7 +13,6 @@ export async function GET(req: Request) {
     await connectDB();
 
     const { searchParams } = new URL(req.url);
-
     const category = searchParams.get("category");
 
     let properties = await Property.find({
@@ -58,32 +56,25 @@ export async function GET(req: Request) {
 
         return {
           id: property._id,
-
+          _id: property._id,
           slug: property.slug || property.propertyId,
-
           title: property.title,
-
           locality: location?.locality || "",
-
           city: location?.city || "",
-
           category: property.category,
-
           price: `₹${Number(pricing?.price || 0).toLocaleString()}`,
-
           area: `${area?.area || 0} ${area?.areaUnit || "sqft"}`,
-
           badge: flags?.isFeatured ? "Featured" : null,
-
           rera: flags?.isRERA || false,
-
           img: validImages[0] || "/maha.png",
-
           images: validImages.length > 0 ? validImages : ["/maha.png"],
-
           views: property.views || 100,
-
           createdAt: property.createdAt,
+          
+          // ✅ AGENT / POSTER INFORMATION
+          agentName: property.agentName || "Property Expert",
+          agentPhone: property.agentPhone || "Not Available",
+          postedBy: property.postedBy || "Agency",
         };
       }),
     );
@@ -91,7 +82,6 @@ export async function GET(req: Request) {
     return NextResponse.json(finalData);
   } catch (error: any) {
     console.error("Properties API Error:", error);
-
     return NextResponse.json(
       {
         error: error.message,

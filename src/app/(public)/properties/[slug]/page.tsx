@@ -2,8 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import ContactButton from "@/components/property/ContactButton"; 
+
 
 import { Navbar } from "@/components/layout/navbar/Navbar";
+
 import { Footer } from "@/components/layout/footer";
 import ViewTracker from "@/components/property/ViewTracker";
 import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
@@ -770,6 +773,13 @@ export default async function PropertyDetailPage({
                       description="Talk with owner today"
                     />
                   </div>
+                  <ContactButton
+  propertyId={property.id}
+  propertyName={property.title}
+  agentName={property.agentName}
+  agentPhone={property.agentPhone}
+  postedBy={property.postedBy}
+/>
                 </div>
               </div>
             </aside>

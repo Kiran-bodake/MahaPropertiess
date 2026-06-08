@@ -41,6 +41,11 @@ type Property = {
   rera?: boolean;
   badge?: string | null;
   createdAt?: string | number | Date;
+  
+  // ✅ ADD THESE THREE FIELDS
+  agentName?: string;
+  agentPhone?: string;
+  postedBy?: string;
 };
 
 type SortKey = "newest" | "price_asc" | "price_desc" | "popular";
@@ -184,10 +189,13 @@ function PropertiesContent() {
   const [ripple, setRipple] = useState<{ x: number; y: number } | null>(null);
 
   // ✅ SELECTED PROPERTY FOR CONTACT POPUP
-  const [selectedProperty, setSelectedProperty] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
+const [selectedProperty, setSelectedProperty] = useState<{
+  id: string;
+  name: string;
+  agentName?: string;
+  agentPhone?: string;
+  postedBy?: string;
+} | null>(null);
 
   // Favorites state
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -591,15 +599,18 @@ function PropertiesContent() {
       <MegaNavbar />
 
       {/* ✅ PASS REAL propertyId & propertyName TO POPUP */}
-      <ContactPopup
-        open={showPopup}
-        onClose={() => {
-          setShowPopup(false);
-          setSelectedProperty(null);
-        }}
-        propertyId={selectedProperty?.id}
-        propertyName={selectedProperty?.name}
-      />
+     <ContactPopup
+  open={showPopup}
+  onClose={() => {
+    setShowPopup(false);
+    setSelectedProperty(null);
+  }}
+  propertyId={selectedProperty?.id}
+  propertyName={selectedProperty?.name}
+  agentName={selectedProperty?.agentName}      // ← ADD THIS
+  agentPhone={selectedProperty?.agentPhone}    // ← ADD THIS
+  postedBy={selectedProperty?.postedBy}        // ← ADD THIS
+/>
 
       <main className="page">
         <div className="container">
@@ -1028,10 +1039,13 @@ function PropertiesContent() {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                setSelectedProperty({
-                                  id: String(p.id || p._id || p.slug),
-                                  name: p.title || p.t || "Property",
-                                });
+                              setSelectedProperty({
+  id: String(p.id || p._id || p.slug),
+  name: p.title || p.t || "Property",
+  agentName: p.agentName || "Property Expert",
+  agentPhone: p.agentPhone || "Not Available",
+  postedBy: p.postedBy || "Agency",
+});
                                 setShowPopup(true);
                               }}
                               className="secondaryBtn"
