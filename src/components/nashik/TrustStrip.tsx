@@ -57,7 +57,7 @@ hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]
               >
                 <Icon className="h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 text-green-600 transition-transform duration-300 group-hover:scale-110" />
 
-                <h3 className="mt-3 md:mt-4 text-2xl md:text-3xl lg:text-4xl font-black tracking-[-0.03em] text-gray-900">
+                <h3 className="mt-3 md:mt-4 text-xl md:text-2xl lg:text-3xl font-black tracking-[-0.03em] text-gray-900">
                   {item.title}
                 </h3>
 

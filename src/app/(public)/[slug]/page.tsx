@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PropertyGrid } from "@/components/property/property-grid";
 import { Footer } from "@/components/layout/footer";
-import { parseSeoSlug, SEO_CATEGORY_MAP } from "@/lib/seoPages";
+import { parseSeoSlug } from "@/lib/seoPages";
 import { getSeoProperties } from "@/lib/getSeoProperties";
 
 export async function generateMetadata({
@@ -51,7 +51,7 @@ export default async function CategoryPage({
     notFound();
   }
 
-  const category = SEO_CATEGORY_MAP[seo.categorySlug];
+  const category = seo.categorySlug.replace(/-/g, " ");
 
   if (!category) {
     notFound();

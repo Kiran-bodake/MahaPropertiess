@@ -46,7 +46,7 @@ export default function InvestmentConsultationForm() {
           >
             <p
               style={{
-                fontSize: "12px",
+                fontSize: "14px",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.4em",
@@ -67,15 +67,13 @@ export default function InvestmentConsultationForm() {
                 color: "#ffffff",
               }}
             >
-              Talk To Nashik
-              <br />
-              Investment Experts
+              Talk To Nashik Investment Experts
             </h2>
 
             <p
               style={{
                 marginTop: "32px",
-                fontSize: "18px",
+                fontSize: "17px",
                 lineHeight: 1.9,
                 color: "#d1d5db",
                 maxWidth: "540px",
@@ -283,7 +281,7 @@ export default function InvestmentConsultationForm() {
                 borderRadius: "18px",
                 border: "none",
                 background: "#05a336",
-                color: "#000000",
+                color: "#ffffff",
                 fontSize: "16px",
                 fontWeight: 700,
                 cursor: "pointer",
@@ -319,7 +317,7 @@ export default function InvestmentConsultationForm() {
         }
 
         .consultationTitle {
-          font-size: 64px;
+          font-size: 56px;
         }
 
         .consultationSection {

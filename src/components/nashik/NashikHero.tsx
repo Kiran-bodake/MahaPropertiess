@@ -89,7 +89,7 @@ export default function NashikHero() {
           <p
             style={{
               maxWidth: "720px",
-              fontSize: "21px",
+              fontSize: "19px",
               lineHeight: 1.9,
               color: "rgba(255,255,255,0.9)",
               textShadow: "0 6px 18px rgba(0,0,0,0.35)",
@@ -129,119 +129,32 @@ export default function NashikHero() {
               Explore Properties
             </Link>
 
-            <button
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "18px",
-                border: "1px solid rgba(255,255,255,0.3)",
-                background: "rgba(255,255,255,0.12)",
-                padding: "18px 34px",
-                fontWeight: 700,
-                color: "#ffffff",
-                backdropFilter: "blur(18px)",
-                cursor: "pointer",
-                transition: "all .3s ease",
-              }}
-            >
-              Get Free Consultation
-            </button>
+            <Link href="/contact">
+              <button
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "18px",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  background: "rgba(255,255,255,0.12)",
+                  padding: "18px 34px",
+                  fontWeight: 700,
+                  color: "#ffffff",
+                  backdropFilter: "blur(18px)",
+                  cursor: "pointer",
+                  transition: "all .3s ease",
+                }}
+              >
+                Get Free Consultation
+              </button>
+            </Link>
           </div>
-
-          {/* STATS CARDS
-          <div
-            style={{
-              marginTop: "70px",
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit,minmax(220px,1fr))",
-              gap: "20px",
-            }}
-          >
-            {[
-              {
-                icon: Building2,
-                text: "2500+ Verified Properties",
-              },
-
-              {
-                icon: MapPinned,
-                text: "40+ Investment Localities",
-              },
-
-              {
-                icon: Factory,
-                text: "Industrial Expansion Hub",
-              },
-
-              {
-                icon: TrendingUp,
-                text: "High Appreciation Corridors",
-              },
-            ].map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.text}
-                  style={{
-                    borderRadius: "20px",
-                    border:
-                      "1px solid rgba(255,255,255,0.15)",
-                    background:
-                      "rgba(255,255,255,0.1)",
-                    padding: "24px",
-                    backdropFilter:
-                      "blur(18px)",
-                    boxShadow:
-                      "0 20px 60px rgba(0,0,0,0.18)",
-                    transition:
-                      "all .3s ease",
-                  }}
-                >
-                  <div
-                    style={{
-                      marginBottom: "18px",
-                      display: "flex",
-                      height: "52px",
-                      width: "52px",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "18px",
-                      background:
-                        "rgba(255,255,255,0.12)",
-                    }}
-                  >
-                    <Icon
-                      style={{
-                        width: "26px",
-                        height: "26px",
-                        color: "#86efac",
-                      }}
-                    />
-                  </div>
-
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: "15px",
-                      fontWeight: 700,
-                      lineHeight: 1.7,
-                      color: "#ffffff",
-                    }}
-                  >
-                    {item.text}
-                  </p>
-                </div>
-              );
-            })}
-          </div> */}
         </div>
       </div>
       <style jsx>{`
         .heroTitle {
-          font-size: 64px;
+          font-size: 56px;
         }
 
         @media (max-width: 1024px) {

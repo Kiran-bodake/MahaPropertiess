@@ -55,9 +55,7 @@ export default function FinalInvestmentCTA() {
               }}
             >
               <h2 className="ctaTitle">
-                Nashik's Next Growth Phase
-                <br />
-                Has Already Started
+                Nashik's Next Growth Phase Has Already Started
               </h2>
 
               <p
@@ -97,8 +95,8 @@ export default function FinalInvestmentCTA() {
                   background: "#05a336",
                   padding: "0 40px",
                   fontSize: "16px",
-                  fontWeight: 700,
-                  color: "#000000",
+                  fontWeight: 600,
+                  color: "#ffffff",
                   textDecoration: "none",
                   transition: "all .3s ease",
                   boxShadow: "0 15px 40px rgba(5,163,54,0.35)",
@@ -137,7 +135,7 @@ export default function FinalInvestmentCTA() {
       <style jsx>{`
         .ctaTitle {
           max-width: 820px;
-          font-size: 64px;
+          font-size: 56px;
           font-weight: 900;
           line-height: 1.08;
           letter-spacing: -0.03em;

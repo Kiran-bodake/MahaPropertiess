@@ -23,6 +23,13 @@ const items = [
     description:
       "Upcoming smart city initiatives, road widening, and ring road connectivity are transforming Nashik into a future-ready urban investment destination.",
   },
+
+  {
+    title: "Emerging IT & Data Center Ecosystem",
+    image: "/nashik/data-center.jpg",
+    description:
+      "Growing IT infrastructure, technology parks, and data center investments are creating new employment opportunities and strengthening long-term real estate demand.",
+  },
 ];
 
 export default function InfrastructureSection() {
@@ -136,11 +143,11 @@ export default function InfrastructureSection() {
         }
 
         .infraTitle {
-          font-size: 62px;
+          font-size: 50px;
         }
 
         .infraDescription {
-          font-size: 22px;
+          font-size: 17px;
           line-height: 1.9;
         }
 

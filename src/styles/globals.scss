@@ -430,63 +430,6 @@ img[data-loading] {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SWIPER PREMIUM UI
-═══════════════════════════════════════════════════════ */
-
-.premium-swiper {
-  overflow: visible !important;
-}
-
-.swiper-pagination {
-  position: relative !important;
-  margin-top: 40px;
-}
-
-.swiper-pagination-bullet {
-  width: 10px !important;
-  height: 10px !important;
-  background: #16a34a !important;
-  opacity: 0.25 !important;
-  transition: all 0.25s ease;
-}
-
-.swiper-pagination-bullet-active {
-  width: 30px !important;
-  border-radius: 999px !important;
-  opacity: 1 !important;
-}
-
-.swiper-button-prev,
-.swiper-button-next {
-  width: 52px !important;
-  height: 52px !important;
-
-  border-radius: 999px !important;
-
-  background: rgba(255, 255, 255, 0.9);
-
-  backdrop-filter: blur(12px);
-
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-
-  color: #16a34a !important;
-
-  transition: all 0.25s ease;
-}
-
-.swiper-button-prev:hover,
-.swiper-button-next:hover {
-  transform: translateY(-2px);
-  background: white;
-}
-
-.swiper-button-prev::after,
-.swiper-button-next::after {
-  font-size: 18px !important;
-  font-weight: 900;
-}
-
-/* ═══════════════════════════════════════════════════════
    PREMIUM GLASS EFFECTS
 ═══════════════════════════════════════════════════════ */
 

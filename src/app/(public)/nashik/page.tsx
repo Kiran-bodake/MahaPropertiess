@@ -3,6 +3,7 @@ import TrustStrip from "@/components/nashik/TrustStrip";
 import WhyInvestSlider from "@/components/nashik/WhyInvestSlider";
 import InfrastructureSection from "@/components/nashik/InfrastructureSection";
 import HotLocalities from "@/components/nashik/HotLocalities";
+import { getFeaturedProperties } from "@/lib/getFeaturedProperties";
 import InvestmentConsultationForm from "@/components/nashik/InvestmentConsultationForm";
 import FAQSection from "@/components/nashik/FAQSection";
 import FinalInvestmentCTA from "@/components/nashik/FinalInvestmentCTA";
@@ -14,6 +15,8 @@ export const metadata = {
   description:
     "Discover Nashik investment opportunities driven by industrial growth, wine tourism, education hubs, bullet train connectivity, and infrastructure expansion.",
 };
+
+const featuredProperties = await getFeaturedProperties(12);
 
 export default function NashikPage() {
   return (
@@ -56,11 +59,11 @@ export default function NashikPage() {
               paddingRight: "18px",
             }}
           >
-            <div style={{ marginBottom: "34px" }}>
+            <div style={{ marginBottom: "34px", paddingLeft: "18px" }}>
               <p
                 style={{
                   color: "#16a34a",
-                  fontSize: "12px",
+                  fontSize: "14px",
                   fontWeight: 700,
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
@@ -74,7 +77,8 @@ export default function NashikPage() {
 
               <h1
                 style={{
-                  fontSize: "clamp(34px,5vw,58px)",
+                  fontSize: "clamp(34px, 3vw, 56px)",
+                  whiteSpace: "nowrap",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",
@@ -132,11 +136,11 @@ export default function NashikPage() {
               paddingRight: "18px",
             }}
           >
-            <div style={{ marginBottom: "34px" }}>
+            <div style={{ marginBottom: "34px", paddingLeft: "18px" }}>
               <p
                 style={{
                   color: "#16a34a",
-                  fontSize: "12px",
+                  fontSize: "14px",
                   fontWeight: 700,
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
@@ -150,7 +154,8 @@ export default function NashikPage() {
 
               <h1
                 style={{
-                  fontSize: "clamp(34px,5vw,58px)",
+                  fontSize: "clamp(34px,3vw,56px)",
+                  whiteSpace: "nowrap",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",
@@ -208,11 +213,11 @@ export default function NashikPage() {
               paddingRight: "18px",
             }}
           >
-            <div style={{ marginBottom: "34px" }}>
+            <div style={{ marginBottom: "34px", paddingLeft: "18px" }}>
               <p
                 style={{
                   color: "#16a34a",
-                  fontSize: "12px",
+                  fontSize: "14px",
                   fontWeight: 700,
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
@@ -226,12 +231,13 @@ export default function NashikPage() {
 
               <h1
                 style={{
-                  fontSize: "clamp(34px,5vw,58px)",
+                  fontSize: "clamp(34px,3vw,56px)",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",
                   color: "#0f172a",
-                  maxWidth: "850px",
+                  maxWidth: "1000px",
+                  whiteSpace: "nowrap",
                   margin: 0,
                   textAlign: "left",
                 }}
@@ -264,7 +270,7 @@ export default function NashikPage() {
                 boxShadow: "0 15px 45px rgba(15,23,42,0.06)",
               }}
             >
-              <HotLocalities />
+              <HotLocalities properties={featuredProperties} />
             </div>
           </div>
         </section>
@@ -312,11 +318,11 @@ export default function NashikPage() {
               paddingRight: "18px",
             }}
           >
-            <div style={{ marginBottom: "34px" }}>
+            <div style={{ marginBottom: "34px", paddingLeft: "18px" }}>
               <p
                 style={{
                   color: "#16a34a",
-                  fontSize: "12px",
+                  fontSize: "14px",
                   fontWeight: 700,
                   letterSpacing: "0.24em",
                   textTransform: "uppercase",
@@ -330,7 +336,8 @@ export default function NashikPage() {
 
               <h1
                 style={{
-                  fontSize: "clamp(34px,5vw,58px)",
+                  fontSize: "clamp(34px,3vw,56px)",
+                  whiteSpace: "nowrap",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",

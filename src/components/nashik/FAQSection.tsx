@@ -40,7 +40,7 @@ export default function FAQSection() {
         }}
       >
         {/* HEADER */}
-        <div
+        {/* <div
           style={{
             marginBottom: "80px",
             textAlign: "center",
@@ -72,7 +72,7 @@ export default function FAQSection() {
           >
             Frequently Asked Questions
           </h2>
-        </div>
+        </div> */}
 
         {/* FAQ LIST */}
         <div
@@ -99,9 +99,7 @@ export default function FAQSection() {
               >
                 {/* QUESTION */}
                 <button
-                  onClick={() =>
-                    setOpenIndex(isOpen ? null : index)
-                  }
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
                   style={{
                     display: "flex",
                     width: "100%",
@@ -116,12 +114,10 @@ export default function FAQSection() {
                     transition: "all .3s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      "#f9fafb";
+                    e.currentTarget.style.background = "#f9fafb";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background =
-                      "transparent";
+                    e.currentTarget.style.background = "transparent";
                   }}
                 >
                   <h3
@@ -147,9 +143,7 @@ export default function FAQSection() {
                       borderRadius: "999px",
                       background: "#ecfdf5",
                       transition: "all .3s ease",
-                      transform: isOpen
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
+                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                     }}
                   >
                     <ChevronDown
@@ -168,8 +162,7 @@ export default function FAQSection() {
                     maxHeight: isOpen ? "300px" : "0px",
                     opacity: isOpen ? 1 : 0,
                     overflow: "hidden",
-                    transition:
-                      "all .35s ease-in-out",
+                    transition: "all .35s ease-in-out",
                   }}
                 >
                   <div

@@ -39,7 +39,7 @@ export default function WhyInvestSlider() {
         >
           <p
             style={{
-              marginBottom: "12px",
+              marginBottom: "14px",
               fontSize: "14px",
               fontWeight: 700,
               textTransform: "uppercase",
@@ -53,7 +53,7 @@ export default function WhyInvestSlider() {
           <h2
             style={{
               margin: 0,
-              fontSize: "56px",
+              fontSize: "clamp(34px, 3vw, 56px)",
               fontWeight: 900,
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
@@ -61,9 +61,7 @@ export default function WhyInvestSlider() {
               maxWidth: "900px",
             }}
           >
-            The Economic Forces
-            <br />
-            Powering Nashik's Future
+            The Economic Forces Powering Nashik's Future
           </h2>
 
           {/* ADD HERE */}
@@ -71,7 +69,7 @@ export default function WhyInvestSlider() {
             style={{
               marginTop: "24px",
               maxWidth: "800px",
-              fontSize: "20px",
+              fontSize: "17px",
               lineHeight: 1.8,
               color: "#4b5563",
             }}
@@ -228,7 +226,7 @@ export default function WhyInvestSlider() {
 
                   {/* CTA */}
                   <Link
-                    href="/properties"
+                    href={item.link}
                     style={{
                       marginTop: "40px",
                       display: "inline-flex",
@@ -272,7 +270,7 @@ export default function WhyInvestSlider() {
         }
 
         .investDescription {
-          font-size: 20px;
+          font-size: 17px;
           line-height: 1.9;
         }
 
@@ -335,35 +333,14 @@ export default function WhyInvestSlider() {
             line-height: 1.2;
           }
 
-          @media (max-width: 768px) {
-            .whyInvestSwiper .swiper-button-prev,
-            .whyInvestSwiper .swiper-button-next {
-              display: none;
-            }
+          .whyInvestSwiper .swiper-button-prev,
+          .whyInvestSwiper .swiper-button-next {
+            display: none;
           }
         }
 
         .whyInvestSwiper {
           overflow: hidden;
-        }
-
-        .whyInvestSwiper .swiper-button-prev,
-        .whyInvestSwiper .swiper-button-next {
-          width: 54px;
-          height: 54px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.96);
-          backdrop-filter: blur(18px);
-          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.7);
-          transition: all 0.3s ease;
-        }
-
-        .whyInvestSwiper .swiper-button-prev::after,
-        .whyInvestSwiper .swiper-button-next::after {
-          font-size: 18px;
-          font-weight: 800;
-          color: #16a34a;
         }
 
         .whyInvestSwiper .swiper-pagination {
@@ -383,6 +360,30 @@ export default function WhyInvestSlider() {
           width: 28px;
           border-radius: 999px;
           background: #16a34a;
+        }
+
+        .whyInvestSwiper .swiper-button-prev,
+        .whyInvestSwiper .swiper-button-next {
+          width: auto;
+          height: auto;
+
+          background: transparent;
+          border: none;
+          box-shadow: none;
+          border-radius: 0;
+
+          transition: all 0.25s ease;
+        }
+
+        .whyInvestSwiper .swiper-button-prev:hover,
+        .whyInvestSwiper .swiper-button-next:hover {
+          transform: scale(1.1);
+        }
+
+        .whyInvestSwiper .swiper-button-prev,
+        .whyInvestSwiper .swiper-button-next {
+          transform: scale(1.8);
+          color: #16a34a !important;
         }
       `}</style>
     </section>
