@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 import { connectDB } from "@/lib/mongodb";
 import Deal from "@/models/Deal";
 
-// ======================
+// ======================================
 // GET SINGLE DEAL
-// ======================
+// ======================================
+
 export async function GET(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -19,13 +20,13 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid Deal ID",
+          message: "Invalid deal id",
         },
         { status: 400 }
       );
     }
 
-    const deal = await Deal.findById(id);
+    const deal = await Deal.findById(id).lean();
 
     if (!deal) {
       return NextResponse.json(
@@ -47,18 +48,19 @@ export async function GET(
     return NextResponse.json(
       {
         success: false,
-        message: "Server Error",
+        message: "Failed to fetch deal",
       },
       { status: 500 }
     );
   }
 }
 
-// ======================
+// ======================================
 // UPDATE DEAL
-// ======================
+// ======================================
+
 export async function PUT(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -70,13 +72,16 @@ export async function PUT(
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid Deal ID",
+          message: "Invalid deal id",
         },
         { status: 400 }
       );
     }
 
-    const body = await request.json();
+    const body = await req.json();
+
+    delete body._id;
+    delete body.createdAt;
 
     const updatedDeal = await Deal.findByIdAndUpdate(
       id,
@@ -118,11 +123,12 @@ export async function PUT(
   }
 }
 
-// ======================
+// ======================================
 // DELETE DEAL
-// ======================
+// ======================================
+
 export async function DELETE(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -134,7 +140,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           success: false,
-          message: "Invalid Deal ID",
+          message: "Invalid deal id",
         },
         { status: 400 }
       );
@@ -155,6 +161,7 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message: "Deal deleted successfully",
+      deletedDeal,
     });
   } catch (error) {
     console.error("DELETE DEAL ERROR:", error);
