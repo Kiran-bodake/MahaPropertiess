@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MessageCircle, Facebook, Link2, Share2 } from "lucide-react";
 
 export function PropertyActions({
   propertyMongoId,
@@ -20,6 +21,7 @@ export function PropertyActions({
   const [showShare, setShowShare] = useState(false);
 
   const [showReport, setShowReport] = useState(false);
+  const [copyText, setCopyText] = useState("Copy Link");
 
   const [reportReason, setReportReason] = useState("");
   const [reportComment, setReportComment] = useState("");
@@ -188,6 +190,9 @@ export function PropertyActions({
               style={{
                 margin: 0,
                 marginBottom: 8,
+                fontSize: "1.2rem",
+                fontWeight: 800,
+                color: "#0f172a",
               }}
             >
               Share Property
@@ -199,20 +204,11 @@ export function PropertyActions({
                 propertyTitle + " " + propertyUrl,
               )}`}
               target="_blank"
-              style={shareBtn}
+              rel="noopener noreferrer"
+              style={brandShareBtn}
             >
+              <MessageCircle size={18} />
               WhatsApp
-            </a>
-
-            {/* TELEGRAM */}
-            <a
-              href={`https://t.me/share/url?url=${encodeURIComponent(
-                propertyUrl,
-              )}&text=${encodeURIComponent(propertyTitle)}`}
-              target="_blank"
-              style={shareBtn}
-            >
-              Telegram
             </a>
 
             {/* FACEBOOK */}
@@ -221,21 +217,28 @@ export function PropertyActions({
                 propertyUrl,
               )}`}
               target="_blank"
-              style={shareBtn}
+              rel="noopener noreferrer"
+              style={brandShareBtn}
             >
+              <Facebook size={18} />
               Facebook
             </a>
 
             {/* COPY LINK */}
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(propertyUrl);
+              onClick={async () => {
+                await navigator.clipboard.writeText(propertyUrl);
 
-                alert("Link copied");
+                setCopyText("✓ Copied");
+
+                setTimeout(() => {
+                  setCopyText("Copy Link");
+                }, 2000);
               }}
-              style={shareBtn}
+              style={brandShareBtn}
             >
-              Copy Link
+              <Link2 size={18} />
+              {copyText}
             </button>
 
             {/* MOBILE SHARE */}
@@ -244,20 +247,35 @@ export function PropertyActions({
                 if (navigator.share) {
                   await navigator.share({
                     title: propertyTitle,
-
                     text: "Check this property",
-
                     url: propertyUrl,
                   });
                 }
               }}
-              style={shareBtn}
+              style={brandShareBtn}
             >
+              <Share2 size={18} />
               More Options
             </button>
 
             {/* CLOSE */}
-            <button onClick={() => setShowShare(false)} style={closeBtn}>
+            <button
+              onClick={() => {
+                setShowShare(false);
+                setCopyText("Copy Link");
+              }}
+              style={{
+                marginTop: 10,
+                height: 48,
+                border: "none",
+                borderRadius: 14,
+                background: "#16a34a",
+                color: "#fff",
+                fontWeight: 700,
+                cursor: "pointer",
+                boxShadow: "0 8px 20px rgba(22,163,74,.25)",
+              }}
+            >
               Close
             </button>
           </div>
@@ -323,12 +341,12 @@ export function PropertyActions({
 
                     border:
                       reportReason === reason
-                        ? "2px solid #dc2626"
+                        ? "2px solid #16a34a"
                         : "1px solid #e2e8f0",
 
-                    background: reportReason === reason ? "#fef2f2" : "#fff",
+                    background: reportReason === reason ? "#f0fdf4" : "#fff",
 
-                    color: reportReason === reason ? "#dc2626" : "#475569",
+                    color: reportReason === reason ? "#16a34a" : "#475569",
 
                     transition: "all .2s ease",
                   }}
@@ -339,19 +357,58 @@ export function PropertyActions({
             </div>
 
             {reportReason === "Other" && (
-              <textarea
-                value={reportComment}
-                onChange={(e) => setReportComment(e.target.value)}
-                placeholder="Describe the issue..."
-                style={{
-                  minHeight: 90,
-                  borderRadius: 12,
-                  border: "1px solid #e2e8f0",
-                  padding: 14,
-                  resize: "none",
-                  fontSize: ".9rem",
-                }}
-              />
+              <>
+                <textarea
+                  value={reportComment}
+                  onChange={(e) => setReportComment(e.target.value)}
+                  placeholder="Describe the issue..."
+                  style={{
+                    minHeight: 90,
+                    borderRadius: 12,
+                    border: "1px solid #e2e8f0",
+                    padding: 14,
+                    resize: "none",
+                    fontSize: ".9rem",
+                  }}
+                />
+                <div
+                  style={{
+                    background: "#f8fafc",
+                    border: "1px solid #94a3b8",
+                    boxShadow: "0 1px 3px rgba(15,23,42,.08)",
+                    borderRadius: 16,
+                    padding: 14,
+                    marginTop: 4,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: ".82rem",
+                      color: "#64748b",
+                      marginBottom: 10,
+                    }}
+                  >
+                    Need immediate assistance? Contact our support team.
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: 10,
+                    }}
+                  >
+                    <input
+                      placeholder="Your Name (optional)"
+                      style={ctaInput}
+                    />
+
+                    <input
+                      placeholder="Mobile Number (optional)"
+                      style={ctaInput}
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
             <div
@@ -381,16 +438,21 @@ export function PropertyActions({
                 disabled={reporting}
                 style={{
                   flex: 1,
-                  height: 40,
+                  height: 48,
                   border: "none",
-                  borderRadius: 12,
-                  background: "#dc2626",
+                  borderRadius: 14,
+                  background: "#16a34a",
                   color: "#fff",
                   fontWeight: 700,
-                  fontSize: ".85rem",
+                  fontSize: ".95rem",
+                  boxShadow: "0 8px 20px rgba(22,163,74,.25)",
                 }}
               >
-                {reporting ? "Submitting..." : "Submit"}
+                {reporting
+                  ? "Submitting..."
+                  : reportReason === "Other"
+                    ? "Submit Report"
+                    : "Submit"}
               </button>
             </div>
           </div>
@@ -561,6 +623,10 @@ const overlayStyle: React.CSSProperties = {
 
   justifyContent: "center",
 
+  paddingTop: 100,
+  paddingBottom: 40,
+  overflowY: "auto",
+
   zIndex: 9999,
 };
 
@@ -585,21 +651,31 @@ const modalStyle: React.CSSProperties = {
 };
 
 const reportSheetStyle: React.CSSProperties = {
-  width: "100%",
-  maxWidth: 520, // instead of 600
+  width: "calc(100% - 24px)",
+  maxWidth: 620,
 
   background: "#fff",
-
   borderRadius: 24,
 
-  padding: "14px 20px 20px",
+  padding: "20px",
 
   display: "flex",
   flexDirection: "column",
+  gap: 14,
 
-  gap: 10,
+  maxHeight: "90vh",
+  overflowY: "auto",
 
   boxShadow: "0 20px 60px rgba(0,0,0,.18)",
+};
+
+const ctaInput: React.CSSProperties = {
+  height: 44,
+  border: "1px solid #e2e8f0",
+  borderRadius: 10,
+  padding: "0 12px",
+  outline: "none",
+  fontSize: ".9rem",
 };
 
 const shareBtn: React.CSSProperties = {
@@ -626,20 +702,41 @@ const shareBtn: React.CSSProperties = {
   background: "#fff",
 };
 
+const brandShareBtn: React.CSSProperties = {
+  height: 54,
+
+  borderRadius: 14,
+
+  border: "1px solid #e2e8f0",
+
+  background: "#fff",
+
+  color: "#475569",
+
+  display: "flex",
+
+  alignItems: "center",
+
+  justifyContent: "center",
+
+  gap: 10,
+
+  fontWeight: 600,
+
+  textDecoration: "none",
+
+  cursor: "pointer",
+
+  transition: "all .2s ease",
+};
+
 const closeBtn: React.CSSProperties = {
   marginTop: 10,
-
-  height: 44,
-
+  height: 48,
   border: "none",
-
-  borderRadius: 12,
-
-  background: "#111827",
-
+  borderRadius: 14,
+  background: "#16a34a",
   color: "#fff",
-
   fontWeight: 700,
-
   cursor: "pointer",
 };

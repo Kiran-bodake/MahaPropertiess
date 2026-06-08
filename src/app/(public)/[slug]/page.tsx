@@ -1,280 +1,38 @@
-import Link from "next/link";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PropertyGrid } from "@/components/property/property-grid";
 import { Footer } from "@/components/layout/footer";
-import { Property } from "@/types/property";
-
-const CATEGORY_DATA: Record<
-  string,
-  {
-    title: string;
-    description: string;
-    keywords: string;
-    chartPoints: number[];
-    examples: Property[];
-  }
-> = {
-  "na-plots-in-nashik": {
-    title: "NA Plots in Nashik | MahaProperties",
-    description:
-      "Find top NA plots in Nashik with verified title, clear approvals, and competitive pricing. Explore listings in Gangapur Road, Nashik Road and more.",
-    keywords: "NA plots Nashik, NA plot sale, Nashik property, Mahaproperties",
-    chartPoints: [8.9, 9.2, 9.5, 9.7, 10.1, 10.4],
-    examples: [
-      {
-        _id: "na1",
-        title: "NA Plot 5000 sqft on Gangapur Road",
-        slug: "na-plot-gangapur-road",
-        category: "na-plot",
-        status: "available",
-        constructionStatus: "ready",
-        price: 6500000,
-        area: 5000,
-        areaUnit: "sqft",
-        locality: "Gangapur Road",
-        city: "Nashik",
-        state: "Maharashtra",
-        description: "Prime NA plot with 30m road frontage.",
-        images: [
-          {
-            url: "https://images.unsplash.com/photo-1466155585022-90ede8891187?w=800&q=80",
-          },
-        ],
-        highlights: ["Clear title", "Wider roads", "Immediate possession"],
-        amenities: ["24x7 security", "800m from highway"],
-        isRERA: true,
-        isFeatured: false,
-        isZeroBrokerage: true,
-        postedBy: "dealer",
-        agentName: "Ravi Sharma",
-        views: 240,
-        savedCount: 62,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  },
-  "collector-na-plots-in-nashik": {
-    title: "Collector NA Plots in Nashik | MahaProperties",
-    description:
-      "Premium collector NA plots in Nashik with approvals and clear titles. Ideal for residential or investment purchase.",
-    keywords: "Collector NA Nashik, Collector NA plots, Nashik real estate",
-    chartPoints: [7.8, 8.1, 8.4, 8.7, 8.9, 9.0],
-    examples: [
-      {
-        _id: "cna1",
-        title: "Collector-NA Plot at Nashik Road",
-        slug: "collector-na-nashik-road",
-        category: "na-plot",
-        status: "available",
-        constructionStatus: "ready",
-        price: 7200000,
-        area: 5500,
-        areaUnit: "sqft",
-        locality: "Nashik Road",
-        city: "Nashik",
-        state: "Maharashtra",
-        description: "Collector NA approved, perfect for villa project.",
-        images: [
-          {
-            url: "https://images.unsplash.com/photo-1523069235832-4a86b7f9c79b?w=800&q=80",
-          },
-        ],
-        highlights: ["Document ready", "Prime location"],
-        amenities: ["Nearby schools", "Hospitals"],
-        isRERA: true,
-        isFeatured: false,
-        isZeroBrokerage: true,
-        postedBy: "builder",
-        agentName: "Priya Joshi",
-        views: 188,
-        savedCount: 43,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  },
-  "agriculture-land-in-nashik": {
-    title: "Agriculture Land in Nashik | MahaProperties",
-    description:
-      "Buy fertile agriculture land in Nashik: Igatpuri, Trimbak, Sinnar and more. Check soil test, irrigation options and growth potential.",
-    keywords: "agriculture land Nashik, farmland Nashik, farm plots Nashik",
-    chartPoints: [6.8, 7.1, 7.4, 7.8, 8.2, 8.7],
-    examples: [
-      {
-        _id: "ag1",
-        title: "30-acre Agriculture Land near Igatpuri",
-        slug: "agri-land-igatpuri",
-        category: "agriculture",
-        status: "available",
-        constructionStatus: "ready",
-        price: 34000000,
-        area: 30,
-        areaUnit: "acre",
-        locality: "Igatpuri",
-        city: "Nashik",
-        state: "Maharashtra",
-        description: "High-yield farmland with guaranteed water source.",
-        images: [
-          {
-            url: "https://images.unsplash.com/photo-1549393220-c6f27829bd2a?w=800&q=80",
-          },
-        ],
-        highlights: ["IRR proposal", "Clear legal status"],
-        amenities: ["Water connection", "Road access"],
-        isRERA: false,
-        isFeatured: false,
-        isZeroBrokerage: false,
-        postedBy: "owner",
-        agentName: "Kunal Deshmukh",
-        views: 134,
-        savedCount: 45,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  },
-  "warehouse-space-in-nashik": {
-    title: "Warehouse Space in Nashik | MahaProperties",
-    description:
-      "Secure warehouse land in Nashik for logistics, storage and industrial units. MIDC and non-MIDC locations available.",
-    keywords:
-      "warehouse Nashik, logistics space Nashik, industrial land Nashik",
-    chartPoints: [8.2, 8.5, 8.7, 8.9, 9.2, 9.4],
-    examples: [
-      {
-        _id: "wh1",
-        title: "Warehouse plot in Satpur MIDC",
-        slug: "warehouse-satpur-midc",
-        category: "warehouse",
-        status: "available",
-        constructionStatus: "ready",
-        price: 49000000,
-        area: 12000,
-        areaUnit: "sqft",
-        locality: "Satpur MIDC",
-        city: "Nashik",
-        state: "Maharashtra",
-        description: "Ideal for logistics: main road access & power supply.",
-        images: [
-          {
-            url: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?w=800&q=80",
-          },
-        ],
-        highlights: ["Approved site plan", "Good connectivity"],
-        amenities: ["24x7 security", "Water & power"],
-        isRERA: false,
-        isFeatured: false,
-        isZeroBrokerage: false,
-        postedBy: "dealer",
-        agentName: "Saurabh Bhagat",
-        views: 205,
-        savedCount: 33,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  },
-  "commercial-properties-in-nashik": {
-    title: "Commercial Properties in Nashik | MahaProperties",
-    description:
-      "Best commercial properties in Nashik: retail shops, showrooms and offices with high footfall locations.",
-    keywords:
-      "commercial properties Nashik, shops for sale, office space Nashik",
-    chartPoints: [8.0, 8.3, 8.6, 8.9, 9.1, 9.5],
-    examples: [
-      {
-        _id: "cp1",
-        title: "Commercial plot near College Road",
-        slug: "commercial-college-road",
-        category: "commercial",
-        status: "available",
-        constructionStatus: "ready",
-        price: 22000000,
-        area: 4000,
-        areaUnit: "sqft",
-        locality: "College Road",
-        city: "Nashik",
-        state: "Maharashtra",
-        description: "High visibility plot for retail or office premise.",
-        images: [
-          {
-            url: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80",
-          },
-        ],
-        highlights: ["Busy area", "Good return potential"],
-        amenities: ["Parking", "Public transport"],
-        isRERA: true,
-        isFeatured: false,
-        isZeroBrokerage: true,
-        postedBy: "builder",
-        agentName: "Meera Jain",
-        views: 270,
-        savedCount: 60,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  },
-  "plots-for-investment": {
-    title: "Plots for Investment in Nashik | MahaProperties",
-    description:
-      "Best investment plots in Nashik - NA, agriculture, and commercial land with high ROI and buyback options.",
-    keywords:
-      "investment plots Nashik, best property investment, Mahaproperties",
-    chartPoints: [7.5, 7.8, 8.2, 8.7, 9.0, 9.4],
-    examples: [
-      {
-        _id: "inv1",
-        title: "Investment plot near Panchavati",
-        slug: "investment-panchavati",
-        category: "na-plot",
-        status: "available",
-        constructionStatus: "ready",
-        price: 15500000,
-        area: 3600,
-        areaUnit: "sqft",
-        locality: "Panchavati",
-        city: "Nashik",
-        state: "Maharashtra",
-        description: "Future growth corridor with strong rental demand.",
-        images: [
-          {
-            url: "https://images.unsplash.com/photo-1523293834405-8927ce615f99?w=800&q=80",
-          },
-        ],
-        highlights: ["Buy-back guarantee", "Market analysis report"],
-        amenities: ["Near highway", "Water access"],
-        isRERA: false,
-        isFeatured: false,
-        isZeroBrokerage: true,
-        postedBy: "owner",
-        agentName: "Ananya Kapoor",
-        views: 311,
-        savedCount: 95,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  },
-};
+import { parseSeoSlug, SEO_CATEGORY_MAP } from "@/lib/seoPages";
+import { getSeoProperties } from "@/lib/getSeoProperties";
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = params;
-  const data = CATEGORY_DATA[slug];
-  if (!data) return { title: "Page not found" };
+  const seo = parseSeoSlug(params.slug);
+
+  if (!seo) {
+    return {
+      title: "Page not found",
+    };
+  }
+
+  const cityName = seo.citySlug
+    .split("-")
+    .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
+    .join(" ");
+
+  const categoryName = seo.categorySlug
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
   return {
-    title: data.title,
-    description: data.description,
-    keywords: data.keywords,
+    title: `${categoryName} in ${cityName} | MahaProperties`,
+    description: `Browse verified ${categoryName.toLowerCase()} in ${cityName}.`,
     openGraph: {
-      title: data.title,
-      description: data.description,
+      title: `${categoryName} in ${cityName}`,
+      description: `Browse verified ${categoryName.toLowerCase()} in ${cityName}.`,
       siteName: "MahaProperties",
       type: "website",
     },
@@ -287,12 +45,22 @@ export default async function CategoryPage({
   params: { slug: string };
 }) {
   const { slug } = params;
-  const data = CATEGORY_DATA[slug];
-  if (!data) {
+  const seo = parseSeoSlug(slug);
+
+  if (!seo) {
     notFound();
   }
 
-  const monthlyEMI = ((data.examples[0]?.price || 0) / 240) * 1.05;
+  const category = SEO_CATEGORY_MAP[seo.categorySlug];
+
+  if (!category) {
+    notFound();
+  }
+
+  const properties = await getSeoProperties(seo.citySlug, category);
+  if (!properties || properties.length === 0) {
+    notFound();
+  }
 
   return (
     <main style={{ background: "#f8fafc", minHeight: "100vh" }}>
@@ -306,79 +74,19 @@ export default async function CategoryPage({
             marginBottom: "12px",
           }}
         >
-          {data.title.replace("| MahaProperties", "")}
+          {seo.categorySlug.replace(/-/g, " ")} in{" "}
+          {seo.citySlug.replace(/-/g, " ")}
         </h1>
-        <p style={{ color: "#475569", fontSize: "1rem", marginBottom: "20px" }}>
-          {data.description}
-        </p>
-
-        <div
+        <p
           style={{
-            display: "flex",
-            gap: "10px",
-            flexWrap: "wrap",
+            color: "#475569",
+            fontSize: "1rem",
             marginBottom: "20px",
           }}
         >
-          {Object.keys(CATEGORY_DATA).map((slug) => (
-            <Link
-              key={slug}
-              href={`/${slug}`}
-              style={{
-                padding: "8px 14px",
-                borderRadius: "999px",
-                background: slug === params.slug ? "#16a34a" : "#e2e8f0",
-                color: slug === params.slug ? "white" : "#334155",
-                textDecoration: "none",
-                fontWeight: 600,
-              }}
-            >
-              {CATEGORY_DATA[slug].title.split("|")[0]}
-            </Link>
-          ))}
-        </div>
-
-        <div style={{ marginBottom: "32px" }}>
-          <h2
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              marginBottom: "10px",
-            }}
-          >
-            Pricing Trend (per sq.ft, indexed)
-          </h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${data.chartPoints.length}, minmax(0, 1fr))`,
-              gap: "10px",
-              alignItems: "end",
-              height: "160px",
-              padding: "12px",
-              background: "white",
-              borderRadius: "12px",
-            }}
-          >
-            {data.chartPoints.map((p, i) => (
-              <div
-                key={i}
-                style={{
-                  background: "#16a34a",
-                  borderRadius: "6px",
-                  height: `${Math.min(100, (p / 10) * 100)}%`,
-                  display: "flex",
-                  alignItems: "flex-end",
-                  justifyContent: "center",
-                  color: "white",
-                  fontSize: "10px",
-                }}
-              >
-                {p}
-              </div>
-            ))}
-          </div>
-        </div>
+          Browse verified {seo.categorySlug.replace(/-/g, " ")} properties in{" "}
+          {seo.citySlug.replace(/-/g, " ")}.
+        </p>
 
         <div
           style={{
@@ -404,36 +112,6 @@ export default async function CategoryPage({
           </ul>
         </div>
 
-        <div
-          style={{
-            marginBottom: "32px",
-            background: "white",
-            borderRadius: "12px",
-            padding: "20px",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-          }}
-        >
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 700 }}>
-            EMI Calculator
-          </h2>
-          <p style={{ color: "#334155", marginBottom: "10px" }}>
-            Approx EMI starting from{" "}
-            <strong>₹{Math.round(monthlyEMI).toLocaleString()}</strong> per
-            month.
-          </p>
-          <details>
-            <summary
-              style={{ cursor: "pointer", color: "#0f766e", fontWeight: 700 }}
-            >
-              Calculate EMI for your budget
-            </summary>
-            <p style={{ color: "#475569", marginTop: "10px" }}>
-              Use our calculator on property details for exact values. Loan term
-              20 years, rate 7.5% p.a.
-            </p>
-          </details>
-        </div>
-
         <div style={{ marginBottom: "32px" }}>
           <h2
             style={{
@@ -444,7 +122,7 @@ export default async function CategoryPage({
           >
             Featured Listings
           </h2>
-          <PropertyGrid properties={data.examples} />
+          <PropertyGrid properties={properties as any} />
         </div>
 
         <div

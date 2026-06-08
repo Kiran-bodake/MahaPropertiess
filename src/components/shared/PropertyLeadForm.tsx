@@ -168,7 +168,7 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
             color: "#92400e",
           }}
         >
-          Leave your details — our expert will call you within 30 mins.
+          Leave your details — our expert will call you back shortly.
         </p>
       </div>
 

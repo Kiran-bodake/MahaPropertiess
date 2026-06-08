@@ -728,7 +728,7 @@ export default async function PropertyDetailPage({
                     <div className="trustTrack">
                       <div className="trustItem">
                         <BadgeCheck size={18} />
-                        <span>Verified Agent</span>
+                        <span>Verified Listing</span>
                       </div>
 
                       <div className="trustItem">
@@ -738,13 +738,13 @@ export default async function PropertyDetailPage({
 
                       <div className="trustItem">
                         <ShieldCheck size={18} />
-                        <span>Trusted Properties</span>
+                        <span>Document Verified</span>
                       </div>
 
                       {/* duplicate for seamless loop */}
                       <div className="trustItem">
                         <BadgeCheck size={18} />
-                        <span>Verified Agent</span>
+                        <span>Verified Listing</span>
                       </div>
 
                       <div className="trustItem">
@@ -754,7 +754,7 @@ export default async function PropertyDetailPage({
 
                       <div className="trustItem">
                         <ShieldCheck size={18} />
-                        <span>Trusted Properties</span>
+                        <span>Document Verified</span>
                       </div>
                     </div>
                   </div>

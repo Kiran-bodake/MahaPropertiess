@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function PropertySectionTabs() {
   const tabs = [
@@ -11,6 +11,30 @@ export function PropertySectionTabs() {
   ];
 
   const [activeTab, setActiveTab] = useState("overview");
+
+  useEffect(() => {
+    const sections = tabs
+      .map(([id]) => document.getElementById(id))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((entry) => entry.isIntersecting);
+
+        if (visible?.target?.id) {
+          setActiveTab(visible.target.id);
+        }
+      },
+      {
+        rootMargin: "-150px 0px -60% 0px",
+        threshold: 0.1,
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section!));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
