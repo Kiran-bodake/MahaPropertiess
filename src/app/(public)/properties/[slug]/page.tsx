@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ContactButton from "@/components/property/ContactButton"; 
-
+import  Breadcrumbs from "@/components/shared/Breadcrumbs";
 
 import { Navbar } from "@/components/layout/navbar/Navbar";
 
@@ -345,15 +345,8 @@ export default async function PropertyDetailPage({
             overflow: "visible",
           }}
         >
-          {/* Breadcrumbs */}
-          <div
-            style={{
-              paddingLeft: 18,
-              marginBottom: 10,
-            }}
-          >
-            <Breadcrumbs property={property} />
-          </div>
+         {/* Breadcrumbs */}
+<Breadcrumbs property={property} />
 
           {/* MAIN GRID */}
           <div
@@ -968,48 +961,6 @@ export default async function PropertyDetailPage({
   );
 }
 
-function Breadcrumbs({ property }: { property: any }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        flexWrap: "wrap",
-        fontSize: ".85rem",
-        color: "#64748b",
-      }}
-    >
-      <Link href="/">Home</Link>
-
-      <span>›</span>
-
-      <Link href="/properties">Properties</Link>
-
-      <span>›</span>
-
-      <Link href={`/properties?city=${property.city}`}>{property.city}</Link>
-
-      <span>›</span>
-
-      <span>{property.locality}</span>
-
-      <span>›</span>
-
-      <span
-        style={{
-          fontWeight: 600,
-          color: "#0f172a",
-        }}
-      >
-        {property.category
-          ?.split("-")
-          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")}
-      </span>
-    </div>
-  );
-}
 
 function SectionTitle({ title }: { title: string }) {
   return (

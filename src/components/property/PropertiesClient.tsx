@@ -9,6 +9,7 @@ import {
   useCallback,
   Suspense,
 } from "react";
+import Breadcrumbs from "@/components/shared/Breadcrumbs";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocationStore } from "@/store/useLocationStore";
@@ -613,6 +614,15 @@ const [selectedProperty, setSelectedProperty] = useState<{
 />
 
       <main className="page">
+  {/* ✅ ADD BREADCRUMBS HERE */}
+       <div className="breadcrumbs-wrapper">
+        <div className="container">
+          <Breadcrumbs />
+        </div>
+      </div>
+
+     
+
         <div className="container">
           {/* HERO */}
           <section className="hero">
@@ -1175,6 +1185,12 @@ const [selectedProperty, setSelectedProperty] = useState<{
             width: min(1400px, 94%);
             margin: auto;
           }
+            .breadcrumbs-wrapper {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  padding: 8px 0;
+}
 
           .hero {
             background: linear-gradient(135deg, #052e16, #166534, #22c55e);
@@ -1237,6 +1253,21 @@ const [selectedProperty, setSelectedProperty] = useState<{
             font-size: 12px;
             font-weight: 800;
           }
+            /* Breadcrumbs Wrapper */
+.breadcrumbs-wrapper {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+  padding: 12px 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .breadcrumbs-wrapper {
+    margin-bottom: 16px;
+    padding: 8px 0;
+  }
+}
 
           .appliedBar {
             background: white;

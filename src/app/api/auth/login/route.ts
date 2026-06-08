@@ -1,56 +1,79 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import User from "@/models/user";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { email, password, securityCode } = body;
-
-    console.log("Login attempt:", { email, password, securityCode });
 
     // Get admin credentials from .env
     const superEmail = process.env.ADMIN_SUPER_EMAIL;
     const superPassword = process.env.ADMIN_SUPER_PASSWORD;
     const superSecurityCode = process.env.ADMIN_SECURITY_CODE;
 
-    // Check super admin credentials
-    if (
-      email === superEmail &&
-      password === superPassword &&
-      securityCode === superSecurityCode
-    ) {
-      console.log("Super admin login successful");
-      return NextResponse.json({
+    // Check super admin
+    if (email === superEmail && password === superPassword && securityCode === superSecurityCode) {
+      const token = jwt.sign(
+        { email, role: "super-admin" },
+        process.env.JWT_SECRET || "your-secret-key",
+        { expiresIn: "7d" }
+      );
+
+      const response = NextResponse.json({
         success: true,
         message: "Login successful",
-        role: "super_admin",
+        role: "super-admin",
       });
+
+      response.cookies.set("admin_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60,
+        path: "/",
+      });
+
+      return response;
     }
 
-    // Check sub-admin credentials
+    // Check sub admin
     const subEmail = process.env.ADMIN_SUB_EMAIL;
     const subPassword = process.env.ADMIN_SUB_PASSWORD;
     const subSecurityCode = process.env.ADMIN_SUB_SECURITY_CODE;
 
-    if (
-      email === subEmail &&
-      password === subPassword &&
-      securityCode === subSecurityCode
-    ) {
-      console.log("Sub admin login successful");
-      return NextResponse.json({
+    if (email === subEmail && password === subPassword && securityCode === subSecurityCode) {
+      const token = jwt.sign(
+        { email, role: "admin" },
+        process.env.JWT_SECRET || "your-secret-key",
+        { expiresIn: "7d" }
+      );
+
+      const response = NextResponse.json({
         success: true,
         message: "Login successful",
-        role: "sub_admin",
+        role: "admin",
       });
+
+      response.cookies.set("admin_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60,
+        path: "/",
+      });
+
+      return response;
     }
 
-    console.log("Invalid credentials");
     return NextResponse.json(
-      { success: false, message: "Invalid email, password, or security code" },
+      { success: false, message: "Invalid credentials" },
       { status: 401 }
     );
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Admin login error:", error);
     return NextResponse.json(
       { success: false, message: "Login failed" },
       { status: 500 }
