@@ -18,6 +18,7 @@ import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import PropertyImageSlider from "@/components/property/PropertyImageSlider";
 import ContactPopup from "@/components/property/ContactPopup";
 import { Footer } from "@/components/layout/footer";
+import { Skeleton } from "../ui/skeleton";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -42,7 +43,7 @@ type Property = {
   rera?: boolean;
   badge?: string | null;
   createdAt?: string | number | Date;
-  
+
   // ✅ ADD THESE THREE FIELDS
   agentName?: string;
   agentPhone?: string;
@@ -190,13 +191,13 @@ function PropertiesContent() {
   const [ripple, setRipple] = useState<{ x: number; y: number } | null>(null);
 
   // ✅ SELECTED PROPERTY FOR CONTACT POPUP
-const [selectedProperty, setSelectedProperty] = useState<{
-  id: string;
-  name: string;
-  agentName?: string;
-  agentPhone?: string;
-  postedBy?: string;
-} | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<{
+    id: string;
+    name: string;
+    agentName?: string;
+    agentPhone?: string;
+    postedBy?: string;
+  } | null>(null);
 
   // Favorites state
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -600,28 +601,26 @@ const [selectedProperty, setSelectedProperty] = useState<{
       <MegaNavbar />
 
       {/* ✅ PASS REAL propertyId & propertyName TO POPUP */}
-     <ContactPopup
-  open={showPopup}
-  onClose={() => {
-    setShowPopup(false);
-    setSelectedProperty(null);
-  }}
-  propertyId={selectedProperty?.id}
-  propertyName={selectedProperty?.name}
-  agentName={selectedProperty?.agentName}      // ← ADD THIS
-  agentPhone={selectedProperty?.agentPhone}    // ← ADD THIS
-  postedBy={selectedProperty?.postedBy}        // ← ADD THIS
-/>
+      <ContactPopup
+        open={showPopup}
+        onClose={() => {
+          setShowPopup(false);
+          setSelectedProperty(null);
+        }}
+        propertyId={selectedProperty?.id}
+        propertyName={selectedProperty?.name}
+        agentName={selectedProperty?.agentName} // ← ADD THIS
+        agentPhone={selectedProperty?.agentPhone} // ← ADD THIS
+        postedBy={selectedProperty?.postedBy} // ← ADD THIS
+      />
 
       <main className="page">
-  {/* ✅ ADD BREADCRUMBS HERE */}
-       <div className="breadcrumbs-wrapper">
-        <div className="container">
-          <Breadcrumbs />
+        {/* ✅ ADD BREADCRUMBS HERE */}
+        <div className="breadcrumbs-wrapper">
+          <div className="container">
+            <Breadcrumbs />
+          </div>
         </div>
-      </div>
-
-     
 
         <div className="container">
           {/* HERO */}
@@ -955,131 +954,160 @@ const [selectedProperty, setSelectedProperty] = useState<{
               <div className="topbar">
                 <div>
                   <span className="topLabel">PROPERTY RESULTS</span>
-                  <h2>
-                    {loading
-                      ? "Loading…"
-                      : `${properties.length} Properties Available`}
-                  </h2>
+                  {loading ? (
+                    <Skeleton className="h-8 w-52" />
+                  ) : (
+                    <h2>{properties.length} Properties Available</h2>
+                  )}
                 </div>
                 <p>Verified listings updated daily</p>
               </div>
 
               <div className="list">
-                {properties.map((p) => {
-                  const fallbackImage = "/maha.png";
+                {loading
+                  ? Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton key={i} variant="card" />
+                    ))
+                  : properties.map((p) => {
+                      const fallbackImage = "/maha.png";
 
-                  const images = p.images?.length
-                    ? p.images
-                    : p.img
-                      ? [p.img]
-                      : [fallbackImage];
-                  console.log("PROPERTY IMAGES:", p.title, images);
-                  const key = getPropKey(p);
-                  const isFav =
-                    typeof window !== "undefined" &&
-                    JSON.parse(localStorage.getItem(FAV_KEY) || "[]").includes(
-                      key,
-                    );
-                  return (
-                    <article
-                      key={p.id || p._id || p.slug}
-                      className="card"
-                      onClick={() => router.push(`/properties/${p.slug}`)}
-                    >
-                      <button
-                        type="button"
-                        aria-label={
-                          isFav ? "Remove from favorites" : "Add to favorites"
-                        }
-                        aria-pressed={isFav}
-                        className={`favBtn ${isFav ? "favBtn--active" : ""}`}
-                        onClick={(e) => toggleFavorite(e, p)}
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="20"
-                          height="20"
-                          fill={isFav ? "#ffffff" : "none"}
-                          stroke={isFav ? "#ffffff" : "#111827"}
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                      const images = p.images?.length
+                        ? p.images
+                        : p.img
+                          ? [p.img]
+                          : [fallbackImage];
+
+                      console.log("PROPERTY IMAGES:", p.title, images);
+
+                      const key = getPropKey(p);
+
+                      const isFav =
+                        typeof window !== "undefined" &&
+                        JSON.parse(
+                          localStorage.getItem(FAV_KEY) || "[]",
+                        ).includes(key);
+
+                      return (
+                        <article
+                          key={p.id || p._id || p.slug}
+                          className="card"
+                          onClick={() => router.push(`/properties/${p.slug}`)}
                         >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                      </button>
-                      <div className="imageWrap">
-                        <PropertyImageSlider
-                          title={p.title || p.t || "Property"}
-                          images={images}
-                        />
-                        <div className="verified">VERIFIED</div>
-                        {p.badge && <div className="badge">{p.badge}</div>}
-                        {/* <div className="photoCount">📸 {images.length}</div> */}
-                      </div>
-                      <div className="cardContent">
-                        <div>
-                          <div className="category">{p.category || p.cat}</div>
-                          <h3 className="title">{p.title || p.t}</h3>
-                          <p className="location">📍 {p.locality || p.loc}</p>
-                          <div className="features">
-                            <div className="feature">📐 {p.area}</div>
-                            <div className="feature">
-                              👁 {p.views || 0} views
-                            </div>
-                            {p.rera && (
-                              <div className="rera">RERA Approved</div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="footer">
-                          <div>
-                            <div className="price">
-                              ₹
-                              {parsePrice(p.price || p.pr).toLocaleString(
-                                "en-IN",
-                              )}
-                            </div>
-                            <span className="neg">Negotiable</span>
-                          </div>
-                          <div className="btns">
-                            {/* ✅ CAPTURE PROPERTY ID + NAME ON CONTACT CLICK */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              setSelectedProperty({
-  id: String(p.id || p._id || p.slug),
-  name: p.title || p.t || "Property",
-  agentName: p.agentName || "Property Expert",
-  agentPhone: p.agentPhone || "Not Available",
-  postedBy: p.postedBy || "Agency",
-});
-                                setShowPopup(true);
-                              }}
-                              className="secondaryBtn"
+                          <button
+                            type="button"
+                            aria-label={
+                              isFav
+                                ? "Remove from favorites"
+                                : "Add to favorites"
+                            }
+                            aria-pressed={isFav}
+                            className={`favBtn ${isFav ? "favBtn--active" : ""}`}
+                            onClick={(e) => toggleFavorite(e, p)}
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="20"
+                              height="20"
+                              fill={isFav ? "#ffffff" : "none"}
+                              stroke={isFav ? "#ffffff" : "#111827"}
+                              strokeWidth="2.2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                             >
-                              Contact
-                            </button>
-                            <button
-                              type="button"
-                              className="primaryBtn"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                          </button>
 
-                                router.push(`/properties/${p.slug}`);
-                              }}
-                            >
-                              View Details
-                            </button>
+                          <div className="imageWrap">
+                            <PropertyImageSlider
+                              title={p.title || p.t || "Property"}
+                              images={images}
+                            />
+
+                            <div className="verified">VERIFIED</div>
+
+                            {p.badge && <div className="badge">{p.badge}</div>}
                           </div>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+
+                          <div className="cardContent">
+                            <div>
+                              <div className="category">
+                                {p.category || p.cat}
+                              </div>
+
+                              <h3 className="title">{p.title || p.t}</h3>
+
+                              <p className="location">
+                                📍 {p.locality || p.loc}
+                              </p>
+
+                              <div className="features">
+                                <div className="feature">📐 {p.area}</div>
+
+                                <div className="feature">
+                                  👁 {p.views || 0} views
+                                </div>
+
+                                {p.rera && (
+                                  <div className="rera">RERA Approved</div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="footer">
+                              <div>
+                                <div className="price">
+                                  ₹
+                                  {parsePrice(p.price || p.pr).toLocaleString(
+                                    "en-IN",
+                                  )}
+                                </div>
+
+                                <span className="neg">Negotiable</span>
+                              </div>
+
+                              <div className="btns">
+                                <button
+                                  type="button"
+                                  className="secondaryBtn"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+
+                                    setSelectedProperty({
+                                      id: String(p.id || p._id || p.slug),
+                                      name: p.title || p.t || "Property",
+                                      agentName:
+                                        p.agentName || "Property Expert",
+                                      agentPhone:
+                                        p.agentPhone || "Not Available",
+                                      postedBy: p.postedBy || "Agency",
+                                    });
+
+                                    setShowPopup(true);
+                                  }}
+                                >
+                                  Contact
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="primaryBtn"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+
+                                    router.push(`/properties/${p.slug}`);
+                                  }}
+                                >
+                                  View Details
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
               </div>
 
               {!loading && properties.length === 0 && (
@@ -1185,12 +1213,12 @@ const [selectedProperty, setSelectedProperty] = useState<{
             width: min(1400px, 94%);
             margin: auto;
           }
-            .breadcrumbs-wrapper {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 20px;
-  padding: 8px 0;
-}
+          .breadcrumbs-wrapper {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            padding: 8px 0;
+          }
 
           .hero {
             background: linear-gradient(135deg, #052e16, #166534, #22c55e);
@@ -1253,21 +1281,21 @@ const [selectedProperty, setSelectedProperty] = useState<{
             font-size: 12px;
             font-weight: 800;
           }
-            /* Breadcrumbs Wrapper */
-.breadcrumbs-wrapper {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 24px;
-  padding: 12px 0;
-}
+          /* Breadcrumbs Wrapper */
+          .breadcrumbs-wrapper {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+            padding: 12px 0;
+          }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .breadcrumbs-wrapper {
-    margin-bottom: 16px;
-    padding: 8px 0;
-  }
-}
+          /* Mobile Responsive */
+          @media (max-width: 768px) {
+            .breadcrumbs-wrapper {
+              margin-bottom: 16px;
+              padding: 8px 0;
+            }
+          }
 
           .appliedBar {
             background: white;

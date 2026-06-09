@@ -30,9 +30,13 @@ import {
   Store,
   Shield,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PropertyMap = dynamic(() => import("@/components/PropertyMap"), {
   ssr: false,
+  loading: () => (
+    <Skeleton className="w-full rounded-xl" style={{ height: 400 }} />
+  ),
 });
 
 /* ─── Types ───────────────────────────────────────────── */
@@ -1899,24 +1903,29 @@ Perfect for ${
         <Navbar />
         <main
           style={{
-            minHeight: "60vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            maxWidth: "1400px",
+            margin: "0 auto",
+            padding: "24px",
           }}
         >
-          <div style={{ color: "#6b7280" }}>Loading form…</div>
-          <style jsx>{`
-            @media (max-width: 1100px) {
-              form > div {
-                grid-template-columns: 1fr !important;
-              }
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(0,1fr) 320px",
+              gap: "24px",
+            }}
+          >
+            <div>
+              <Skeleton className="h-12 w-full rounded-xl mb-4" />
+              <Skeleton className="h-12 w-full rounded-xl mb-4" />
+              <Skeleton className="h-12 w-full rounded-xl mb-4" />
+              <Skeleton className="h-64 w-full rounded-xl" />
+            </div>
 
-              aside {
-                position: static !important;
-              }
-            }
-          `}</style>
+            <div>
+              <Skeleton className="h-80 w-full rounded-xl" />
+            </div>
+          </div>
         </main>
         <Footer />
       </>
@@ -1949,6 +1958,7 @@ Perfect for ${
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             minHeight: "350px",
+            height: "clamp(140px, 30vw, 350px)",
             borderRadius: "0 0 12px 12px",
           }}
         />
@@ -3988,42 +3998,90 @@ Perfect for ${
           .stepScroller {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+
+          .stepScroller::-webkit-scrollbar {
+            display: none;
+          }
+
+          /* FORM ROWS */
+          .responsiveRow2 {
+            grid-template-columns: 1fr !important;
           }
 
           /* 3 COLUMN ROWS */
           .responsiveRow3 {
-            grid-template-columns: 1fr !important;
-          }
-
-          /* 2 COLUMN ROWS */
-          .responsiveRow2 {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: repeat(2, 1fr) !important;
           }
         }
 
         @media (max-width: 768px) {
           /* SECTION CARD */
           .sectionCard {
-            padding: 18px !important;
+            padding: 14px !important;
             border-radius: 14px !important;
           }
 
-          grid-template-columns: 1fr;
-}
-
           /* HERO */
           .heroSection {
-            padding: 28px 16px !important;
+            min-height: 140px !important;
+            background-position: center !important;
+            background-size: cover !important;
+            padding: 20px 12px !important;
           }
 
-          /* STEP LABEL */
-          .stepLabel {
-            font-size: 0.74rem !important;
+          /* STEP LABELS INSIDE BUTTONS */
+          .stepScroller button span {
+            font-size: 11px !important;
+            line-height: 1.2 !important;
           }
 
-          /* BUTTONS */
-          .mobileBtn {
-            width: 100%;
+          /* STEP BUTTONS */
+          .stepScroller button {
+            min-width: 95px !important;
+            padding: 10px 6px !important;
+          }
+
+          /* FORM ROWS */
+          .responsiveRow2 {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* OWNER / DEALER / BUILDER */
+          .responsiveRow3 {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* INPUTS */
+          input,
+          select,
+          textarea {
+            font-size: 16px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .heroSection {
+            min-height: 110px !important;
+            padding: 16px 10px !important;
+          }
+
+          .stepScroller button {
+            min-width: 85px !important;
+            padding: 8px 4px !important;
+          }
+
+          .stepScroller button span {
+            font-size: 10px !important;
+          }
+
+          .sectionCard {
+            padding: 12px !important;
+          }
+
+          .responsiveRow3 {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>

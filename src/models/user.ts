@@ -75,7 +75,7 @@ const UserSchema = new Schema<IUser>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // ✅ FIXED: Only create indexes that don't conflict
@@ -83,7 +83,7 @@ const UserSchema = new Schema<IUser>(
 // UserSchema.index({ phone: 1 });  // ← REMOVED THIS LINE (causing conflict)
 
 // Keep these indexes (no conflict)
-UserSchema.index({ email: 1 });
+// UserSchema.index({ email: 1 });
 UserSchema.index({ role: 1 });
 
 // Virtual for full profile

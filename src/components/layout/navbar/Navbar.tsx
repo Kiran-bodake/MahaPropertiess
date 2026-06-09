@@ -419,7 +419,7 @@ export function Navbar() {
 
   const [searchFocus, setSearchFocus] = useState(false);
 
-  const [properties, setProperties] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>(
     {},
@@ -529,12 +529,14 @@ export function Navbar() {
   }, [user]);
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchCounts = async () => {
       try {
-        const res = await fetch("/api/properties");
+        const res = await fetch("/api/property-counts");
         const data = await res.json();
 
-        setProperties(data);
+        setTotalCount(data.total || 0);
+
+        const counts = data.counts || {};
 
         const defaultCats = [
           "NA Plot",
@@ -546,54 +548,6 @@ export function Navbar() {
           "Residential",
         ];
 
-        const counts: Record<string, number> = {};
-
-        data.forEach((p: any) => {
-          const rawCat = (p.category || p.cat || "").toLowerCase();
-
-          let cat = "";
-
-          switch (rawCat) {
-            case "na-plot":
-              cat = "NA Plot";
-              break;
-
-            case "collector-na":
-              cat = "Collector NA";
-              break;
-
-            case "agriculture":
-              cat = "Agriculture";
-              break;
-
-            case "commercial":
-              cat = "Commercial";
-              break;
-
-            case "warehouse":
-              cat = "Warehouse";
-              break;
-
-            case "investment":
-            case "investment-plot":
-              cat = "Investment";
-              break;
-
-            case "residential":
-              cat = "Residential";
-              break;
-
-            default:
-              cat = rawCat
-                .replace(/-/g, " ")
-                .replace(/\b\w/g, (l: string) => l.toUpperCase());
-          }
-
-          if (!cat) return;
-
-          counts[cat] = (counts[cat] || 0) + 1;
-        });
-
         defaultCats.forEach((cat) => {
           if (!(cat in counts)) {
             counts[cat] = 0;
@@ -601,17 +555,17 @@ export function Navbar() {
         });
 
         const sortedCategories = Object.entries(counts)
-          .sort((a, b) => b[1] - a[1])
+          .sort((a: any, b: any) => Number(b[1]) - Number(a[1]))
           .map(([cat]) => cat);
 
         setCategoryCounts(counts);
         setDynamicCategories(sortedCategories);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch property counts:", err);
       }
     };
 
-    fetchProperties();
+    fetchCounts();
   }, []);
   // Autocomplete hook
   const {
@@ -1910,9 +1864,7 @@ export function Navbar() {
                         opacity: 0.8,
                       }}
                     >
-                      (
-                      {t === "All" ? properties.length : categoryCounts[t] || 0}
-                      )
+                      ({t === "All" ? totalCount : categoryCounts[t] || 0})
                     </span>
                   </Link>
                 ))}

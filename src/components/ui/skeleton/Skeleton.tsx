@@ -1,9 +1,17 @@
 import { cn } from "@/lib/utils";
 import styles from "./skeleton.module.scss";
 
-interface SkeletonProps { className?: string; variant?: "rect" | "text" | "circle" | "card"; }
+interface SkeletonProps {
+  className?: string;
+  variant?: "rect" | "text" | "circle" | "card";
+  style?: React.CSSProperties;
+}
 
-export function Skeleton({ className, variant = "rect" }: SkeletonProps) {
+export function Skeleton({
+  className,
+  variant = "rect",
+  style,
+}: SkeletonProps) {
   if (variant === "card") {
     return (
       <div className={styles.card}>
@@ -21,12 +29,15 @@ export function Skeleton({ className, variant = "rect" }: SkeletonProps) {
     );
   }
   return (
-    <div className={cn(
-      styles.base,
-      variant === "circle" && styles.circle,
-      variant === "text"   && styles.text,
-      variant === "rect"   && styles.rect,
-      className
-    )} />
+    <div
+      className={cn(
+        styles.base,
+        variant === "circle" && styles.circle,
+        variant === "text" && styles.text,
+        variant === "rect" && styles.rect,
+        className,
+      )}
+      style={style}
+    />
   );
 }
