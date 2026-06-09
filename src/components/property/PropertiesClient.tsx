@@ -81,6 +81,7 @@ function formatPropertyType(type: string) {
     industrial: "Industrial Properties",
     warehouse: "Warehouses",
     farmhouse: "Farmhouses",
+    residential: "Residential Properties",
   };
 
   return map[type.toLowerCase()] || type;
@@ -626,17 +627,15 @@ function PropertiesContent() {
           {/* HERO */}
           <section className="hero">
             <h1>
-              {formattedType && location
-                ? `Find ${formattedType} in ${
-                    location === city ? city : `${location}, ${city}`
-                  }`
-                : formattedType
-                  ? `Find ${formattedType} in ${city}`
-                  : location
-                    ? `Find Premium in ${
-                        location === city ? city : `${location}, ${city}`
-                      }`
-                    : `Find Premium in ${city}`}
+              {loading
+                ? "Properties for Sale in Nashik"
+                : formattedType && location
+                  ? `Find ${formattedType} in ${
+                      location === city ? city : `${location}, ${city}`
+                    }`
+                  : formattedType
+                    ? `Find ${formattedType} in ${city}`
+                    : `Properties for Sale in ${location || city}`}
             </h1>
 
             <p>
