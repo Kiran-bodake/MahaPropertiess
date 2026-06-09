@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { connectDB } from "@/lib/mongodb";
 import PropertyInquiry from "@/models/PropertyInquiry";
 import Notification from "@/models/Notification";
+
+// =========================================
+// HELPER: Generate slug from property title
+// =========================================
+const generatePropertySlug = (title: string): string => {
+  if (!title) return "";
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+};
 
 // =========================================
 // SAVE PROPERTY INQUIRY (WITH NOTIFICATION)
@@ -13,9 +23,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // ✅ Extract all fields including auth fields
+    // ✅ Extract all fields including auth fields and property slug
     const {
       propertyTitle,
+      propertySlug: incomingPropertySlug,
       customerName,
       name,
       email,
@@ -25,13 +36,18 @@ export async function POST(req: NextRequest) {
       isAuthenticated,
       userId,
       verificationToken,
+      propertyId,
       ...rest
     } = body;
+
+    // ✅ Generate property slug if not provided
+    const propertySlug = incomingPropertySlug || generatePropertySlug(propertyTitle);
 
     // Prepare inquiry data with proper field mapping
     const inquiryData = {
       // Map to existing schema fields
       propertyTitle: propertyTitle || rest.propertyTitle,
+      propertyId: propertyId || null,
       customerName: customerName || name || "Unknown",
       name: customerName || name || "Unknown",
       email: email || "",
@@ -40,7 +56,7 @@ export async function POST(req: NextRequest) {
       message: message || "",
       inquiryType: inquiryType || "lead-form",
       
-      // ✅ NEW AUTHENTICATION FIELDS
+      // Authentication fields
       isAuthenticated: isAuthenticated || false,
       userId: userId || null,
       verificationToken: verificationToken || null,
@@ -55,22 +71,21 @@ export async function POST(req: NextRequest) {
       ...rest
     };
 
-    console.log("📝 Saving inquiry with auth data:", {
+    console.log("📝 Saving inquiry:", {
       propertyTitle: inquiryData.propertyTitle,
+      propertySlug: propertySlug,
       customerName: inquiryData.customerName,
       phone: inquiryData.phone,
       isAuthenticated: inquiryData.isAuthenticated,
-      userId: inquiryData.userId,
-      hasVerificationToken: !!inquiryData.verificationToken,
-      verifiedAt: inquiryData.verifiedAt
     });
 
     // Create inquiry in database
     const inquiry = await PropertyInquiry.create(inquiryData);
 
-    // ✅ CREATE NOTIFICATION FOR NEW LEAD
+    // ✅ CREATE NOTIFICATION FOR NEW LEAD WITH PROPERTY SLUG
     const userType = inquiry.isAuthenticated ? 'Verified User' : 'Guest (OTP Verified)';
-    await Notification.create({
+    
+    const notification = await Notification.create({
       userId: "admin",
       type: "lead",
       title: "🆕 New Lead Received",
@@ -78,20 +93,31 @@ export async function POST(req: NextRequest) {
       referenceId: inquiry._id.toString(),
       isRead: false,
       metadata: {
+        // ✅ CRITICAL: These fields are used for redirect
+        propertySlug: propertySlug,           // For frontend property page redirect
+        propertyTitle: inquiry.propertyTitle,  // Property name
+        propertyId: propertyId || null,        // Property ID
+        // Other metadata
         isAuthenticated: inquiry.isAuthenticated,
         userId: inquiry.userId,
         phone: inquiry.phone,
-        propertyTitle: inquiry.propertyTitle,
         verifiedViaOTP: !!inquiry.verificationToken,
-        inquiryId: inquiry._id.toString()
+        inquiryId: inquiry._id.toString(),
+        customerName: inquiry.customerName,
+        createdAt: new Date().toISOString(),
       }
     });
 
-    console.log("✅ Property Inquiry + Notification Saved");
+    console.log("✅ Notification created with propertySlug:", propertySlug);
+    console.log("📢 Notification ID:", notification._id);
 
     return NextResponse.json({
       success: true,
       inquiry,
+      notification: {
+        id: notification._id,
+        propertySlug: propertySlug,
+      },
       message: "Inquiry submitted successfully"
     });
 
@@ -121,6 +147,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status');
     const isAuthenticated = searchParams.get('isAuthenticated');
     const userId = searchParams.get('userId');
+    const propertyId = searchParams.get('propertyId');
     const limit = parseInt(searchParams.get('limit') || '50');
     const skip = parseInt(searchParams.get('skip') || '0');
 
@@ -131,6 +158,7 @@ export async function GET(req: NextRequest) {
     if (isAuthenticated === 'true') query.isAuthenticated = true;
     if (isAuthenticated === 'false') query.isAuthenticated = false;
     if (userId) query.userId = userId;
+    if (propertyId) query.propertyId = propertyId;
 
     const inquiries = await PropertyInquiry.find(query)
       .sort({ createdAt: -1 })
@@ -163,6 +191,36 @@ export async function GET(req: NextRequest) {
         hasMore: false
       }
     });
+  }
+}
+
+// =========================================
+// GET SINGLE INQUIRY BY ID
+// =========================================
+export async function GET_BY_ID(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    await connectDB();
+
+    const { id } = params;
+    const inquiry = await PropertyInquiry.findById(id);
+
+    if (!inquiry) {
+      return NextResponse.json(
+        { success: false, message: "Inquiry not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      inquiry,
+    });
+  } catch (error) {
+    console.error("Error fetching inquiry:", error);
+    return NextResponse.json(
+      { success: false, message: "Failed to fetch inquiry" },
+      { status: 500 }
+    );
   }
 }
 
@@ -214,6 +272,46 @@ export async function PUT(req: NextRequest) {
     console.error("Error updating inquiry:", error);
     return NextResponse.json(
       { success: false, message: "Failed to update inquiry" },
+      { status: 500 }
+    );
+  }
+}
+
+// =========================================
+// DELETE INQUIRY
+// =========================================
+export async function DELETE(req: NextRequest) {
+  try {
+    await connectDB();
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "Inquiry ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const deletedInquiry = await PropertyInquiry.findByIdAndDelete(id);
+
+    if (!deletedInquiry) {
+      return NextResponse.json(
+        { success: false, message: "Inquiry not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Inquiry deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("Error deleting inquiry:", error);
+    return NextResponse.json(
+      { success: false, message: "Failed to delete inquiry" },
       { status: 500 }
     );
   }

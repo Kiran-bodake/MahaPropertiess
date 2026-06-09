@@ -3,6 +3,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
+import OTPModal from "@/components/shared/OTPModal";
 
 type Props = {
   open: boolean;
@@ -50,6 +52,13 @@ export default function ContactPopup({
   const [loading, setLoading] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [thankYouMessage, setThankYouMessage] = useState<any>(null);
+  
+  // OTP states
+  const [showOTP, setShowOTP] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<any>(null);
+  
+  // Auth hook
+  const { isAuthenticated, user, sendOTP, verifyOTP, isLoading: authLoading } = useAuth();
 
   const goNext = useCallback(() => {
     setActiveSlide((p) => p === showcaseSlides.length - 1 ? 0 : p + 1);
@@ -91,6 +100,46 @@ export default function ContactPopup({
     }
   }, []);
 
+  // Submit lead to backend
+  const submitLeadToBackend = async (formData: any, verificationToken?: string) => {
+    const userId = user?.id || user?._id || null;
+    
+    console.log("📤 Submitting lead:", {
+      propertyName: propertyName,
+      isAuthenticated: !!user,
+      userId: userId,
+      hasVerificationToken: !!verificationToken
+    });
+    
+    const res = await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        propertyId,
+        propertyName,
+        name: formData.name,
+        mobileNumber: formData.phone,
+        email: formData.email,
+        interest: formData.selected || selected,
+        whatsappConsent: formData.whatsappConsent !== undefined ? formData.whatsappConsent : whatsappConsent,
+        agentName,
+        agentPhone,
+        postedBy,
+        isAuthenticated: !!user,
+        userId: userId,
+        verificationToken: verificationToken
+      }),
+    });
+
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to save information");
+    }
+    
+    return data;
+  };
+
   const handleSubmit = async () => {
     if (!name || !phone || !email) {
       toast.error("Please fill all fields");
@@ -107,29 +156,17 @@ export default function ContactPopup({
     try {
       setLoading(true);
 
-      const res = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          propertyId,
-          propertyName,
-          name,
-          mobileNumber: cleanPhone,
-          email,
-          interest: selected,
-          whatsappConsent,
-          agentName,
-          agentPhone,
-          postedBy,
-        }),
-      });
-
-      const data = await res.json();
-      
-      if (data.success) {
+      if (isAuthenticated) {
+        // ✅ USER IS LOGGED IN - Submit directly
+        console.log("✅ User authenticated, submitting lead directly...");
+        
+        const formData = { name, phone: cleanPhone, email, selected, whatsappConsent };
+        await submitLeadToBackend(formData);
+        
         await fetchThankYouMessage();
         setShowThankYou(true);
         
+        // Reset form
         setName("");
         setPhone("");
         setEmail("");
@@ -140,12 +177,70 @@ export default function ContactPopup({
           setShowThankYou(false);
           onClose();
         }, 5000);
+        
       } else {
-        toast.error(data.message || "Failed to save information");
+        // ✅ USER IS NOT LOGGED IN - Need OTP verification
+        console.log("❌ User not authenticated, sending OTP...");
+        
+        await sendOTP(cleanPhone);
+        
+        setPendingFormData({
+          name,
+          phone: cleanPhone,
+          email,
+          selected,
+          whatsappConsent
+        });
+        
+        setShowOTP(true);
       }
-    } catch (error) {
+      
+    } catch (error: any) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle successful OTP verification
+  const handleOTPVerified = async (verificationToken: string) => {
+    console.log("🎯 OTP Verified! Submitting lead...");
+    
+    if (!pendingFormData) {
+      console.error("No pending form data found!");
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      await submitLeadToBackend(pendingFormData, verificationToken);
+      
+      await fetchThankYouMessage();
+      setShowThankYou(true);
+      
+      // Reset form
+      setName("");
+      setPhone("");
+      setEmail("");
+      setSelected("Buy");
+      setWhatsappConsent(true);
+      
+      setShowOTP(false);
+      setPendingFormData(null);
+      
+      setTimeout(() => {
+        setShowThankYou(false);
+        onClose();
+      }, 5000);
+      
+      toast.success("Lead submitted successfully!");
+      
+    } catch (error: any) {
+      console.error("Error in handleOTPVerified:", error);
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -203,6 +298,29 @@ export default function ContactPopup({
           {/* RIGHT PANEL */}
           <div className="rightPanel">
             <div className="rightPanelContent">
+              {/* Auth Status Badge */}
+              {!authLoading && (
+                <div
+                  style={{
+                    marginBottom: "8px",
+                    padding: "6px 12px",
+                    borderRadius: "10px",
+                    fontSize: "0.7rem",
+                    fontWeight: 500,
+                    backgroundColor: isAuthenticated ? "#dcfce7" : "#dbeafe",
+                    color: isAuthenticated ? "#166534" : "#1e40af",
+                    border: `1px solid ${isAuthenticated ? "#bbf7d0" : "#bfdbfe"}`,
+                    textAlign: "center",
+                  }}
+                >
+                  {isAuthenticated ? (
+                    <span>✅ Verified User • Submit directly</span>
+                  ) : (
+                    <span>📱 New User • OTP verification required</span>
+                  )}
+                </div>
+              )}
+
               <div className="header">
                 <h2>Contact Property Owner</h2>
                 <p className="headerDescription">Get pricing details, brochures, site visit support and expert consultation instantly.</p>
@@ -221,7 +339,6 @@ export default function ContactPopup({
                     <div className="agentName">{agentName}</div>
                     <div className="agentRole">{postedBy}</div>
                   </div>
-                 
                 </div>
                 <div className="agentDetails">
                   <div className="detailBadge">
@@ -256,6 +373,7 @@ export default function ContactPopup({
                   className="input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  disabled={loading}
                 />
                 <input
                   type="tel"
@@ -264,6 +382,7 @@ export default function ContactPopup({
                   value={phone}
                   maxLength={10}
                   onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                  disabled={loading}
                 />
                 <input
                   type="email"
@@ -271,6 +390,7 @@ export default function ContactPopup({
                   className="input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </div>
 
@@ -279,12 +399,13 @@ export default function ContactPopup({
                   type="checkbox"
                   checked={whatsappConsent}
                   onChange={(e) => setWhatsappConsent(e.target.checked)}
+                  disabled={loading}
                 />
                 <span>Get instant updates on WhatsApp</span>
               </label>
 
-              <button className="submitBtn" onClick={handleSubmit} disabled={loading}>
-                {loading ? "Saving..." : "Get Contact Details"}
+              <button className="submitBtn" onClick={handleSubmit} disabled={loading || authLoading}>
+                {loading ? "Processing..." : "Get Contact Details"}
               </button>
 
               <div className="trustInfo">🔒 Your information is safe & secure with MahaPropertys</div>
@@ -292,6 +413,20 @@ export default function ContactPopup({
           </div>
         </div>
       </div>
+
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTP}
+        onClose={() => {
+          setShowOTP(false);
+          setPendingFormData(null);
+        }}
+        phoneNumber={phone}
+        onVerify={handleOTPVerified}
+        enquiryData={pendingFormData}
+        verifyOTP={verifyOTP}
+        sendOTP={sendOTP}
+      />
 
       {/* THANK YOU MODAL */}
       {showThankYou && thankYouMessage && (
@@ -421,7 +556,6 @@ export default function ContactPopup({
           color: white;
         }
 
-        /* PROFESSIONAL GRADIENT TEXT FOR TITLES */
         .slideTitle {
           font-size: 1.8rem;
           font-weight: 800;
@@ -556,7 +690,6 @@ export default function ContactPopup({
           line-height: 1.5;
         }
 
-        /* AGENT INFO CARD */
         .agentInfoCard {
           background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
           border-radius: 16px;
@@ -596,25 +729,6 @@ export default function ContactPopup({
           font-size: 11px;
           color: #16a34a;
           font-weight: 600;
-        }
-
-        .callBtn {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 14px;
-          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-          color: white;
-          text-decoration: none;
-          border-radius: 10px;
-          font-size: 12px;
-          font-weight: 600;
-          transition: all 0.2s;
-        }
-
-        .callBtn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
         }
 
         .agentDetails {
@@ -864,7 +978,6 @@ export default function ContactPopup({
           color: #94a3b8;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 800px) {
           .popup {
             grid-template-columns: 1fr;
@@ -905,11 +1018,6 @@ export default function ContactPopup({
 
           .agentHeader {
             flex-wrap: wrap;
-          }
-
-          .callBtn {
-            width: 100%;
-            justify-content: center;
           }
 
           .thankyouModal {
