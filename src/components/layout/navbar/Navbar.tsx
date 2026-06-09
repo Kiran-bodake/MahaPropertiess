@@ -421,6 +421,9 @@ export function Navbar() {
 
   const [properties, setProperties] = useState<any[]>([]);
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>(
+    {},
+  );
 
   const router = useRouter();
 
@@ -533,7 +536,6 @@ export function Navbar() {
 
         setProperties(data);
 
-        // ✅ Categories
         const defaultCats = [
           "NA Plot",
           "Collector NA",
@@ -541,29 +543,69 @@ export function Navbar() {
           "Commercial",
           "Warehouse",
           "Investment",
+          "Residential",
         ];
 
-        const dbCats = data
-          .map((p: any) => {
-            const cat = p.category || p.cat || "";
+        const counts: Record<string, number> = {};
 
-            const formatted = cat
-              .replace(/-/g, " ")
-              .replace(/\b\w/g, (l: string) => l.toUpperCase());
+        data.forEach((p: any) => {
+          const rawCat = (p.category || p.cat || "").toLowerCase();
 
-            if (formatted === "Na Plot") return "NA Plot";
+          let cat = "";
 
-            if (formatted === "Collector Na") return "Collector NA";
+          switch (rawCat) {
+            case "na-plot":
+              cat = "NA Plot";
+              break;
 
-            return formatted;
-          })
-          .filter(Boolean);
+            case "collector-na":
+              cat = "Collector NA";
+              break;
 
-        const cats: string[] = [
-          ...new Set<string>([...defaultCats, ...dbCats]),
-        ];
+            case "agriculture":
+              cat = "Agriculture";
+              break;
 
-        setDynamicCategories(cats);
+            case "commercial":
+              cat = "Commercial";
+              break;
+
+            case "warehouse":
+              cat = "Warehouse";
+              break;
+
+            case "investment":
+            case "investment-plot":
+              cat = "Investment";
+              break;
+
+            case "residential":
+              cat = "Residential";
+              break;
+
+            default:
+              cat = rawCat
+                .replace(/-/g, " ")
+                .replace(/\b\w/g, (l: string) => l.toUpperCase());
+          }
+
+          if (!cat) return;
+
+          counts[cat] = (counts[cat] || 0) + 1;
+        });
+
+        defaultCats.forEach((cat) => {
+          if (!(cat in counts)) {
+            counts[cat] = 0;
+          }
+        });
+
+        const sortedCategories = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])
+          .map(([cat]) => cat);
+
+        setCategoryCounts(counts);
+        setDynamicCategories(sortedCategories);
       } catch (err) {
         console.error(err);
       }
@@ -1842,10 +1884,11 @@ export function Navbar() {
                     }
                     style={{
                       whiteSpace: "nowrap",
-                      padding: "6px 16px",
+                      padding: "8px 15px",
                       borderRadius: "999px",
-                      fontSize: "12.5px",
+                      fontSize: "12px",
                       fontWeight: 600,
+                      lineHeight: 1.2,
                       color: "#374151",
                       background: "#f3f4f6",
                       border: "1px solid #e5e7eb",
@@ -1860,6 +1903,17 @@ export function Navbar() {
                     }
                   >
                     {t}
+                    <span
+                      style={{
+                        marginLeft: 6,
+                        fontWeight: 700,
+                        opacity: 0.8,
+                      }}
+                    >
+                      (
+                      {t === "All" ? properties.length : categoryCounts[t] || 0}
+                      )
+                    </span>
                   </Link>
                 ))}
               </div>

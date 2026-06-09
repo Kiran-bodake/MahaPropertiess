@@ -15,6 +15,7 @@ import {
   Twitter,
 } from "lucide-react";
 import { Footer } from "../layout/footer";
+import StickySupport from "../shared/StickySupport";
 /* ═══════════════════════════════════════════════════════════
    TOKENS
 ═══════════════════════════════════════════════════════════ */
@@ -3070,6 +3071,7 @@ export default function MahaHome() {
       </main>
       {/* Single footer */}
       <Footer />
+      <StickySupport />
       {/* WhatsApp sticky — official logo */}
       <WA />
     </>

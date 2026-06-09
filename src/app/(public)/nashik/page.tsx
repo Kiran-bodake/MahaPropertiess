@@ -9,6 +9,8 @@ import FAQSection from "@/components/nashik/FAQSection";
 import FinalInvestmentCTA from "@/components/nashik/FinalInvestmentCTA";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
+import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
+import StickySupport from "@/components/shared/StickySupport";
 
 export const metadata = {
   title: "Why Invest in Nashik | Nashik Real Estate Investment",
@@ -407,6 +409,8 @@ export default function NashikPage() {
         </section>
       </main>
       <Footer />
+      <StickySupport />
+      <FloatingWhatsapp />
     </>
   );
 }
