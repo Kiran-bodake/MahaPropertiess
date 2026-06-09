@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
+import OTPModal from "./OTPModal";
 
 type ThankYouMessage = {
   _id?: string;
@@ -22,6 +24,21 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
   const [loading, setLoading] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [thankYouMessage, setThankYouMessage] = useState<ThankYouMessage | null>(null);
+  
+  // OTP states
+  const [showOTP, setShowOTP] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<any>(null);
+  
+  // Auth hook
+  const { isAuthenticated, user, sendOTP, verifyOTP, isLoading: authLoading } = useAuth();
+
+  // Close Thank You Modal
+  const closeThankYou = () => {
+    setShowThankYou(false);
+    setTimeout(() => {
+      setSubmitted(false);
+    }, 300);
+  };
 
   // Fetch active thank you message from database
   const fetchThankYouMessage = async () => {
@@ -31,7 +48,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
       if (data.success && data.messages && data.messages.length > 0) {
         setThankYouMessage(data.messages[0]);
       } else {
-        // Default message if none configured
         setThankYouMessage({
           title: "Thank You!",
           message: "Your property inquiry has been submitted successfully. Our expert will contact you shortly.",
@@ -43,7 +59,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
       }
     } catch (error) {
       console.error("Error fetching thank you message:", error);
-      // Default message on error
       setThankYouMessage({
         title: "Thank You!",
         message: "Your property inquiry has been submitted successfully. Our expert will contact you shortly.",
@@ -60,10 +75,48 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
     fetchThankYouMessage();
   }, []);
 
+  // Submit enquiry to backend
+  const submitEnquiryToBackend = async (formData: any, verificationToken?: string) => {
+    const userId = user?.id || user?._id || null;
+    
+    console.log("📤 Submitting enquiry:", {
+      propertyTitle: formData.propertyTitle || propertyTitle,
+      isAuthenticated: !!user,
+      userId: userId,
+      hasVerificationToken: !!verificationToken
+    });
+    
+    const res = await fetch("/api/property-inquiry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        propertyTitle: formData.propertyTitle || propertyTitle,
+        customerName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        inquiryType: "lead-form",
+        isAuthenticated: !!user,
+        userId: userId,
+        verificationToken: verificationToken
+      }),
+    });
+
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || "Something went wrong");
+    }
+    
+    return data;
+  };
+
+  // Handle form submission with auth check
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (!name || !email || !phone) {
       toast.error("Please fill all required fields");
       return;
@@ -78,58 +131,89 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/property-inquiry", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          propertyTitle,
-          customerName: name,
-          email,
-          phone: cleanPhone,
-          message,
-          inquiryType: "lead-form",
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        console.log("Property Inquiry Saved");
+      if (isAuthenticated) {
+        console.log("✅ User authenticated, submitting enquiry directly...");
         
-        // Fetch latest thank you message before showing
+        const formData = { name, email, phone: cleanPhone, message, propertyTitle };
+        await submitEnquiryToBackend(formData);
+        
         await fetchThankYouMessage();
         setShowThankYou(true);
         
-        // Reset form
         setName("");
         setEmail("");
         setPhone("");
         setMessage("");
         setSubmitted(true);
         
-        // Auto close thank you modal after 5 seconds
         setTimeout(() => {
           setShowThankYou(false);
         }, 5000);
+        
       } else {
-        toast.error(data.message || "Something went wrong");
+        console.log("❌ User not authenticated, sending OTP...");
+        
+        await sendOTP(cleanPhone);
+        
+        setPendingFormData({
+          name,
+          email,
+          phone: cleanPhone,
+          message,
+          propertyTitle
+        });
+        
+        setShowOTP(true);
       }
-    } catch (error) {
+      
+    } catch (error: any) {
       console.log(error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(error.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const closeThankYou = () => {
-    setShowThankYou(false);
-    // Optional: Reset submitted state after modal closes
-    setTimeout(() => {
-      setSubmitted(false);
-    }, 300);
+  // Handle successful OTP verification
+  const handleOTPVerified = async (verificationToken: string) => {
+    console.log("🎯 OTP Verified! Submitting enquiry...");
+    console.log("Pending form data:", pendingFormData);
+    
+    if (!pendingFormData) {
+      console.error("No pending form data found!");
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      await submitEnquiryToBackend(pendingFormData, verificationToken);
+      
+      await fetchThankYouMessage();
+      setShowThankYou(true);
+      
+      setName("");
+      setEmail("");
+      setPhone("");
+      setMessage("");
+      setSubmitted(true);
+      
+      setShowOTP(false);
+      setPendingFormData(null);
+      
+      setTimeout(() => {
+        setShowThankYou(false);
+      }, 5000);
+      
+      toast.success("Enquiry submitted successfully!");
+      
+    } catch (error: any) {
+      console.error("Error in handleOTPVerified:", error);
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inp: React.CSSProperties = {
@@ -198,6 +282,28 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
           padding: "18px 20px",
         }}
       >
+        {/* Auth Status Badge */}
+        {!authLoading && (
+          <div
+            style={{
+              marginBottom: "12px",
+              padding: "8px 12px",
+              borderRadius: "10px",
+              fontSize: "0.8rem",
+              fontWeight: 500,
+              backgroundColor: isAuthenticated ? "#dcfce7" : "#dbeafe",
+              color: isAuthenticated ? "#166534" : "#1e40af",
+              border: `1px solid ${isAuthenticated ? "#bbf7d0" : "#bfdbfe"}`,
+            }}
+          >
+            {isAuthenticated ? (
+              <span>✅ Verified User • Submit enquiry directly</span>
+            ) : (
+              <span>📱 New User • OTP verification required</span>
+            )}
+          </div>
+        )}
+
         {/* HEADER */}
         <div
           style={{
@@ -228,16 +334,16 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
             Interested in this property?
           </p>
 
-        <p
-          style={{
-            margin: "3px 0 0",
-            fontSize: "0.85rem",
-            color: "#92400e",
-          }}
-        >
-          Leave your details — our expert will call you back shortly.
-        </p>
-      </div>
+          <p
+            style={{
+              margin: "3px 0 0",
+              fontSize: "0.85rem",
+              color: "#92400e",
+            }}
+          >
+            Leave your details — our expert will call you back shortly.
+          </p>
+        </div>
 
         {/* FORM */}
         <form onSubmit={handleSubmit}>
@@ -250,7 +356,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
               alignItems: "start",
             }}
           >
-            {/* NAME */}
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -259,7 +364,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
               style={inp}
             />
 
-            {/* EMAIL */}
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -269,7 +373,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
               style={inp}
             />
 
-            {/* PHONE */}
             <input
               value={phone}
               onChange={(e) => {
@@ -285,7 +388,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
               style={inp}
             />
 
-            {/* MESSAGE */}
             <div
               style={{
                 gridColumn: "1 / -1",
@@ -311,7 +413,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
               />
             </div>
 
-            {/* BUTTON */}
             <div
               style={{
                 gridColumn: "1 / -1",
@@ -321,7 +422,7 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
             >
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || authLoading}
                 style={{
                   height: 52,
                   padding: "0 28px",
@@ -345,14 +446,28 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                {loading ? "Sending..." : "Get a Callback"}
+                {loading ? "Processing..." : "Get a Callback"}
               </button>
             </div>
           </div>
         </form>
       </div>
 
-      {/* Professional Thank You Modal */}
+      {/* OTP Modal */}
+      <OTPModal
+        isOpen={showOTP}
+        onClose={() => {
+          setShowOTP(false);
+          setPendingFormData(null);
+        }}
+        phoneNumber={phone}
+        onVerify={handleOTPVerified}
+        enquiryData={pendingFormData}
+        verifyOTP={verifyOTP}
+        sendOTP={sendOTP}
+      />
+
+      {/* Thank You Modal */}
       {showThankYou && thankYouMessage && (
         <div className="thankyouOverlay" onClick={closeThankYou}>
           <div 
@@ -405,7 +520,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
           }
         }
 
-        /* Thank You Modal Styles */
         .thankyouOverlay {
           position: fixed;
           top: 0;
@@ -566,3 +680,6 @@ export function PropertyLeadForm({ propertyTitle }: { propertyTitle: string }) {
     </>
   );
 }
+
+// ✅ IMPORTANT: Default export at the bottom
+export default PropertyLeadForm;

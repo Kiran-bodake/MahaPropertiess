@@ -1,17 +1,25 @@
-export type UserRole = "user" | "admin" | "super-admin";
-
-export interface User {
-  _id: string;
-  phone: string;
-  name?: string;
-  email?: string;
-  role: UserRole;
-  savedProperties: string[];
-  isVerified: boolean;
-  createdAt: string;
+// types/user.ts
+export interface AuthSession {
+  success: boolean;
+  message: string;
+  user: {
+    id?: string;
+    _id?: string;
+    phone: string;
+    name: string | null;
+    email: string | null;
+    isVerified: boolean;
+    verifiedAt?: string;
+  };
+  token: string;
 }
 
-export interface AuthSession {
-  user: User;
-  token: string;
+export interface User {
+  id: string;
+  _id: string;
+  phone: string;
+  name: string | null;
+  email: string | null;
+  isVerified: boolean;
+  verifiedAt?: string;
 }

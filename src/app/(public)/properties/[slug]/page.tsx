@@ -11,7 +11,7 @@ import { Footer } from "@/components/layout/footer";
 import ViewTracker from "@/components/property/ViewTracker";
 import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
-import { PropertyLeadForm } from "@/components/shared/PropertyLeadForm";
+import PropertyLeadForm from "@/components/shared/PropertyLeadForm";87
 import { PropertySectionTabs } from "@/components/property/PropertySectionTabs";
 import { PropertyActions } from "@/components/property/PropertyActions";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
