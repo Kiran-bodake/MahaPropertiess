@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import HomePropertyCard from "@/components/property/HomePropertyCard";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -63,10 +63,17 @@ export default function HotLocalities({ properties }: { properties: any[] }) {
         <div style={{ position: "relative" }}>
           <Swiper
             className="hotLocalitiesSwiper"
-            modules={[Navigation, Pagination]}
+            modules={[Navigation, Pagination, Autoplay]}
             navigation
             pagination={{ clickable: true }}
-            spaceBetween={20}
+            loop={true}
+            spaceBetween={16}
+            slidesPerGroup={1}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
             breakpoints={{
               0: {
                 slidesPerView: 1.1,
@@ -75,9 +82,6 @@ export default function HotLocalities({ properties }: { properties: any[] }) {
                 slidesPerView: 2,
               },
               1200: {
-                slidesPerView: 3,
-              },
-              1500: {
                 slidesPerView: 4,
               },
             }}
@@ -151,17 +155,19 @@ export default function HotLocalities({ properties }: { properties: any[] }) {
 
         .hotLocalitiesSwiper .swiper-button-prev,
         .hotLocalitiesSwiper .swiper-button-next {
-          border-radius: 999px;
-          background: #fff;
-          border: 1px solid #e5e7eb;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          width: 28px !important;
+          height: 28px !important;
+
+          background: transparent;
+          border: none;
+          box-shadow: none;
         }
 
         .hotLocalitiesSwiper .swiper-button-prev::after,
         .hotLocalitiesSwiper .swiper-button-next::after {
-          font-size: 16px;
+          font-size: 10px;
+          font-weight: 900;
           color: #16a34a;
-          font-weight: 700;
         }
       `}</style>
     </section>

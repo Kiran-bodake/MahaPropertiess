@@ -267,8 +267,6 @@ export default function HomePropertyCard({
   const [ii, setIi] = useState(0);
   const [sv, setSv] = useState(false);
 
-  console.log("CARD DATA", p);
-
   return (
     <Link
       href={`/properties/${p.slug}`}
@@ -591,35 +589,48 @@ export default function HomePropertyCard({
           </div>
 
           {/* Bottom Buttons */}
+
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
-              gap: "7px",
+              gap: "8px",
+              marginTop: "12px",
             }}
           >
             <div
-              className="b bo"
               style={{
-                fontSize: "12px",
-                padding: "8px 10px",
-                borderRadius: "7px",
-                textAlign: "center",
+                height: "38px",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+                background: "#fff",
+                color: "#475569",
+                fontSize: "13px",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               Details
             </div>
 
             <div
-              className="b bg"
               style={{
-                fontSize: "12px",
-                padding: "8px 10px",
-                borderRadius: "7px",
-                textAlign: "center",
+                height: "38px",
+                borderRadius: "8px",
+                background: "#166534",
+                color: "#fff",
+                fontSize: "13px",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
               }}
             >
-              {I.ph} Contact
+              {I.ph}
+              Contact
             </div>
           </div>
         </div>
