@@ -10,7 +10,12 @@ export default function EMICalculatorPage() {
   const [rate, setRate] = useState(8.5);
   const [years, setYears] = useState(20);
 
-  const emi = calculateEMI(loan, rate, years);
+  // No auto calculation
+  const [emi, setEmi] = useState<number | null>(null);
+
+  const handleCalculate = () => {
+    setEmi(calculateEMI(loan, rate, years));
+  };
 
   return (
     <>
@@ -78,6 +83,23 @@ export default function EMICalculatorPage() {
             />
           </div>
 
+          <button
+            onClick={handleCalculate}
+            style={{
+              marginTop: 20,
+              height: 48,
+              padding: "0 24px",
+              borderRadius: 12,
+              background: "#166534",
+              color: "#fff",
+              fontWeight: 700,
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Calculate EMI
+          </button>
+
           <div
             style={{
               marginTop: 24,
@@ -103,8 +125,109 @@ export default function EMICalculatorPage() {
                 marginTop: 8,
               }}
             >
-              ₹{emi.toLocaleString("en-IN")}
+              {emi !== null
+                ? `₹${emi.toLocaleString("en-IN")}`
+                : "Click Calculate"}
             </div>
+          </div>
+
+          {/* Guide Section */}
+          <div
+            style={{
+              marginTop: 40,
+              paddingTop: 32,
+              borderTop: "1px solid #e2e8f0",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.8rem",
+                fontWeight: 800,
+                marginBottom: 16,
+              }}
+            >
+              Home Loan EMI Guide
+            </h2>
+
+            <p
+              style={{
+                color: "#475569",
+                lineHeight: 1.8,
+                marginBottom: 20,
+              }}
+            >
+              An EMI (Equated Monthly Installment) is the fixed monthly amount
+              paid by a borrower to repay a home loan. The EMI includes both
+              principal and interest components and remains constant throughout
+              the loan tenure.
+            </p>
+
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: 700,
+                marginBottom: 10,
+              }}
+            >
+              What Factors Affect EMI?
+            </h3>
+
+            <ul
+              style={{
+                paddingLeft: 20,
+                lineHeight: 2,
+                color: "#475569",
+              }}
+            >
+              <li>Loan Amount</li>
+              <li>Interest Rate</li>
+              <li>Loan Tenure</li>
+              <li>Prepayments and Foreclosures</li>
+            </ul>
+
+            <h3
+              style={{
+                marginTop: 24,
+                fontSize: "1.2rem",
+                fontWeight: 700,
+                marginBottom: 10,
+              }}
+            >
+              Benefits of Using an EMI Calculator
+            </h3>
+
+            <ul
+              style={{
+                paddingLeft: 20,
+                lineHeight: 2,
+                color: "#475569",
+              }}
+            >
+              <li>Instant EMI estimation</li>
+              <li>Compare loan offers easily</li>
+              <li>Plan monthly finances better</li>
+              <li>Know affordability before purchase</li>
+            </ul>
+
+            <h3
+              style={{
+                marginTop: 24,
+                fontSize: "1.2rem",
+                fontWeight: 700,
+                marginBottom: 10,
+              }}
+            >
+              EMI Formula
+            </h3>
+
+            <p
+              style={{
+                color: "#475569",
+                lineHeight: 1.8,
+              }}
+            >
+              EMI = P × R × (1 + R)^N / ((1 + R)^N − 1)
+            </p>
           </div>
         </div>
       </main>

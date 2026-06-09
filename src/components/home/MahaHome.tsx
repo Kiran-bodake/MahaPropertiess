@@ -1084,6 +1084,7 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
   const imgs = p.img ? [p.img] : [];
   const [ii, setIi] = useState(0);
   const [sv, setSv] = useState(false);
+  console.log("PROPERTY:", p);
 
   return (
     <Link
@@ -1358,7 +1359,7 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
             }}
           >
             <span style={{ color: G.g }}>{I.pin}</span>
-            {p.loc || p.location}
+            {p.locality ? `${p.locality}, ${p.city || ""}` : p.city || "Nashik"}
           </div>
 
           <div
