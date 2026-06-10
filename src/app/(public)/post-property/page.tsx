@@ -250,6 +250,7 @@ const SectionCard = ({
     }}
   >
     <div
+      className="sectionHeader"
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -786,6 +787,7 @@ function ImageUploadZone({
       {/* Thumbnails grid */}
       {files.length > 0 && (
         <div
+          className="uploadGrid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
@@ -1852,7 +1854,12 @@ Perfect for ${
               after verification.
             </p>
             <div
-              style={{ display: "flex", gap: "10px", justifyContent: "center" }}
+              className="successButtons"
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "center",
+              }}
             >
               <button
                 onClick={() => {
@@ -2090,6 +2097,7 @@ Perfect for ${
 
           <form onSubmit={handleSubmit}>
             <div
+              className="mainLayout"
               style={{
                 display: "grid",
                 gridTemplateColumns: "minmax(0,1fr) 320px",
@@ -2109,7 +2117,15 @@ Perfect for ${
                     onPrev={() => setStep((s) => Math.max(0, s - 1))}
                     onNext={handleNext}
                   >
-                    <Row cols={3}>
+                    <div
+                      className="postedByGrid"
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(3,1fr)",
+                        gap: "14px",
+                        marginBottom: "18px",
+                      }}
+                    >
                       {meta.postedByOptions.map((opt) => (
                         <div
                           key={opt.value}
@@ -2121,14 +2137,15 @@ Perfect for ${
                           }
                           style={{
                             flex: 1,
-                            minWidth: "180px",
+                            width: "100%",
+                            minWidth: 0,
                             cursor: "pointer",
                             border:
                               form.postedBy === opt.value
                                 ? "2px solid #16a34a"
                                 : "1px solid #d1d5db",
                             borderRadius: "16px",
-                            padding: "20px",
+                            padding: "14px",
                             background:
                               form.postedBy === opt.value
                                 ? "#f0fdf4"
@@ -2145,8 +2162,8 @@ Perfect for ${
                           {/* Image Container */}
                           <div
                             style={{
-                              width: "64px",
-                              height: "64px",
+                              width: "52px",
+                              height: "52px",
                               marginBottom: "12px",
 
                               display: "flex",
@@ -2188,7 +2205,7 @@ Perfect for ${
                           </span>
                         </div>
                       ))}
-                    </Row>
+                    </div>
                     <Row>
                       <Field>
                         {lbl("Your Name", true)}
@@ -2651,6 +2668,7 @@ Perfect for ${
 
                     {/* MAP LOCATION */}
                     <div
+                      className="mapSection"
                       style={{
                         marginTop: "24px",
                         border: "1px solid #e2e8f0",
@@ -3981,20 +3999,22 @@ Perfect for ${
         </div>
       </main>
       <style jsx>{`
+        /* =========================
+     TABLET
+  ========================= */
         @media (max-width: 1100px) {
-          /* MAIN LAYOUT */
+          /* Main Layout */
           form > div {
             grid-template-columns: 1fr !important;
           }
 
-          /* SIDEBAR */
           aside {
             position: static !important;
             top: unset !important;
             width: 100%;
           }
 
-          /* STEP INDICATOR */
+          /* Step Indicator */
           .stepScroller {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -4005,55 +4025,87 @@ Perfect for ${
             display: none;
           }
 
-          /* FORM ROWS */
+          /* Form Rows */
           .responsiveRow2 {
             grid-template-columns: 1fr !important;
           }
 
-          /* 3 COLUMN ROWS */
           .responsiveRow3 {
             grid-template-columns: repeat(2, 1fr) !important;
           }
         }
 
+        /* =========================
+     MOBILE
+  ========================= */
         @media (max-width: 768px) {
-          /* SECTION CARD */
-          .sectionCard {
-            padding: 14px !important;
-            border-radius: 14px !important;
-          }
-
-          /* HERO */
+          /* Hero */
           .heroSection {
             min-height: 140px !important;
+            height: 140px !important;
             background-position: center !important;
             background-size: cover !important;
             padding: 20px 12px !important;
           }
 
-          /* STEP LABELS INSIDE BUTTONS */
-          .stepScroller button span {
-            font-size: 11px !important;
-            line-height: 1.2 !important;
+          .sectionHeader {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .postedByGrid {
+            grid-template-columns: 1fr !important;
+            width: 100%;
           }
 
-          /* STEP BUTTONS */
+          .postedByGrid > div {
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box;
+          }
+
+          /* Cards */
+          .sectionCard {
+            padding: 14px !important;
+            border-radius: 14px !important;
+          }
+
+          /* All grids become single column */
+          .responsiveRow2,
+          .responsiveRow3 {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* Stepper */
           .stepScroller button {
             min-width: 95px !important;
             padding: 10px 6px !important;
           }
 
-          /* FORM ROWS */
-          .responsiveRow2 {
-            grid-template-columns: 1fr !important;
+          .stepScroller button span {
+            font-size: 11px !important;
+            line-height: 1.2 !important;
           }
 
-          /* OWNER / DEALER / BUILDER */
-          .responsiveRow3 {
-            grid-template-columns: 1fr !important;
+          .mainLayout {
+            width: 100% !important;
+            overflow-x: hidden;
           }
 
-          /* INPUTS */
+          .sectionCard {
+            width: 100% !important;
+            box-sizing: border-box;
+            overflow: hidden;
+          }
+
+          aside {
+            width: 100% !important;
+          }
+
+          body {
+            overflow-x: hidden;
+          }
+
+          /* Prevent iOS zoom */
           input,
           select,
           textarea {
@@ -4061,10 +4113,18 @@ Perfect for ${
           }
         }
 
+        /* =========================
+     SMALL MOBILE
+  ========================= */
         @media (max-width: 480px) {
           .heroSection {
             min-height: 110px !important;
+            height: 110px !important;
             padding: 16px 10px !important;
+          }
+
+          .sectionCard {
+            padding: 12px !important;
           }
 
           .stepScroller button {
@@ -4074,14 +4134,6 @@ Perfect for ${
 
           .stepScroller button span {
             font-size: 10px !important;
-          }
-
-          .sectionCard {
-            padding: 12px !important;
-          }
-
-          .responsiveRow3 {
-            grid-template-columns: 1fr !important;
           }
         }
       `}</style>
