@@ -120,7 +120,13 @@ export default function BlogsPage() {
                     }}
                   >
                     {/* IMAGE */}
-                    <div style={{ overflow: "hidden", position: "relative", height: "200px" }}>
+                    <div
+                      style={{
+                        overflow: "hidden",
+                        position: "relative",
+                        height: "200px",
+                      }}
+                    >
                       <Image
                         fill
                         src={b.img}

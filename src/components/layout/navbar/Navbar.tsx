@@ -654,6 +654,7 @@ export function Navbar() {
         <div
           key={item.label}
           style={{
+            position: "relative",
             display: item.label === "Coworking" ? "none" : "block",
           }}
           onMouseEnter={() => openMenu(item.label)}
@@ -1103,7 +1104,7 @@ export function Navbar() {
                     key={item.label}
                     style={{
                       position: "relative",
-                      display: item.label === "Coworking" ? "none" : "relative",
+                      display: item.label === "Coworking" ? "none" : "block",
                     }}
                     onMouseEnter={() => openMenu(item.label)}
                     onMouseLeave={closeMenu}

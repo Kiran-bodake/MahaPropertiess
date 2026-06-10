@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 import { Building2, BadgeCheck, Users, MapPin, PhoneCall } from "lucide-react";
+import type { Metadata } from "next";
 
 const BODY_FONT = "'DM Sans', system-ui, sans-serif";
 
@@ -32,6 +33,65 @@ const values = [
     desc: "Strong understanding of Nashik and Maharashtra property markets.",
   },
 ];
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://mahaproperties.in"),
+
+  title: "About MahaProperties | Maharashtra's Trusted Property Portal",
+
+  description:
+    "Learn about MahaProperties, Maharashtra's trusted real estate platform for verified residential, commercial, agricultural land, NA plots and investment properties.",
+
+  keywords: [
+    "MahaProperties",
+    "About MahaProperties",
+    "Properties in Maharashtra",
+    "Real Estate Maharashtra",
+    "Property Portal Maharashtra",
+    "Properties in Nashik",
+    "Agricultural Land Maharashtra",
+    "Commercial Properties Maharashtra",
+    "NA Plots Maharashtra",
+  ],
+
+  openGraph: {
+    title: "About MahaProperties | Maharashtra's Trusted Property Portal",
+
+    description:
+      "Discover MahaProperties and our mission to provide verified property listings across Maharashtra.",
+
+    url: "https://mahaproperties.in/about",
+
+    siteName: "MahaProperties",
+
+    images: [
+      {
+        url: "https://mahaproperties.in/about-banner.png",
+        width: 1200,
+        height: 630,
+        alt: "About MahaProperties",
+      },
+    ],
+
+    locale: "en_IN",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+
+    title: "About MahaProperties | Maharashtra's Trusted Property Portal",
+
+    description:
+      "Discover MahaProperties and our mission to provide verified property listings across Maharashtra.",
+
+    images: ["https://mahaproperties.in/about-banner.png"],
+  },
+
+  alternates: {
+    canonical: "https://mahaproperties.in/about",
+  },
+};
 
 export default function AboutPage() {
   return (
