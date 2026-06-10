@@ -611,11 +611,15 @@ export function Navbar() {
     width: "100%",
     border: "none",
     background: "transparent",
-    padding: "14px 16px",
+    padding: "10px 18px",
     textAlign: "left",
     cursor: "pointer",
     fontWeight: 600,
     color: "#111827",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    fontSize: "14px",
   };
 
   const openMenu = (label: string) => {
@@ -1473,14 +1477,19 @@ export function Navbar() {
                           {/* USER INFO */}
                           <div
                             style={{
-                              padding: "14px",
+                              padding: "16px 18px",
                               borderBottom: "1px solid #f3f4f6",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "4px",
                             }}
                           >
                             <div
                               style={{
                                 fontWeight: 700,
                                 color: "#111827",
+                                fontSize: "15px",
+                                lineHeight: 1.2,
                               }}
                             >
                               {user?.name || "User"}
@@ -1488,95 +1497,56 @@ export function Navbar() {
 
                             <div
                               style={{
-                                fontSize: ".85rem",
+                                fontSize: "13px",
                                 color: "#64748b",
-                                marginTop: "2px",
+                                letterSpacing: "0.3px",
                               }}
                             >
-                              {user?.phone}
+                              {user?.phone
+                                ? `${user.phone.substring(0, 5)}xxxxx`
+                                : ""}
                             </div>
                           </div>
 
-                          {/* MENU ITEMS */}
-
-                          {/* NOTIFICATION BELL */}
+                          {/* NOTIFICATION ITEM */}
                           <div
                             style={{
                               position: "relative",
                             }}
                           >
-                            {/* BELL BUTTON */}
                             <button
                               onClick={() =>
                                 setShowNotifications(!showNotifications)
                               }
                               style={{
-                                width: "45px",
-
-                                height: "38px",
-
-                                borderRadius: "12px",
-
-                                display: "flex",
-
-                                alignItems: "center",
-
-                                justifyContent: "center",
-
-                                border: "1.5px solid #e5e7eb",
-
-                                background: "#fff",
-
-                                color: "#374151",
-
-                                transition: "all .2s ease",
-
-                                cursor: "pointer",
-
+                                ...menuBtn,
                                 position: "relative",
-
-                                boxShadow: "0 1px 2px rgba(0,0,0,.04)",
                               }}
                             >
-                              <Bell size={18} />
+                              <Bell size={16} />
 
-                              {/* RED BADGE */}
+                              <span>Notifications</span>
+
                               {unreadCount > 0 && (
-                                <div
+                                <span
                                   style={{
-                                    position: "absolute",
-
-                                    top: -5,
-
-                                    right: -5,
-
-                                    minWidth: 20,
-
-                                    height: 20,
-
-                                    borderRadius: "50%",
-
+                                    marginLeft: "auto",
                                     background: "#ef4444",
-
                                     color: "#fff",
-
-                                    fontSize: 11,
-
+                                    fontSize: "11px",
                                     fontWeight: 700,
-
+                                    borderRadius: "999px",
+                                    minWidth: "20px",
+                                    height: "20px",
                                     display: "flex",
-
                                     alignItems: "center",
-
                                     justifyContent: "center",
-
-                                    padding: "0 5px",
-
+                                    padding: "0 6px",
                                     boxShadow: "0 4px 10px rgba(239,68,68,.3)",
                                   }}
                                 >
                                   {unreadCount}
-                                </div>
+                                </span>
                               )}
                             </button>
 
@@ -1714,13 +1684,9 @@ export function Navbar() {
                             )}
                           </div>
 
-                          <Link
-                            href="/favorites"
-                            style={menuBtn as React.CSSProperties}
-                          ></Link>
-
                           <Link href="/favorites" style={menuBtn}>
-                            ❤️ Favorite Properties
+                            <Heart size={16} color="#ec4899" />
+                            <span>Saved Properties</span>
                           </Link>
 
                           {/* LOGOUT */}
