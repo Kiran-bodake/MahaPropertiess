@@ -61,11 +61,11 @@ export function AdminNavbar() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notificationId, isRead: true }),
       });
-      
+
       setNotifications((prev) =>
         prev.map((x) =>
-          x._id === notificationId ? { ...x, isRead: true } : x
-        )
+          x._id === notificationId ? { ...x, isRead: true } : x,
+        ),
       );
     } catch (error) {
       console.error("Error marking as read:", error);
@@ -82,10 +82,8 @@ export function AdminNavbar() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ markAllAsRead: true }),
       });
-      
-      setNotifications((prev) =>
-        prev.map((x) => ({ ...x, isRead: true }))
-      );
+
+      setNotifications((prev) => prev.map((x) => ({ ...x, isRead: true })));
     } catch (error) {
       console.error("Error marking all as read:", error);
     }
@@ -98,8 +96,8 @@ export function AdminNavbar() {
     if (!name) return "";
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
   };
 
   // =========================
@@ -143,7 +141,7 @@ export function AdminNavbar() {
   // =========================
   const redirectToPropertyAdminPage = (item: any) => {
     const propertyId = item.metadata?.propertyId || item.referenceId;
-    
+
     if (propertyId) {
       router.push(`/x-admin/properties/${propertyId}`);
     } else {
@@ -206,6 +204,7 @@ export function AdminNavbar() {
   // OPEN NOTIFICATION - MAIN REDIRECT LOGIC
   // =========================
   const openNotification = async (item: any) => {
+    console.log("Notification clicked", item);
     // Mark as read
     if (!item.isRead) {
       await markAsRead(item._id);
@@ -222,10 +221,10 @@ export function AdminNavbar() {
     // ========================================
     // REDIRECT RULES
     // ========================================
-    
+
     // 1. LEAD → Property Page (Frontend)
     if (item.type === "lead") {
-      redirectToPropertyPage(item);
+      router.push("/x-admin/property-inquiries");
       return;
     }
 
@@ -267,7 +266,9 @@ export function AdminNavbar() {
   // HELPER: GET TIME AGO
   // =========================
   const getTimeAgo = (date: string) => {
-    const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+    const seconds = Math.floor(
+      (new Date().getTime() - new Date(date).getTime()) / 1000,
+    );
     if (seconds < 60) return `${seconds}s ago`;
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
@@ -415,7 +416,9 @@ export function AdminNavbar() {
                     padding: "0 4px",
                   }}
                 >
-                  {unreadNotifications.length > 99 ? "99+" : unreadNotifications.length}
+                  {unreadNotifications.length > 99
+                    ? "99+"
+                    : unreadNotifications.length}
                 </span>
               )}
             </button>
@@ -448,8 +451,12 @@ export function AdminNavbar() {
                   }}
                 >
                   <div>
-                    <strong style={{ fontSize: 14, color: "#1f2937" }}>Notifications</strong>
-                    <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
+                    <strong style={{ fontSize: 14, color: "#1f2937" }}>
+                      Notifications
+                    </strong>
+                    <div
+                      style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}
+                    >
                       {unreadNotifications.length} unread
                     </div>
                   </div>
@@ -475,8 +482,12 @@ export function AdminNavbar() {
                   {notifications.length === 0 ? (
                     <div style={{ padding: "40px 20px", textAlign: "center" }}>
                       <div style={{ fontSize: 40, marginBottom: 8 }}>🔔</div>
-                      <div style={{ fontSize: 14, color: "#6b7280" }}>No notifications yet</div>
-                      <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}>
+                      <div style={{ fontSize: 14, color: "#6b7280" }}>
+                        No notifications yet
+                      </div>
+                      <div
+                        style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}
+                      >
                         New notifications will appear here
                       </div>
                     </div>
@@ -498,15 +509,37 @@ export function AdminNavbar() {
                             e.currentTarget.style.background = "#f3f4f6";
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.background = item.isRead ? "#fff" : "#eff6ff";
+                            e.currentTarget.style.background = item.isRead
+                              ? "#fff"
+                              : "#eff6ff";
                           }}
                         >
-                          <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                            <div style={{ fontSize: 20 }}>{getNotificationIcon(item.type)}</div>
-                            
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 12,
+                              alignItems: "flex-start",
+                            }}
+                          >
+                            <div style={{ fontSize: 20 }}>
+                              {getNotificationIcon(item.type)}
+                            </div>
+
                             <div style={{ flex: 1 }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                                <strong style={{ fontSize: 13, color: "#1f2937" }}>{item.title}</strong>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 8,
+                                  marginBottom: 4,
+                                  flexWrap: "wrap",
+                                }}
+                              >
+                                <strong
+                                  style={{ fontSize: 13, color: "#1f2937" }}
+                                >
+                                  {item.title}
+                                </strong>
                                 <span
                                   style={{
                                     fontSize: 10,
@@ -520,19 +553,32 @@ export function AdminNavbar() {
                                   {priorityStyle.label}
                                 </span>
                               </div>
-                              <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 6, lineHeight: 1.4 }}>
+                              <div
+                                style={{
+                                  fontSize: 12,
+                                  color: "#6b7280",
+                                  marginBottom: 6,
+                                  lineHeight: 1.4,
+                                }}
+                              >
                                 {item.message}
                               </div>
                               <div style={{ fontSize: 10, color: "#9ca3af" }}>
                                 {getTimeAgo(item.createdAt)}
                               </div>
                               {item.metadata?.propertyName && (
-                                <div style={{ fontSize: 10, color: "#4f46e5", marginTop: 4 }}>
+                                <div
+                                  style={{
+                                    fontSize: 10,
+                                    color: "#4f46e5",
+                                    marginTop: 4,
+                                  }}
+                                >
                                   🏠 {item.metadata.propertyName}
                                 </div>
                               )}
                             </div>
-                            
+
                             {!item.isRead && (
                               <div
                                 style={{
