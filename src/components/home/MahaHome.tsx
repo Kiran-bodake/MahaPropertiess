@@ -862,7 +862,7 @@ function Hero() {
 
           {/* ✅ NEW SEARCH BAR — redirects to /properties with filters */}
           <div className="fu d3" style={{ maxWidth: "880px" }}>
-            <HeroSearch />
+            <HeroSearch defaultCity={city} />
           </div>
         </div>
       </div>

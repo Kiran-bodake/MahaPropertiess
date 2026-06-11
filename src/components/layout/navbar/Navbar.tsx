@@ -1845,7 +1845,7 @@ export function Navbar() {
                 }}
               >
                 <Link
-                  href="/properties?sort=latest"
+                  href="/properties?sortBy=newest"
                   style={{
                     whiteSpace: "nowrap",
                     padding: "6px 14px",
@@ -1859,7 +1859,7 @@ export function Navbar() {
                   Latest
                 </Link>
                 <Link
-                  href="/properties?sort=popular"
+                  href="/properties?sortBy=popular"
                   style={{
                     whiteSpace: "nowrap",
                     padding: "6px 14px",
@@ -1873,7 +1873,7 @@ export function Navbar() {
                   Popular
                 </Link>
                 <Link
-                  href="/filter"
+                  href="/properties"
                   style={{
                     whiteSpace: "nowrap",
                     padding: "6px 14px",

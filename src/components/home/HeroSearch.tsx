@@ -3,9 +3,9 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Tag, MapPin } from "lucide-react";
+import { useLocationStore } from "@/store/useLocationStore";
 
 type Property = {
-
   id?: string;
 
   title?: string;
@@ -15,8 +15,7 @@ type Property = {
   locality?: string;
 
   city?: string;
-
-}
+};
 
 const G = {
   g: "#1a6b3c",
@@ -37,16 +36,23 @@ function norm(s: unknown) {
 
 export default function HeroSearch() {
   const router = useRouter();
+  const { city } = useLocationStore();
 
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [locality, setLocality] = useState("");
 
+  useEffect(() => {
+    if (city && !locality) {
+      setLocality(city);
+    }
+  }, [city]);
+
   const [allProps, setAllProps] = useState<Property[]>([]);
   const [showCatDD, setShowCatDD] = useState(false);
   const [showLocDD, setShowLocDD] = useState(false);
   const [suggestions, setSuggestions] = useState<any[]>([]);
-const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const catRef = useRef<HTMLDivElement>(null);
   const locRef = useRef<HTMLDivElement>(null);
@@ -78,7 +84,7 @@ const [showSuggestions, setShowSuggestions] = useState(false);
   const categories = useMemo(() => {
     const s = new Set<string>();
     allProps.forEach((p) => {
-      const c = (p.category ||   "").trim();
+      const c = (p.category || "").trim();
       if (c) s.add(c);
     });
     return [...s].sort();
@@ -87,7 +93,7 @@ const [showSuggestions, setShowSuggestions] = useState(false);
   const locations = useMemo(() => {
     const s = new Set<string>();
     allProps.forEach((p) => {
-      const raw = (p.locality ||  "").trim();
+      const raw = (p.locality || "").trim();
       const city = (p.city || "").trim();
       if (city) s.add(city);
       if (raw) s.add(raw);
@@ -116,13 +122,9 @@ const [showSuggestions, setShowSuggestions] = useState(false);
     if (locality.trim()) params.set("locality", locality.trim());
     const qs = params.toString();
 
-setShowSuggestions(false);
+    setShowSuggestions(false);
 
-router.push(
-  qs
-    ? `/properties?${qs}`
-    : "/properties"
-);
+    router.push(qs ? `/properties?${qs}` : "/properties");
   };
 
   return (
@@ -144,93 +146,91 @@ router.push(
       className="hero-search"
     >
       {/* SEARCH */}
-<div style={{ position: "relative" }}>
-  <span style={iconBox}>
-    <Search size={18} color="#1a6b3c" />
-  </span>
+      <div style={{ position: "relative" }}>
+        <span style={iconBox}>
+          <Search size={18} color="#1a6b3c" />
+        </span>
 
-  <input
-    data-testid="hero-search-input"
-    value={q}
-    onChange={(e) => {
-      const value = e.target.value;
+        <input
+          data-testid="hero-search-input"
+          value={q}
+          onChange={(e) => {
+            const value = e.target.value;
 
-      setQ(value);
+            setQ(value);
 
-      if (!value.trim()) {
-        setSuggestions([]);
-        setShowSuggestions(false);
-        return;
-      }
+            if (!value.trim()) {
+              setSuggestions([]);
+              setShowSuggestions(false);
+              return;
+            }
 
-     const filtered = allProps
-  .filter(
-    (p: any) =>
-      norm(p.title).includes(norm(value)) ||
-      norm(p.category).includes(norm(value)) ||
-      norm(p.locality).includes(norm(value)) ||
-      norm(p.city).includes(norm(value))
-  )
-  .slice(0, 6);
+            const filtered = allProps
+              .filter(
+                (p: any) =>
+                  norm(p.title).includes(norm(value)) ||
+                  norm(p.category).includes(norm(value)) ||
+                  norm(p.locality).includes(norm(value)) ||
+                  norm(p.city).includes(norm(value)),
+              )
+              .slice(0, 6);
 
-      setSuggestions(filtered);
-      setShowSuggestions(true);
-    }}
-    onFocus={() => {
-      if (suggestions.length > 0) {
-        setShowSuggestions(true);
-      }
-    }}
-    placeholder='Try "NA plot", "warehouse"...'
-    style={inputStyle}
-    autoComplete="off"
-  />
-
-  {/* Suggestions Dropdown */}
-  {showSuggestions && suggestions.length > 0 && (
-    <div style={ddStyle}>
-      {suggestions.map((property: any) => (
-        <button
-          key={property.id}
-          type="button"
-          style={ddItem}
-          onClick={() => {
-           setQ(property.title);
-            setShowSuggestions(false);
-
-           router.push(
-  `/properties?q=${encodeURIComponent(
-   property.title
-  )}`
-);
+            setSuggestions(filtered);
+            setShowSuggestions(true);
           }}
-        >
-          <Search size={16} color="#1a6b3c" />
+          onFocus={() => {
+            if (suggestions.length > 0) {
+              setShowSuggestions(true);
+            }
+          }}
+          placeholder='Try "NA plot", "warehouse"...'
+          style={inputStyle}
+          autoComplete="off"
+        />
 
-          <div>
-            <div
-              style={{
-                fontWeight: 600,
-                fontSize: "14px"
-              }}
-            >
-              {property.title}
-            </div>
+        {/* Suggestions Dropdown */}
+        {showSuggestions && suggestions.length > 0 && (
+          <div style={ddStyle}>
+            {suggestions.map((property: any) => (
+              <button
+                key={property.id}
+                type="button"
+                style={ddItem}
+                onClick={() => {
+                  setQ(property.title);
+                  setShowSuggestions(false);
 
-            <div
-              style={{
-                fontSize: "12px",
-                color: "#6b7280"
-              }}
-            >
-            {property.locality || property.city}
-            </div>
+                  router.push(
+                    `/properties?q=${encodeURIComponent(property.title)}`,
+                  );
+                }}
+              >
+                <Search size={16} color="#1a6b3c" />
+
+                <div>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontSize: "14px",
+                    }}
+                  >
+                    {property.title}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#6b7280",
+                    }}
+                  >
+                    {property.locality || property.city}
+                  </div>
+                </div>
+              </button>
+            ))}
           </div>
-        </button>
-      ))}
-    </div>
-  )}
-</div>
+        )}
+      </div>
 
       {/* CATEGORY */}
       <div style={{ position: "relative" }} ref={catRef}>
@@ -282,7 +282,7 @@ router.push(
             setShowLocDD(true);
           }}
           onFocus={() => setShowLocDD(true)}
-          placeholder="City / Locality"
+          placeholder={`Search in ${city || "Nashik"}`}
           style={inputStyle}
           autoComplete="off"
         />

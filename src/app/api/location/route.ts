@@ -37,7 +37,10 @@ export async function GET() {
     // LOCALHOST FALLBACK
     // =========================
 
-    if (ip === "::1" || ip === "127.0.0.1" || !ip) {
+    if (
+      process.env.NODE_ENV === "development" &&
+      (ip === "::1" || ip === "127.0.0.1" || !ip)
+    ) {
       const response = NextResponse.json({
         success: true,
 
@@ -52,19 +55,19 @@ export async function GET() {
 
       // Save Nashik cookies
       response.cookies.set("city", "Nashik", {
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: 60 * 60 * 24 * 7,
 
         path: "/",
       });
 
       response.cookies.set("lat", "19.9975", {
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: 60 * 60 * 24 * 7,
 
         path: "/",
       });
 
       response.cookies.set("lng", "73.7898", {
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: 60 * 60 * 24 * 7,
 
         path: "/",
       });
@@ -83,6 +86,10 @@ export async function GET() {
         cache: "no-store",
       },
     );
+
+    if (!res.ok) {
+      throw new Error("IPInfo lookup failed");
+    }
 
     const data = await res.json();
 
