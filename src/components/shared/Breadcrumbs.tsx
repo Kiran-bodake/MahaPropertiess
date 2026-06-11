@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Home } from "lucide-react";
+import React from "react";
 
 interface BreadcrumbItem {
   name: string;
@@ -25,11 +26,13 @@ export default function Breadcrumbs({ items, property }: Props) {
       <nav className="breadcrumbs">
         <div className="breadcrumb-list">
           <Link href="/" className="breadcrumb-link">
-            <Home size={14} /> Home
+            🏠 Home
           </Link>
+
           {items.map((item, index) => (
-            <span key={item.href}>
-              <span className="separator">/</span>
+            <React.Fragment key={`${item.href}-${index}`}>
+              <span className="separator">›</span>
+
               {index === items.length - 1 ? (
                 <span className="current">{item.name}</span>
               ) : (
@@ -37,39 +40,54 @@ export default function Breadcrumbs({ items, property }: Props) {
                   {item.name}
                 </Link>
               )}
-            </span>
+            </React.Fragment>
           ))}
         </div>
 
         <style jsx>{`
           .breadcrumbs {
-            padding: 12px 0;
-            margin-bottom: 16px;
+            padding: 6px 0;
+            margin-bottom: 12px;
           }
+
           .breadcrumb-list {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px;
             font-size: 13px;
+            min-height: 24px;
           }
+
           .breadcrumb-link {
-            display: flex;
-            align-items: center;
-            gap: 4px;
             color: #16a34a;
             text-decoration: none;
+            display: inline-flex;
+            align-items: center;
           }
+
           .breadcrumb-link:hover {
             text-decoration: underline;
           }
+
           .separator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             color: #cbd5e1;
-            margin: 0 4px;
+            margin: 0 2px;
           }
+
           .current {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             color: #0f172a;
             font-weight: 600;
+            background: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 999px;
+            line-height: 1;
           }
         `}</style>
       </nav>
@@ -79,7 +97,10 @@ export default function Breadcrumbs({ items, property }: Props) {
   // Property breadcrumbs - with safe null checks
   const formatCategory = (cat?: string) => {
     if (!cat) return "Property";
-    return cat.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    return cat
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
   };
 
   // Safe check for property existence
@@ -87,7 +108,9 @@ export default function Breadcrumbs({ items, property }: Props) {
     return (
       <nav className="breadcrumbs">
         <div className="breadcrumb-list">
-          <Link href="/" className="breadcrumb-link">🏠 Home</Link>
+          <Link href="/" className="breadcrumb-link">
+            🏠 Home
+          </Link>
           <span className="separator">›</span>
           <span className="current">Properties</span>
         </div>
@@ -130,20 +153,20 @@ export default function Breadcrumbs({ items, property }: Props) {
         <Link href="/properties" className="breadcrumb-link">
           Properties
         </Link>
-        
+
         {/* Safe check for city - only show if exists */}
         {property.city && (
           <>
             <span className="separator">›</span>
-            <Link 
-              href={`/properties?city=${encodeURIComponent(property.city)}`} 
+            <Link
+              href={`/properties?city=${encodeURIComponent(property.city)}`}
               className="breadcrumb-link"
             >
               {property.city}
             </Link>
           </>
         )}
-        
+
         {/* Safe check for locality - only show if exists */}
         {property.locality && (
           <>
@@ -151,12 +174,10 @@ export default function Breadcrumbs({ items, property }: Props) {
             <span className="breadcrumb-text">{property.locality}</span>
           </>
         )}
-        
+
         {/* Always show category or fallback */}
         <span className="separator">›</span>
-        <span className="current">
-          {formatCategory(property.category)}
-        </span>
+        <span className="current">{formatCategory(property.category)}</span>
       </div>
 
       <style jsx>{`

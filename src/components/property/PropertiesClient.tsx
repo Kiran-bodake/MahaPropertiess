@@ -594,6 +594,22 @@ function PropertiesContent() {
     }
   };
 
+  const breadcrumbItems = [{ name: "Properties", href: "/properties" }];
+
+  if (filters.locality) {
+    breadcrumbItems.push({
+      name: filters.locality,
+      href: `/properties?city=${encodeURIComponent(filters.locality)}`,
+    });
+  }
+
+  if (filters.category.length > 0) {
+    breadcrumbItems.push({
+      name: formatPropertyType(filters.category[0]),
+      href: `/properties?city=${encodeURIComponent(filters.locality)}&cat=${encodeURIComponent(filters.category[0])}`,
+    });
+  }
+
   /* ================================================================ */
   /*  Render                                                           */
   /* ================================================================ */
@@ -617,10 +633,8 @@ function PropertiesContent() {
 
       <main className="page">
         {/* ✅ ADD BREADCRUMBS HERE */}
-        <div className="breadcrumbs-wrapper">
-          <div className="container">
-            <Breadcrumbs />
-          </div>
+        <div className="container">
+          <Breadcrumbs items={breadcrumbItems} />
         </div>
 
         <div className="container">
@@ -1212,12 +1226,6 @@ function PropertiesContent() {
             width: min(1400px, 94%);
             margin: auto;
           }
-          .breadcrumbs-wrapper {
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 20px;
-            padding: 8px 0;
-          }
 
           .hero {
             background: linear-gradient(135deg, #052e16, #166534, #22c55e);
@@ -1282,10 +1290,10 @@ function PropertiesContent() {
           }
           /* Breadcrumbs Wrapper */
           .breadcrumbs-wrapper {
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 24px;
-            padding: 12px 0;
+            background: transparent;
+            border-bottom: none;
+            margin-bottom: 20px;
+            padding: 8px 0 20px;
           }
 
           /* Mobile Responsive */
