@@ -6,7 +6,9 @@ export const SEO_CATEGORY_MAP: Record<string, string> = {
   "residential-properties": "residential",
 };
 
-export function parseSeoSlug(slug: string) {
+export function parseSeoSlug(slug?: string) {
+  if (!slug) return null;
+
   const match = slug.match(/(.+)-in-(.+)/);
 
   if (!match) return null;

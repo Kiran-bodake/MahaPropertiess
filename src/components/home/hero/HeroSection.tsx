@@ -37,37 +37,37 @@ const CATEGORIES = [
   {
     label: "NA Plot",
     icon: "🏞️",
-    href: "/properties?category=na-plot",
+    href: "/properties/city/nashik/na-plot",
     color: "#16a34a",
   },
   {
     label: "Collector NA Plot",
     icon: "📋",
-    href: "/properties?category=collector-na-plot",
+    href: "/properties/city/nashik/collector-na",
     color: "#0891b2",
   },
   {
     label: "Agriculture Land",
     icon: "🌾",
-    href: "/properties?category=agriculture",
+    href: "/properties/city/nashik/agriculture",
     color: "#d97706",
   },
   {
     label: "Warehouse Land",
     icon: "🏭",
-    href: "/properties?category=warehouse",
+    href: "/properties/city/nashik/warehouse",
     color: "#7c3aed",
   },
   {
     label: "Commercial Property",
     icon: "🏢",
-    href: "/properties?category=commercial",
+    href: "/properties/city/nashik/commercial",
     color: "#dc2626",
   },
   {
     label: "Investment Plots",
     icon: "📈",
-    href: "/properties?category=investment-plot",
+    href: "/properties/city/nashik/investment-plot",
     color: "#0f766e",
   },
 ];
@@ -131,6 +131,22 @@ export function HeroSection() {
   }, [showSuggestions, suggestions]);
 
   const current = SLIDES[slide];
+
+  const citySlug =
+    locality && locality !== "Any Locality"
+      ? locality.toLowerCase().replace(/\s+/g, "-")
+      : "";
+
+  const categoryMap: Record<string, string> = {
+    "NA Plot": "na-plot",
+    "Collector NA Plot": "collector-na",
+    "Agriculture Land": "agriculture",
+    "Warehouse Land": "warehouse",
+    "Commercial Property": "commercial",
+    "Investment Plots": "investment-plot",
+  };
+
+  const categorySlug = category !== "All Types" ? categoryMap[category] : "";
 
   return (
     <section
@@ -463,7 +479,13 @@ export function HeroSection() {
             {/* Search Button */}
             <div style={{ padding: "6px" }}>
               <Link
-                href={`/properties?q=${query}&category=${category}&locality=${locality}`}
+                href={
+                  citySlug && categorySlug
+                    ? `/properties/city/${citySlug}/${categorySlug}`
+                    : citySlug
+                      ? `/properties/city/${citySlug}`
+                      : "/properties"
+                }
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -499,7 +521,11 @@ export function HeroSection() {
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.label}
-              href={cat.href}
+              href={`/properties/city/${
+                locality && locality !== "Any Locality"
+                  ? locality.toLowerCase().replace(/\s+/g, "-")
+                  : "nashik"
+              }/${cat.href.split("/").pop()}`}
               style={{
                 display: "flex",
                 alignItems: "center",

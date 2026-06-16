@@ -164,17 +164,34 @@ async function fetchAllProperties(signal?: AbortSignal): Promise<Property[]> {
 /* ================================================================== */
 /*  Page                                                               */
 /* ================================================================== */
-export default function PropertiesPage() {
+type PropertiesClientProps = {
+  initialCity?: string;
+  initialCategory?: string;
+};
+
+export default function PropertiesPage({
+  initialCity,
+  initialCategory,
+}: PropertiesClientProps) {
   return (
     <Suspense
       fallback={<div style={{ minHeight: "100vh", background: "#f0f4f8" }} />}
     >
-      <PropertiesContent />
+      <PropertiesContent
+        initialCity={initialCity}
+        initialCategory={initialCategory}
+      />
     </Suspense>
   );
 }
 
-function PropertiesContent() {
+function PropertiesContent({
+  initialCity,
+  initialCategory,
+}: {
+  initialCity?: string;
+  initialCategory?: string;
+}) {
   const { city, lat, lng } = useLocationStore();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -213,10 +230,14 @@ function PropertiesContent() {
     q: searchParams.get("q") ?? "",
 
     // Category from navbar / chips / URL
-    category: type ? [type] : searchParams.getAll("category"),
+    category: initialCategory
+      ? [initialCategory]
+      : type
+        ? [type]
+        : searchParams.getAll("category"),
 
     // Location from Hero or URL
-    locality: location || "",
+    locality: initialCity || location || "",
 
     // Sorting
     sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
@@ -228,9 +249,14 @@ function PropertiesContent() {
     const nextFilters = {
       q: searchParams.get("q") ?? "",
 
-      category: type ? [type] : searchParams.getAll("category"),
+      category: initialCategory
+        ? [initialCategory]
+        : type
+          ? [type]
+          : searchParams.getAll("category"),
 
-      locality: location || (!hasSearchParams ? city || "Nashik" : ""),
+      locality:
+        initialCity || location || (!hasSearchParams ? city || "Nashik" : ""),
 
       sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
     };
@@ -242,7 +268,7 @@ function PropertiesContent() {
 
       return nextFilters;
     });
-  }, [city, location, type, searchParams]);
+  }, [city, location, type, searchParams, initialCity, initialCategory]);
 
   // Adjust filters during render when URL shorthand params change (avoids effect)
 
@@ -306,7 +332,29 @@ function PropertiesContent() {
 
     const next = qs.toString();
 
-    router.replace(next ? `/properties?${next}` : "/properties", {
+    const citySlug =
+      debouncedFilters.locality
+        ?.split(",")
+        .pop()
+        ?.trim()
+        .toLowerCase()
+        .replace(/\s+/g, "-") || "";
+
+    const catSlug = debouncedFilters.category?.[0]
+      ?.toLowerCase()
+      .replace(/\s+/g, "-");
+
+    let url = "/properties";
+
+    if (citySlug) {
+      url = `/properties/city/${citySlug}`;
+    }
+
+    if (citySlug && catSlug) {
+      url = `/properties/city/${citySlug}/${catSlug}`;
+    }
+
+    router.replace(url, {
       scroll: false,
     });
   }, [debouncedFilters, router]);
@@ -398,8 +446,11 @@ function PropertiesContent() {
       const haystack = `${title} ${category} ${locality} ${city}`;
 
       if (q && !haystack.includes(q)) return false;
-      if (selectedCats.length > 0 && !selectedCats.includes(category))
+      const categorySlug = category.toLowerCase().replace(/\s+/g, "-");
+
+      if (selectedCats.length > 0 && !selectedCats.includes(categorySlug)) {
         return false;
+      }
       if (loc && !locality.includes(loc) && !city.includes(loc)) return false;
       return true;
     });
@@ -599,7 +650,9 @@ function PropertiesContent() {
   if (filters.locality) {
     breadcrumbItems.push({
       name: filters.locality,
-      href: `/properties?city=${encodeURIComponent(filters.locality)}`,
+      href: `/properties/city/${filters.locality
+        .toLowerCase()
+        .replace(/\s+/g, "-")}`,
     });
   }
 

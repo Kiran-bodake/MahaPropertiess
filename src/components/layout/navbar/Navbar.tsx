@@ -60,17 +60,17 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Agriculture Land",
             sub: "Fertile farmland with clear title",
-            href: "/properties?cat=agriculture",
+            href: "/properties/city/nashik/agriculture",
           },
           {
             label: "Farmhouse Plots",
             sub: "Country-breeze weekend homes",
-            href: "/properties?cat=farmhouse",
+            href: "/properties/city/nashik/farmhouse",
           },
           {
             label: "Orchard Land",
             sub: "Fruit-growing investment plots",
-            href: "/properties?cat=orchard",
+            href: "/properties/city/nashik/orchard",
           },
         ],
       },
@@ -82,17 +82,17 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Commercial Plots",
             sub: "High footfall business land",
-            href: "/properties?cat=commercial",
+            href: "/properties/city/nashik/commercial",
           },
           {
             label: "Warehouse Land",
             sub: "Logistics & industrial zones",
-            href: "/properties?cat=warehouse",
+            href: "/properties/city/nashik/warehouse",
           },
           {
             label: "Industrial Sheds",
             sub: "Manufacturing-ready land",
-            href: "/properties?cat=industrial-shed",
+            href: "/properties/city/nashik/industrial-shed",
           },
         ],
       },
@@ -104,17 +104,17 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "NA Plots",
             sub: "Approved land for construction",
-            href: "/properties?cat=na-plot",
+            href: "/properties/city/nashik/na-plot",
           },
           {
             label: "Collector NA",
             sub: "Collector-approved plot options",
-            href: "/properties?cat=collector-na",
+            href: "/properties/city/nashik/collector-na",
           },
           {
             label: "CIDCO Plots",
             sub: "Planned development layouts",
-            href: "/properties?cat=cidco-plot",
+            href: "/properties/city/nashik/cidco-plot",
           },
         ],
       },
@@ -126,17 +126,17 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "MIDC Land",
             sub: "State industrial parks",
-            href: "/properties?cat=midc",
+            href: "/properties/city/nashik/midc",
           },
           {
             label: "Non-MIDC Land",
             sub: "Flexible industrial zones",
-            href: "/properties?cat=non-midc",
+            href: "/properties/city/nashik/non-midc",
           },
           {
             label: "Factory-ready",
             sub: "Plug-and-play industrial land",
-            href: "/properties?cat=industrial",
+            href: "/properties/city/nashik/industrial",
           },
         ],
       },
@@ -161,22 +161,22 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "NA Plots",
             sub: "Approved plots for construction",
-            href: "/properties?cat=na-plot",
+            href: "/properties/city/nashik/na-plot",
           },
           {
             label: "Collector NA Plot",
             sub: "Collector approved & clear title",
-            href: "/properties?cat=collector-na",
+            href: "/properties/city/nashik/collector-na",
           },
           {
             label: "CIDCO Plots",
             sub: "CIDCO approved layouts",
-            href: "/properties?cat=cidco-plot",
+            href: "/properties/city/nashik/cidco-plot",
           },
           {
             label: "Plots for Investment",
             sub: "High-return investment plots",
-            href: "/properties?cat=investment-plot",
+            href: "/properties/city/nashik/investment-plot",
           },
         ],
       },
@@ -192,22 +192,22 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Agriculture Land",
             sub: "Fertile farmland, clear title",
-            href: "/properties?cat=agriculture",
+            href: "/properties/city/nashik/agriculture",
           },
           {
             label: "Farmhouse Plots",
             sub: "Weekend retreat land",
-            href: "/properties?cat=farmhouse",
+            href: "/properties/city/nashik/farmhouse",
           },
           {
             label: "Mango / Orchard Land",
             sub: "Income-generating orchards",
-            href: "/properties?cat=orchard",
+            href: "/properties/city/nashik/orchard",
           },
           {
             label: "Grape Farm Land",
             sub: "Nashik's famous vineyards",
-            href: "/properties?cat=grape-farm",
+            href: "/properties/city/nashik/grape-farm",
           },
         ],
       },
@@ -223,22 +223,22 @@ const NAV_LINKS: NavLinkDef[] = [
           {
             label: "Commercial Plots",
             sub: "Prime commercial land",
-            href: "/properties?cat=commercial",
+            href: "/properties/city/nashik/commercial",
           },
           {
             label: "Warehouse Land",
             sub: "Industrial & logistics land",
-            href: "/properties?cat=warehouse",
+            href: "/properties/city/nashik/warehouse",
           },
           {
             label: "Industrial Sheds",
             sub: "MIDC & non-MIDC sheds",
-            href: "/properties?cat=industrial-shed",
+            href: "/properties/city/nashik/industrial-shed",
           },
           {
             label: "Showroom / Shop",
             sub: "Retail commercial spaces",
-            href: "/properties?cat=showroom",
+            href: "/properties/city/nashik/showroom",
           },
         ],
       },
@@ -1799,7 +1799,7 @@ export function Navbar() {
                     href={
                       t === "All"
                         ? "/properties"
-                        : `/properties?cat=${encodeURIComponent(
+                        : `/properties/city/nashik/${encodeURIComponent(
                             t.toLowerCase().replace(/\s+/g, "-"),
                           )}`
                     }
@@ -2089,42 +2089,42 @@ export function Navbar() {
                   {
                     icon: "🏞️",
                     label: "NA Plots",
-                    href: "/properties?cat=na-plot",
+                    href: "/properties/city/nashik/na-plot",
                   },
                   {
                     icon: "📋",
                     label: "Collector NA",
-                    href: "/properties?cat=collector-na",
+                    href: "/properties/city/nashik/collector-na",
                   },
                   {
                     icon: "🌾",
                     label: "Agriculture",
-                    href: "/properties?cat=agriculture",
+                    href: "/properties/city/nashik/agriculture",
                   },
                   {
                     icon: "🏭",
                     label: "Warehouse",
-                    href: "/properties?cat=warehouse",
+                    href: "/properties/city/nashik/warehouse",
                   },
                   {
                     icon: "🏢",
                     label: "Commercial",
-                    href: "/properties?cat=commercial",
+                    href: "/properties/city/nashik/commercial",
                   },
                   {
                     icon: "📈",
                     label: "Investment Plots",
-                    href: "/properties?cat=investment-plot",
+                    href: "/properties/city/nashik/investment-plot",
                   },
                   {
                     icon: "🍇",
                     label: "Farmhouse",
-                    href: "/properties?cat=farmhouse",
+                    href: "/properties/city/nashik/farmhouse",
                   },
                   {
                     icon: "🏗️",
                     label: "Industrial Shed",
-                    href: "/properties?cat=industrial-shed",
+                    href: "/properties/city/nashik/industrial-shed",
                   },
                 ].map((c) => (
                   <Link

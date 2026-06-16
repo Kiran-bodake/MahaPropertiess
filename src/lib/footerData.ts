@@ -2,54 +2,39 @@ export const FCOLS = [
   {
     t: "NA Plots",
     ll: [
-      [
-        "NA Plots In Gangapur Road",
-        "/properties?cat=na-plot&locality=gangapur-road",
-      ],
-      [
-        "NA Plots In Nashik Road",
-        "/properties?cat=na-plot&locality=nashik-road",
-      ],
-      ["NA Plots In Meri", "/properties?cat=na-plot&locality=meri"],
-      ["NA Plots In Igatpuri", "/properties?cat=na-plot&locality=igatpuri"],
-      [
-        "NA Plots In Trimbak Road",
-        "/properties?cat=na-plot&locality=trimbak-road",
-      ],
-      ["Collector NA Plot", "/properties?cat=collector-na"],
+      ["NA Plots In Gangapur Road", "/properties/city/gangapur-road/na-plot"],
+      ["NA Plots In Nashik Road", "/properties/city/nashik-road/na-plot"],
+      ["NA Plots In Meri", "/properties/city/meri/na-plot"],
+      ["NA Plots In Igatpuri", "/properties/city/igatpuri/na-plot"],
+      ["NA Plots In Trimbak Road", "/properties/city/trimbak-road/na-plot"],
+      ["Collector NA Plot", "/properties/city/nashik/collector-na"],
     ],
   },
+
   {
     t: "Agriculture",
     ll: [
-      ["Agriculture Land In Nashik", "/properties?cat=agriculture&city=nashik"],
-      [
-        "Farm Land In Igatpuri",
-        "/properties?cat=agriculture&locality=igatpuri",
-      ],
-      ["Farmhouse Plots In Nashik", "/properties?cat=agriculture&city=nashik"],
-      ["Grape Farm Land", "/properties?cat=agriculture"],
-      ["Warehouse Land", "/properties?cat=warehouse"],
-      ["Industrial Sheds MIDC", "/properties?cat=warehouse&locality=MIDC"],
+      ["Agriculture Land In Nashik", "/properties/city/nashik/agriculture"],
+      ["Farm Land In Igatpuri", "/properties/city/igatpuri/agriculture"],
+      ["Farmhouse Plots In Nashik", "/properties/city/nashik/farmhouse"],
+      ["Grape Farm Land", "/properties/city/nashik/grape-farm"],
+      ["Warehouse Land", "/properties/city/nashik/warehouse"],
+      ["Industrial Sheds MIDC", "/properties/city/ambad/industrial-shed"],
     ],
   },
+
   {
     t: "Commercial",
     ll: [
-      ["Commercial Plots In Nashik", "/properties?cat=commercial&city=nashik"],
-      ["Plots In Satpur MIDC", "/properties?cat=commercial&locality=satpur"],
-      [
-        "Industrial Plots In Ambad",
-        "/properties?cat=commercial&locality=ambad",
-      ],
-      ["Showroom / Office Space", "/properties?cat=commercial"],
-      ["Investment Plots In Nashik", "/properties?cat=investment&city=nashik"],
-      [
-        "Collector NA Plots In Nashik",
-        "/properties?cat=collector-na&city=nashik",
-      ],
+      ["Commercial Plots In Nashik", "/properties/city/nashik/commercial"],
+      ["Plots In Satpur MIDC", "/properties/city/satpur/commercial"],
+      ["Industrial Plots In Ambad", "/properties/city/ambad/commercial"],
+      ["Showroom / Office Space", "/properties/city/nashik/showroom"],
+      ["Investment Plots In Nashik", "/properties/city/nashik/investment-plot"],
+      ["Collector NA Plots In Nashik", "/properties/city/nashik/collector-na"],
     ],
   },
+
   {
     t: "Company",
     ll: [

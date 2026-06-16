@@ -862,7 +862,7 @@ function Hero() {
 
           {/* ✅ NEW SEARCH BAR — redirects to /properties with filters */}
           <div className="fu d3" style={{ maxWidth: "880px" }}>
-            <HeroSearch defaultCity={city} />
+            <HeroSearch />
           </div>
         </div>
       </div>
@@ -988,7 +988,9 @@ function CatGrid({ properties }: any) {
           {dynamicCats.map((c: any, i: number) => (
             <Link
               key={c.label}
-              href={`/properties?category=${encodeURIComponent(c.label)}`}
+              href={`/properties/city/nashik/${c.label
+                .toLowerCase()
+                .replace(/\s+/g, "-")}`}
               className={`zm lf ${v ? "fu" : ""}`}
               style={{
                 borderRadius: "12px",
