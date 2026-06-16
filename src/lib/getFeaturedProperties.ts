@@ -5,12 +5,12 @@ import PropertyPricing from "@/models/PropertyPricing";
 import PropertyArea from "@/models/PropertyArea";
 import PropertyImage from "@/models/PropertyImage";
 
-export async function getFeaturedProperties(limit = 12) {
+export async function getFeaturedProperties(city: string, limit = 12) {
   await connectDB();
 
   const locations = await PropertyLocation.find({
     city: {
-      $regex: /^nashik$/i,
+      $regex: new RegExp(`^${city}$`, "i"),
     },
   });
 
@@ -62,7 +62,7 @@ export async function getFeaturedProperties(limit = 12) {
       imageMap.get(property.propertyId)?.images?.find((x: any) => x.isPrimary)
         ?.url ||
       imageMap.get(property.propertyId)?.images?.[0]?.url ||
-      "",
+      "/maha.png",
 
     price:
       pricingMap.get(property.propertyId)?.price ||

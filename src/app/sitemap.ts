@@ -57,12 +57,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${BASE_URL}/about-us`,
+      url: `${BASE_URL}/about`,
       lastModified: new Date(),
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/contact-us`,
+      url: `${BASE_URL}/contact`,
       lastModified: new Date(),
       priority: 0.8,
     },

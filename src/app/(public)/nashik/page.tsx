@@ -18,7 +18,7 @@ export const metadata = {
     "Discover Nashik investment opportunities driven by industrial growth, wine tourism, education hubs, bullet train connectivity, and infrastructure expansion.",
 };
 
-const featuredProperties = await getFeaturedProperties(12);
+const featuredProperties = await getFeaturedProperties("Nashik", 12);
 
 export default function NashikPage() {
   return (
