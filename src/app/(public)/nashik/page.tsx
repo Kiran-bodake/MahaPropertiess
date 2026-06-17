@@ -84,7 +84,8 @@ export default function NashikPage() {
               <h1
                 style={{
                   fontSize: "clamp(34px, 3vw, 56px)",
-                  whiteSpace: "nowrap",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",
@@ -161,7 +162,8 @@ export default function NashikPage() {
               <h1
                 style={{
                   fontSize: "clamp(34px,3vw,56px)",
-                  whiteSpace: "nowrap",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",
@@ -243,7 +245,8 @@ export default function NashikPage() {
                   letterSpacing: "-0.04em",
                   color: "#0f172a",
                   maxWidth: "1000px",
-                  whiteSpace: "nowrap",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
                   margin: 0,
                   textAlign: "left",
                 }}
@@ -343,7 +346,8 @@ export default function NashikPage() {
               <h1
                 style={{
                   fontSize: "clamp(34px,3vw,56px)",
-                  whiteSpace: "nowrap",
+                  whiteSpace: "normal",
+                  wordBreak: "break-word",
                   lineHeight: "1.02",
                   fontWeight: 900,
                   letterSpacing: "-0.04em",

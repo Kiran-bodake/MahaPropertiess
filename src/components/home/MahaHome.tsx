@@ -906,6 +906,10 @@ function Hero() {
 function CatGrid({ properties }: any) {
   const [ref, v] = useInView();
 
+  const { city } = useLocationStore();
+
+  const citySlug = city?.trim().toLowerCase().replace(/\s+/g, "-") || "nashik";
+
   if (!properties) return null;
 
   // ✅ Dynamic category data from DB
@@ -988,7 +992,7 @@ function CatGrid({ properties }: any) {
           {dynamicCats.map((c: any, i: number) => (
             <Link
               key={c.label}
-              href={`/properties/city/nashik/${c.label
+              href={`/properties/city/${citySlug}/${c.label
                 .toLowerCase()
                 .replace(/\s+/g, "-")}`}
               className={`zm lf ${v ? "fu" : ""}`}

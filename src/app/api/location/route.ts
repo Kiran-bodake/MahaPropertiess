@@ -41,38 +41,14 @@ export async function GET() {
       process.env.NODE_ENV === "development" &&
       (ip === "::1" || ip === "127.0.0.1" || !ip)
     ) {
-      const response = NextResponse.json({
+      return NextResponse.json({
         success: true,
-
         location: {
           city: "Nashik",
-
           lat: 19.9975,
-
           lng: 73.7898,
         },
       });
-
-      // Save Nashik cookies
-      response.cookies.set("city", "Nashik", {
-        maxAge: 60 * 60 * 24 * 7,
-
-        path: "/",
-      });
-
-      response.cookies.set("lat", "19.9975", {
-        maxAge: 60 * 60 * 24 * 7,
-
-        path: "/",
-      });
-
-      response.cookies.set("lng", "73.7898", {
-        maxAge: 60 * 60 * 24 * 7,
-
-        path: "/",
-      });
-
-      return response;
     }
 
     // =========================
@@ -135,9 +111,7 @@ export async function GET() {
 
       location: {
         city: "Nashik",
-
         lat: 19.9975,
-
         lng: 73.7898,
       },
     });

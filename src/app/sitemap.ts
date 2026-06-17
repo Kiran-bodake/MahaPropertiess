@@ -75,11 +75,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/faq`,
-      lastModified: new Date(),
-      priority: 0.8,
-    },
-    {
       url: `${BASE_URL}/list-property`,
       lastModified: new Date(),
       priority: 0.8,

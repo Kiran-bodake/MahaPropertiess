@@ -197,7 +197,7 @@ function PropertiesContent({
   const router = useRouter();
   const type = searchParams.get("type") || searchParams.get("cat") || "";
   const location =
-    searchParams.get("location") || searchParams.get("locality") || null;
+    searchParams.get("location") || searchParams.get("locality") || "";
   const formattedType = type ? formatPropertyType(type) : "";
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
@@ -243,32 +243,21 @@ function PropertiesContent({
     sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
   });
 
+  const hasInitializedCity = useRef(false);
+
   useEffect(() => {
-    const hasSearchParams = searchParams.toString().length > 0;
+    // don't override if URL already contains city
+    if (hasInitializedCity.current) return;
+    if (!city) return;
+    if (initialCity) return;
 
-    const nextFilters = {
-      q: searchParams.get("q") ?? "",
+    setFilters((prev) => ({
+      ...prev,
+      locality: city,
+    }));
 
-      category: initialCategory
-        ? [initialCategory]
-        : type
-          ? [type]
-          : searchParams.getAll("category"),
-
-      locality:
-        initialCity || location || (!hasSearchParams ? city || "Nashik" : ""),
-
-      sortBy: (searchParams.get("sortBy") as SortKey) ?? "newest",
-    };
-
-    setFilters((prev) => {
-      const same = JSON.stringify(prev) === JSON.stringify(nextFilters);
-
-      if (same) return prev;
-
-      return nextFilters;
-    });
-  }, [city, location, type, searchParams, initialCity, initialCategory]);
+    hasInitializedCity.current = true;
+  }, [city, initialCity]);
 
   // Adjust filters during render when URL shorthand params change (avoids effect)
 
@@ -314,16 +303,10 @@ function PropertiesContent({
   useEffect(() => {
     const qs = new URLSearchParams();
 
+    // category and locality are already represented in the path
+
     if (debouncedFilters.q) {
       qs.set("q", debouncedFilters.q);
-    }
-
-    if (debouncedFilters.category.length > 0) {
-      qs.set("cat", debouncedFilters.category[0]);
-    }
-
-    if (debouncedFilters.locality) {
-      qs.set("locality", debouncedFilters.locality);
     }
 
     if (debouncedFilters.sortBy !== "newest") {
@@ -354,9 +337,13 @@ function PropertiesContent({
       url = `/properties/city/${citySlug}/${catSlug}`;
     }
 
-    router.replace(url, {
-      scroll: false,
-    });
+    const nextUrl = next ? `${url}?${next}` : url;
+
+    if (window.location.pathname + window.location.search !== nextUrl) {
+      router.replace(nextUrl, {
+        scroll: false,
+      });
+    }
   }, [debouncedFilters, router]);
 
   useEffect(() => {
@@ -441,8 +428,10 @@ function PropertiesContent({
     let list = allProperties.filter((p) => {
       const title = norm(p.title || p.t);
       const category = norm(p.category || p.cat);
-      const locality = norm(p.locality || p.loc);
-      const city = norm(p.city);
+      const { locality: locPart, city: cityPart } = getLocalityParts(p);
+
+      const locality = norm(locPart);
+      const city = norm(cityPart);
       const haystack = `${title} ${category} ${locality} ${city}`;
 
       if (q && !haystack.includes(q)) return false;
@@ -535,18 +524,18 @@ function PropertiesContent({
   };
 
   const resetFilters = () => {
+    hasInitializedCity.current = true;
+
     setFilters({
       q: "",
-
       category: [],
-
       locality: "",
-
       sortBy: "newest",
     });
 
-    // Remove URL params
-    router.push("/properties");
+    router.replace("/properties", {
+      scroll: false,
+    });
   };
 
   const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -638,8 +627,10 @@ function PropertiesContent({
   const clearChip = (key: keyof Filters | string) => {
     if (key === "sortBy") setF("sortBy", "newest");
     else if (key === "q") setF("q", "");
-    else if (key === "locality") setF("locality", "");
-    else if (typeof key === "string" && key.startsWith("cat-")) {
+    else if (key === "locality") {
+      hasInitializedCity.current = true;
+      setF("locality", "");
+    } else if (typeof key === "string" && key.startsWith("cat-")) {
       const cat = key.replace("cat-", "");
       toggleCategory(cat);
     }
@@ -888,7 +879,10 @@ function PropertiesContent({
                           type="button"
                           className="clearBtn"
                           aria-label="Clear location"
-                          onClick={() => setF("locality", "")}
+                          onClick={() => {
+                            hasInitializedCity.current = true;
+                            setF("locality", "");
+                          }}
                         >
                           ×
                         </button>
@@ -1042,8 +1036,6 @@ function PropertiesContent({
                         : p.img
                           ? [p.img]
                           : [fallbackImage];
-
-                      console.log("PROPERTY IMAGES:", p.title, images);
 
                       const key = getPropKey(p);
 

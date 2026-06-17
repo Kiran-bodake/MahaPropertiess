@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { Heart, LogOut } from "lucide-react";
+import { useLocationStore } from "@/store/useLocationStore";
 import {
   Menu,
   X,
@@ -426,6 +427,9 @@ export function Navbar() {
   );
 
   const router = useRouter();
+  const { city } = useLocationStore();
+
+  const citySlug = city?.trim().toLowerCase().replace(/\s+/g, "-") || "nashik";
 
   const menuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1241,7 +1245,10 @@ export function Navbar() {
                                 return (
                                   <Link
                                     key={link.label}
-                                    href={link.href}
+                                    href={link.href.replace(
+                                      "/properties/city/nashik",
+                                      `/properties/city/${citySlug}`,
+                                    )}
                                     style={{
                                       display: "block",
                                       padding: "7px 8px",
@@ -1799,7 +1806,7 @@ export function Navbar() {
                     href={
                       t === "All"
                         ? "/properties"
-                        : `/properties/city/nashik/${encodeURIComponent(
+                        : `/properties/city/${citySlug}/${encodeURIComponent(
                             t.toLowerCase().replace(/\s+/g, "-"),
                           )}`
                     }
@@ -2129,7 +2136,10 @@ export function Navbar() {
                 ].map((c) => (
                   <Link
                     key={c.label}
-                    href={c.href}
+                    href={c.href.replace(
+                      "/properties/city/nashik",
+                      `/properties/city/${citySlug}`,
+                    )}
                     onClick={() => setMenuOpen(false)}
                     style={{
                       display: "flex",
@@ -2329,7 +2339,7 @@ export function Navbar() {
               }}
             >
               <Link
-                href="/enquiry"
+                href="/contact"
                 onClick={() => setMenuOpen(false)}
                 style={{
                   padding: "14px",

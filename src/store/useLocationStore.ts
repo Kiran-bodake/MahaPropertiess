@@ -17,12 +17,9 @@ type LocationState = {
 };
 
 export const useLocationStore = create<LocationState>((set) => ({
-  city: "Nashik",
-
-  lat: 19.9975,
-
-  lng: 73.7898,
-
+  city: "",
+  lat: 0,
+  lng: 0,
   loading: true,
 
   setLocation: (city, lat, lng) =>

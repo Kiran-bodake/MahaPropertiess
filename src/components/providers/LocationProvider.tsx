@@ -18,12 +18,8 @@ export default function LocationProvider({
 
         const data = await res.json();
 
-        if (data?.location) {
-          setLocation(
-            data.location.city || "Nashik",
-            data.location.lat || 19.9975,
-            data.location.lng || 73.7898,
-          );
+        if (data?.location?.city) {
+          setLocation(data.location.city, data.location.lat, data.location.lng);
         }
       } catch (error) {
         console.log(error);

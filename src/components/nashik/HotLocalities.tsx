@@ -46,7 +46,8 @@ export default function HotLocalities({ properties }: { properties: any[] }) {
           <h2
             style={{
               fontSize: "clamp(34px,3vw,56px)",
-              whiteSpace: "nowrap",
+              whiteSpace: "normal",
+              wordBreak: "break-word",
               fontWeight: 900,
               lineHeight: 1.05,
               letterSpacing: "-0.03em",
