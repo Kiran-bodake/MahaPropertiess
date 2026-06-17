@@ -1,6 +1,17 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
+=======
+import { 
+  Users, Phone, Mail, Home, Calendar, Clock, 
+  Eye, RefreshCw, Search, ChevronLeft, ChevronRight,
+  CheckCircle, MessageCircle, FileText, Tag, Star,
+  Building2, User, PhoneCall, CalendarDays, NotebookPen,
+  Save, X, Bell, TrendingUp, Target, Award,
+  AlertCircle, CheckCheck, ArrowRight, Filter
+} from "lucide-react";
+>>>>>>> 2011411 (updated code)
 
 type InquiryStatus =
   | "new"
@@ -37,6 +48,7 @@ const statusLabels: Record<InquiryStatus, string> = {
   closed: "Closed",
 };
 
+<<<<<<< HEAD
 const statusStyles: Record<InquiryStatus, { bg: string; color: string; icon: string }> = {
   new: { bg: "#dbeafe", color: "#1e40af", icon: "🆕" },
   contacted: { bg: "#fef3c7", color: "#92400e", icon: "📞" },
@@ -44,6 +56,15 @@ const statusStyles: Record<InquiryStatus, { bg: string; color: string; icon: str
   "site-visit": { bg: "#fce7f3", color: "#831843", icon: "🏠" },
   negotiation: { bg: "#ede9fe", color: "#6d28d9", icon: "💼" },
   closed: { bg: "#f3e8ff", color: "#6b21a8", icon: "✅" },
+=======
+const statusStyles: Record<InquiryStatus, { bg: string; color: string; icon: React.ReactNode }> = {
+  new: { bg: "#dbeafe", color: "#1e40af", icon: <Bell size={12} /> },
+  contacted: { bg: "#fef3c7", color: "#92400e", icon: <PhoneCall size={12} /> },
+  interested: { bg: "#dcfce7", color: "#166534", icon: <Star size={12} /> },
+  "site-visit": { bg: "#fce7f3", color: "#831843", icon: <Building2 size={12} /> },
+  negotiation: { bg: "#ede9fe", color: "#6d28d9", icon: <Target size={12} /> },
+  closed: { bg: "#f3e8ff", color: "#6b21a8", icon: <Award size={12} /> },
+>>>>>>> 2011411 (updated code)
 };
 
 export default function PropertyInquiriesPage() {
@@ -51,7 +72,10 @@ export default function PropertyInquiriesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Inquiry | null>(null);
 
+<<<<<<< HEAD
   // Drawer form state
+=======
+>>>>>>> 2011411 (updated code)
   const [drawerStatus, setDrawerStatus] = useState<InquiryStatus>("new");
   const [drawerNotes, setDrawerNotes] = useState("");
   const [drawerSaving, setDrawerSaving] = useState(false);
@@ -59,7 +83,10 @@ export default function PropertyInquiriesPage() {
   const [drawerSuccess, setDrawerSuccess] = useState(false);
   const [nextFollowUp, setNextFollowUp] = useState<string>("");
 
+<<<<<<< HEAD
   // Search and filters
+=======
+>>>>>>> 2011411 (updated code)
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -94,7 +121,10 @@ export default function PropertyInquiriesPage() {
     setDrawerError(null);
     setDrawerSuccess(false);
 
+<<<<<<< HEAD
     // Mark lead as read
+=======
+>>>>>>> 2011411 (updated code)
     if (!lead.isRead) {
       try {
         const response = await fetch(`/api/property-inquiry/${lead._id}`, {
@@ -178,6 +208,7 @@ export default function PropertyInquiriesPage() {
       setDrawerSaving(false);
     }
   };
+<<<<<<< HEAD
   const convertToDeal = async (
   inquiryId: string
 ) => {
@@ -207,6 +238,29 @@ export default function PropertyInquiriesPage() {
     alert("Failed to create deal");
   }
 };
+=======
+
+  const convertToDeal = async (inquiryId: string) => {
+    try {
+      const res = await fetch("/api/admin/deals/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inquiryId }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Deal created successfully");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to create deal");
+    }
+  };
+>>>>>>> 2011411 (updated code)
 
   const getCustomerName = (lead: Inquiry) => lead.customerName || lead.name || "-";
   const getPhone = (lead: Inquiry) => lead.phone || lead.mobileNumber || "-";
@@ -263,7 +317,11 @@ export default function PropertyInquiriesPage() {
           <p style={subtitleStyle}>Manage and track your customer inquiries efficiently</p>
         </div>
         <button onClick={fetchInquiries} style={refreshButtonStyle}>
+<<<<<<< HEAD
           <span style={{ marginRight: 8 }}>🔄</span>
+=======
+          <RefreshCw size={16} style={{ marginRight: 8 }} />
+>>>>>>> 2011411 (updated code)
           Refresh
         </button>
       </div>
@@ -271,7 +329,13 @@ export default function PropertyInquiriesPage() {
       {/* STATISTICS CARDS */}
       <div style={statsGridStyle}>
         <div style={{ ...statCardStyle, borderLeft: "4px solid #3b82f6" }}>
+<<<<<<< HEAD
           <div style={statIconStyle}>📊</div>
+=======
+          <div style={statIconStyle}>
+            <Users size={28} color="#3b82f6" />
+          </div>
+>>>>>>> 2011411 (updated code)
           <div>
             <h4 style={statLabelStyle}>Total Leads</h4>
             <h2 style={statValueStyle}>{totalLeads}</h2>
@@ -279,7 +343,13 @@ export default function PropertyInquiriesPage() {
         </div>
 
         <div style={{ ...statCardStyle, borderLeft: "4px solid #f59e0b" }}>
+<<<<<<< HEAD
           <div style={statIconStyle}>🆕</div>
+=======
+          <div style={statIconStyle}>
+            <Bell size={28} color="#f59e0b" />
+          </div>
+>>>>>>> 2011411 (updated code)
           <div>
             <h4 style={statLabelStyle}>New Leads</h4>
             <h2 style={statValueStyle}>{newLeads}</h2>
@@ -287,7 +357,13 @@ export default function PropertyInquiriesPage() {
         </div>
 
         <div style={{ ...statCardStyle, borderLeft: "4px solid #10b981" }}>
+<<<<<<< HEAD
           <div style={statIconStyle}>⭐</div>
+=======
+          <div style={statIconStyle}>
+            <Star size={28} color="#10b981" />
+          </div>
+>>>>>>> 2011411 (updated code)
           <div>
             <h4 style={statLabelStyle}>Interested</h4>
             <h2 style={statValueStyle}>{interestedLeads}</h2>
@@ -295,7 +371,13 @@ export default function PropertyInquiriesPage() {
         </div>
 
         <div style={{ ...statCardStyle, borderLeft: "4px solid #8b5cf6" }}>
+<<<<<<< HEAD
           <div style={statIconStyle}>✅</div>
+=======
+          <div style={statIconStyle}>
+            <CheckCircle size={28} color="#8b5cf6" />
+          </div>
+>>>>>>> 2011411 (updated code)
           <div>
             <h4 style={statLabelStyle}>Closed</h4>
             <h2 style={statValueStyle}>{closedLeads}</h2>
@@ -306,7 +388,11 @@ export default function PropertyInquiriesPage() {
       {/* SEARCH AND FILTERS */}
       <div style={filtersContainerStyle}>
         <div style={searchBoxStyle}>
+<<<<<<< HEAD
           <span style={{ color: "#94a3b8", fontSize: 18 }}>🔍</span>
+=======
+          <Search size={18} color="#94a3b8" />
+>>>>>>> 2011411 (updated code)
           <input
             type="text"
             placeholder="Search by name, phone, email or property..."
@@ -343,7 +429,13 @@ export default function PropertyInquiriesPage() {
       {/* EMPTY STATE */}
       {filteredInquiries.length === 0 ? (
         <div style={emptyStateStyle}>
+<<<<<<< HEAD
           <div style={{ fontSize: 60, marginBottom: 16 }}>📭</div>
+=======
+          <div style={{ fontSize: 60, marginBottom: 16 }}>
+            <FileText size={60} color="#cbd5e1" />
+          </div>
+>>>>>>> 2011411 (updated code)
           <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#0f172a" }}>
             No inquiries found
           </h3>
@@ -388,11 +480,24 @@ export default function PropertyInquiriesPage() {
                     </td>
                     <td style={tdStyle}>
                       <div style={contactCellStyle}>
+<<<<<<< HEAD
                         <span style={{ marginRight: 6 }}>📱</span>
                         {getPhone(inquiry)}
                       </div>
                     </td>
                     <td style={tdStyle}>{getProperty(inquiry)}</td>
+=======
+                        <Phone size={14} style={{ marginRight: 6 }} />
+                        {getPhone(inquiry)}
+                      </div>
+                    </td>
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <Home size={14} color="#64748b" />
+                        {getProperty(inquiry)}
+                      </div>
+                    </td>
+>>>>>>> 2011411 (updated code)
                     <td style={tdStyle}>
                       <span
                         style={{
@@ -407,6 +512,10 @@ export default function PropertyInquiriesPage() {
                     </td>
                     <td style={tdStyle}>
                       <div style={dateCellStyle}>
+<<<<<<< HEAD
+=======
+                        <Calendar size={12} style={{ marginRight: 4 }} />
+>>>>>>> 2011411 (updated code)
                         {new Date(inquiry.createdAt).toLocaleString("en-IN", {
                           day: "2-digit",
                           month: "short",
@@ -417,6 +526,7 @@ export default function PropertyInquiriesPage() {
                         })}
                       </div>
                     </td>
+<<<<<<< HEAD
                    <td style={tdStyle}>
   <div
     style={{
@@ -450,6 +560,23 @@ export default function PropertyInquiriesPage() {
     </button>
   </div>
 </td>
+=======
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                        <button onClick={() => openLead(inquiry)} style={viewButtonStyle}>
+                          <Eye size={14} style={{ marginRight: 6 }} />
+                          View
+                        </button>
+                        <button
+                          onClick={() => convertToDeal(inquiry._id)}
+                          style={convertButtonStyle}
+                        >
+                          <TrendingUp size={14} style={{ marginRight: 6 }} />
+                          Convert
+                        </button>
+                      </div>
+                    </td>
+>>>>>>> 2011411 (updated code)
                   </tr>
                 );
               })}
@@ -468,7 +595,12 @@ export default function PropertyInquiriesPage() {
                   cursor: currentPage === 1 ? "not-allowed" : "pointer",
                 }}
               >
+<<<<<<< HEAD
                 ← Previous
+=======
+                <ChevronLeft size={16} style={{ marginRight: 4 }} />
+                Previous
+>>>>>>> 2011411 (updated code)
               </button>
               <span style={paginationInfoStyle}>
                 Page {currentPage} of {totalPages}
@@ -482,7 +614,12 @@ export default function PropertyInquiriesPage() {
                   cursor: currentPage === totalPages ? "not-allowed" : "pointer",
                 }}
               >
+<<<<<<< HEAD
                 Next →
+=======
+                Next
+                <ChevronRight size={16} style={{ marginLeft: 4 }} />
+>>>>>>> 2011411 (updated code)
               </button>
             </div>
           )}
@@ -506,7 +643,11 @@ export default function PropertyInquiriesPage() {
                 <p style={drawerSubtitleStyle}>{getCustomerName(selectedLead)}</p>
               </div>
               <button onClick={closeLead} style={closeButtonStyle}>
+<<<<<<< HEAD
                 <span style={{ fontSize: 20 }}>✕</span>
+=======
+                <X size={20} />
+>>>>>>> 2011411 (updated code)
               </button>
             </div>
 
@@ -515,7 +656,11 @@ export default function PropertyInquiriesPage() {
               {/* CUSTOMER INFO CARD */}
               <div style={drawerCardStyle}>
                 <div style={cardHeaderStyle}>
+<<<<<<< HEAD
                   <span style={cardIconStyle}>👤</span>
+=======
+                  <User size={20} style={cardIconStyle} />
+>>>>>>> 2011411 (updated code)
                   <h3 style={cardTitleStyle}>Customer Information</h3>
                 </div>
                 <div style={infoGridStyle}>
@@ -537,7 +682,11 @@ export default function PropertyInquiriesPage() {
               {/* PROPERTY INFO CARD */}
               <div style={drawerCardStyle}>
                 <div style={cardHeaderStyle}>
+<<<<<<< HEAD
                   <span style={cardIconStyle}>🏠</span>
+=======
+                  <Building2 size={20} style={cardIconStyle} />
+>>>>>>> 2011411 (updated code)
                   <h3 style={cardTitleStyle}>Property Information</h3>
                 </div>
                 <div style={infoGridStyle}>
@@ -567,7 +716,11 @@ export default function PropertyInquiriesPage() {
               {/* STATUS UPDATE CARD */}
               <div style={drawerCardStyle}>
                 <div style={cardHeaderStyle}>
+<<<<<<< HEAD
                   <span style={cardIconStyle}>📊</span>
+=======
+                  <Tag size={20} style={cardIconStyle} />
+>>>>>>> 2011411 (updated code)
                   <h3 style={cardTitleStyle}>Lead Status</h3>
                 </div>
                 <select
@@ -577,7 +730,11 @@ export default function PropertyInquiriesPage() {
                 >
                   {Object.entries(statusLabels).map(([key, label]) => (
                     <option key={key} value={key}>
+<<<<<<< HEAD
                       {statusStyles[key as InquiryStatus].icon} {label}
+=======
+                      {label}
+>>>>>>> 2011411 (updated code)
                     </option>
                   ))}
                 </select>
@@ -586,7 +743,11 @@ export default function PropertyInquiriesPage() {
               {/* FOLLOW UP CARD */}
               <div style={drawerCardStyle}>
                 <div style={cardHeaderStyle}>
+<<<<<<< HEAD
                   <span style={cardIconStyle}>📅</span>
+=======
+                  <CalendarDays size={20} style={cardIconStyle} />
+>>>>>>> 2011411 (updated code)
                   <h3 style={cardTitleStyle}>Next Follow Up</h3>
                 </div>
                 <input
@@ -597,6 +758,10 @@ export default function PropertyInquiriesPage() {
                 />
                 {nextFollowUp && (
                   <p style={followUpHintStyle}>
+<<<<<<< HEAD
+=======
+                    <Clock size={12} style={{ marginRight: 4 }} />
+>>>>>>> 2011411 (updated code)
                     Scheduled for: {new Date(nextFollowUp).toLocaleString("en-IN")}
                   </p>
                 )}
@@ -605,7 +770,11 @@ export default function PropertyInquiriesPage() {
               {/* NOTES CARD */}
               <div style={drawerCardStyle}>
                 <div style={cardHeaderStyle}>
+<<<<<<< HEAD
                   <span style={cardIconStyle}>📝</span>
+=======
+                  <NotebookPen size={20} style={cardIconStyle} />
+>>>>>>> 2011411 (updated code)
                   <h3 style={cardTitleStyle}>Internal Notes</h3>
                 </div>
                 <textarea
@@ -620,7 +789,11 @@ export default function PropertyInquiriesPage() {
               {selectedLead.message && (
                 <div style={drawerCardStyle}>
                   <div style={cardHeaderStyle}>
+<<<<<<< HEAD
                     <span style={cardIconStyle}>💬</span>
+=======
+                    <MessageCircle size={20} style={cardIconStyle} />
+>>>>>>> 2011411 (updated code)
                     <h3 style={cardTitleStyle}>Customer Message</h3>
                   </div>
                   <div style={messageBoxStyle}>{selectedLead.message}</div>
@@ -630,13 +803,21 @@ export default function PropertyInquiriesPage() {
               {/* ALERTS */}
               {drawerError && (
                 <div style={errorBoxStyle}>
+<<<<<<< HEAD
                   <span style={{ marginRight: 8, fontSize: 18 }}>⚠️</span>
+=======
+                  <AlertCircle size={18} style={{ marginRight: 8 }} />
+>>>>>>> 2011411 (updated code)
                   {drawerError}
                 </div>
               )}
               {drawerSuccess && (
                 <div style={successBoxStyle}>
+<<<<<<< HEAD
                   <span style={{ marginRight: 8, fontSize: 18 }}>✓</span>
+=======
+                  <CheckCheck size={18} style={{ marginRight: 8 }} />
+>>>>>>> 2011411 (updated code)
                   Changes saved successfully!
                 </div>
               )}
@@ -653,13 +834,21 @@ export default function PropertyInquiriesPage() {
                   cursor: drawerSaving ? "not-allowed" : "pointer",
                 }}
               >
+<<<<<<< HEAD
                 <span style={{ marginRight: 8 }}>{drawerSaving ? "⏳" : "💾"}</span>
+=======
+                <Save size={18} style={{ marginRight: 8 }} />
+>>>>>>> 2011411 (updated code)
                 {drawerSaving ? "Saving..." : "Save Changes"}
               </button>
 
               <div style={actionButtonsGridStyle}>
                 <a href={`tel:${getPhone(selectedLead)}`} style={callButtonStyle}>
+<<<<<<< HEAD
                   <span style={{ marginRight: 6 }}>📞</span>
+=======
+                  <Phone size={14} style={{ marginRight: 6 }} />
+>>>>>>> 2011411 (updated code)
                   Call
                 </a>
                 <a
@@ -668,7 +857,11 @@ export default function PropertyInquiriesPage() {
                   rel="noopener noreferrer"
                   style={whatsappButtonStyle}
                 >
+<<<<<<< HEAD
                   <span style={{ marginRight: 6 }}>💬</span>
+=======
+                  <MessageCircle size={14} style={{ marginRight: 6 }} />
+>>>>>>> 2011411 (updated code)
                   WhatsApp
                 </a>
               </div>
@@ -752,7 +945,10 @@ const statCardStyle: React.CSSProperties = {
 };
 
 const statIconStyle: React.CSSProperties = {
+<<<<<<< HEAD
   fontSize: "32px",
+=======
+>>>>>>> 2011411 (updated code)
   width: "56px",
   height: "56px",
   display: "flex",
@@ -903,6 +1099,11 @@ const contactCellStyle: React.CSSProperties = {
 const dateCellStyle: React.CSSProperties = {
   fontSize: "13px",
   color: "#64748b",
+<<<<<<< HEAD
+=======
+  display: "flex",
+  alignItems: "center",
+>>>>>>> 2011411 (updated code)
 };
 
 const statusBadgeStyle: React.CSSProperties = {
@@ -924,6 +1125,25 @@ const viewButtonStyle: React.CSSProperties = {
   cursor: "pointer",
   fontSize: "13px",
   transition: "all 0.2s ease",
+<<<<<<< HEAD
+=======
+  display: "flex",
+  alignItems: "center",
+};
+
+const convertButtonStyle: React.CSSProperties = {
+  padding: "8px 16px",
+  borderRadius: "10px",
+  border: "none",
+  background: "#16a34a",
+  color: "#fff",
+  cursor: "pointer",
+  fontWeight: "600",
+  fontSize: "13px",
+  transition: "all 0.2s ease",
+  display: "flex",
+  alignItems: "center",
+>>>>>>> 2011411 (updated code)
 };
 
 const paginationStyle: React.CSSProperties = {
@@ -945,6 +1165,11 @@ const paginationButtonStyle: React.CSSProperties = {
   fontSize: "14px",
   cursor: "pointer",
   transition: "all 0.2s ease",
+<<<<<<< HEAD
+=======
+  display: "flex",
+  alignItems: "center",
+>>>>>>> 2011411 (updated code)
 };
 
 const paginationInfoStyle: React.CSSProperties = {
@@ -985,7 +1210,11 @@ const spinnerStyle: React.CSSProperties = {
   animation: "spin 1s linear infinite",
 };
 
+<<<<<<< HEAD
 /* DRAWER STYLES */
+=======
+// DRAWER STYLES
+>>>>>>> 2011411 (updated code)
 const overlayStyle: React.CSSProperties = {
   position: "fixed",
   top: 0,
@@ -1094,7 +1323,10 @@ const cardHeaderStyle: React.CSSProperties = {
 };
 
 const cardIconStyle: React.CSSProperties = {
+<<<<<<< HEAD
   fontSize: "24px",
+=======
+>>>>>>> 2011411 (updated code)
   width: "44px",
   height: "44px",
   display: "flex",
@@ -1102,6 +1334,10 @@ const cardIconStyle: React.CSSProperties = {
   justifyContent: "center",
   borderRadius: "10px",
   background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+<<<<<<< HEAD
+=======
+  color: "#4f46e5",
+>>>>>>> 2011411 (updated code)
 };
 
 const cardTitleStyle: React.CSSProperties = {
@@ -1172,6 +1408,11 @@ const followUpHintStyle: React.CSSProperties = {
   background: "#f8fafc",
   borderRadius: "8px",
   border: "1px solid #e2e8f0",
+<<<<<<< HEAD
+=======
+  display: "flex",
+  alignItems: "center",
+>>>>>>> 2011411 (updated code)
 };
 
 const modernTextareaStyle: React.CSSProperties = {
@@ -1290,5 +1531,9 @@ const whatsappButtonStyle: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "center",
   transition: "all 0.2s ease",
+<<<<<<< HEAD
 };
 
+=======
+};
+>>>>>>> 2011411 (updated code)

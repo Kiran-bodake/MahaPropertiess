@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 export default function AdminTestimonials() {
+<<<<<<< HEAD
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -212,5 +213,45 @@ export default function AdminTestimonials() {
         }
       `}</style>
     </>
+=======
+  const [form, setForm] = useState({
+    n: "",
+
+    r: "",
+
+    lc: "",
+
+    txt: "",
+
+    av: "",
+
+    pImg: "",
+  });
+
+  const submit = async () => {
+    await fetch("/api/testimonials", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(form),
+    });
+
+    alert("Testimonial Added");
+  };
+
+  return (
+    <div style={{ padding: 40 }}>
+      <h1>Add Testimonial</h1>
+
+      <input placeholder="Name" />
+
+      <textarea placeholder="Review" />
+
+      <button onClick={submit}>Save</button>
+    </div>
+>>>>>>> 2011411 (updated code)
   );
 }

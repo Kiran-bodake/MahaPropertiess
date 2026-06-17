@@ -9,9 +9,16 @@ interface StickyContactFormProps {
   title?: string;
   description?: string;
   propertyTitle: string;
+<<<<<<< HEAD
 }
 
 export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
+=======
+   propertyId: string; 
+}
+
+export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFormProps) {
+>>>>>>> 2011411 (updated code)
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -91,6 +98,10 @@ export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+<<<<<<< HEAD
+=======
+        propertyId: propertyId, 
+>>>>>>> 2011411 (updated code)
         propertyTitle: propertyTitle,
         customerName: formData.name,
         email: formData.email,

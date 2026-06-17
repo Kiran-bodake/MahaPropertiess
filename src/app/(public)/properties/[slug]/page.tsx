@@ -49,6 +49,10 @@ import AreaConversion from "@/components/property/AreaConversion";
 import PropertyMap from "@/components/property/PropertyMapWrapper";
 
 type PropertyType = {
+<<<<<<< HEAD
+=======
+  _id?: string;
+>>>>>>> 2011411 (updated code)
   id: string;
   slug: string;
   title: string;
@@ -760,6 +764,7 @@ export default async function PropertyDetailPage({
                       marginTop: 20,
                     }}
                   >
+<<<<<<< HEAD
                     <StickyContactForm
                       propertyTitle={property.title}
                       title="Request Callback"
@@ -768,6 +773,17 @@ export default async function PropertyDetailPage({
                   </div>
                   <ContactButton
   propertyId={property.id}
+=======
+                   <StickyContactForm
+  propertyId={property.propertyId || property._id || ""}  // ✅ PASS propertyId
+  propertyTitle={property.title}
+  title="Request Callback"
+  description="Talk with owner today"
+/>
+                  </div>
+                  <ContactButton
+  propertyId={property.propertyId || property._id || ""}  // ✅ PASS propertyId
+>>>>>>> 2011411 (updated code)
   propertyName={property.title}
   agentName={property.agentName}
   agentPhone={property.agentPhone}

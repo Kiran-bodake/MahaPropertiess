@@ -28,6 +28,12 @@ export interface IPropertyInquiry extends Document {
 
   inquiryType?: string;
 
+<<<<<<< HEAD
+=======
+  // ✅ NEW CATEGORY FIELD
+  category: "real-estate" | "commercial" | "residential" | "industrial";
+
+>>>>>>> 2011411 (updated code)
   // ✅ NEW AUTHENTICATION FIELDS
   isAuthenticated?: boolean;
   userId?: string;
@@ -127,6 +133,18 @@ const PropertyInquirySchema = new Schema<IPropertyInquiry>(
       default: "general",
     },
 
+<<<<<<< HEAD
+=======
+    // ✅ NEW CATEGORY FIELD - Add this section
+    category: {
+      type: String,
+      enum: ["real-estate", "commercial", "residential", "industrial"],
+      default: "real-estate",
+      required: true,
+      index: true, // For filtering by category
+    },
+
+>>>>>>> 2011411 (updated code)
     // ✅ NEW FIELDS - Authentication tracking
     isAuthenticated: {
       type: Boolean,
@@ -203,6 +221,10 @@ PropertyInquirySchema.virtual('isVerified').get(function() {
 PropertyInquirySchema.index({ createdAt: -1 });
 PropertyInquirySchema.index({ status: 1, createdAt: -1 });
 PropertyInquirySchema.index({ isAuthenticated: 1, createdAt: -1 });
+<<<<<<< HEAD
+=======
+PropertyInquirySchema.index({ category: 1, createdAt: -1 }); // ✅ NEW INDEX for category queries
+>>>>>>> 2011411 (updated code)
 
 /* =========================
    MODEL EXPORT

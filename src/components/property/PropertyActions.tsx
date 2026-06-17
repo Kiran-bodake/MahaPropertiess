@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { MessageCircle, Facebook, Link2, Share2 } from "lucide-react";
+=======
+import { MessageCircle,  Link2, Share2 } from "lucide-react";
+>>>>>>> 2011411 (updated code)
 
 export function PropertyActions({
   propertyMongoId,
@@ -211,6 +215,7 @@ export function PropertyActions({
               WhatsApp
             </a>
 
+<<<<<<< HEAD
             {/* FACEBOOK */}
             <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
@@ -223,6 +228,10 @@ export function PropertyActions({
               <Facebook size={18} />
               Facebook
             </a>
+=======
+          
+             
+>>>>>>> 2011411 (updated code)
 
             {/* COPY LINK */}
             <button

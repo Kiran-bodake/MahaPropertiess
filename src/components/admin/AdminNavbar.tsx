@@ -13,6 +13,10 @@ const crumbs: Record<string, string[]> = {
   "/x-admin/properties": ["Dashboard", "Properties"],
   "/x-admin/notifications": ["Dashboard", "Notifications"],
   "/x-admin/followups": ["Dashboard", "Follow-ups"],
+<<<<<<< HEAD
+=======
+  "/email-settings": ["Dashboard", "Email Settings"], // ✅ Added for email settings
+>>>>>>> 2011411 (updated code)
 };
 
 export function AdminNavbar() {
@@ -25,6 +29,10 @@ export function AdminNavbar() {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+<<<<<<< HEAD
+=======
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false); // ✅ NEW STATE
+>>>>>>> 2011411 (updated code)
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -149,6 +157,21 @@ export function AdminNavbar() {
     }
   };
 
+<<<<<<< HEAD
+=======
+  // ✅ NEW: Navigate to Email Settings
+  const goToEmailSettings = () => {
+    setShowSettingsDropdown(false);
+    router.push("/email-settings");
+  };
+
+  // ✅ NEW: Navigate to Security Settings
+  const goToSecuritySettings = () => {
+    setShowSettingsDropdown(false);
+    router.push("/x-admin/security");
+  };
+
+>>>>>>> 2011411 (updated code)
   // =========================
   // SOCKET CONNECTION (Optional)
   // =========================
@@ -627,6 +650,7 @@ export function AdminNavbar() {
             )}
           </div>
 
+<<<<<<< HEAD
           {/* SETTINGS BUTTON */}
           <button
             style={{
@@ -649,6 +673,122 @@ export function AdminNavbar() {
           >
             <Settings size={18} />
           </button>
+=======
+          {/* ✅ UPDATED: SETTINGS BUTTON WITH DROPDOWN */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
+              style={{
+                padding: 8,
+                border: "1px solid #e5e7eb",
+                borderRadius: 10,
+                background: "white",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#f9fafb";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "white";
+              }}
+            >
+              <Settings size={18} />
+            </button>
+
+            {/* Settings Dropdown Menu */}
+            {showSettingsDropdown && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setShowSettingsDropdown(false)}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 45,
+                    right: 0,
+                    width: 220,
+                    background: "white",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: 12,
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+                    zIndex: 1000,
+                    overflow: "hidden",
+                  }}
+                >
+                  {/* Email Settings Option */}
+                  <button
+                    onClick={goToEmailSettings}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      width: "100%",
+                      padding: "12px 16px",
+                      border: "none",
+                      background: "white",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      fontSize: 13,
+                      transition: "background 0.2s",
+                      borderBottom: "1px solid #f3f4f6",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#f3f4f6";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "white";
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>📧</span>
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Email Settings</div>
+                      <div style={{ fontSize: 11, color: "#6b7280" }}>
+                        Configure category emails
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Security Settings Option */}
+                  <button
+                    onClick={goToSecuritySettings}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      width: "100%",
+                      padding: "12px 16px",
+                      border: "none",
+                      background: "white",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      fontSize: 13,
+                      transition: "background 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#f3f4f6";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "white";
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>🔐</span>
+                    <div>
+                      <div style={{ fontWeight: 600 }}>Security</div>
+                      <div style={{ fontSize: 11, color: "#6b7280" }}>
+                        Password & security
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+>>>>>>> 2011411 (updated code)
 
           {/* PROFILE BUTTON */}
           <div style={{ position: "relative" }}>
@@ -748,4 +888,8 @@ export function AdminNavbar() {
       </div>
     </header>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2011411 (updated code)
