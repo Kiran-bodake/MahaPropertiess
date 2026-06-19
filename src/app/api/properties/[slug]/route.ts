@@ -83,12 +83,9 @@ export async function GET(
 
     /* Final UI response */
     const result = {
-<<<<<<< HEAD
-=======
       // ✅ ADDED: propertyId for email service
       propertyId: property._id.toString(),
 
->>>>>>> 2011411 (updated code)
       id: property._id,
 
       slug: property.slug || property.propertyId,
@@ -177,8 +174,4 @@ export async function GET(
       },
     );
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2011411 (updated code)

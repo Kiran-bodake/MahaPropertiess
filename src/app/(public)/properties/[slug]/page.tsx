@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ContactButton from "@/components/property/ContactButton"; 
-import  Breadcrumbs from "@/components/shared/Breadcrumbs";
+import ContactButton from "@/components/property/ContactButton";
+import Breadcrumbs from "@/components/shared/Breadcrumbs";
 
 import { Navbar } from "@/components/layout/navbar/Navbar";
 
@@ -11,7 +11,8 @@ import { Footer } from "@/components/layout/footer";
 import ViewTracker from "@/components/property/ViewTracker";
 import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
-import PropertyLeadForm from "@/components/shared/PropertyLeadForm";87
+import PropertyLeadForm from "@/components/shared/PropertyLeadForm";
+87;
 import { PropertySectionTabs } from "@/components/property/PropertySectionTabs";
 import { PropertyActions } from "@/components/property/PropertyActions";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
@@ -49,10 +50,7 @@ import AreaConversion from "@/components/property/AreaConversion";
 import PropertyMap from "@/components/property/PropertyMapWrapper";
 
 type PropertyType = {
-<<<<<<< HEAD
-=======
   _id?: string;
->>>>>>> 2011411 (updated code)
   id: string;
   slug: string;
   title: string;
@@ -349,8 +347,8 @@ export default async function PropertyDetailPage({
             overflow: "visible",
           }}
         >
-         {/* Breadcrumbs */}
-<Breadcrumbs property={property} />
+          {/* Breadcrumbs */}
+          <Breadcrumbs property={property} />
 
           {/* MAIN GRID */}
           <div
@@ -764,31 +762,20 @@ export default async function PropertyDetailPage({
                       marginTop: 20,
                     }}
                   >
-<<<<<<< HEAD
                     <StickyContactForm
+                      propertyId={property.propertyId || property._id || ""} // ✅ PASS propertyId
                       propertyTitle={property.title}
                       title="Request Callback"
                       description="Talk with owner today"
                     />
                   </div>
                   <ContactButton
-  propertyId={property.id}
-=======
-                   <StickyContactForm
-  propertyId={property.propertyId || property._id || ""}  // ✅ PASS propertyId
-  propertyTitle={property.title}
-  title="Request Callback"
-  description="Talk with owner today"
-/>
-                  </div>
-                  <ContactButton
-  propertyId={property.propertyId || property._id || ""}  // ✅ PASS propertyId
->>>>>>> 2011411 (updated code)
-  propertyName={property.title}
-  agentName={property.agentName}
-  agentPhone={property.agentPhone}
-  postedBy={property.postedBy}
-/>
+                    propertyId={property.propertyId || property._id || ""} // ✅ PASS propertyId
+                    propertyName={property.title}
+                    agentName={property.agentName}
+                    agentPhone={property.agentPhone}
+                    postedBy={property.postedBy}
+                  />
                 </div>
               </div>
             </aside>
@@ -976,7 +963,6 @@ export default async function PropertyDetailPage({
     </>
   );
 }
-
 
 function SectionTitle({ title }: { title: string }) {
   return (

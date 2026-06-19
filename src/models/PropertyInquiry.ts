@@ -1,9 +1,4 @@
-import mongoose, {
-  Schema,
-  Document,
-  models,
-  model,
-} from "mongoose";
+import mongoose, { Schema, Document, models, model } from "mongoose";
 
 /* =========================
    TYPE SAFETY
@@ -28,12 +23,9 @@ export interface IPropertyInquiry extends Document {
 
   inquiryType?: string;
 
-<<<<<<< HEAD
-=======
   // ✅ NEW CATEGORY FIELD
   category: "real-estate" | "commercial" | "residential" | "industrial";
 
->>>>>>> 2011411 (updated code)
   // ✅ NEW AUTHENTICATION FIELDS
   isAuthenticated?: boolean;
   userId?: string;
@@ -48,10 +40,7 @@ export interface IPropertyInquiry extends Document {
     | "negotiation"
     | "closed";
 
-  priority:
-    | "hot"
-    | "warm"
-    | "cold";
+  priority: "hot" | "warm" | "cold";
 
   nextFollowUp?: Date | null;
 
@@ -133,8 +122,6 @@ const PropertyInquirySchema = new Schema<IPropertyInquiry>(
       default: "general",
     },
 
-<<<<<<< HEAD
-=======
     // ✅ NEW CATEGORY FIELD - Add this section
     category: {
       type: String,
@@ -144,7 +131,6 @@ const PropertyInquirySchema = new Schema<IPropertyInquiry>(
       index: true, // For filtering by category
     },
 
->>>>>>> 2011411 (updated code)
     // ✅ NEW FIELDS - Authentication tracking
     isAuthenticated: {
       type: Boolean,
@@ -209,11 +195,11 @@ const PropertyInquirySchema = new Schema<IPropertyInquiry>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // ✅ Add virtual field to check if user is verified
-PropertyInquirySchema.virtual('isVerified').get(function() {
+PropertyInquirySchema.virtual("isVerified").get(function () {
   return this.isAuthenticated === true || this.verifiedAt !== null;
 });
 
@@ -221,10 +207,7 @@ PropertyInquirySchema.virtual('isVerified').get(function() {
 PropertyInquirySchema.index({ createdAt: -1 });
 PropertyInquirySchema.index({ status: 1, createdAt: -1 });
 PropertyInquirySchema.index({ isAuthenticated: 1, createdAt: -1 });
-<<<<<<< HEAD
-=======
 PropertyInquirySchema.index({ category: 1, createdAt: -1 }); // ✅ NEW INDEX for category queries
->>>>>>> 2011411 (updated code)
 
 /* =========================
    MODEL EXPORT
@@ -234,7 +217,7 @@ const PropertyInquiry =
   model<IPropertyInquiry>(
     "PropertyInquiry",
     PropertyInquirySchema,
-    "property_inquiries"
+    "property_inquiries",
   );
 
 export default PropertyInquiry;

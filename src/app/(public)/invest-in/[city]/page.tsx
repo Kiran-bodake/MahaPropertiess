@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-<<<<<<< HEAD
 import FeaturedPropertiesSlider from "@/components/invest/FeaturedPropertiesSlider";
 import { getFeaturedProperties } from "@/lib/getFeaturedProperties";
 import { Navbar as MegaNavbar } from "@/components/layout/navbar/Navbar";
 import { Footer } from "@/components/layout/footer";
 import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
 import StickySupport from "@/components/shared/StickySupport";
-=======
-import Property from "@/models/Property";
-import PropertyLocation from "@/models/PropertyLocation";
-import { connectDB } from "@/lib/mongodb";
->>>>>>> 2011411 (updated code)
 
 type Props = {
   params: Promise<{
@@ -49,7 +43,6 @@ export default async function InvestInCityPage({ params }: Props) {
   console.log("URL City:", city);
   console.log("Formatted City:", cityName);
 
-<<<<<<< HEAD
   const properties = await getFeaturedProperties(cityName, 12);
   return (
     <>
@@ -417,160 +410,5 @@ export default async function InvestInCityPage({ params }: Props) {
       <StickySupport />
       <FloatingWhatsapp />
     </>
-=======
-  await connectDB();
-
-  const locations = await PropertyLocation.find({
-    city: cityName,
-  })
-    .select("propertyId")
-    .lean();
-
-  console.log("Locations Found:", locations.length);
-  console.log(locations);
-
-  const propertyIds = locations.map((l: any) => l.propertyId);
-
-  const properties = await Property.find({
-    propertyId: { $in: propertyIds },
-    approvalStatus: "approved",
-  })
-    .sort({ createdAt: -1 })
-    .limit(5)
-    .lean();
-
-  console.log("Property IDs:", propertyIds);
-  console.log("Properties Found:", properties.length);
-  return (
-    <main
-      style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "60px 20px",
-      }}
-    >
-      <section
-        style={{
-          textAlign: "center",
-          marginBottom: "60px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "3rem",
-            fontWeight: 800,
-          }}
-        >
-          Invest In {cityName}
-        </h1>
-
-        <p
-          style={{
-            maxWidth: "800px",
-            margin: "20px auto",
-            color: "#64748b",
-          }}
-        >
-          Explore premium residential, commercial, NA plots and agricultural
-          investment opportunities in {cityName}.
-        </p>
-      </section>
-
-      <section style={{ marginBottom: "60px" }}>
-        <h2>Featured Properties</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))",
-            gap: "20px",
-          }}
-        >
-          {properties.map((property: any) => (
-            <div
-              key={property._id}
-              style={{
-                background: "#fff",
-                padding: "20px",
-                borderRadius: "12px",
-                border: "1px solid #e2e8f0",
-              }}
-            >
-              <h3>{property.title}</h3>
-
-              <p>{property.categoryLabel}</p>
-
-              <a href={`/properties/${property.slug}`}>View Property →</a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section
-        style={{
-          marginBottom: "60px",
-        }}
-      >
-        <h2>About {cityName}</h2>
-
-        <p>
-          {cityName} is one of the fastest-growing real estate destinations in
-          Maharashtra. It offers strong appreciation potential, infrastructure
-          growth, industrial development and residential demand.
-        </p>
-      </section>
-
-      <section
-        style={{
-          marginBottom: "60px",
-        }}
-      >
-        <h2>About MahaProperties</h2>
-
-        <p>
-          MahaProperties helps buyers discover verified residential, commercial,
-          agricultural and NA plot opportunities across Maharashtra.
-        </p>
-
-        <a href="/about-us">Read More →</a>
-      </section>
-
-      <section
-        style={{
-          marginBottom: "60px",
-        }}
-      >
-        <h2>Property Categories</h2>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "16px",
-            flexWrap: "wrap",
-          }}
-        >
-          <a href={`/properties/city/${city}/residential`}>Residential</a>
-
-          <a href={`/properties/city/${city}/commercial`}>Commercial</a>
-
-          <a href={`/properties/city/${city}/agriculture`}>Agriculture</a>
-
-          <a href={`/properties/city/${city}/na-plot`}>NA Plot</a>
-        </div>
-      </section>
-
-      <section>
-        <h2>Recent Listings</h2>
-
-        <ul>
-          {properties.map((property: any) => (
-            <li key={property._id}>
-              <a href={`/properties/${property.slug}`}>{property.title}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
->>>>>>> 2011411 (updated code)
   );
 }

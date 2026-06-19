@@ -13,10 +13,6 @@ const crumbs: Record<string, string[]> = {
   "/x-admin/properties": ["Dashboard", "Properties"],
   "/x-admin/notifications": ["Dashboard", "Notifications"],
   "/x-admin/followups": ["Dashboard", "Follow-ups"],
-<<<<<<< HEAD
-=======
-  "/email-settings": ["Dashboard", "Email Settings"], // ✅ Added for email settings
->>>>>>> 2011411 (updated code)
 };
 
 export function AdminNavbar() {
@@ -29,10 +25,7 @@ export function AdminNavbar() {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-<<<<<<< HEAD
-=======
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false); // ✅ NEW STATE
->>>>>>> 2011411 (updated code)
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -157,8 +150,6 @@ export function AdminNavbar() {
     }
   };
 
-<<<<<<< HEAD
-=======
   // ✅ NEW: Navigate to Email Settings
   const goToEmailSettings = () => {
     setShowSettingsDropdown(false);
@@ -171,7 +162,6 @@ export function AdminNavbar() {
     router.push("/x-admin/security");
   };
 
->>>>>>> 2011411 (updated code)
   // =========================
   // SOCKET CONNECTION (Optional)
   // =========================
@@ -650,30 +640,6 @@ export function AdminNavbar() {
             )}
           </div>
 
-<<<<<<< HEAD
-          {/* SETTINGS BUTTON */}
-          <button
-            style={{
-              padding: 8,
-              border: "1px solid #e5e7eb",
-              borderRadius: 10,
-              background: "white",
-              cursor: "pointer",
-              transition: "all 0.2s",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#f9fafb";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "white";
-            }}
-          >
-            <Settings size={18} />
-          </button>
-=======
           {/* ✅ UPDATED: SETTINGS BUTTON WITH DROPDOWN */}
           <div style={{ position: "relative" }}>
             <button
@@ -788,7 +754,6 @@ export function AdminNavbar() {
               </>
             )}
           </div>
->>>>>>> 2011411 (updated code)
 
           {/* PROFILE BUTTON */}
           <div style={{ position: "relative" }}>
@@ -888,8 +853,4 @@ export function AdminNavbar() {
       </div>
     </header>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2011411 (updated code)

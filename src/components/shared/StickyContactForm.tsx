@@ -9,29 +9,32 @@ interface StickyContactFormProps {
   title?: string;
   description?: string;
   propertyTitle: string;
-<<<<<<< HEAD
+  propertyId: string;
 }
 
-export function StickyContactForm({ propertyTitle }: StickyContactFormProps) {
-=======
-   propertyId: string; 
-}
-
-export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFormProps) {
->>>>>>> 2011411 (updated code)
+export function StickyContactForm({
+  propertyTitle,
+  propertyId,
+}: StickyContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   // OTP states
   const [showOTP, setShowOTP] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<any>(null);
-  
+
   // Auth hook
-  const { isAuthenticated, user, sendOTP, verifyOTP, isLoading: authLoading } = useAuth();
+  const {
+    isAuthenticated,
+    user,
+    sendOTP,
+    verifyOTP,
+    isLoading: authLoading,
+  } = useAuth();
 
   const [errors, setErrors] = useState({
     name: "",
@@ -82,26 +85,26 @@ export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFo
   };
 
   // Submit enquiry to backend
-  const submitEnquiryToBackend = async (formData: any, verificationToken?: string) => {
+  const submitEnquiryToBackend = async (
+    formData: any,
+    verificationToken?: string,
+  ) => {
     const userId = user?.id || user?._id || null;
-    
+
     console.log("📤 Submitting callback request:", {
       propertyTitle: propertyTitle,
       isAuthenticated: !!user,
       userId: userId,
-      hasVerificationToken: !!verificationToken
+      hasVerificationToken: !!verificationToken,
     });
-    
+
     const res = await fetch("/api/property-inquiry", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-<<<<<<< HEAD
-=======
-        propertyId: propertyId, 
->>>>>>> 2011411 (updated code)
+        propertyId: propertyId,
         propertyTitle: propertyTitle,
         customerName: formData.name,
         email: formData.email,
@@ -110,16 +113,16 @@ export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFo
         inquiryType: "callback",
         isAuthenticated: !!user,
         userId: userId,
-        verificationToken: verificationToken
+        verificationToken: verificationToken,
       }),
     });
 
     const data = await res.json();
-    
+
     if (!res.ok) {
       throw new Error(data.message || "Something went wrong");
     }
-    
+
     return data;
   };
 
@@ -135,36 +138,36 @@ export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFo
 
       if (isAuthenticated) {
         // ✅ USER IS LOGGED IN - Submit directly
-        console.log("✅ User authenticated, submitting callback request directly...");
-        
+        console.log(
+          "✅ User authenticated, submitting callback request directly...",
+        );
+
         const formData = { name, email, phone: cleanPhone, message };
         await submitEnquiryToBackend(formData);
-        
+
         setStatus("Request submitted successfully");
         toast.success("Callback request submitted!");
-        
+
         // Reset form
         setName("");
         setEmail("");
         setPhone("");
         setMessage("");
-        
       } else {
         // ✅ USER IS NOT LOGGED IN - Need OTP verification
         console.log("❌ User not authenticated, sending OTP...");
-        
+
         await sendOTP(cleanPhone);
-        
+
         setPendingFormData({
           name,
           email,
           phone: cleanPhone,
-          message
+          message,
         });
-        
+
         setShowOTP(true);
       }
-      
     } catch (error) {
       console.log(error);
       setStatus("Something went wrong");
@@ -177,30 +180,29 @@ export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFo
   // Handle successful OTP verification
   const handleOTPVerified = async (verificationToken: string) => {
     console.log("🎯 OTP Verified! Submitting callback request...");
-    
+
     if (!pendingFormData) {
       console.error("No pending form data found!");
       toast.error("Something went wrong. Please try again.");
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       await submitEnquiryToBackend(pendingFormData, verificationToken);
-      
+
       setStatus("Request submitted successfully");
       toast.success("Callback request submitted!");
-      
+
       // Reset form
       setName("");
       setEmail("");
       setPhone("");
       setMessage("");
-      
+
       setShowOTP(false);
       setPendingFormData(null);
-      
     } catch (error: any) {
       console.error("Error in handleOTPVerified:", error);
       setStatus("Something went wrong");
@@ -379,7 +381,9 @@ export function StickyContactForm({ propertyTitle, propertyId }: StickyContactFo
           style={{
             width: "100%",
             height: 48,
-            background: loading ? "#9ca3af" : "linear-gradient(135deg,#166534,#16a34a)",
+            background: loading
+              ? "#9ca3af"
+              : "linear-gradient(135deg,#166534,#16a34a)",
             color: "#fff",
             border: "none",
             borderRadius: 14,
