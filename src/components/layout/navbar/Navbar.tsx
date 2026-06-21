@@ -422,6 +422,7 @@ export function Navbar() {
 
   const [totalCount, setTotalCount] = useState(0);
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
+  const [menus, setMenus] = useState<any[]>([]);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>(
     {},
   );
@@ -571,6 +572,21 @@ export function Navbar() {
 
     fetchCounts();
   }, []);
+
+  useEffect(() => {
+    async function fetchMenus() {
+      try {
+        const res = await fetch("/api/menu");
+        const data = await res.json();
+
+        setMenus(data);
+      } catch (err) {
+        console.error("Menu error:", err);
+      }
+    }
+
+    fetchMenus();
+  }, []);
   // Autocomplete hook
   const {
     query: searchQ,
@@ -637,6 +653,26 @@ export function Navbar() {
     if (menuTimerRef.current) clearTimeout(menuTimerRef.current);
   };
 
+  const navMap = Object.fromEntries(
+    NAV_LINKS.map((item) => [item.label, item]),
+  );
+
+  const finalMenus =
+    menus.length > 0
+      ? menus
+          .map((m: any) => ({
+            ...m,
+            ...(navMap[m.title] || {}),
+          }))
+          .filter((m: any) => m.label)
+      : NAV_LINKS;
+
+  console.log("menus", menus);
+  console.log(
+    "finalMenus",
+    finalMenus.map((x: any) => x.label),
+  );
+
   /* colour helpers */
   const onDark = false; /* transparent phase = text white */
   const logoTxt = onDark ? "#ffffff" : "#14532d";
@@ -654,7 +690,7 @@ export function Navbar() {
       style={{ display: "flex", alignItems: "center", gap: "2px", flex: 1 }}
       className="hide-md"
     >
-      {NAV_LINKS.map((item) => (
+      {finalMenus.map((item) => (
         <div
           key={item.label}
           style={{
@@ -732,7 +768,7 @@ export function Navbar() {
                 gap: "20px",
               }}
             >
-              {item.mega.map((section) => (
+              {item.mega.map((section: any) => (
                 <div
                   key={section.group}
                   style={{
@@ -1103,7 +1139,7 @@ export function Navbar() {
                 }}
                 className="hide-md"
               >
-                {NAV_LINKS.map((item) => (
+                {finalMenus.map((item) => (
                   <div
                     key={item.label}
                     style={{
@@ -1192,7 +1228,7 @@ export function Navbar() {
                           gap: "24px",
                         }}
                       >
-                        {item.mega.map((group) => {
+                        {item.mega.map((group: any) => {
                           const groupImage = (group as { image?: string })
                             .image;
 
