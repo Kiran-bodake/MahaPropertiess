@@ -908,50 +908,98 @@ function CatGrid({ properties }: any) {
 
   const { city } = useLocationStore();
 
-  const citySlug = city?.trim().toLowerCase().replace(/\s+/g, "-") || "nashik";
+  const citySlug =
+    city?.trim().toLowerCase().replace(/\s+/g, "-") || "nashik";
 
-  if (!properties) return null;
+
+  // ✅ FIX: Always make sure properties is an array
+  const propertyList = Array.isArray(properties)
+    ? properties
+    : properties?.properties || [];
+
+
+  if (!propertyList.length) return null;
+
+
 
   // ✅ Dynamic category data from DB
   const categoriesMap: any = {};
 
-  properties.forEach((p: any) => {
-    const category = p.category || p.cat;
+
+
+  propertyList.forEach((p: any) => {
+
+
+    const category =
+      p.category || p.cat;
+
+
 
     if (!category) return;
 
+
+
     if (!categoriesMap[category]) {
+
+
       categoriesMap[category] = {
+
+
         label: category,
+
+
         count: 0,
+
+
         image:
           p.img ||
+          p.image ||
           "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
+
+
       };
+
+
     }
 
+
+
     categoriesMap[category].count += 1;
+
+
+
   });
+
+
 
   // ✅ Convert object → array
   const dynamicCats = Object.values(categoriesMap);
 
+
+
   return (
     <section
       className="sec"
-      style={{ background: G.off, padding: "44px 0" }}
+      style={{
+        background: G.off,
+        padding: "44px 0"
+      }}
       ref={ref}
     >
+
+
       <div className="w">
+
+
         {/* Header */}
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginBottom: "22px",
-            flexWrap: "wrap",
-            gap: "10px",
+            display:"flex",
+            justifyContent:"space-between",
+            alignItems:"flex-end",
+            marginBottom:"22px",
+            flexWrap:"wrap",
+            gap:"10px",
           }}
         >
           <div>
@@ -1462,125 +1510,265 @@ function Featured({ properties }: any) {
   const [tab, setTab] = useState("All");
   const [ref, vis] = useInView();
 
-  if (!properties) return null;
 
-  // ✅ FIXED FILTER (supports both API + old data)
-  const filtered =
+  // ✅ Normalize API response
+  const propertyList = Array.isArray(properties)
+    ? properties
+    : properties?.properties || [];
+
+
+  if (!propertyList.length) {
+    return null;
+  }
+
+
+
+  // ✅ FILTER
+  const filteredList = 
     tab === "All"
-      ? properties
-      : properties.filter((p: any) =>
+      ? propertyList
+      : propertyList.filter((p: any) =>
           (p.category || p.cat || "")
             .toLowerCase()
-            .includes(tab.toLowerCase().split(" ")[0]),
+            .includes(
+              tab
+                .toLowerCase()
+                .split(" ")[0]
+            )
         );
+
+
 
   return (
     <section
       className="sec"
-      style={{ background: "white", padding: "44px 0" }}
+      style={{
+        background: "white",
+        padding: "44px 0"
+      }}
       ref={ref}
     >
+
       <div className="w">
+
+
         {/* Header */}
+
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginBottom: "16px",
-            flexWrap: "wrap",
-            gap: "10px",
+            display:"flex",
+            justifyContent:"space-between",
+            alignItems:"flex-end",
+            marginBottom:"16px",
+            flexWrap:"wrap",
+            gap:"10px",
           }}
         >
+
           <div>
-            <div className="sl">Handpicked</div>
+
+            <div className="sl">
+              Handpicked
+            </div>
+
+
             <h2
               style={{
-                fontFamily: FONT,
-                fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
-                fontWeight: 800,
-                letterSpacing: "-0.03em",
-                color: G.ink,
+                fontFamily:FONT,
+                fontSize:"clamp(1.4rem,2.8vw,2.1rem)",
+                fontWeight:800,
+                letterSpacing:"-0.03em",
+                color:G.ink,
               }}
             >
+
               Featured Properties
+
             </h2>
+
+
           </div>
+
+
 
           <Link
             href="/properties"
             className="b bo"
-            style={{ padding: "8px 15px", fontSize: "12.5px" }}
+            style={{
+              padding:"8px 15px",
+              fontSize:"12.5px"
+            }}
           >
+
             View All {I.arr}
+
           </Link>
+
+
         </div>
+
+
+
 
         {/* Tabs */}
+
+
         <div
           style={{
-            display: "flex",
-            gap: "6px",
-            overflowX: "auto",
-            marginBottom: "14px",
+            display:"flex",
+            gap:"6px",
+            overflowX:"auto",
+            marginBottom:"14px",
           }}
         >
-          {TABS_P.map((t) => (
+
+          {TABS_P.map((t)=>(
+            
             <button
+
               key={t}
-              onClick={() => setTab(t)}
+
+              onClick={()=>setTab(t)}
+
               className="b"
+
               style={{
-                padding: "6px 14px",
-                borderRadius: "99px",
-                fontSize: "12.5px",
-                fontWeight: 600,
-                background: tab === t ? G.ink : "white",
-                color: tab === t ? "white" : G.sl,
-                border: `1.5px solid ${tab === t ? G.ink : G.li}`,
+                padding:"6px 14px",
+                borderRadius:"99px",
+                fontSize:"12.5px",
+                fontWeight:600,
+                background:
+                  tab===t
+                  ? G.ink
+                  :"white",
+
+                color:
+                  tab===t
+                  ?"white"
+                  :G.sl,
+
+                border:
+                `1.5px solid ${
+                  tab===t
+                  ? G.ink
+                  : G.li
+                }`,
               }}
+
             >
+
               {t}
+
             </button>
+
           ))}
+
         </div>
 
-        {/* ✅ USE PCARD HERE (IMPORTANT FIX) */}
+
+
+
+
+        {/* Property Cards */}
+
+
         <div
+
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4,1fr)",
-            gap: "14px",
+            display:"grid",
+            gridTemplateColumns:"repeat(4,1fr)",
+            gap:"14px",
           }}
+
         >
-          {filtered.slice(0, 8).map((p: any, i: number) => (
-            <PCard key={p.id || i} p={p} vis={vis} d={i * 0.05} />
-          ))}
+
+
+          {
+            filteredList
+            .slice(0,8)
+            .map(
+              (p:any,i:number)=>(
+
+
+                <PCard
+
+                  key={
+                    p._id ||
+                    p.id ||
+                    i
+                  }
+
+                  p={p}
+
+                  vis={vis}
+
+                  d={
+                    i * 0.05
+                  }
+
+                />
+
+
+              )
+            )
+          }
+
+
+
         </div>
+
+
+
+
+
 
         {/* Responsive */}
+
         <style>{`
+
           @media(max-width:1100px){
+
             .sec div[style*="grid-template-columns"]{
+
               grid-template-columns:repeat(3,1fr)!important
+
             }
+
           }
+
+
           @media(max-width:768px){
+
             .sec div[style*="grid-template-columns"]{
+
               grid-template-columns:repeat(2,1fr)!important
+
             }
+
           }
+
+
+
           @media(max-width:480px){
+
             .sec div[style*="grid-template-columns"]{
+
               grid-template-columns:1fr!important
+
             }
+
           }
+
         `}</style>
+
+
+
       </div>
+
+
     </section>
   );
 }
-
 /* ═══════════════════════════════════════════════════════════
    STATS  — background image + 5 columns incl. 2000+ clients
 ═══════════════════════════════════════════════════════════ */
@@ -1730,247 +1918,476 @@ function Stats() {
    LOCALITIES  — 4/row, 3 rows, CTA instead of pill list
 ═══════════════════════════════════════════════════════════ */
 function Locs({ properties }: any) {
+
   const { city } = useLocationStore();
+
   const [ref, vis] = useInView();
 
-  if (!properties) return null;
+
+
+  // ✅ FIX: support both API response and direct array
+  const propertyList = Array.isArray(properties)
+    ? properties
+    : properties?.properties || [];
+
+
+
+  if (!propertyList.length) {
+    return null;
+  }
+
+
+
 
   // ✅ Create dynamic locality data from DB
+
   const localityMap: any = {};
 
-  properties.forEach((p: any) => {
-    const locality = p.location || p.loc || p.locality;
+
+
+  propertyList.forEach((p: any) => {
+
+
+    const locality =
+      p.location ||
+      p.loc ||
+      p.locality;
+
+
 
     if (!locality) return;
 
+
+
     if (!localityMap[locality]) {
+
+
       localityMap[locality] = {
+
+
         name: locality,
+
+
         count: 0,
+
+
         image:
           p.img ||
           p.images?.[0] ||
-          "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
+          "/maha.png",
+
+
+
         types: new Set(),
+
+
       };
+
+
     }
+
+
+
 
     localityMap[locality].count += 1;
 
-    // store categories
+
+
     if (p.category || p.cat) {
-      localityMap[locality].types.add(p.category || p.cat);
+
+
+      localityMap[locality]
+        .types
+        .add(
+          p.category || p.cat
+        );
+
+
     }
+
+
+
   });
 
-  // ✅ Convert object to array
-  const locs = Object.values(localityMap).map((l: any) => ({
-    ...l,
-    tp: Array.from(l.types).slice(0, 2).join(" • "),
-  }));
 
-  // ✅ Optional sort by most listings
-  locs.sort((a: any, b: any) => b.count - a.count);
 
-  // ✅ Show top 12
-  const show = locs.slice(0, 12);
+
+
+  // Convert object → array
+
+  const locs = Object
+    .values(localityMap)
+    .map((l:any)=>({
+
+      ...l,
+
+      tp:
+        Array.from(l.types)
+        .slice(0,2)
+        .join(" • ")
+
+    }));
+
+
+
+
+
+  // sort
+
+  locs.sort(
+    (a:any,b:any)=>
+      b.count - a.count
+  );
+
+
+
+
+  const show =
+    locs.slice(0,12);
+
+
+
+
 
   return (
+
     <section
+
       className="sec"
-      style={{ background: G.off, padding: "44px 0" }}
+
+      style={{
+        background:G.off,
+        padding:"44px 0"
+      }}
+
       ref={ref}
+
     >
+
+
       <div className="w">
-        {/* Header */}
+
+
+
         <div
+
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            marginBottom: "22px",
-            flexWrap: "wrap",
-            gap: "10px",
+            display:"flex",
+            justifyContent:"space-between",
+            alignItems:"flex-end",
+            marginBottom:"22px",
+            flexWrap:"wrap",
+            gap:"10px"
           }}
+
         >
+
+
           <div>
-            <div className="sl">Explore {city}</div>
+
+
+            <div className="sl">
+
+              Explore {city}
+
+            </div>
+
+
 
             <h2
+
               style={{
-                fontFamily: FONT,
-                fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
-                fontWeight: 800,
-                letterSpacing: "-0.03em",
-                color: G.ink,
+                fontFamily:FONT,
+                fontSize:"clamp(1.4rem,2.8vw,2.1rem)",
+                fontWeight:800,
+                letterSpacing:"-0.03em",
+                color:G.ink
               }}
+
             >
+
               Top Localities
+
             </h2>
+
+
+
           </div>
 
+
+
           <Link
+
             href="/properties"
+
             className="b bo"
-            style={{ padding: "8px 16px", fontSize: "12.5px" }}
+
+            style={{
+              padding:"8px 16px",
+              fontSize:"12.5px"
+            }}
+
           >
+
             View All Localities {I.arr}
+
           </Link>
+
+
+
         </div>
 
-        {/* Grid */}
+
+
+
+
         <div
+
           className="lg"
+
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4,1fr)",
-            gap: "12px",
+            display:"grid",
+            gridTemplateColumns:"repeat(4,1fr)",
+            gap:"12px"
           }}
+
         >
-          {show.map((l: any, i: number) => (
-            <Link
-              key={l.name}
-              href={`/localities/${l.name.toLowerCase().replace(/\s+/g, "-")}`}
-              className="lf zm"
+
+
+
+        {show.map((l:any,i:number)=>(
+
+
+          <Link
+
+            key={l.name}
+
+            href={
+              `/localities/${
+                l.name
+                .toLowerCase()
+                .replace(/\s+/g,"-")
+              }`
+            }
+
+
+            className="lf zm"
+
+
+            style={{
+              borderRadius:"11px",
+              overflow:"hidden",
+              position:"relative",
+              display:"block",
+              height:"138px",
+              boxShadow:"0 2px 8px rgba(0,0,0,.07)",
+              opacity:vis?1:0,
+              transform:vis
+              ?"none"
+              :"translateY(10px)",
+            }}
+
+
+          >
+
+
+
+            <div
               style={{
-                borderRadius: "11px",
-                overflow: "hidden",
-                position: "relative",
-                display: "block",
-                height: "138px",
-                boxShadow: "0 2px 8px rgba(0,0,0,.07)",
-                opacity: vis ? 1 : 0,
-                transform: vis ? "none" : "translateY(10px)",
-                transition: `opacity .45s ${E} ${
-                  i * 0.04
-                }s,transform .45s ${E} ${
-                  i * 0.04
-                }s,box-shadow .26s ${E},transform .26s ${E}`,
+                position:"absolute",
+                inset:0
               }}
             >
-              {/* Image */}
-              <div style={{ position: "absolute", inset: 0 }}>
-                <Image
-                  src={l.image}
-                  alt={l.name}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
 
-              {/* Overlay */}
-              <div
+              <Image
+
+                src={l.image}
+
+                alt={l.name}
+
+                fill
+
                 style={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.12) 60%,transparent 100%)",
+                  objectFit:"cover"
                 }}
+
               />
 
-              {/* HOT badge */}
-              {l.count >= 5 && (
-                <span
-                  style={{
-                    position: "absolute",
-                    top: "8px",
-                    right: "8px",
-                    background: "#ef4444",
-                    color: "white",
-                    fontSize: "8.5px",
-                    fontWeight: 800,
-                    padding: "2px 7px",
-                    borderRadius: "99px",
-                  }}
-                >
-                  🔥 HOT
-                </span>
-              )}
+            </div>
 
-              {/* Content */}
-              <div
+
+
+
+
+            <div
+
+              style={{
+                position:"absolute",
+                inset:0,
+                background:
+                "linear-gradient(to top,rgba(0,0,0,.7),transparent)"
+              }}
+
+            />
+
+
+
+
+
+            {l.count >=5 && (
+
+              <span
+
                 style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  padding: "9px 11px",
+                  position:"absolute",
+                  top:"8px",
+                  right:"8px",
+                  background:"#ef4444",
+                  color:"white",
+                  fontSize:"8.5px",
+                  fontWeight:800,
+                  padding:"2px 7px",
+                  borderRadius:"99px"
                 }}
+
               >
-                <h3
-                  style={{
-                    fontWeight: 800,
-                    fontSize: "12.5px",
-                    color: "white",
-                    marginBottom: "2px",
-                  }}
-                >
-                  {l.name}
-                </h3>
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      color: "rgba(255,255,255,.68)",
-                    }}
-                  >
-                    {l.tp || "Properties"}
-                  </span>
+                🔥 HOT
 
-                  <span
-                    style={{
-                      fontSize: "10px",
-                      background: "rgba(255,255,255,.17)",
-                      color: "white",
-                      padding: "2px 7px",
-                      borderRadius: "99px",
-                      fontWeight: 700,
-                      backdropFilter: "blur(8px)",
-                    }}
-                  >
-                    {l.count}+
-                  </span>
-                </div>
+              </span>
+
+            )}
+
+
+
+
+
+
+            <div
+
+              style={{
+                position:"absolute",
+                bottom:0,
+                left:0,
+                right:0,
+                padding:"9px 11px"
+              }}
+
+            >
+
+
+              <h3
+
+                style={{
+                  fontWeight:800,
+                  fontSize:"12.5px",
+                  color:"white"
+                }}
+
+              >
+
+                {l.name}
+
+              </h3>
+
+
+
+
+              <div
+
+                style={{
+                  display:"flex",
+                  justifyContent:"space-between"
+                }}
+
+              >
+
+
+                <span
+
+                  style={{
+                    fontSize:"10px",
+                    color:"rgba(255,255,255,.68)"
+                  }}
+
+                >
+
+                  {l.tp || "Properties"}
+
+                </span>
+
+
+
+
+                <span
+
+                  style={{
+                    fontSize:"10px",
+                    background:"rgba(255,255,255,.17)",
+                    color:"white",
+                    padding:"2px 7px",
+                    borderRadius:"99px"
+                  }}
+
+                >
+
+                  {l.count}+
+
+                </span>
+
+
+
               </div>
-            </Link>
-          ))}
+
+
+            </div>
+
+
+
+          </Link>
+
+
+        ))}
+
+
+
         </div>
 
-        {/* CTA */}
-        <div style={{ textAlign: "center", marginTop: "22px" }}>
-          <Link
-            href="/properties"
-            className="b bo"
-            style={{ padding: "10px 24px", fontSize: "13px" }}
-          >
-            Explore All {city} Localities {I.arr}
-          </Link>
-        </div>
+
+
       </div>
 
-      {/* Responsive */}
+
+
+
+
       <style>{`
+
         @media(max-width:900px){
+
           .lg{
-            grid-template-columns:repeat(3,1fr)!important
+            grid-template-columns:repeat(3,1fr)!important;
           }
+
         }
 
+
         @media(max-width:640px){
+
           .lg{
-            grid-template-columns:repeat(2,1fr)!important
+            grid-template-columns:repeat(2,1fr)!important;
           }
+
         }
+
       `}</style>
+
+
+
     </section>
+
   );
+
 }
 
 /* ═══════════════════════════════════════════════════════════

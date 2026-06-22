@@ -1,355 +1,576 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { connectDB } from "@/lib/mongodb";
+
 import PropertyInquiry from "@/models/PropertyInquiry";
 import Notification from "@/models/Notification";
-import { sendInquiryEmails } from "@/services/emailService"; // ✅ FIXED import
-import Property from "@/models/Property"; // ✅ Add this to fetch property details
+import Property from "@/models/Property";
 
-// =========================================
-// HELPER: Generate slug from property title
-// =========================================
-const generatePropertySlug = (title: string): string => {
-  if (!title) return "";
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+import { sendInquiryEmails } from "@/services/emailService";
+
+import { getCurrentUserId } from "@/lib/getCurrentUser";
+import { checkPermission } from "@/lib/checkPermission";
+
+
+
+// Generate slug
+const generatePropertySlug = (title:string)=>{
+
+if(!title) return "";
+
+return title
+.toLowerCase()
+.replace(/[^a-z0-9]+/g,"-")
+.replace(/^-|-$/g,"");
+
 };
 
-// =========================================
-// SAVE PROPERTY INQUIRY (WITH NOTIFICATION)
-// =========================================
-export async function POST(req: NextRequest) {
-  try {
-    await connectDB();
 
-    const body = await req.json();
 
-    // ✅ Extract all fields
-    const {
-      propertyTitle,
-      propertySlug: incomingPropertySlug,
-      customerName,
-      name,
-      email,
-      phone,
-      message,
-      inquiryType,
-      isAuthenticated,
-      userId,
-      verificationToken,
-      propertyId,
-      ...rest
-    } = body;
 
-    // ✅ Generate property slug if not provided
-    const propertySlug =
-      incomingPropertySlug || generatePropertySlug(propertyTitle);
 
-    // ✅ FETCH FULL PROPERTY DETAILS FROM DATABASE
-    let propertyData = null;
-    if (propertyId) {
-      try {
-        propertyData = await Property.findById(propertyId);
-        if (propertyData) {
-          console.log(`✅ Found property for email: ${propertyData.title}`);
-        } else {
-          console.warn(`⚠️ Property not found with ID: ${propertyId}`);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching property:", error);
-      }
-    }
+// ==========================
+// CREATE INQUIRY
+// ==========================
 
-    // Prepare inquiry data with proper field mapping
-    const inquiryData = {
-      propertyTitle: propertyData?.title || propertyTitle || rest.propertyTitle,
-      propertyId: propertyId || null,
-      customerName: customerName || name || "Unknown",
-      name: customerName || name || "Unknown",
-      email: email || "",
-      phone: phone || rest.mobileNumber || "",
-      mobileNumber: phone || rest.mobileNumber || "",
-      message: message || "",
-      inquiryType: inquiryType || "lead-form",
+export async function POST(req:NextRequest){
 
-      // Authentication fields
-      isAuthenticated: isAuthenticated || false,
-      userId: userId || null,
-      verificationToken: verificationToken || null,
-      verifiedAt: verificationToken ? new Date() : null,
+try{
 
-      // Default values
-      status: "new",
-      priority: "warm",
-      isRead: false,
-      reminderSent: false,
 
-      ...rest,
-    };
+await connectDB();
 
-    console.log("📝 Saving inquiry:", {
-      propertyTitle: inquiryData.propertyTitle,
-      propertySlug: propertySlug,
-      customerName: inquiryData.customerName,
-      phone: inquiryData.phone,
-      isAuthenticated: inquiryData.isAuthenticated,
-    });
 
-    // Create inquiry in database
-    const inquiry = await PropertyInquiry.create(inquiryData);
 
-    // =========================================
-    // ✅ SEND EMAIL WITH FULL PROPERTY DETAILS
-    // =========================================
-    try {
-      // Prepare lead object for email service
-      const lead = {
-        _id: inquiry._id.toString(),
-        name: inquiry.customerName || inquiry.name || "Guest",
-        email: inquiry.email || "",
-        phone: inquiry.phone || "",
-        message: inquiry.message || "",
-        category: inquiry.category || "real-estate",
-        createdAt: inquiry.createdAt || new Date(),
-        createdBy: inquiry.isAuthenticated ? "authenticated" : "guest",
-        customFields: {
-          propertyId: propertyId || null,
-          propertyTitle: propertyData?.title || inquiry.propertyTitle || null,
-          budget: propertyData?.price || null,
-          preferredLocation: propertyData?.location || null,
-        },
-      };
+const userId =
+await getCurrentUserId();
 
-      // ✅ Send email using your email service
-      const emailResult = await sendInquiryEmails(lead, propertyData);
 
-      console.log("✅ Email sent successfully:", {
-        department: emailResult.departmentEmail.success,
-        autoReply: emailResult.autoReply.success,
-      });
 
-      // ✅ Update inquiry with email status
-      await PropertyInquiry.findByIdAndUpdate(inquiry._id, {
-        emailSent: emailResult.departmentEmail.success,
-        emailMessageId: emailResult.departmentEmail.messageId,
-        emailError: emailResult.departmentEmail.error || null,
-      });
-    } catch (emailError) {
-      // ✅ LOG BUT DON'T BREAK THE FLOW
-      const errorMessage =
-        emailError instanceof Error
-          ? emailError.message
-          : "Unknown email error";
-      console.error("❌ Email sending failed:", errorMessage);
+if(!userId){
 
-      // Update inquiry with email error
-      await PropertyInquiry.findByIdAndUpdate(inquiry._id, {
-        emailSent: false,
-        emailError: errorMessage,
-      });
-      // ⚠️ DON'T RETURN - Continue with notification
-    }
+return NextResponse.json(
+{
+message:"Unauthorized"
+},
+{
+status:401
+}
+);
 
-    // ✅ CREATE NOTIFICATION
-    const userType = inquiry.isAuthenticated ? "Verified User" : "Guest";
-
-    const notification = await Notification.create({
-      userId: "admin",
-      type: "lead",
-      title: "🆕 New Lead Received",
-      message: `${inquiry.customerName || inquiry.name || "New customer"} sent an inquiry - ${userType}`,
-      referenceId: inquiry._id.toString(),
-      isRead: false,
-      metadata: {
-        propertySlug: propertySlug,
-        propertyTitle: inquiry.propertyTitle,
-        propertyId: propertyId || null,
-        isAuthenticated: inquiry.isAuthenticated,
-        userId: inquiry.userId,
-        phone: inquiry.phone,
-        verifiedViaOTP: !!inquiry.verificationToken,
-        inquiryId: inquiry._id.toString(),
-        customerName: inquiry.customerName,
-        createdAt: new Date().toISOString(),
-        category: inquiry.category, // ✅ Add category for routing
-      },
-    });
-
-    console.log("✅ Notification created with propertySlug:", propertySlug);
-
-    return NextResponse.json({
-      success: true,
-      inquiry,
-      notification: {
-        id: notification._id,
-        propertySlug: propertySlug,
-      },
-      email: {
-        sent: true, // or false if failed
-      },
-      message: "Inquiry submitted successfully",
-    });
-  } catch (error) {
-    console.error("Error saving inquiry:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to save inquiry. Please try again.",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      {
-        status: 500,
-      },
-    );
-  }
 }
 
-// =========================================
-// FETCH PROPERTY INQUIRIES
-// =========================================
-export async function GET(req: NextRequest) {
-  try {
-    await connectDB();
 
-    const { searchParams } = new URL(req.url);
-    const status = searchParams.get("status");
-    const isAuthenticated = searchParams.get("isAuthenticated");
-    const userId = searchParams.get("userId");
-    const propertyId = searchParams.get("propertyId");
-    const category = searchParams.get("category"); // ✅ Add category filter
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const skip = parseInt(searchParams.get("skip") || "0");
 
-    // Build query filters
-    let query: any = {};
+const allowed =
+await checkPermission(
+userId,
+"inquiry.create"
+);
 
-    if (status) query.status = status;
-    if (isAuthenticated === "true") query.isAuthenticated = true;
-    if (isAuthenticated === "false") query.isAuthenticated = false;
-    if (userId) query.userId = userId;
-    if (propertyId) query.propertyId = propertyId;
-    if (category) query.category = category; // ✅ Add category filter
 
-    const inquiries = await PropertyInquiry.find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(skip);
 
-    const total = await PropertyInquiry.countDocuments(query);
+if(!allowed){
 
-    return NextResponse.json({
-      success: true,
-      inquiries,
-      pagination: {
-        total,
-        limit,
-        skip,
-        hasMore: skip + inquiries.length < total,
-      },
-    });
-  } catch (error) {
-    console.error("Error fetching inquiries:", error);
+return NextResponse.json(
+{
+message:"You don't have permission to create inquiry"
+},
+{
+status:403
+}
+);
 
-    return NextResponse.json({
-      success: false,
-      inquiries: [],
-      pagination: {
-        total: 0,
-        limit: 0,
-        skip: 0,
-        hasMore: false,
-      },
-    });
-  }
 }
 
-// =========================================
-// UPDATE INQUIRY STATUS
-// =========================================
-export async function PUT(req: NextRequest) {
-  try {
-    await connectDB();
 
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
 
-    const body = await req.json();
-    const { status, priority, notes, nextFollowUp } = body;
 
-    if (!id) {
-      return NextResponse.json(
-        { success: false, message: "Inquiry ID is required" },
-        { status: 400 },
-      );
-    }
+const body =
+await req.json();
 
-    const updateData: any = {};
-    if (status) updateData.status = status;
-    if (priority) updateData.priority = priority;
-    if (notes) updateData.notes = notes;
-    if (nextFollowUp) updateData.nextFollowUp = new Date(nextFollowUp);
 
-    const inquiry = await PropertyInquiry.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
 
-    if (!inquiry) {
-      return NextResponse.json(
-        { success: false, message: "Inquiry not found" },
-        { status: 404 },
-      );
-    }
+const {
 
-    return NextResponse.json({
-      success: true,
-      inquiry,
-    });
-  } catch (error) {
-    console.error("Error updating inquiry:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to update inquiry" },
-      { status: 500 },
-    );
-  }
+propertyId,
+
+propertyTitle,
+
+customerName,
+
+name,
+
+email,
+
+phone,
+
+message,
+
+category,
+
+...rest
+
+
+}=body;
+
+
+
+let propertyData=null;
+
+
+
+if(propertyId){
+
+propertyData =
+await Property.findById(propertyId);
+
 }
 
-// =========================================
+
+
+
+
+const propertySlug =
+generatePropertySlug(
+propertyData?.title ||
+propertyTitle
+);
+
+
+
+const inquiryData:any={
+
+
+propertyId,
+
+propertyTitle:
+propertyData?.title ||
+propertyTitle,
+
+
+customerName:
+customerName ||
+name ||
+"Unknown",
+
+
+name:
+customerName ||
+name ||
+"Unknown",
+
+
+email,
+
+phone,
+
+
+message,
+
+
+category:
+category ||
+"real-estate",
+
+
+status:"new",
+
+priority:"warm",
+
+isRead:false,
+
+
+...rest
+
+
+};
+
+
+
+
+
+const inquiry =
+await PropertyInquiry.create(
+inquiryData
+);
+
+
+
+
+
+
+// notification
+
+await Notification.create({
+
+userId:"admin",
+
+type:"lead",
+
+title:"New Inquiry Received",
+
+message:
+`${inquiry.customerName} sent inquiry`,
+
+
+referenceId:
+inquiry._id.toString(),
+
+
+metadata:{
+
+propertyId,
+
+propertySlug,
+
+category
+
+}
+
+
+});
+
+
+
+
+
+return NextResponse.json({
+
+success:true,
+
+inquiry,
+
+message:"Inquiry created successfully"
+
+});
+
+
+
+
+}catch(error:any){
+
+
+console.log(error);
+
+
+return NextResponse.json({
+
+success:false,
+
+message:error.message
+
+},
+{
+status:500
+}
+);
+
+
+}
+
+}
+
+
+
+
+
+
+
+
+// ==========================
+// GET INQUIRIES
+// ==========================
+
+
+export async function GET(req:NextRequest){
+
+try{
+
+
+await connectDB();
+
+
+
+const userId =
+await getCurrentUserId();
+
+
+
+if(!userId){
+
+return NextResponse.json(
+{
+message:"Unauthorized"
+},
+{
+status:401
+}
+);
+
+}
+
+
+
+const allowed =
+await checkPermission(
+userId,
+"inquiry.read"
+);
+
+
+
+if(!allowed){
+
+return NextResponse.json(
+{
+message:"You don't have permission to view inquiries"
+},
+{
+status:403
+}
+);
+
+}
+
+
+
+
+
+const inquiries =
+await PropertyInquiry
+.find()
+.sort({
+createdAt:-1
+});
+
+
+
+
+
+return NextResponse.json({
+
+success:true,
+
+inquiries
+
+});
+
+
+
+}catch(error){
+
+
+return NextResponse.json({
+
+success:false,
+
+message:"Failed to fetch inquiries"
+
+},
+{
+status:500
+}
+);
+
+
+}
+
+}
+
+
+
+
+
+
+
+// ==========================
+// UPDATE INQUIRY
+// ==========================
+
+
+export async function PUT(req:NextRequest){
+
+
+try{
+
+
+await connectDB();
+
+
+
+const userId =
+await getCurrentUserId();
+
+
+
+const allowed =
+await checkPermission(
+userId!,
+"inquiry.update"
+);
+
+
+
+if(!allowed){
+
+return NextResponse.json(
+{
+message:"No permission"
+},
+{
+status:403
+}
+);
+
+}
+
+
+
+const {id}= 
+await req.json();
+
+
+
+const body =
+await req.json();
+
+
+
+const updated =
+await PropertyInquiry.findByIdAndUpdate(
+
+id,
+
+body,
+
+{
+new:true
+}
+
+);
+
+
+
+
+return NextResponse.json({
+
+success:true,
+
+inquiry:updated
+
+});
+
+
+
+}catch(error){
+
+
+return NextResponse.json({
+
+success:false
+
+},
+{
+status:500
+}
+);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
 // DELETE INQUIRY
-// =========================================
-export async function DELETE(req: NextRequest) {
-  try {
-    await connectDB();
+// ==========================
 
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
 
-    if (!id) {
-      return NextResponse.json(
-        { success: false, message: "Inquiry ID is required" },
-        { status: 400 },
-      );
-    }
+export async function DELETE(req:NextRequest){
 
-    const deletedInquiry = await PropertyInquiry.findByIdAndDelete(id);
 
-    if (!deletedInquiry) {
-      return NextResponse.json(
-        { success: false, message: "Inquiry not found" },
-        { status: 404 },
-      );
-    }
+try{
 
-    return NextResponse.json({
-      success: true,
-      message: "Inquiry deleted successfully",
-    });
-  } catch (error) {
-    console.error("Error deleting inquiry:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to delete inquiry" },
-      { status: 500 },
-    );
-  }
+
+await connectDB();
+
+
+
+const userId =
+await getCurrentUserId();
+
+
+
+const allowed =
+await checkPermission(
+userId!,
+"inquiry.delete"
+);
+
+
+
+if(!allowed){
+
+return NextResponse.json(
+{
+message:"No permission"
+},
+{
+status:403
+}
+);
+
+}
+
+
+
+
+const {id} =
+await req.json();
+
+
+
+
+await PropertyInquiry.findByIdAndDelete(
+id
+);
+
+
+
+return NextResponse.json({
+
+success:true,
+
+message:"Inquiry deleted"
+
+});
+
+
+
+}catch(error){
+
+
+return NextResponse.json({
+
+success:false
+
+},
+{
+status:500
+}
+);
+
+
+}
+
+
 }

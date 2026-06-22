@@ -1,86 +1,213 @@
-import { NextResponse }
-  from "next/server";
+import { NextResponse } from "next/server";
 
-import { connectDB }
-  from "@/lib/mongodb";
+import { connectDB } from "@/lib/mongodb";
 
-import Property
-  from "@/models/Property";
+import Property from "@/models/Property";
 
-export async function POST(
-  req: Request
-){
+import { getCurrentUserId } from "@/lib/getCurrentUser";
 
-  try{
+import { checkPermission } from "@/lib/checkPermission";
 
-    await connectDB();
 
-    const {
-      id
-    } = await req.json();
+export async function POST(req: Request) {
 
-    console.log(
-      "Approving property:",
-      id
-    );
 
-    const updatedProperty =
+try{
 
-      await Property.findByIdAndUpdate(
 
-        id,
+await connectDB();
 
-        {
 
-          approvalStatus:
-            "approved"
 
-        },
+/*
+GET CURRENT LOGIN USER
+*/
 
-        {
+const userId =
+await getCurrentUserId();
 
-          returnDocument: "after"
 
-        }
 
-      );
+if(!userId){
 
-    console.log(
-      "Updated:",
-      updatedProperty
-    );
+return NextResponse.json(
 
-    return NextResponse.json({
+{
+success:false,
+message:"Unauthorized"
+},
 
-      success:true
+{
+status:401
+}
 
-    });
+);
 
-  }
+}
 
-  catch(error){
 
-    console.error(
-      "Approve error:",
-      error
-    );
 
-    return NextResponse.json(
+/*
+CHECK PERMISSION
+*/
 
-      {
+const allowed =
 
-        success:false
+await checkPermission(
 
-      },
+userId,
 
-      {
+"property.update"
 
-        status:500
+);
 
-      }
 
-    );
 
-  }
+if(!allowed){
+
+
+return NextResponse.json(
+
+{
+
+success:false,
+
+message:"You don't have permission"
+
+},
+
+{
+status:403
+}
+
+);
+
+
+}
+
+
+
+
+const {id}=await req.json();
+
+
+
+if(!id){
+
+return NextResponse.json(
+
+{
+success:false,
+message:"Property id required"
+},
+
+{
+status:400
+}
+
+);
+
+}
+
+
+
+
+
+const property =
+
+await Property.findByIdAndUpdate(
+
+id,
+
+{
+
+approvalStatus:"approved"
+
+},
+
+{
+
+new:true
+
+}
+
+);
+
+
+
+
+
+if(!property){
+
+
+return NextResponse.json(
+
+{
+success:false,
+message:"Property not found"
+},
+
+{
+status:404
+}
+
+);
+
+
+}
+
+
+
+
+
+return NextResponse.json(
+
+{
+
+success:true,
+
+message:"Property approved successfully",
+
+property
+
+}
+
+);
+
+
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+"Approve property error:",
+error
+);
+
+
+
+return NextResponse.json(
+
+{
+
+success:false,
+
+message:"Server error"
+
+},
+
+{
+status:500
+}
+
+);
+
+
+}
+
 
 }

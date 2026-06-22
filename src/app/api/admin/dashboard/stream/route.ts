@@ -66,21 +66,19 @@ export async function GET(req: NextRequest) {
           ]);
 
           // =========================
-          // DATE RANGES (7 DAYS)
+          // 🔥 CHANGED: DATE RANGES FOR MONTH-OVER-MONTH
           // =========================
           const now = new Date();
 
-          const last7Start = new Date();
-          last7Start.setDate(now.getDate() - 7);
-
-          const prev7Start = new Date();
-          prev7Start.setDate(now.getDate() - 14);
-
-          const prev7End = new Date();
-          prev7End.setDate(now.getDate() - 7);
+          // This month (from 1st of this month to now)
+          const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          
+          // Last month (from 1st of last month to end of last month)
+          const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of previous month
 
           // =========================
-          // 7-DAY COMPARISON DATA
+          // 🔥 CHANGED: MONTH-OVER-MONTH COMPARISON DATA
           // =========================
           const [
             currentInquiries,
@@ -90,33 +88,34 @@ export async function GET(req: NextRequest) {
             currentDeals,
             previousDeals,
           ] = await Promise.all([
+            // This month's inquiries
             PropertyInquiry.countDocuments({
-              createdAt: { $gte: last7Start },
+              createdAt: { $gte: thisMonthStart },
             }),
-
+            // Last month's inquiries
             PropertyInquiry.countDocuments({
-              createdAt: { $gte: prev7Start, $lt: prev7End },
+              createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
             }),
-
+            // This month's properties
             Property.countDocuments({
-              createdAt: { $gte: last7Start },
+              createdAt: { $gte: thisMonthStart },
             }),
-
+            // Last month's properties
             Property.countDocuments({
-              createdAt: { $gte: prev7Start, $lt: prev7End },
+              createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
             }),
-
+            // This month's deals
             Deal.countDocuments({
-              createdAt: { $gte: last7Start },
+              createdAt: { $gte: thisMonthStart },
             }),
-
+            // Last month's deals
             Deal.countDocuments({
-              createdAt: { $gte: prev7Start, $lt: prev7End },
+              createdAt: { $gte: lastMonthStart, $lt: lastMonthEnd },
             }),
           ]);
 
           // =========================
-          // MONTHLY TREND
+          // MONTHLY TREND (LAST 12 MONTHS)
           // =========================
           const year = new Date().getFullYear();
 
@@ -143,7 +142,7 @@ export async function GET(req: NextRequest) {
                 month: months[i],
                 properties,
                 inquiries,
-                deals: Math.floor(inquiries * 0.3),
+                deals: Math.floor(inquiries * 0.3), // Or actual deals if you have them
               };
             })
           );
@@ -198,7 +197,7 @@ export async function GET(req: NextRequest) {
             ],
 
             // =========================
-            // 7-DAY COMPARISON (NEW)
+            // 🔥 CHANGED: MONTH-OVER-MONTH COMPARISON
             // =========================
             currentPeriod: {
               inquiries: currentInquiries,
