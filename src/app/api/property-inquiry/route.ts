@@ -6,123 +6,49 @@ import PropertyInquiry from "@/models/PropertyInquiry";
 import Notification from "@/models/Notification";
 import Property from "@/models/Property";
 
-import { sendInquiryEmails } from "@/services/emailService";
-
 import { getCurrentUserId } from "@/lib/getCurrentUser";
 import { checkPermission } from "@/lib/checkPermission";
 
 
 
-// Generate slug
-const generatePropertySlug = (title:string)=>{
 
-if(!title) return "";
-
-return title
-.toLowerCase()
-.replace(/[^a-z0-9]+/g,"-")
-.replace(/^-|-$/g,"");
-
-};
-
-
-
-
-
-// ==========================
-// CREATE INQUIRY
-// ==========================
+// ===============================
+// CREATE PUBLIC INQUIRY
+// NO JWT REQUIRED
+// ===============================
 
 export async function POST(req:NextRequest){
 
 try{
 
-
 await connectDB();
 
 
-
-const userId =
-await getCurrentUserId();
-
-
-
-if(!userId){
-
-return NextResponse.json(
-{
-message:"Unauthorized"
-},
-{
-status:401
-}
-);
-
-}
-
-
-
-const allowed =
-await checkPermission(
-userId,
-"inquiry.create"
-);
-
-
-
-if(!allowed){
-
-return NextResponse.json(
-{
-message:"You don't have permission to create inquiry"
-},
-{
-status:403
-}
-);
-
-}
-
-
-
-
-const body =
-await req.json();
-
+const body = await req.json();
 
 
 const {
 
 propertyId,
-
 propertyTitle,
-
 customerName,
-
 name,
-
 email,
-
 phone,
-
 message,
-
-category,
-
-...rest
+category
 
 
 }=body;
 
 
 
-let propertyData=null;
-
+let property=null;
 
 
 if(propertyId){
 
-propertyData =
+property =
 await Property.findById(propertyId);
 
 }
@@ -130,23 +56,15 @@ await Property.findById(propertyId);
 
 
 
-
-const propertySlug =
-generatePropertySlug(
-propertyData?.title ||
-propertyTitle
-);
-
-
-
-const inquiryData:any={
-
+const inquiry = await PropertyInquiry.create({
 
 propertyId,
 
+
 propertyTitle:
-propertyData?.title ||
-propertyTitle,
+property?.title ||
+propertyTitle ||
+"Unknown Property",
 
 
 customerName:
@@ -165,7 +83,6 @@ email,
 
 phone,
 
-
 message,
 
 
@@ -178,29 +95,16 @@ status:"new",
 
 priority:"warm",
 
-isRead:false,
+isRead:false
 
 
-...rest
-
-
-};
+});
 
 
 
 
 
-const inquiry =
-await PropertyInquiry.create(
-inquiryData
-);
-
-
-
-
-
-
-// notification
+// create admin notification
 
 await Notification.create({
 
@@ -208,7 +112,7 @@ userId:"admin",
 
 type:"lead",
 
-title:"New Inquiry Received",
+title:"New Property Inquiry",
 
 message:
 `${inquiry.customerName} sent inquiry`,
@@ -222,14 +126,12 @@ metadata:{
 
 propertyId,
 
-propertySlug,
-
 category
 
 }
 
-
 });
+
 
 
 
@@ -239,19 +141,23 @@ return NextResponse.json({
 
 success:true,
 
-inquiry,
+message:"Inquiry submitted successfully",
 
-message:"Inquiry created successfully"
+inquiry
+
 
 });
 
 
+}
+
+catch(error:any){
 
 
-}catch(error:any){
-
-
-console.log(error);
+console.log(
+"INQUIRY CREATE ERROR",
+error
+);
 
 
 return NextResponse.json({
@@ -263,12 +169,12 @@ message:error.message
 },
 {
 status:500
-}
-);
+});
 
 
 }
 
+
 }
 
 
@@ -278,12 +184,15 @@ status:500
 
 
 
-// ==========================
-// GET INQUIRIES
-// ==========================
+
+// ===============================
+// ADMIN GET INQUIRIES
+// JWT REQUIRED
+// ===============================
 
 
 export async function GET(req:NextRequest){
+
 
 try{
 
@@ -299,37 +208,44 @@ await getCurrentUserId();
 
 if(!userId){
 
-return NextResponse.json(
-{
+return NextResponse.json({
+
 message:"Unauthorized"
+
 },
 {
 status:401
-}
-);
+});
 
 }
 
 
 
-const allowed =
+
+const permission =
 await checkPermission(
+
 userId,
+
 "inquiry.read"
+
 );
 
 
 
-if(!allowed){
 
-return NextResponse.json(
-{
-message:"You don't have permission to view inquiries"
+if(!permission){
+
+
+return NextResponse.json({
+
+message:"Permission denied"
+
 },
 {
 status:403
-}
-);
+});
+
 
 }
 
@@ -338,11 +254,15 @@ status:403
 
 
 const inquiries =
-await PropertyInquiry
-.find()
+
+await PropertyInquiry.find()
+
 .sort({
+
 createdAt:-1
+
 });
+
 
 
 
@@ -354,39 +274,44 @@ success:true,
 
 inquiries
 
+
 });
 
 
 
-}catch(error){
+
+}
+
+catch(error:any){
 
 
 return NextResponse.json({
 
 success:false,
 
-message:"Failed to fetch inquiries"
+message:error.message
 
 },
 {
 status:500
-}
-);
-
-
-}
+});
 
 }
 
 
+}
 
 
 
 
 
-// ==========================
-// UPDATE INQUIRY
-// ==========================
+
+
+
+
+// ===============================
+// ADMIN UPDATE
+// ===============================
 
 
 export async function PUT(req:NextRequest){
@@ -404,31 +329,49 @@ await getCurrentUserId();
 
 
 
+if(!userId){
+
+return NextResponse.json({
+
+message:"Unauthorized"
+
+},
+{
+status:401
+});
+
+}
+
+
+
+
+
 const allowed =
+
 await checkPermission(
-userId!,
+
+userId,
+
 "inquiry.update"
+
 );
 
 
 
 if(!allowed){
 
-return NextResponse.json(
-{
-message:"No permission"
+return NextResponse.json({
+
+message:"Permission denied"
+
 },
 {
 status:403
+});
+
+
 }
-);
 
-}
-
-
-
-const {id}= 
-await req.json();
 
 
 
@@ -436,13 +379,25 @@ const body =
 await req.json();
 
 
+const {
+
+id,
+
+...updateData
+
+}=body;
+
+
+
+
 
 const updated =
+
 await PropertyInquiry.findByIdAndUpdate(
 
 id,
 
-body,
+updateData,
 
 {
 new:true
@@ -453,28 +408,34 @@ new:true
 
 
 
+
 return NextResponse.json({
 
 success:true,
 
 inquiry:updated
 
+
 });
 
 
 
-}catch(error){
+
+}
+
+catch(error:any){
 
 
 return NextResponse.json({
 
-success:false
+success:false,
+
+message:error.message
 
 },
 {
 status:500
-}
-);
+});
 
 
 }
@@ -490,9 +451,9 @@ status:500
 
 
 
-// ==========================
-// DELETE INQUIRY
-// ==========================
+// ===============================
+// ADMIN DELETE
+// ===============================
 
 
 export async function DELETE(req:NextRequest){
@@ -504,45 +465,68 @@ try{
 await connectDB();
 
 
-
+    console.log("JWT SECRET:", process.env.JWT_SECRET);
 const userId =
 await getCurrentUserId();
 
 
 
+
+if(!userId){
+
+return NextResponse.json({
+
+message:"Unauthorized"
+
+},
+{
+status:401
+});
+
+}
+
+
+
+
 const allowed =
+
 await checkPermission(
-userId!,
+
+userId,
+
 "inquiry.delete"
+
 );
+
 
 
 
 if(!allowed){
 
-return NextResponse.json(
-{
-message:"No permission"
+return NextResponse.json({
+
+message:"Permission denied"
+
 },
 {
 status:403
-}
-);
+});
 
 }
 
 
 
 
-const {id} =
+const {id}=
+
 await req.json();
 
 
 
 
-await PropertyInquiry.findByIdAndDelete(
-id
-);
+await PropertyInquiry.findByIdAndDelete(id);
+
+
 
 
 
@@ -552,22 +536,28 @@ success:true,
 
 message:"Inquiry deleted"
 
+
 });
 
 
 
-}catch(error){
+
+}
+
+
+catch(error:any){
 
 
 return NextResponse.json({
 
-success:false
+success:false,
+
+message:error.message
 
 },
 {
 status:500
-}
-);
+});
 
 
 }

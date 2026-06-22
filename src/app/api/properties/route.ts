@@ -10,415 +10,377 @@ import PropertyFlags from "@/models/PropertyFlags";
 import PropertyImage from "@/models/PropertyImage";
 
 
-import { getCurrentUserId } from "@/lib/getCurrentUser";
-import { checkPermission } from "@/lib/checkPermission";
+export async function GET(req: Request) {
 
+  try {
 
 
-export async function GET(req:Request){
+    await connectDB();
 
 
-try{
 
+    const { searchParams } =
+      new URL(req.url);
 
-await connectDB();
 
 
+    const category =
+      searchParams.get("category");
 
-const userId =
-await getCurrentUserId();
 
 
 
-if(!userId){
 
+    let properties = await Property.find({
 
-return NextResponse.json(
+      approvalStatus: "approved"
 
-{
-success:false,
-message:"Unauthorized"
-},
+    })
+    .sort({
 
-{
-status:401
-}
+      createdAt: -1
 
-);
+    });
 
 
-}
 
 
 
 
-const hasPermission =
+    if(category && category !== "All") {
 
-await checkPermission(
 
-userId,
+      properties =
+        properties.filter(
 
-"property.read"
+          (item:any) =>
 
-);
+          item.category
+          ?.toLowerCase()
+          ===
+          category.toLowerCase()
 
+        );
 
 
+    }
 
-if(!hasPermission){
 
 
-return NextResponse.json(
 
-{
 
-success:false,
 
-message:"Permission denied"
 
-},
+    const finalData = await Promise.all(
 
-{
 
-status:403
+      properties.map(
 
-}
+        async(property:any)=>{
 
-);
 
+          const propertyId =
+            property.propertyId;
 
-}
 
 
 
 
+          const location =
+            await PropertyLocation.findOne({
 
+              propertyId
 
-const {searchParams}
+            });
 
-=
-new URL(req.url);
 
 
 
-const category =
+          const pricing =
+            await PropertyPricing.findOne({
 
-searchParams.get(
-"category"
-);
+              propertyId
 
+            });
 
 
 
 
+          const area =
+            await PropertyArea.findOne({
 
-let properties =
+              propertyId
 
-await Property.find({
+            });
 
-approvalStatus:"approved"
 
-})
 
-.sort({
 
-createdAt:-1
+          const flags =
+            await PropertyFlags.findOne({
 
-});
+              propertyId
 
+            });
 
 
 
 
+          const imageDoc =
+            await PropertyImage.findOne({
 
+              propertyId
 
-if(category && category!=="All"){
+            });
 
 
-properties =
 
-properties.filter(
 
-(item:any)=>
 
-item.category
-?.toLowerCase()
-===
-category.toLowerCase()
+          const images =
 
-);
+            imageDoc?.images
 
+            ?.map(
+              (img:any)=>img.url
+            )
 
-}
+            ?.filter(Boolean)
 
+            ||
+            [];
 
 
 
 
 
-const finalData =
 
-await Promise.all(
 
 
-properties.map(
+          return {
 
-async(property:any)=>{
 
+            id:
+            property._id,
 
-const propertyId =
-property.propertyId;
 
+            _id:
+            property._id,
 
 
 
-const location =
+            title:
+            property.title,
 
-await PropertyLocation.findOne({
 
-propertyId
 
-});
+            slug:
 
+            property.slug ||
+            property.propertyId,
 
 
-const pricing =
 
-await PropertyPricing.findOne({
+            category:
 
-propertyId
+            property.category,
 
-});
 
 
+            locality:
 
-const area =
+            location?.locality || "",
 
-await PropertyArea.findOne({
 
-propertyId
 
-});
+            city:
 
+            location?.city || "",
 
 
-const flags =
 
-await PropertyFlags.findOne({
 
-propertyId
+            price:
 
-});
+            `₹${Number(
+              pricing?.price || 0
+            ).toLocaleString()}`,
 
 
 
-const imageDoc =
 
-await PropertyImage.findOne({
+            area:
 
-propertyId
+            `${area?.area || 0} ${
+              area?.areaUnit || "sqft"
+            }`,
 
-});
 
 
 
 
-const images =
+            badge:
 
-imageDoc?.images
+            flags?.isFeatured
 
-?.map(
-(img:any)=>img.url
-)
+            ?
 
-?.filter(Boolean)
+            "Featured"
 
-|| [];
+            :
 
+            null,
 
 
 
 
 
+            rera:
 
-return {
+            flags?.isRERA || false,
 
 
-id:property._id,
 
-_id:property._id,
 
 
-title:
-property.title,
+            img:
 
+            images[0]
 
-slug:
+            ||
 
-property.slug ||
-property.propertyId,
+            "/maha.png",
 
 
-category:
 
-property.category,
 
 
+            images:
 
-locality:
+            images.length
 
-location?.locality || "",
+            ?
 
+            images
 
+            :
 
-city:
+            ["/maha.png"],
 
-location?.city || "",
 
 
 
-price:
 
-`₹${Number(
-pricing?.price || 0
-).toLocaleString()}`,
+            views:
 
+            property.views || 0,
 
 
-area:
 
-`${area?.area || 0} ${
-area?.areaUnit || "sqft"
-}`,
 
 
+            agentName:
 
-badge:
+            property.agentName ||
 
-flags?.isFeatured
-?
-"Featured"
-:
-null,
+            "Property Expert",
 
 
 
-rera:
 
-flags?.isRERA || false,
 
+            agentPhone:
 
+            property.agentPhone ||
 
-img:
+            "Not Available",
 
-images[0] ||
-"/maha.png",
 
 
 
-images:
 
-images.length
-?
-images
-:
-["/maha.png"],
+            postedBy:
 
+            property.postedBy ||
 
+            "Agency",
 
-views:
 
-property.views || 0,
 
 
 
-agentName:
+            createdAt:
 
-property.agentName ||
-"Property Expert",
+            property.createdAt
 
 
+          };
 
-agentPhone:
 
-property.agentPhone ||
-"Not Available",
 
+        }
 
 
-postedBy:
+      )
 
-property.postedBy ||
-"Agency",
 
+    );
 
 
-createdAt:
 
-property.createdAt
 
 
-};
 
 
-}
 
-)
+    return NextResponse.json({
 
-);
+      success:true,
 
+      data:finalData
 
+    });
 
 
 
 
 
-return NextResponse.json(
 
-{
+  }
 
-success:true,
+  catch(error:any){
 
-data:finalData
 
-}
+    console.log(
 
-);
+      "PROPERTY API ERROR",
 
+      error
 
+    );
 
-}
 
-catch(error:any){
 
+    return NextResponse.json(
 
-console.log(
-"PROPERTY API ERROR",
-error
-);
+      {
 
+        success:false,
 
+        message:error.message
 
-return NextResponse.json(
+      },
 
-{
+      {
 
-success:false,
+        status:500
 
-message:error.message
+      }
 
-},
+    );
 
-{
 
-status:500
-
-}
-
-);
-
-
-}
+  }
 
 
 }

@@ -1,16 +1,12 @@
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import { verifyAccessToken } from "@/lib/jwt";
 
 
-export async function getCurrentUserId(): Promise<string | null> {
+export async function getCurrentUserId() {
 
   try {
 
-
-    const cookieStore =
-      await cookies();
-
-
+    const cookieStore = await cookies();
 
     const token =
       cookieStore.get(
@@ -18,81 +14,48 @@ export async function getCurrentUserId(): Promise<string | null> {
       )?.value;
 
 
+    if(!token){
 
-    if (!token) {
+      console.log("NO TOKEN");
 
       return null;
-
     }
-
 
 
 
     const decoded =
-      jwt.verify(
-        token,
-        process.env.JWT_SECRET!
-      ) as {
-        sub?: string;
-        userId?: string;
-        id?: string;
-      };
+      verifyAccessToken(token);
 
 
 
+    if(!decoded){
 
-
-    const userId =
-      decoded.userId ||
-      decoded.sub ||
-      decoded.id;
-
-
-
-
-
-    if (!userId) {
-
-
-      console.log(
-        "JWT payload missing user id",
-        decoded
-      );
-
+      console.log("INVALID TOKEN");
 
       return null;
-
     }
 
 
 
-    return userId;
+    console.log(
+      "USER ID FROM JWT:",
+      decoded.sub
+    );
+
+
+    return decoded.sub;
 
 
 
-  } catch(error:any) {
+  } catch(error:any){
 
-
-    if(error.name === "TokenExpiredError"){
-
-      console.log(
-        "JWT expired"
-      );
-
-    }
-    else{
-
-      console.log(
-        "JWT ERROR",
-        error
-      );
-
-    }
-
+    console.log(
+      "AUTH ERROR:",
+      error.message
+    );
 
 
     return null;
-
 
   }
 

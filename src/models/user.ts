@@ -6,7 +6,7 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
 
-  role: mongoose.Types.ObjectId;
+ role: mongoose.Types.ObjectId;
 
   refreshTokenHash: string | null;
   avatar: string;

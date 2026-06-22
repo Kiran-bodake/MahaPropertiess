@@ -17,10 +17,15 @@ export async function POST(req: NextRequest) {
     // Check super admin
     if (email === superEmail && password === superPassword && securityCode === superSecurityCode) {
       const token = jwt.sign(
-        { email, role: "super-admin" },
-        process.env.JWT_SECRET || "your-secret-key",
-        { expiresIn: "7d" }
-      );
+ {
+   email,
+   role:"super-admin"
+ },
+ process.env.JWT_SECRET!,
+ {
+   expiresIn:"7d"
+ }
+)
 
       const response = NextResponse.json({
         success: true,
@@ -28,7 +33,7 @@ export async function POST(req: NextRequest) {
         role: "super-admin",
       });
 
-      response.cookies.set("admin_token", token, {
+      response.cookies.set("propvista-access-token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
@@ -45,11 +50,16 @@ export async function POST(req: NextRequest) {
     const subSecurityCode = process.env.ADMIN_SUB_SECURITY_CODE;
 
     if (email === subEmail && password === subPassword && securityCode === subSecurityCode) {
-      const token = jwt.sign(
-        { email, role: "admin" },
-        process.env.JWT_SECRET || "your-secret-key",
-        { expiresIn: "7d" }
-      );
+     const token = jwt.sign(
+{
+ email,
+ role:"admin"
+},
+process.env.JWT_SECRET!,
+{
+ expiresIn:"7d"
+}
+);
 
       const response = NextResponse.json({
         success: true,
@@ -57,7 +67,7 @@ export async function POST(req: NextRequest) {
         role: "admin",
       });
 
-      response.cookies.set("admin_token", token, {
+    response.cookies.set("propvista-access-token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",

@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         phone: user.phone,
         role: user.role 
       },
-      process.env.JWT_SECRET || "your-secret-key",
+      process.env.JWT_SECRET!,
       { expiresIn: "7d" }
     );
 
@@ -106,14 +106,13 @@ export async function POST(req: NextRequest) {
     });
 
     // Set HTTP-only cookie
-    response.cookies.set("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60,
-      path: "/",
-    });
-
+    response.cookies.set("propvista-access-token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60,
+  path: "/",
+});
     return response;
   } catch (error: unknown) {
     console.error("Verify OTP Error:", error);

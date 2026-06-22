@@ -52,6 +52,7 @@ export async function DELETE(req: NextRequest) {
   try {
     await connectDB();
 
+     console.log("JWT SECRET:", process.env.JWT_SECRET);
     const { id } = await req.json();
 
     if (!id) {

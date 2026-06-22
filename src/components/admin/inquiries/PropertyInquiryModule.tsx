@@ -95,11 +95,46 @@ export default function PropertyInquiryModule() {
   const perPage = 10;
 
   /* ===== FETCH ===== */
-  const fetchData = async () => {
-    const res = await fetch("/api/property-inquiry");
+ const fetchData = async () => {
+  try {
+
+    const res = await fetch("/api/property-inquiry", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+
+    if (!res.ok) {
+      console.error(
+        "Inquiry API error:",
+        res.status
+      );
+      return;
+    }
+
+
     const data = await res.json();
-    setInquiries(data?.inquiries || []);
-  };
+
+
+    setInquiries(
+      Array.isArray(data?.inquiries)
+        ? data.inquiries
+        : []
+    );
+
+
+  } catch(error){
+
+    console.error(
+      "Fetch inquiry error:",
+      error
+    );
+
+  }
+};
 
   useEffect(() => {
     fetchData();

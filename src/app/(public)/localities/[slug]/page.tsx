@@ -55,35 +55,67 @@ const res = await fetch("http://localhost:3000/api/properties", {
 });
 
 const properties = await res.json();
-
 export default async function LocalityPage({ params }: Props) {
+
   const { slug } = await params;
+
 
   const localityName = slug
     .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .map(
+      (w) =>
+        w.charAt(0).toUpperCase() + w.slice(1)
+    )
     .join(" ");
 
-  const filtered = properties.filter((p: any) => {
-    const locality = (p.locality || p.location || "")
+
+
+  // ✅ FIX: Make sure properties is always an array
+  const propertyList = Array.isArray(properties)
+    ? properties
+    : properties?.data || [];
+
+
+
+
+  const filtered = propertyList.filter((p: any) => {
+
+
+    const locality = (
+      p.locality ||
+      p.location ||
+      ""
+    )
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-    return locality.includes(slug.toLowerCase());
+
+
+    return locality.includes(
+      slug.toLowerCase()
+    );
+
   });
+
+
+
 
   const currentProperty = filtered[0];
 
-  const nearbyProperties = currentProperty
-    ? properties
-        .filter((p: any) => {
-          return (
-            p.city === currentProperty.city && p.slug !== currentProperty.slug
-          );
-        })
-        .slice(0, 4)
-    : [];
 
+
+  // continue your existing code below...
+
+ const nearbyProperties = currentProperty
+  ? propertyList.filter((p: any) => {
+
+      return (
+        p.city === currentProperty.city &&
+        p.slug !== currentProperty.slug
+      );
+
+    })
+  : [];
   return (
     <>
       <MegaNavbar />
