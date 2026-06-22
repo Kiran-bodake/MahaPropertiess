@@ -43,6 +43,11 @@ const items = [
     icon: ShieldAlert,
   },
   {
+    href: "/x-admin/menu",
+    label: "Menu Manager",
+    icon: Layers,
+  },
+  {
     href: "/x-admin/analytics",
     label: "Analytics",
     icon: Layers,
