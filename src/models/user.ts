@@ -1,143 +1,204 @@
-import mongoose, { Schema, models, Document, Model } from "mongoose";
+import mongoose, {
+  Schema,
+  models,
+  Document,
+  Model
+} from "mongoose";
+
 
 export interface IUser extends Document {
-  name: string;
-  phone?: string;
-  email: string;
-  passwordHash: string;
 
- role: mongoose.Types.ObjectId;
+  name:string;
 
-  refreshTokenHash: string | null;
-  avatar: string;
+  phone?:string;
 
-  savedProperties: mongoose.Types.ObjectId[];
+  email:string;
 
-  isVerified: boolean;
-  loginCount: number;
-  lastLoginAt: Date;
+  passwordHash:string;
 
-  createdAt: Date;
-  updatedAt: Date;
 
-  getPublicProfile(): object;
+  role:mongoose.Types.ObjectId;
+
+
+  refreshTokenHash?:string | null;
+
+
+  avatar?:string;
+
+
+  savedProperties:mongoose.Types.ObjectId[];
+
+
+  isVerified:boolean;
+
+
+  loginCount:number;
+
+
+  lastLoginAt?:Date | null;
+
+
+  createdAt:Date;
+
+
+  updatedAt:Date;
+
+
+  getPublicProfile():object;
+
 }
 
 
+
 const UserSchema = new Schema<IUser>(
-  {
 
-    name:{
-      type:String,
-      required:true,
-      trim:true
-    },
+{
 
-
-    phone:{
-      type:String,
-      unique:true,
-      sparse:true,
-      trim:true
-    },
+name:{
+type:String,
+required:true,
+trim:true
+},
 
 
-    email:{
-      type:String,
-      required:true,
-      lowercase:true,
-      trim:true
-    },
+
+phone:{
+type:String,
+unique:true,
+sparse:true,
+trim:true
+},
 
 
-    passwordHash:{
-      type:String,
-      required:true
-    },
+
+email:{
+type:String,
+required:true,
+lowercase:true,
+trim:true,
+unique:true
+},
 
 
-    // 🔥 RBAC ROLE
-    role:{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"Role",
-      required:true,
-      index:true
-    },
+
+passwordHash:{
+type:String,
+required:true
+},
 
 
-    refreshTokenHash:{
-      type:String,
-      default:null
-    },
 
 
-    avatar:{
-      type:String,
-      default:""
-    },
+// RBAC ROLE
+role:{
+
+type:Schema.Types.ObjectId,
+
+ref:"Role",
+
+required:true,
+
+index:true
+
+},
 
 
-    savedProperties:[
-      {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Property"
-      }
-    ],
+
+refreshTokenHash:{
+
+type:String,
+
+default:null
+
+},
 
 
-    isVerified:{
-      type:Boolean,
-      default:false
-    },
+
+avatar:{
+
+type:String,
+
+default:""
+
+},
 
 
-    loginCount:{
-      type:Number,
-      default:0
-    },
+
+savedProperties:[
+
+{
+
+type:Schema.Types.ObjectId,
+
+ref:"Property"
+
+}
+
+],
 
 
-    lastLoginAt:{
-      type:Date,
-      default:null
-    }
 
-  },
+isVerified:{
 
-  {
-    timestamps:true,
-    versionKey:false
-  }
+type:Boolean,
+
+default:false
+
+},
+
+
+
+loginCount:{
+
+type:Number,
+
+default:0
+
+},
+
+
+
+lastLoginAt:{
+
+type:Date,
+
+default:null
+
+}
+
+
+
+},
+
+{
+
+timestamps:true,
+
+versionKey:false
+
+}
 
 );
 
 
 
-// faster user role lookup
-UserSchema.index({
-  role:1
-});
 
-
-
-// PUBLIC RESPONSE
+// public data
 UserSchema.methods.getPublicProfile=function(){
 
 return {
 
- id:this._id,
+id:this._id,
 
- name:this.name,
+name:this.name,
 
- email:this.email,
+email:this.email,
 
- phone:this.phone,
+role:this.role,
 
- avatar:this.avatar,
+avatar:this.avatar,
 
- role:this.role,
-
- isVerified:this.isVerified
+isVerified:this.isVerified
 
 };
 
@@ -146,13 +207,19 @@ return {
 
 
 
-// prevent hot reload error
+
 const User:Model<IUser> =
-(models.User as Model<IUser>) ||
+
+models.User ||
+
 mongoose.model<IUser>(
+
 "User",
+
 UserSchema
+
 );
+
 
 
 export default User;

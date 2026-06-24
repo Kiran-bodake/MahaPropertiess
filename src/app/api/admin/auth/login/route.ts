@@ -1,220 +1,219 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { setupDatabase } from "@/lib/db-init";
 
 import User from "@/models/user";
 import Role from "@/models/Role";
 
-import { hashPassword, verifyPassword } from "@/lib/auth";
-import { signAccessToken, signRefreshToken } from "@/lib/jwt";
+import {
+  hashPassword,
+  verifyPassword
+} from "@/lib/auth";
 
-
-// Create default admins if not exist
-async function initializeAdminUsers() {
-
-  if (
-    !process.env.ADMIN_SUPER_EMAIL ||
-    !process.env.ADMIN_SUPER_PASSWORD
-  ) {
-    return;
-  }
-
-
-  const superEmail =
-    process.env.ADMIN_SUPER_EMAIL.toLowerCase();
-
-
-  const subEmail =
-    process.env.ADMIN_SUB_EMAIL?.toLowerCase();
+import {
+  signAccessToken,
+  signRefreshToken
+} from "@/lib/jwt";
 
 
 
-  // get roles from database
+// ===============================
+// CREATE DEFAULT ADMINS
+// ===============================
 
-  const superRole =
-    await Role.findOne({
-      name:"super-admin"
-    });
-
-
-  const adminRole =
-    await Role.findOne({
-      name:"admin"
-    });
+async function initializeAdminUsers(){
 
 
-
-  if(!superRole || !adminRole){
-    throw new Error(
-      "Roles not found. Run role seed first."
-    );
-  }
+if(
+!process.env.ADMIN_SUPER_EMAIL ||
+!process.env.ADMIN_SUPER_PASSWORD
+){
+return;
+}
 
 
 
-  const superAdmin =
-    await User.findOne({
-      email:superEmail
-    });
+const superEmail =
+process.env.ADMIN_SUPER_EMAIL
+.toLowerCase();
 
 
 
-  if(!superAdmin){
-
-    await User.create({
-
-      name:"Super Admin",
-
-      email:superEmail,
-
-      phone:"8855445788",
-
-      role:superRole._id,
-
-      passwordHash:
-        hashPassword(
-          process.env.ADMIN_SUPER_PASSWORD
-        ),
-
-      isVerified:true
-    });
-
-  }
+const subEmail =
+process.env.ADMIN_SUB_EMAIL
+?.toLowerCase();
 
 
 
-  if(
-    subEmail &&
-    process.env.ADMIN_SUB_PASSWORD
-  ){
-
-
-    const subAdmin =
-      await User.findOne({
-        email:subEmail
-      });
+const superRole =
+await Role.findOne({
+name:"super-admin"
+});
 
 
 
-    if(!subAdmin){
-
-      await User.create({
-
-        name:"Sub Admin",
-
-        email:subEmail,
-
-        phone:"8855445588",
-
-        role:adminRole._id,
+const adminRole =
+await Role.findOne({
+name:"admin"
+});
 
 
-        passwordHash:
-          hashPassword(
-            process.env.ADMIN_SUB_PASSWORD
-          ),
 
 
-        isVerified:true
+if(!superRole || !adminRole){
 
-      });
-
-    }
-
-  }
+throw new Error(
+"Admin roles missing. Seed roles first."
+);
 
 }
 
 
 
 
+// SUPER ADMIN
+
+const existingSuper =
+await User.findOne({
+email:superEmail
+});
+
+
+
+if(!existingSuper){
+
+
+await User.create({
+
+name:"Super Admin",
+
+email:superEmail,
+
+phone:"8855445788",
+
+role:superRole._id,
+
+passwordHash:
+await hashPassword(
+process.env.ADMIN_SUPER_PASSWORD
+),
+
+isVerified:true
+
+});
+
+
+}
+
+
+
+
+// SUB ADMIN
+
+if(
+subEmail &&
+process.env.ADMIN_SUB_PASSWORD
+){
+
+
+const existingSub =
+await User.findOne({
+email:subEmail
+});
+
+
+
+if(!existingSub){
+
+
+await User.create({
+
+name:"Sub Admin",
+
+email:subEmail,
+
+phone:"8855445588",
+
+role:adminRole._id,
+
+
+passwordHash:
+await hashPassword(
+process.env.ADMIN_SUB_PASSWORD
+),
+
+
+isVerified:true
+
+});
+
+
+}
+
+
+}
+
+
+
+}
+
+
+
+
+
+// ===============================
+// LOGIN
+// ===============================
+
+
 export async function POST(
- req:NextRequest
+req:NextRequest
 ){
 
 
 try{
 
 
-const {
- email:e,
- password,
- securityCode
-
-}=await req.json();
+const body =
+await req.json();
 
 
 
 const email =
-String(e ?? "")
+String(body.email ?? "")
 .toLowerCase()
 .trim();
 
 
 
+const password =
+body.password;
+
+
+
+const securityCode =
+body.securityCode;
+
+
+
+
 if(
- !email ||
- !password ||
- !securityCode
+!email ||
+!password ||
+!securityCode
 ){
 
 return NextResponse.json(
+
 {
 message:
-"Email password and security code required"
+"Email password security code required"
 },
+
 {
 status:400
 }
-);
 
-}
-
-
-
-
-await setupDatabase();
-
-
-
-await initializeAdminUsers();
-
-
-
-
-
-// IMPORTANT RBAC POPULATE
-
-const user =
-await User.findOne({
- email
-
-})
-.populate({
-
-path:"role",
-
-populate:{
-path:"permissions"
-}
-
-});
-
-
-
-
-
-if(
- !user ||
- !user.passwordHash
-){
-
-return NextResponse.json(
-{
-message:"Invalid credentials"
-},
-{
-status:401
-}
 );
 
 }
@@ -223,30 +222,7 @@ status:401
 
 
 
-const validPassword =
-verifyPassword(
- password,
- user.passwordHash
-);
-
-
-
-if(!validPassword){
-
-return NextResponse.json(
-{
-message:"Invalid credentials"
-},
-{
-status:401
-}
-);
-
-}
-
-
-
-
+// security check
 
 const validCode =
 
@@ -262,13 +238,17 @@ process.env.ADMIN_SUB_SECURITY_CODE;
 
 if(!validCode){
 
+
 return NextResponse.json(
+
 {
-message:"Security code invalid"
+message:"Invalid security code"
 },
+
 {
 status:401
 }
+
 );
 
 }
@@ -277,20 +257,118 @@ status:401
 
 
 
-// permissions array
+await setupDatabase();
 
-const permissions =
 
-(user.role as any)
-.permissions
-.map(
-(p:any)=>p.key
+
+await initializeAdminUsers();
+
+
+
+
+
+
+// GET USER WITH ROLE + PERMISSIONS
+
+const user =
+
+await User.findOne({
+
+email
+
+})
+
+.populate({
+
+path:"role",
+
+populate:{
+path:"permissions"
+}
+
+});
+
+
+
+
+
+if(!user){
+
+
+return NextResponse.json(
+
+{
+message:"User not found"
+},
+
+{
+status:401
+}
+
+);
+
+}
+
+
+
+
+
+
+const passwordValid =
+
+await verifyPassword(
+
+password,
+
+user.passwordHash
+
 );
 
 
 
 
 
+
+if(!passwordValid){
+
+
+return NextResponse.json(
+
+{
+message:"Invalid password"
+},
+
+{
+status:401
+}
+
+);
+
+
+}
+
+
+
+
+
+
+const role:any = user.role;
+
+
+
+const permissions =
+
+role?.permissions?.map(
+(p:any)=>p.key
+) || [];
+
+
+
+
+
+
+
+// CREATE ACCESS TOKEN
 
 const accessToken =
 
@@ -300,9 +378,7 @@ user._id.toString(),
 
 user.email,
 
-
-(user.role as any)
-.name
+role.name
 
 );
 
@@ -311,22 +387,16 @@ user.email,
 
 
 
-const {
-token:refreshToken,
+// CREATE REFRESH TOKEN
 
-hash:refreshHash
+const refresh =
 
-}
-
-=
 signRefreshToken();
 
 
 
-
-
 user.refreshTokenHash =
-refreshHash;
+refresh.hash;
 
 
 
@@ -338,7 +408,10 @@ await user.save();
 
 
 
-const response = NextResponse.json({
+const response =
+
+NextResponse.json({
+
 
 success:true,
 
@@ -355,14 +428,13 @@ name:user.name,
 email:user.email,
 
 
-role:
-(user.role as any).name,
+role:role.name,
 
 
 permissions
 
-}
 
+}
 
 
 });
@@ -371,12 +443,15 @@ permissions
 
 
 
-response.cookies.set({
 
-name:
+
+response.cookies.set(
+
 "propvista-access-token",
 
-value:accessToken,
+accessToken,
+
+{
 
 
 httpOnly:true,
@@ -395,18 +470,25 @@ path:"/",
 maxAge:
 15*60
 
-});
+
+}
+
+);
 
 
 
 
 
-response.cookies.set({
 
-name:
+
+
+response.cookies.set(
+
 "propvista-refresh-token",
 
-value:refreshToken,
+refresh.token,
+
+{
 
 
 httpOnly:true,
@@ -425,7 +507,12 @@ path:"/",
 maxAge:
 7*24*60*60
 
-});
+
+}
+
+);
+
+
 
 
 
@@ -435,13 +522,13 @@ return response;
 
 
 
-}
 
-catch(error){
+}
+catch(error:any){
 
 
 console.error(
-"Login error:",
+"ADMIN LOGIN ERROR:",
 error
 );
 
@@ -450,14 +537,8 @@ error
 return NextResponse.json(
 
 {
-
-message:
-error instanceof Error
-?
-error.message
-:
-"Internal server error"
-
+message:error.message ||
+"Login failed"
 },
 
 {
