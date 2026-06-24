@@ -34,10 +34,13 @@ export default function MenuTreeSortPage() {
     if (!over || active.id === over.id) return;
 
     const projection = getProjection(flatMenus, active.id, over.id, offsetLeft);
+    if (!projection) return;
 
     const oldIndex = flatMenus.findIndex((item) => item._id === active.id);
 
     const newIndex = flatMenus.findIndex((item) => item._id === over.id);
+
+    if (newIndex === -1) return;
 
     const sortedItems = arrayMove(flatMenus, oldIndex, newIndex);
 
@@ -46,14 +49,30 @@ export default function MenuTreeSortPage() {
         return {
           ...item,
           depth: Math.max(0, projection.depth || 0),
-          parentId: projection.depth > 0 ? projection.parentId : null,
+          parentId:
+            projection.depth > 0 && projection.parentId
+              ? projection.parentId
+              : null,
         };
       }
 
       return item;
     });
 
-    setMenus(updatedItems);
+    setMenus(
+      updatedItems.map((item: any) => ({
+        ...item,
+        depth: item._id === active.id ? projection.depth : item.depth,
+      })),
+    );
+
+    console.table(
+      updatedItems.map((x: any) => ({
+        title: x.title,
+        depth: x.depth,
+        parent: x.parentId,
+      })),
+    );
   }
   return (
     <div style={{ padding: 20 }}>
@@ -83,7 +102,10 @@ export default function MenuTreeSortPage() {
         onDragMove={(event) => {
           setOffsetLeft(event.delta.x);
         }}
-        onDragEnd={handleDragEnd}
+        onDragEnd={(event) => {
+          handleDragEnd(event);
+          setOffsetLeft(0);
+        }}
       >
         <SortableContext
           items={flatMenus.map((m) => m._id)}

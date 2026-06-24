@@ -17,7 +17,7 @@ export function flattenTree(
         ...acc,
         {
           ...item,
-          depth,
+          depth: item.depth ?? depth,
         },
         ...flattenTree(items, item._id, depth + 1),
       ];

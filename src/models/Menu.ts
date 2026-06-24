@@ -61,6 +61,16 @@ const MenuSchema = new Schema(
       default: false,
     },
 
+    image: {
+      type: String,
+      default: "",
+    },
+
+    columnWidth: {
+      type: String,
+      default: "220px",
+    },
+
     megaMenu: {
       type: Boolean,
       default: false,

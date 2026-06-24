@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { buildTree } from "@/lib/menu-tree/buildTree";
 import { Heart, LogOut } from "lucide-react";
 import { useLocationStore } from "@/store/useLocationStore";
 import {
@@ -580,6 +580,7 @@ export function Navbar() {
         const data = await res.json();
 
         setMenus(data);
+        console.log("API data", data);
       } catch (err) {
         console.error("Menu error:", err);
       }
@@ -657,21 +658,24 @@ export function Navbar() {
     NAV_LINKS.map((item) => [item.label, item]),
   );
 
+  console.log(
+    menus.map((m: any) => ({
+      ...(navMap[m.title] || {}),
+      ...m,
+      label: m.title,
+    })),
+  );
   const finalMenus =
     menus.length > 0
-      ? menus
-          .map((m: any) => ({
-            ...m,
-            ...(navMap[m.title] || {}),
-          }))
-          .filter((m: any) => m.label)
+      ? menus.map((m: any) => ({
+          ...m,
+          label: m.title,
+          icon: navMap[m.title]?.icon,
+          mega: navMap[m.title]?.mega || [],
+        }))
       : NAV_LINKS;
 
-  console.log("menus", menus);
-  console.log(
-    "finalMenus",
-    finalMenus.map((x: any) => x.label),
-  );
+  console.log(finalMenus);
 
   /* colour helpers */
   const onDark = false; /* transparent phase = text white */
@@ -695,7 +699,7 @@ export function Navbar() {
           key={item.label}
           style={{
             position: "relative",
-            display: item.label === "Coworking" ? "none" : "block",
+            display: "block",
           }}
           onMouseEnter={() => openMenu(item.label)}
           onMouseLeave={closeMenu}
