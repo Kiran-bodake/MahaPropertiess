@@ -37,6 +37,7 @@ export const createProperty = async (body: any) => {
       strict: true,
     })}-${propertyId.toLowerCase()}`;
 
+    
     /* CREATE MAIN PROPERTY */
     const property = await Property.create({
       propertyId,
@@ -56,8 +57,10 @@ export const createProperty = async (body: any) => {
       status: body.status || "available",
 
       constructionStatus: body.constructionStatus || "ready",
-
-      postedBy: body.postedBy || "owner",
+postedBy:
+  body.postedBy
+    ? body.postedBy.charAt(0).toUpperCase() + body.postedBy.slice(1).toLowerCase()
+    : "Owner",
 
       agentName: body.agentName || "",
 
@@ -97,39 +100,52 @@ export const createProperty = async (body: any) => {
     });
 
     /* NOTIFICATION */
-    try {
-      await NotificationModel.create({
-        userId: body.userId || property._id.toString(),
+   /* NOTIFICATION */
 
-        type: "property",
+try {
+  await NotificationModel.create({
 
-        title: "New Property Submitted",
+    userId: body.userId || property._id.toString(),
 
-        message: `${property.title} waiting for approval`,
+    type: "system",
 
-        referenceId: property._id,
+    title: "New Property Submitted",
 
-        isRead: false,
-      });
-    } catch (notificationError) {
-      console.error(
-        "Notification Error:",
+    message: `${property.title} is waiting for approval`,
 
-        notificationError,
-      );
-    }
+    referenceId: property._id,
 
-    /* USER */
-    await PropertyUser.create({
-      propertyId,
+    isRead: false,
 
-      postedBy: body.postedBy || "owner",
+  });
 
-      name: body.agentName || "",
+} catch (notificationError) {
 
-      phone: body.agentPhone || "",
-    });
+  console.error(
+    "Notification Creation Error:",
+    notificationError
+  );
 
+}
+   /* USER */
+
+const propertyUserPostedBy =
+  body.postedBy?.toLowerCase() === "builder"
+    ? "builder"
+    : body.postedBy?.toLowerCase() === "dealer"
+    ? "dealer"
+    : "owner";
+
+
+await PropertyUser.create({
+  propertyId,
+
+  postedBy: propertyUserPostedBy,
+
+  name: body.agentName || "",
+
+  phone: body.agentPhone || "",
+});
     /* LOCATION */
     await PropertyLocation.create({
       propertyId,

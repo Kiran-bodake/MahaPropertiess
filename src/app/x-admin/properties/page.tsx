@@ -68,7 +68,7 @@ export default function PropertiesPage() {
     try {
       const res = await fetch(`/api/admin/properties?approval=${filter}&mine=${mine}`);
       const data = await res.json();
-      setProperties(data.properties ?? []);
+     setProperties(data.properties ?? data.data ?? []);
     } catch (error) {
       console.error(error);
       toast.error("Failed to load properties");
