@@ -1827,13 +1827,9 @@ function CatGrid({ properties }: any) {
 
 
   // ✅ FIX: Always make sure properties is an array
-
-  const propertyList = Array.isArray(properties)
-
-    ? properties
-
-    : properties?.properties || [];
-
+const propertyList = Array.isArray(properties)
+  ? properties
+  : properties?.data || properties?.properties || [];
 
 
 
