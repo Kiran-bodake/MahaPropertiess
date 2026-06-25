@@ -667,12 +667,16 @@ export function Navbar() {
   );
   const finalMenus =
     menus.length > 0
-      ? menus.map((m: any) => ({
-          ...m,
-          label: m.title,
-          icon: navMap[m.title]?.icon,
-          mega: navMap[m.title]?.mega || [],
-        }))
+      ? menus
+          .filter(
+            (m: any) => m.active && m.showOnDesktop && m.location === "header",
+          )
+          .map((m: any) => ({
+            ...m,
+            label: m.title,
+            icon: navMap[m.title]?.icon,
+            mega: navMap[m.title]?.mega || [],
+          }))
       : NAV_LINKS;
 
   console.log(finalMenus);
@@ -691,7 +695,14 @@ export function Navbar() {
 
   const desktopNav = (
     <nav
-      style={{ display: "flex", alignItems: "center", gap: "2px", flex: 1 }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        flex: 1,
+        flexWrap: "nowrap",
+        overflow: "visible",
+      }}
       className="hide-md"
     >
       {finalMenus.map((item) => (
@@ -699,22 +710,30 @@ export function Navbar() {
           key={item.label}
           style={{
             position: "relative",
-            display: "block",
+            display: "inline-flex",
+            flexShrink: 0,
           }}
           onMouseEnter={() => openMenu(item.label)}
           onMouseLeave={closeMenu}
         >
           <button
             style={{
-              display: "flex",
+              display: "inline-flex",
               alignItems: "center",
-              gap: "5px",
-              padding: "8px 10px",
+              justifyContent: "center",
+
+              whiteSpace: "nowrap",
+              minWidth: "fit-content",
+              width: "auto",
+
+              gap: "4px",
+              padding: "8px 12px",
+
               borderRadius: "9px",
               fontFamily: "var(--font-dm,'DM Sans',sans-serif)",
               fontSize: "14px",
               fontWeight: 600,
-              whiteSpace: "nowrap",
+
               color: activeMenu === item.label ? navHov : navTxt,
               background:
                 activeMenu === item.label
@@ -722,6 +741,7 @@ export function Navbar() {
                     ? "rgba(255,255,255,0.12)"
                     : "rgba(22,163,74,0.07)"
                   : "transparent",
+
               border: "none",
               cursor: "pointer",
               transition: "all 0.18s ease",
@@ -906,30 +926,29 @@ export function Navbar() {
           style={{
             display: "flex",
             alignItems: "center",
-            height: "68px",
+            height: scrolled ? "60px" : "60px",
             gap: "0",
             transition: "height 0.35s ease",
             paddingLeft: "0px",
           }}
         >
           {/* ── LOGO ── */}
-          {/* <Link href="/" style={{ display:"flex", alignItems:"center", gap:"10px", textDecoration:"none", flexShrink:0, marginRight:"28px" }}> */}
           <Link
             href="/"
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "10px",
+              gap: "0px",
               textDecoration: "none",
               flexShrink: 0,
-              marginRight: "8px",
+              marginRight: "0px",
               marginLeft: "0px",
             }}
           >
             <div
               style={{
-                width: "200px",
-                height: "50px",
+                width: "135px",
+                height: "46px",
                 borderRadius: "11px",
                 overflow: "hidden",
                 position: "relative",
@@ -1056,29 +1075,29 @@ export function Navbar() {
               </div>
 
               {/* Locality quick-pick 
-              <select style={{
-                height:"40px", padding:"0 10px", borderRadius:"10px",
-                border:"1.5px solid #e5e7eb", background:"white",
-                fontSize:"13px", fontWeight:500, color:"#374151",
-                fontFamily:"var(--font-dm,'DM Sans',sans-serif)", cursor:"pointer",
-                outline:"none",
-              }}>
-                <option value="">All Localities</option>
-                {LOCALITIES_QUICK.map(l => <option key={l}>{l}</option>)}
-              </select>
-            
-               Type quick-pick 
-              <select style={{
-                height:"40px", padding:"0 10px", borderRadius:"10px",
-                border:"1.5px solid #e5e7eb", background:"white",
-                fontSize:"13px", fontWeight:500, color:"#374151",
-                fontFamily:"var(--font-dm,'DM Sans',sans-serif)", cursor:"pointer",
-                outline:"none", display:"none",
-              }} className="hide-md">
-                <option value="">All Types</option>
-                {TYPES_QUICK.map(t => <option key={t}>{t}</option>)}
-              </select>
-              */}
+                <select style={{
+                  height:"40px", padding:"0 10px", borderRadius:"10px",
+                  border:"1.5px solid #e5e7eb", background:"white",
+                  fontSize:"13px", fontWeight:500, color:"#374151",
+                  fontFamily:"var(--font-dm,'DM Sans',sans-serif)", cursor:"pointer",
+                  outline:"none",
+                }}>
+                  <option value="">All Localities</option>
+                  {LOCALITIES_QUICK.map(l => <option key={l}>{l}</option>)}
+                </select>
+              
+                Type quick-pick 
+                <select style={{
+                  height:"40px", padding:"0 10px", borderRadius:"10px",
+                  border:"1.5px solid #e5e7eb", background:"white",
+                  fontSize:"13px", fontWeight:500, color:"#374151",
+                  fontFamily:"var(--font-dm,'DM Sans',sans-serif)", cursor:"pointer",
+                  outline:"none", display:"none",
+                }} className="hide-md">
+                  <option value="">All Types</option>
+                  {TYPES_QUICK.map(t => <option key={t}>{t}</option>)}
+                </select>
+                */}
               {/* Divider */}
               <div
                 style={{
@@ -1138,8 +1157,10 @@ export function Navbar() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "2px",
+                  gap: "6px",
                   flex: 1,
+                  flexWrap: "nowrap",
+                  overflow: "visible",
                 }}
                 className="hide-md"
               >
@@ -1148,31 +1169,30 @@ export function Navbar() {
                     key={item.label}
                     style={{
                       position: "relative",
-                      display: item.label === "Coworking" ? "none" : "block",
+                      display:
+                        item.label === "Coworking" ? "none" : "inline-flex",
+                      flexShrink: 0,
                     }}
                     onMouseEnter={() => openMenu(item.label)}
                     onMouseLeave={closeMenu}
                   >
                     <button
                       style={{
-                        display: "flex",
+                        display: "inline-flex",
                         alignItems: "center",
-                        gap: "5px",
-                        padding: "8px 13px",
+                        justifyContent: "center",
+
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                        minWidth: "max-content",
+
+                        gap: "4px",
+                        padding: "8px 10px",
+
                         borderRadius: "9px",
                         fontFamily: "var(--font-dm,'DM Sans',sans-serif)",
                         fontSize: "14px",
                         fontWeight: 600,
-                        color: activeMenu === item.label ? navHov : navTxt,
-                        background:
-                          activeMenu === item.label
-                            ? onDark
-                              ? "rgba(255,255,255,0.12)"
-                              : "rgba(22,163,74,0.07)"
-                            : "transparent",
-                        border: "none",
-                        cursor: "pointer",
-                        transition: "all 0.18s ease",
                       }}
                     >
                       {item.label}
@@ -1392,26 +1412,26 @@ export function Navbar() {
 
                 {/* Phone */}
                 {/* <a
-                  href="tel:+919876543210"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    padding: "8px 14px",
-                    borderRadius: "9px",
-                    border: onDark
-                      ? "1.5px solid rgba(255,255,255,0.22)"
-                      : "1.5px solid #e5e7eb",
-                    background: onDark ? "rgba(255,255,255,0.1)" : "white",
-                    color: onDark ? "white" : "#374151",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    transition: "all 0.18s",
-                  }}
-                  className="hide-sm"
-                >
-                  <Phone size={14} /> +91 98765 43210
-                </a> */}
+                    href="tel:+919876543210"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "7px",
+                      padding: "8px 14px",
+                      borderRadius: "9px",
+                      border: onDark
+                        ? "1.5px solid rgba(255,255,255,0.22)"
+                        : "1.5px solid #e5e7eb",
+                      background: onDark ? "rgba(255,255,255,0.1)" : "white",
+                      color: onDark ? "white" : "#374151",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      transition: "all 0.18s",
+                    }}
+                    className="hide-sm"
+                  >
+                    <Phone size={14} /> +91 98765 43210
+                  </a> */}
 
                 {/* Post CTA */}
                 <Link
@@ -1826,9 +1846,9 @@ export function Navbar() {
                 alignItems: "center",
                 justifyContent: "space-between",
                 gap: "8px",
-                paddingLeft: "50px",
+                paddingLeft: "30px",
                 overflowX: "auto",
-                minHeight: "38px",
+                height: "38px",
               }}
             >
               <div
@@ -1919,7 +1939,7 @@ export function Navbar() {
                 >
                   Popular
                 </Link>
-                <Link
+                {/* <Link
                   href="/properties"
                   style={{
                     whiteSpace: "nowrap",
@@ -1932,7 +1952,7 @@ export function Navbar() {
                   }}
                 >
                   Filters
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>
@@ -1940,8 +1960,8 @@ export function Navbar() {
       </header>
 
       {/* ══════════════════════════════════════
-           SLIDE-IN FULL-SCREEN DRAWER MENU
-         ══════════════════════════════════════ */}
+            SLIDE-IN FULL-SCREEN DRAWER MENU
+          ══════════════════════════════════════ */}
       {menuOpen && (
         <div
           style={{ position: "fixed", inset: 0, zIndex: 2000, display: "flex" }}
@@ -2399,24 +2419,24 @@ export function Navbar() {
                 <Bell size={16} /> Enquiry Now
               </Link>
               {/* <a
-                href="tel:+919876543210"
-                style={{
-                  padding: "12px",
-                  borderRadius: "10px",
-                  textAlign: "center",
-                  background: "#f9fafb",
-                  border: "1.5px solid #e5e7eb",
-                  color: "#374151",
-                  fontWeight: 600,
-                  fontSize: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                }}
-              >
-                <Phone size={15} /> +91 98765 43210
-              </a> */}
+                  href="tel:+919876543210"
+                  style={{
+                    padding: "12px",
+                    borderRadius: "10px",
+                    textAlign: "center",
+                    background: "#f9fafb",
+                    border: "1.5px solid #e5e7eb",
+                    color: "#374151",
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <Phone size={15} /> +91 98765 43210
+                </a> */}
             </div>
           </div>
         </div>
@@ -2424,13 +2444,13 @@ export function Navbar() {
 
       {/* ── Responsive helpers ── */}
       <style>{`
-        @media (max-width: 1100px) { .hide-md { display: none !important; } }
-        @media (max-width:  768px) { .hide-sm { display: none !important; } }
-        @media (max-width:  480px) { .hide-xs { display: none !important; } }
-        @keyframes slideRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideDown  { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
-      `}</style>
+          @media (max-width: 1100px) { .hide-md { display: none !important; } }
+          @media (max-width:  768px) { .hide-sm { display: none !important; } }
+          @media (max-width:  480px) { .hide-xs { display: none !important; } }
+          @keyframes slideRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+          @keyframes slideDown  { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
+        `}</style>
     </>
   );
 }

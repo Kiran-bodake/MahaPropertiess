@@ -44,6 +44,7 @@ export const FCOLS = [
       ["Contact Us", "/contact"],
       ["Privacy Policy", "/privacy-policy"],
       ["Terms of Use", "/terms"],
+      ["Tools", "/tools"],
     ],
   },
 ];
