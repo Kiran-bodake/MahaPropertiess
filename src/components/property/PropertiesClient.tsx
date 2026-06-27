@@ -152,15 +152,19 @@ function readFavorites(): string[] {
 /*  API                                                                */
 /* ------------------------------------------------------------------ */
 async function fetchAllProperties(signal?: AbortSignal): Promise<Property[]> {
-  const res = await fetch(`${BASE_URL}/api/properties`, {
+  const res = await fetch("/api/properties", {
     cache: "no-store",
     signal,
   });
-  if (!res.ok) throw new Error("Failed to fetch properties");
-  const data = await res.json();
-  return Array.isArray(data) ? data : data.properties || [];
-}
 
+  if (!res.ok) {
+    throw new Error("Failed to fetch properties");
+  }
+
+  const json = await res.json();
+
+  return Array.isArray(json.data) ? json.data : [];
+}
 /* ================================================================== */
 /*  Page                                                               */
 /* ================================================================== */
@@ -288,15 +292,21 @@ function PropertiesContent({
 
   useEffect(() => {
     const ctrl = new AbortController();
+
     fetchAllProperties(ctrl.signal)
       .then(setAllProperties)
       .catch((e) => {
-        if (e?.name !== "AbortError") {
+        if (e.name !== "AbortError") {
           console.error("Property fetch error:", e);
           setAllProperties([]);
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!ctrl.signal.aborted) {
+          setLoading(false);
+        }
+      });
+
     return () => ctrl.abort();
   }, []);
 

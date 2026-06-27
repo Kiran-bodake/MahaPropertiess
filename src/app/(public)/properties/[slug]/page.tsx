@@ -168,13 +168,18 @@ async function getProperty(slug: string): Promise<PropertyType | null> {
 }
 
 async function getRelatedProperties(city: string): Promise<PropertyType[]> {
-  const res = await fetch(`http://localhost:3000/api/properties?city=${city}`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `http://localhost:3000/api/properties?city=${encodeURIComponent(city)}`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) return [];
 
-  return res.json();
+  const json = await res.json();
+
+  return json.data || [];
 }
 
 export async function generateMetadata({
@@ -257,7 +262,6 @@ export default async function PropertyDetailPage({
   const property = await getProperty(slug);
 
   if (!property) notFound();
-  console.log("DETAIL PAGE PROPERTY", property);
 
   const relatedProperties = await getRelatedProperties(property.city);
 
@@ -288,10 +292,7 @@ export default async function PropertyDetailPage({
 
     provider: {
       "@type": "RealEstateAgent",
-
-      name: property.agentName,
-
-      telephone: property.agentPhone,
+      name: "MahaProperties",
     },
 
     mainEntity: {
@@ -770,11 +771,8 @@ export default async function PropertyDetailPage({
                     />
                   </div>
                   <ContactButton
-                    propertyId={property.propertyId || property._id || ""} // ✅ PASS propertyId
+                    propertyId={property.propertyId || property._id || ""}
                     propertyName={property.title}
-                    agentName={property.agentName}
-                    agentPhone={property.agentPhone}
-                    postedBy={property.postedBy}
                   />
                 </div>
               </div>

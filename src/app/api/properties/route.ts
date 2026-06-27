@@ -9,378 +9,131 @@ import PropertyArea from "@/models/PropertyArea";
 import PropertyFlags from "@/models/PropertyFlags";
 import PropertyImage from "@/models/PropertyImage";
 
-
 export async function GET(req: Request) {
-
   try {
-
-
     await connectDB();
 
+    const { searchParams } = new URL(req.url);
 
-
-    const { searchParams } =
-      new URL(req.url);
-
-
-
-    const category =
-      searchParams.get("category");
-
-
-
-
+    const category = searchParams.get("category");
 
     let properties = await Property.find({
-
-      approvalStatus: "approved"
-
-    })
-    .sort({
-
-      createdAt: -1
-
+      approvalStatus: "approved",
+    }).sort({
+      createdAt: -1,
     });
 
-
-
-
-
-
-    if(category && category !== "All") {
-
-
-      properties =
-        properties.filter(
-
-          (item:any) =>
-
-          item.category
-          ?.toLowerCase()
-          ===
-          category.toLowerCase()
-
-        );
-
-
+    if (category && category !== "All") {
+      properties = properties.filter(
+        (item: any) => item.category?.toLowerCase() === category.toLowerCase(),
+      );
     }
 
-
-
-
-
-
-
     const finalData = await Promise.all(
+      properties.map(async (property: any) => {
+        const propertyId = property.propertyId;
 
+        const location = await PropertyLocation.findOne({
+          propertyId,
+        });
 
-      properties.map(
+        const pricing = await PropertyPricing.findOne({
+          propertyId,
+        });
 
-        async(property:any)=>{
+        const area = await PropertyArea.findOne({
+          propertyId,
+        });
 
+        const flags = await PropertyFlags.findOne({
+          propertyId,
+        });
 
-          const propertyId =
-            property.propertyId;
+        const imageDoc = await PropertyImage.findOne({
+          propertyId,
+        });
 
+        const images =
+          imageDoc?.images
 
+            ?.map((img: any) => img.url)
 
+            ?.filter(Boolean) || [];
 
+        return {
+          id: property._id,
 
-          const location =
-            await PropertyLocation.findOne({
+          _id: property._id,
 
-              propertyId
+          title: property.title,
 
-            });
+          slug: property.slug || property.propertyId,
 
+          category: property.category,
 
+          locality: location?.locality || "",
 
+          city: location?.city || "",
 
-          const pricing =
-            await PropertyPricing.findOne({
+          price: `₹${Number(pricing?.price || 0).toLocaleString()}`,
 
-              propertyId
+          area: `${area?.area || 0} ${area?.areaUnit || "sqft"}`,
 
-            });
+          badge: flags?.isFeatured ? "Featured" : null,
 
+          rera: flags?.isRERA || false,
 
+          img: images[0] || "/maha.png",
 
+          images: images.length ? images : ["/maha.png"],
 
-          const area =
-            await PropertyArea.findOne({
+          views: property.views || 0,
 
-              propertyId
+          // agentName:
 
-            });
+          // property.agentName ||
 
+          // "Property Expert",
 
+          // agentPhone:
 
+          // property.agentPhone ||
 
-          const flags =
-            await PropertyFlags.findOne({
+          // "Not Available",
 
-              propertyId
+          // postedBy:
 
-            });
+          // property.postedBy ||
 
+          // "Agency",
 
-
-
-          const imageDoc =
-            await PropertyImage.findOne({
-
-              propertyId
-
-            });
-
-
-
-
-
-          const images =
-
-            imageDoc?.images
-
-            ?.map(
-              (img:any)=>img.url
-            )
-
-            ?.filter(Boolean)
-
-            ||
-            [];
-
-
-
-
-
-
-
-
-          return {
-
-
-            id:
-            property._id,
-
-
-            _id:
-            property._id,
-
-
-
-            title:
-            property.title,
-
-
-
-            slug:
-
-            property.slug ||
-            property.propertyId,
-
-
-
-            category:
-
-            property.category,
-
-
-
-            locality:
-
-            location?.locality || "",
-
-
-
-            city:
-
-            location?.city || "",
-
-
-
-
-            price:
-
-            `₹${Number(
-              pricing?.price || 0
-            ).toLocaleString()}`,
-
-
-
-
-            area:
-
-            `${area?.area || 0} ${
-              area?.areaUnit || "sqft"
-            }`,
-
-
-
-
-
-            badge:
-
-            flags?.isFeatured
-
-            ?
-
-            "Featured"
-
-            :
-
-            null,
-
-
-
-
-
-            rera:
-
-            flags?.isRERA || false,
-
-
-
-
-
-            img:
-
-            images[0]
-
-            ||
-
-            "/maha.png",
-
-
-
-
-
-            images:
-
-            images.length
-
-            ?
-
-            images
-
-            :
-
-            ["/maha.png"],
-
-
-
-
-
-            views:
-
-            property.views || 0,
-
-
-
-
-
-            agentName:
-
-            property.agentName ||
-
-            "Property Expert",
-
-
-
-
-
-            agentPhone:
-
-            property.agentPhone ||
-
-            "Not Available",
-
-
-
-
-
-            postedBy:
-
-            property.postedBy ||
-
-            "Agency",
-
-
-
-
-
-            createdAt:
-
-            property.createdAt
-
-
-          };
-
-
-
-        }
-
-
-      )
-
-
+          createdAt: property.createdAt,
+        };
+      }),
     );
-
-
-
-
-
-
-
 
     return NextResponse.json({
+      success: true,
 
-      success:true,
-
-      data:finalData
-
+      data: finalData,
     });
-
-
-
-
-
-
-  }
-
-  catch(error:any){
-
-
+  } catch (error: any) {
     console.log(
-
       "PROPERTY API ERROR",
 
-      error
-
+      error,
     );
 
-
-
     return NextResponse.json(
-
       {
+        success: false,
 
-        success:false,
-
-        message:error.message
-
+        message: error.message,
       },
 
       {
-
-        status:500
-
-      }
-
+        status: 500,
+      },
     );
-
-
   }
-
-
 }

@@ -98,10 +98,9 @@ export async function GET(
 
       locality: location?.locality || "",
       postedBy: property.postedBy || "",
-
       agentName: property.agentName || "",
-
-      agentPhone: property.agentPhone || "",
+      // Keep these private - do not expose in public property API
+      // agentPhone: property.agentPhone || "",
 
       status: property.status || "",
 

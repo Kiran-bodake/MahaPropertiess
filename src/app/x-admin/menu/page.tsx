@@ -48,20 +48,22 @@ export default function MenuPage() {
             <span className="menu-icon">☰</span>
             Menu Manager
           </h1>
-          <p className="header-subtitle">Manage your navigation menus and their structure</p>
+          <p className="header-subtitle">
+            Manage your navigation menus and their structure
+          </p>
         </div>
         <div className="header-right">
           <button onClick={() => fetchMenus()} className="btn btn-secondary">
             <span className="btn-icon">⟳</span>
             Refresh
           </button>
-         <button 
-  onClick={() => window.location.href = "/x-admin/menu/new"} 
-  className="btn btn-primary"
->
-  <span className="btn-icon">+</span>
-  Add Menu
-</button>
+          <button
+            onClick={() => (window.location.href = "/x-admin/menu/new")}
+            className="btn btn-primary"
+          >
+            <span className="btn-icon">+</span>
+            Add Menu
+          </button>
         </div>
       </div>
 
@@ -79,14 +81,14 @@ export default function MenuPage() {
           <table className="menu-table">
             <thead>
               <tr>
-                <th>Order</th>
-                <th>Title</th>
-                <th>Location</th>
-                <th className="text-center">Desktop</th>
-                <th className="text-center">Mobile</th>
-                <th className="text-center">Active</th>
-                <th>Parent</th>
-                <th className="text-center">Actions</th>
+                <th className="col-order">#</th>
+                <th className="col-title">Title</th>
+                <th className="col-location">Location</th>
+                <th className="col-status text-center">Desktop</th>
+                <th className="col-status text-center">Mobile</th>
+                <th className="col-status text-center">Active</th>
+                <th className="col-parent">Parent</th>
+                <th className="col-actions text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -112,7 +114,8 @@ export default function MenuPage() {
         {menus.length > 0 && (
           <div className="table-footer">
             <p>
-              Showing <span className="footer-count">{menus.length}</span> menu items
+              Showing <span className="footer-count">{menus.length}</span> menu
+              items
             </p>
           </div>
         )}
@@ -144,7 +147,9 @@ export default function MenuPage() {
         }
 
         @keyframes spin {
-          to { transform: rotate(360deg); }
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         .loading-spinner p {
@@ -158,14 +163,18 @@ export default function MenuPage() {
           padding: 24px;
           max-width: 1280px;
           margin: 0 auto;
+          min-height: 100vh;
+          background: #f8fafc;
         }
 
         /* Header */
         .menu-header {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: space-between;
           margin-bottom: 32px;
+          flex-wrap: wrap;
+          gap: 16px;
         }
 
         .header-left h1 {
@@ -199,36 +208,38 @@ export default function MenuPage() {
         .btn {
           display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 8px;
-          padding: 8px 16px;
-          font-size: 14px;
-          font-weight: 500;
-          border: none;
-          border-radius: 8px;
+          padding: 10px 20px;
+          border-radius: 10px;
           cursor: pointer;
           transition: all 0.2s ease;
-          text-decoration: none;
+          font-weight: 600;
+          font-size: 14px;
+          border: none;
+          white-space: nowrap;
         }
 
         .btn-primary {
-          background-color: #4f46e5;
+          background: linear-gradient(135deg, #4f46e5, #6366f1);
           color: white;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
         .btn-primary:hover {
-          background-color: #4338ca;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
         }
 
         .btn-secondary {
-          background-color: white;
+          background: white;
+          border: 1px solid #e2e8f0;
           color: #374151;
-          border: 1px solid #d1d5db;
         }
 
         .btn-secondary:hover {
-          background-color: #f9fafb;
+          background: #f8fafc;
+          border-color: #cbd5e1;
         }
 
         .btn-icon {
@@ -239,10 +250,10 @@ export default function MenuPage() {
         /* Error Message */
         .error-message {
           margin-bottom: 24px;
-          padding: 16px;
+          padding: 16px 20px;
           background-color: #fef2f2;
           border: 1px solid #fecaca;
-          border-radius: 8px;
+          border-radius: 10px;
           color: #dc2626;
         }
 
@@ -258,15 +269,16 @@ export default function MenuPage() {
 
         /* Table Container */
         .table-container {
-          background-color: white;
-          border-radius: 12px;
-          border: 1px solid #e5e7eb;
+          background: #ffffff;
+          border-radius: 16px;
           overflow: hidden;
+          border: 1px solid #e2e8f0;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .table-wrapper {
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
 
         /* Table Styles */
@@ -274,35 +286,70 @@ export default function MenuPage() {
           width: 100%;
           border-collapse: collapse;
           font-size: 14px;
+          min-width: 800px;
         }
 
         .menu-table thead {
-          background-color: #f9fafb;
+          background: #f8fafc;
+          border-bottom: 2px solid #e2e8f0;
         }
 
         .menu-table th {
-          padding: 12px 24px;
-          text-align: left;
-          font-size: 12px;
-          font-weight: 600;
+          padding: 14px 16px;
+          font-size: 11px;
+          font-weight: 700;
+          color: #64748b;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          color: #4b5563;
-          border-bottom: 1px solid #e5e7eb;
+          text-align: left;
+          border-bottom: 1px solid #e2e8f0;
         }
 
         .menu-table td {
-          padding: 12px 24px;
-          border-bottom: 1px solid #f3f4f6;
+          padding: 14px 16px;
+          border-bottom: 1px solid #f1f5f9;
           vertical-align: middle;
         }
 
+        .menu-table tbody tr {
+          transition: background-color 0.15s ease;
+        }
+
         .menu-table tbody tr:hover {
-          background-color: #f9fafb;
+          background: #f8fafc;
         }
 
         .menu-table tbody tr:last-child td {
           border-bottom: none;
+        }
+
+        /* Column Widths */
+        .col-order {
+          width: 60px;
+          text-align: center;
+        }
+
+        .col-title {
+          width: 280px;
+          min-width: 200px;
+        }
+
+        .col-location {
+          width: 150px;
+        }
+
+        .col-status {
+          width: 100px;
+          text-align: center;
+        }
+
+        .col-parent {
+          width: 150px;
+        }
+
+        .col-actions {
+          width: 120px;
+          text-align: center;
         }
 
         .text-center {
@@ -312,7 +359,7 @@ export default function MenuPage() {
         /* Empty State */
         .empty-state {
           text-align: center;
-          padding: 48px 24px;
+          padding: 64px 24px;
         }
 
         .empty-icon {
@@ -329,21 +376,21 @@ export default function MenuPage() {
         }
 
         .empty-state p {
-          margin: 0 0 16px 0;
+          margin: 0 0 20px 0;
           font-size: 14px;
           color: #6b7280;
         }
 
         /* Table Footer */
         .table-footer {
-          padding: 12px 24px;
-          background-color: #f9fafb;
-          border-top: 1px solid #e5e7eb;
+          background: #fafafa;
+          padding: 14px 24px;
+          border-top: 1px solid #e2e8f0;
         }
 
         .table-footer p {
           margin: 0;
-          font-size: 14px;
+          font-size: 13px;
           color: #6b7280;
         }
 
@@ -353,6 +400,22 @@ export default function MenuPage() {
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+          .menu-table {
+            font-size: 13px;
+            min-width: 700px;
+          }
+
+          .menu-table th,
+          .menu-table td {
+            padding: 10px 12px;
+          }
+
+          .col-title {
+            width: 200px;
+          }
+        }
+
         @media (max-width: 768px) {
           .menu-page {
             padding: 16px;
@@ -360,7 +423,7 @@ export default function MenuPage() {
 
           .menu-header {
             flex-direction: column;
-            gap: 16px;
+            align-items: flex-start;
           }
 
           .header-left h1 {
@@ -382,8 +445,12 @@ export default function MenuPage() {
 
           .menu-table th,
           .menu-table td {
-            padding: 8px 12px;
-            font-size: 13px;
+            padding: 8px 10px;
+            font-size: 12px;
+          }
+
+          .menu-table {
+            min-width: 600px;
           }
         }
 
@@ -391,12 +458,16 @@ export default function MenuPage() {
           .menu-table th,
           .menu-table td {
             padding: 6px 8px;
-            font-size: 12px;
+            font-size: 11px;
           }
 
           .btn {
-            padding: 6px 12px;
-            font-size: 13px;
+            padding: 8px 14px;
+            font-size: 12px;
+          }
+
+          .menu-table {
+            min-width: 500px;
           }
         }
       `}</style>

@@ -1187,12 +1187,20 @@ export function Navbar() {
                         minWidth: "max-content",
 
                         gap: "4px",
-                        padding: "8px 10px",
+                        padding: "8px 12px",
 
                         borderRadius: "9px",
                         fontFamily: "var(--font-dm,'DM Sans',sans-serif)",
                         fontSize: "14px",
                         fontWeight: 600,
+
+                        color: activeMenu === item.label ? navHov : navTxt,
+                        background:
+                          activeMenu === item.label
+                            ? onDark
+                              ? "rgba(255,255,255,0.12)"
+                              : "rgba(22,163,74,0.07)"
+                            : "transparent",
                       }}
                     >
                       {item.label}

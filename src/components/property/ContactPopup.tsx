@@ -18,17 +18,20 @@ type Props = {
 
 const showcaseSlides = [
   {
-    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1400&auto=format&fit=crop",
     title: "Verified Premium Listings",
     desc: "100% verified NA plots, commercial spaces & investment properties.",
   },
   {
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1400&auto=format&fit=crop",
     title: "Trusted Property Experts",
     desc: "Get instant support for pricing, site visits & documentation.",
   },
   {
-    image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1400&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1400&auto=format&fit=crop",
     title: "Prime Nashik Locations",
     desc: "Discover high-growth investment opportunities in premium areas.",
   },
@@ -52,20 +55,26 @@ export default function ContactPopup({
   const [loading, setLoading] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
   const [thankYouMessage, setThankYouMessage] = useState<any>(null);
-  
+
   // OTP states
   const [showOTP, setShowOTP] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<any>(null);
-  
+
   // Auth hook
-  const { isAuthenticated, user, sendOTP, verifyOTP, isLoading: authLoading } = useAuth();
+  const {
+    isAuthenticated,
+    user,
+    sendOTP,
+    verifyOTP,
+    isLoading: authLoading,
+  } = useAuth();
 
   const goNext = useCallback(() => {
-    setActiveSlide((p) => p === showcaseSlides.length - 1 ? 0 : p + 1);
+    setActiveSlide((p) => (p === showcaseSlides.length - 1 ? 0 : p + 1));
   }, []);
 
   const goPrev = useCallback(() => {
-    setActiveSlide((p) => p === 0 ? showcaseSlides.length - 1 : p - 1);
+    setActiveSlide((p) => (p === 0 ? showcaseSlides.length - 1 : p - 1));
   }, []);
 
   const fetchThankYouMessage = useCallback(async () => {
@@ -81,10 +90,11 @@ export default function ContactPopup({
         setThankYouMessage({
           _id: "default",
           title: "Thank You!",
-          message: "Your property inquiry has been submitted successfully. Our expert will contact you shortly.",
+          message:
+            "Your property inquiry has been submitted successfully. Our expert will contact you shortly.",
           buttonText: "Close",
           backgroundColor: "#16a34a",
-          icon: "✓"
+          icon: "✓",
         });
       }
     } catch (error) {
@@ -92,25 +102,29 @@ export default function ContactPopup({
       setThankYouMessage({
         _id: "default",
         title: "Thank You!",
-        message: "Your property inquiry has been submitted successfully. Our expert will contact you shortly.",
+        message:
+          "Your property inquiry has been submitted successfully. Our expert will contact you shortly.",
         buttonText: "Close",
         backgroundColor: "#16a34a",
-        icon: "✓"
+        icon: "✓",
       });
     }
   }, []);
 
   // Submit lead to backend
-  const submitLeadToBackend = async (formData: any, verificationToken?: string) => {
+  const submitLeadToBackend = async (
+    formData: any,
+    verificationToken?: string,
+  ) => {
     const userId = user?.id || user?._id || null;
-    
+
     console.log("📤 Submitting lead:", {
       propertyName: propertyName,
       isAuthenticated: !!user,
       userId: userId,
-      hasVerificationToken: !!verificationToken
+      hasVerificationToken: !!verificationToken,
     });
-    
+
     const res = await fetch("/api/leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -121,22 +135,25 @@ export default function ContactPopup({
         mobileNumber: formData.phone,
         email: formData.email,
         interest: formData.selected || selected,
-        whatsappConsent: formData.whatsappConsent !== undefined ? formData.whatsappConsent : whatsappConsent,
+        whatsappConsent:
+          formData.whatsappConsent !== undefined
+            ? formData.whatsappConsent
+            : whatsappConsent,
         agentName,
         agentPhone,
         postedBy,
         isAuthenticated: !!user,
         userId: userId,
-        verificationToken: verificationToken
+        verificationToken: verificationToken,
       }),
     });
 
     const data = await res.json();
-    
+
     if (!res.ok) {
       throw new Error(data.message || "Failed to save information");
     }
-    
+
     return data;
   };
 
@@ -159,42 +176,46 @@ export default function ContactPopup({
       if (isAuthenticated) {
         // ✅ USER IS LOGGED IN - Submit directly
         console.log("✅ User authenticated, submitting lead directly...");
-        
-        const formData = { name, phone: cleanPhone, email, selected, whatsappConsent };
+
+        const formData = {
+          name,
+          phone: cleanPhone,
+          email,
+          selected,
+          whatsappConsent,
+        };
         await submitLeadToBackend(formData);
-        
+
         await fetchThankYouMessage();
         setShowThankYou(true);
-        
+
         // Reset form
         setName("");
         setPhone("");
         setEmail("");
         setSelected("Buy");
         setWhatsappConsent(true);
-        
+
         setTimeout(() => {
           setShowThankYou(false);
           onClose();
         }, 5000);
-        
       } else {
         // ✅ USER IS NOT LOGGED IN - Need OTP verification
         console.log("❌ User not authenticated, sending OTP...");
-        
+
         await sendOTP(cleanPhone);
-        
+
         setPendingFormData({
           name,
           phone: cleanPhone,
           email,
           selected,
-          whatsappConsent
+          whatsappConsent,
         });
-        
+
         setShowOTP(true);
       }
-      
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || "Something went wrong");
@@ -206,38 +227,37 @@ export default function ContactPopup({
   // Handle successful OTP verification
   const handleOTPVerified = async (verificationToken: string) => {
     console.log("🎯 OTP Verified! Submitting lead...");
-    
+
     if (!pendingFormData) {
       console.error("No pending form data found!");
       toast.error("Something went wrong. Please try again.");
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       await submitLeadToBackend(pendingFormData, verificationToken);
-      
+
       await fetchThankYouMessage();
       setShowThankYou(true);
-      
+
       // Reset form
       setName("");
       setPhone("");
       setEmail("");
       setSelected("Buy");
       setWhatsappConsent(true);
-      
+
       setShowOTP(false);
       setPendingFormData(null);
-      
+
       setTimeout(() => {
         setShowThankYou(false);
         onClose();
       }, 5000);
-      
+
       toast.success("Lead submitted successfully!");
-      
     } catch (error: any) {
       console.error("Error in handleOTPVerified:", error);
       toast.error(error.message || "Something went wrong");
@@ -260,7 +280,11 @@ export default function ContactPopup({
     <>
       <div className="overlay" onClick={onClose}>
         <div className="popup" onClick={(e) => e.stopPropagation()}>
-          <button onClick={onClose} className="closeBtn" aria-label="Close Popup">
+          <button
+            onClick={onClose}
+            className="closeBtn"
+            aria-label="Close Popup"
+          >
             ×
           </button>
 
@@ -281,8 +305,20 @@ export default function ContactPopup({
                   </div>
                 </div>
               ))}
-              <button type="button" className="navArrow navArrow--left" onClick={goPrev}>‹</button>
-              <button type="button" className="navArrow navArrow--right" onClick={goNext}>›</button>
+              <button
+                type="button"
+                className="navArrow navArrow--left"
+                onClick={goPrev}
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                className="navArrow navArrow--right"
+                onClick={goNext}
+              >
+                ›
+              </button>
               <div className="dots">
                 {showcaseSlides.map((_, index) => (
                   <button
@@ -323,7 +359,10 @@ export default function ContactPopup({
 
               <div className="header">
                 <h2>Contact Property Owner</h2>
-                <p className="headerDescription">Get pricing details, brochures, site visit support and expert consultation instantly.</p>
+                <p className="headerDescription">
+                  Get pricing details, brochures, site visit support and expert
+                  consultation instantly.
+                </p>
               </div>
 
               {/* AGENT INFO CARD */}
@@ -331,8 +370,19 @@ export default function ContactPopup({
                 <div className="agentHeader">
                   <div className="agentIcon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
+                      <path
+                        d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                      <circle
+                        cx="12"
+                        cy="7"
+                        r="4"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
                   <div className="agentInfo">
@@ -358,7 +408,9 @@ export default function ContactPopup({
                       key={item}
                       type="button"
                       onClick={() => setSelected(item)}
-                      className={selected === item ? "pillBtn active" : "pillBtn"}
+                      className={
+                        selected === item ? "pillBtn active" : "pillBtn"
+                      }
                     >
                       {item}
                     </button>
@@ -381,7 +433,9 @@ export default function ContactPopup({
                   className="input"
                   value={phone}
                   maxLength={10}
-                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))}
+                  onChange={(e) =>
+                    setPhone(e.target.value.replace(/[^0-9]/g, ""))
+                  }
                   disabled={loading}
                 />
                 <input
@@ -404,11 +458,17 @@ export default function ContactPopup({
                 <span>Get instant updates on WhatsApp</span>
               </label>
 
-              <button className="submitBtn" onClick={handleSubmit} disabled={loading || authLoading}>
+              <button
+                className="submitBtn"
+                onClick={handleSubmit}
+                disabled={loading || authLoading}
+              >
                 {loading ? "Processing..." : "Get Contact Details"}
               </button>
 
-              <div className="trustInfo">🔒 Your information is safe & secure with MahaPropertys</div>
+              <div className="trustInfo">
+                🔒 Your information is safe & secure with MahaPropertys
+              </div>
             </div>
           </div>
         </div>
@@ -431,12 +491,27 @@ export default function ContactPopup({
       {/* THANK YOU MODAL */}
       {showThankYou && thankYouMessage && (
         <div className="thankyouOverlay">
-          <div className="thankyouModal" style={{ borderTopColor: thankYouMessage.backgroundColor || "#16a34a" }}>
-            <div className="thankyouIcon" style={{ backgroundColor: thankYouMessage.backgroundColor || "#16a34a" }}>
+          <div
+            className="thankyouModal"
+            style={{
+              borderTopColor: thankYouMessage.backgroundColor || "#16a34a",
+            }}
+          >
+            <div
+              className="thankyouIcon"
+              style={{
+                backgroundColor: thankYouMessage.backgroundColor || "#16a34a",
+              }}
+            >
               {thankYouMessage.icon || "✓"}
             </div>
-            <h2 className="thankyouTitle">{thankYouMessage.title || "Thank You!"}</h2>
-            <p className="thankyouMessage">{thankYouMessage.message || "Your property inquiry has been submitted successfully. Our expert will contact you shortly."}</p>
+            <h2 className="thankyouTitle">
+              {thankYouMessage.title || "Thank You!"}
+            </h2>
+            <p className="thankyouMessage">
+              {thankYouMessage.message ||
+                "Your property inquiry has been submitted successfully. Our expert will contact you shortly."}
+            </p>
             <div className="thankyouDetails">
               <div className="detailItem">
                 <span className="detailLabel">Property:</span>
@@ -451,9 +526,11 @@ export default function ContactPopup({
                 <span className="detailValue">{agentName}</span>
               </div>
             </div>
-            <button 
-              className="thankyouButton" 
-              style={{ backgroundColor: thankYouMessage.backgroundColor || "#16a34a" }}
+            <button
+              className="thankyouButton"
+              style={{
+                backgroundColor: thankYouMessage.backgroundColor || "#16a34a",
+              }}
               onClick={() => {
                 setShowThankYou(false);
                 onClose();
@@ -547,7 +624,11 @@ export default function ContactPopup({
         .slideOverlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.2));
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.7),
+            rgba(0, 0, 0, 0.2)
+          );
         }
 
         .slideContent {

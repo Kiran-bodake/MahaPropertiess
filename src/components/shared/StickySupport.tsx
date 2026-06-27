@@ -15,14 +15,14 @@ export default function StickySupport() {
             position: "fixed",
             right: 20,
             bottom: 165,
-            width: 380,
-            maxWidth: "calc(100vw - 40px)",
-            background: "#4f4945",
-            borderRadius: 20,
-            padding: 20,
+            width: 390,
+            maxWidth: "calc(100vw - 32px)",
+            background: "#4A433F",
+            borderRadius: 16,
+            padding: 16,
             color: "#fff",
             zIndex: 9999,
-            boxShadow: "0 20px 60px rgba(0,0,0,.25)",
+            boxShadow: "0 18px 45px rgba(0,0,0,.28)",
           }}
         >
           <div
@@ -38,6 +38,7 @@ export default function StickySupport() {
                 margin: 0,
                 fontSize: 22,
                 fontWeight: 700,
+                color: "#fff",
               }}
             >
               Contact Support
@@ -65,7 +66,7 @@ export default function StickySupport() {
               gap: 16,
               background: "#6a635f",
               borderRadius: 16,
-              padding: "18px",
+              padding: "12px 16px",
               textDecoration: "none",
               color: "#fff",
             }}
@@ -74,7 +75,7 @@ export default function StickySupport() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 14,
+                gap: 8,
               }}
             >
               <PhoneCall size={24} />

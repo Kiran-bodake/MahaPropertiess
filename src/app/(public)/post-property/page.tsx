@@ -431,55 +431,81 @@ function Toggle({
   checked,
   onChange,
   labelText,
+  vertical = false,
 }: {
   checked: boolean;
   onChange: () => void;
   labelText: string;
+  vertical?: boolean;
 }) {
   return (
     <div
       style={{
         display: "flex",
-        alignItems: "center",
-        gap: "10px",
-        cursor: "pointer",
+        flexDirection: vertical ? "column" : "row",
+        alignItems: vertical ? "flex-start" : "center",
+        gap: vertical ? "8px" : "10px",
       }}
-      onClick={onChange}
     >
+      {labelText && (
+        <span
+          style={{
+            fontSize: "0.9rem",
+            fontWeight: 600,
+            color: "#374151",
+          }}
+        >
+          {labelText}
+        </span>
+      )}
+
       <div
+        onClick={onChange}
         style={{
-          width: "42px",
-          height: "24px",
-          borderRadius: "999px",
-          background: checked ? "#16a34a" : "#d1d5db",
-          position: "relative",
-          transition: "background 0.2s",
-          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          cursor: "pointer",
         }}
       >
         <div
           style={{
-            position: "absolute",
-            top: "3px",
-            left: checked ? "21px" : "3px",
-            width: "18px",
-            height: "18px",
-            borderRadius: "50%",
-            background: "#fff",
-            transition: "left 0.2s",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+            width: 42,
+            height: 24,
+            borderRadius: 999,
+            background: checked ? "#16a34a" : "#d1d5db",
+            position: "relative",
+            transition: "background 0.2s",
+            flexShrink: 0,
           }}
-        />
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: 3,
+              left: checked ? 21 : 3,
+              width: 18,
+              height: 18,
+              borderRadius: "50%",
+              background: "#fff",
+              transition: "left 0.2s",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+            }}
+          />
+        </div>
+
+        {!vertical && labelText && (
+          <span
+            style={{
+              marginLeft: 10,
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              color: checked ? "#14532d" : "#6b7280",
+            }}
+          >
+            {labelText}
+          </span>
+        )}
       </div>
-      <span
-        style={{
-          fontSize: "0.9rem",
-          fontWeight: 600,
-          color: checked ? "#14532d" : "#6b7280",
-        }}
-      >
-        {labelText}
-      </span>
     </div>
   );
 }
@@ -3032,6 +3058,7 @@ Perfect for ${
                               set("mainRoadFacing", !form.mainRoadFacing)
                             }
                             labelText="Main Road Facing"
+                            vertical
                           />
                         </Field>
                       </Row>
@@ -3046,6 +3073,7 @@ Perfect for ${
                               set("borewellAvailable", !form.borewellAvailable)
                             }
                             labelText="Borewell Available"
+                            vertical
                           />
                         </Field>
 
@@ -3087,6 +3115,7 @@ Perfect for ${
                               set("truckAccess", !form.truckAccess)
                             }
                             labelText="Truck Access"
+                            vertical
                           />
                         </Field>
 
@@ -3100,6 +3129,7 @@ Perfect for ${
                               )
                             }
                             labelText="Industrial Approved"
+                            vertical
                           />
                         </Field>
                       </Row>
