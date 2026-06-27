@@ -34,61 +34,340 @@ type NavMegaSection = { group: string; image?: string; items: NavSubLink[] };
 type NavLinkDef = { label: string; icon: LucideIcon; mega?: NavMegaSection[] };
 
 const NAV_LINKS: NavLinkDef[] = [
-  { label: "Residential", icon: Home, mega: [{ group: "NA Plots", items: [
-    { label: "NA Plots", sub: "Approved plots for construction", href: "/properties/city/nashik/na-plot" },
-    { label: "Collector NA Plot", sub: "Collector approved & clear title", href: "/properties/city/nashik/collector-na" },
-    { label: "CIDCO Plots", sub: "CIDCO approved layouts", href: "/properties/city/nashik/cidco-plot" },
-    { label: "Plots for Investment", sub: "High-return investment plots", href: "/properties/city/nashik/investment-plot" },
-  ]}]},
-  { label: "Agriculture", icon: TreePine, mega: [{ group: "Land Types", items: [
-    { label: "Agriculture Land", sub: "Fertile farmland, clear title", href: "/properties/city/nashik/agriculture" },
-    { label: "Farmhouse Plots", sub: "Weekend retreat land", href: "/properties/city/nashik/farmhouse" },
-    { label: "Mango / Orchard Land", sub: "Income-generating orchards", href: "/properties/city/nashik/orchard" },
-    { label: "Grape Farm Land", sub: "Nashik's famous vineyards", href: "/properties/city/nashik/grape-farm" },
-  ]}]},
-  { label: "Commercial", icon: Building2, mega: [{ group: "Commercial Properties", items: [
-    { label: "Commercial Plots", sub: "Prime commercial land", href: "/properties/city/nashik/commercial" },
-    { label: "Warehouse Land", sub: "Industrial & logistics land", href: "/properties/city/nashik/warehouse" },
-    { label: "Industrial Sheds", sub: "MIDC & non-MIDC sheds", href: "/properties/city/nashik/industrial-shed" },
-    { label: "Showroom / Shop", sub: "Retail commercial spaces", href: "/properties/city/nashik/showroom" },
-  ]}]},
-  { label: "Localities", icon: MapPin, mega: [
-    { group: "North Nashik", items: [
-      { label: "Gangapur Road", sub: "Premium residential zone", href: "/localities/gangapur-road" },
-      { label: "College Road", sub: "Education & lifestyle hub", href: "/localities/college-road" },
-      { label: "Indira Nagar", sub: "Established neighbourhood", href: "/localities/indira-nagar" },
-      { label: "Panchavati", sub: "Heritage locality", href: "/localities/panchavati" },
-    ]},
-    { group: "East & South", items: [
-      { label: "Nashik Road", sub: "Industrial & residential", href: "/localities/nashik-road" },
-      { label: "Ambad MIDC", sub: "Industrial powerhouse", href: "/localities/ambad" },
-      { label: "Satpur MIDC", sub: "Manufacturing hub", href: "/localities/satpur" },
-      { label: "Pathardi Phata", sub: "Emerging investment zone", href: "/localities/pathardi-phata" },
-    ]},
-    { group: "Outskirts & Taluka", items: [
-      { label: "Igatpuri", sub: "Hill station & agri land", href: "/localities/igatpuri" },
-      { label: "Trimbak Road", sub: "Spiritual & nature zone", href: "/localities/trimbak-road" },
-      { label: "Meri Village", sub: "Best value NA plots", href: "/localities/meri" },
-      { label: "Sinnar", sub: "Industrial growth corridor", href: "/localities/sinnar" },
-    ]},
-  ]},
-  { label: "About Nashik", icon: Landmark, mega: [{ group: "Why Nashik?", items: [
-    { label: "Investment Guide", sub: "Market trends & ROI insights", href: "/nashik/investment-guide" },
-    { label: "Top Localities", sub: "Best areas to buy in 2025", href: "/nashik/localities" },
-    { label: "Infrastructure", sub: "Roads, metro & development", href: "/nashik/infrastructure" },
-    { label: "Price Trends", sub: "Historical & projected prices", href: "/nashik/price-trends" },
-  ]}]},
-  { label: "All", icon: TrendingUp, mega: [{ group: "All Categories", items: [
-    { label: "NA Plots", sub: "Approved land", href: "/properties/city/nashik/na-plot" },
-    { label: "Agriculture", sub: "Farmland", href: "/properties/city/nashik/agriculture" },
-    { label: "Commercial", sub: "Business land", href: "/properties/city/nashik/commercial" },
-    { label: "Warehouse", sub: "Logistics zones", href: "/properties/city/nashik/warehouse" },
-  ]}]},
-  { label: "Tools", icon: Sparkles, mega: [{ group: "Property Tools", items: [
-    { label: "EMI Calculator", sub: "Calculate home loan EMI", href: "/tools/emi-calculator" },
-    { label: "Area Converter", sub: "Sq.Ft, Guntha, Acre conversion", href: "/tools/area-converter" },
-    { label: "Stamp Duty Calculator", sub: "Maharashtra property charges", href: "/tools/stamp-duty-calculator" },
-  ]}]},
+  {
+    label: "Residential",
+    icon: Home,
+    mega: [
+      {
+        group: "NA Plots",
+        items: [
+          {
+            label: "NA Plots",
+            sub: "Approved plots for construction",
+            href: "/properties/city/nashik/na-plot",
+          },
+          {
+            label: "Collector NA Plot",
+            sub: "Collector approved & clear title",
+            href: "/properties/city/nashik/collector-na",
+          },
+          {
+            label: "CIDCO Plots",
+            sub: "CIDCO approved layouts",
+            href: "/properties/city/nashik/cidco-plot",
+          },
+          {
+            label: "Plots for Investment",
+            sub: "High-return investment plots",
+            href: "/properties/city/nashik/investment-plot",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Agriculture",
+    icon: TreePine,
+    mega: [
+      {
+        group: "Land Types",
+        items: [
+          {
+            label: "Agriculture Land",
+            sub: "Fertile farmland, clear title",
+            href: "/properties/city/nashik/agriculture",
+          },
+          {
+            label: "Farmhouse Plots",
+            sub: "Weekend retreat land",
+            href: "/properties/city/nashik/farmhouse",
+          },
+          {
+            label: "Mango / Orchard Land",
+            sub: "Income-generating orchards",
+            href: "/properties/city/nashik/orchard",
+          },
+          {
+            label: "Grape Farm Land",
+            sub: "Nashik's famous vineyards",
+            href: "/properties/city/nashik/grape-farm",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Commercial",
+    icon: Building2,
+    mega: [
+      {
+        group: "Commercial Properties",
+        items: [
+          {
+            label: "Commercial Plots",
+            sub: "Prime commercial land",
+            href: "/properties/city/nashik/commercial",
+          },
+          {
+            label: "Warehouse Land",
+            sub: "Industrial & logistics land",
+            href: "/properties/city/nashik/warehouse",
+          },
+          {
+            label: "Industrial Sheds",
+            sub: "MIDC & non-MIDC sheds",
+            href: "/properties/city/nashik/industrial-shed",
+          },
+          {
+            label: "Showroom / Shop",
+            sub: "Retail commercial spaces",
+            href: "/properties/city/nashik/showroom",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Localities",
+    icon: MapPin,
+    mega: [
+      {
+        group: "North Nashik",
+        items: [
+          {
+            label: "Gangapur Road",
+            sub: "Premium residential zone",
+            href: "/localities/gangapur-road",
+          },
+          {
+            label: "College Road",
+            sub: "Education & lifestyle hub",
+            href: "/localities/college-road",
+          },
+          {
+            label: "Indira Nagar",
+            sub: "Established neighbourhood",
+            href: "/localities/indira-nagar",
+          },
+          {
+            label: "Panchavati",
+            sub: "Heritage locality",
+            href: "/localities/panchavati",
+          },
+        ],
+      },
+      {
+        group: "East & South",
+        items: [
+          {
+            label: "Nashik Road",
+            sub: "Industrial & residential",
+            href: "/localities/nashik-road",
+          },
+          {
+            label: "Ambad MIDC",
+            sub: "Industrial powerhouse",
+            href: "/localities/ambad",
+          },
+          {
+            label: "Satpur MIDC",
+            sub: "Manufacturing hub",
+            href: "/localities/satpur",
+          },
+          {
+            label: "Pathardi Phata",
+            sub: "Emerging investment zone",
+            href: "/localities/pathardi-phata",
+          },
+        ],
+      },
+      {
+        group: "Outskirts & Taluka",
+        items: [
+          {
+            label: "Igatpuri",
+            sub: "Hill station & agri land",
+            href: "/localities/igatpuri",
+          },
+          {
+            label: "Trimbak Road",
+            sub: "Spiritual & nature zone",
+            href: "/localities/trimbak-road",
+          },
+          {
+            label: "Meri Village",
+            sub: "Best value NA plots",
+            href: "/localities/meri",
+          },
+          {
+            label: "Sinnar",
+            sub: "Industrial growth corridor",
+            href: "/localities/sinnar",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "About Nashik",
+    icon: Landmark,
+    mega: [
+      {
+        group: "Why Nashik?",
+        items: [
+          {
+            label: "Investment Guide",
+            sub: "Market trends & ROI insights",
+            href: "/nashik/investment-guide",
+          },
+          {
+            label: "Top Localities",
+            sub: "Best areas to buy in 2025",
+            href: "/nashik/localities",
+          },
+          {
+            label: "Infrastructure",
+            sub: "Roads, metro & development",
+            href: "/nashik/infrastructure",
+          },
+          {
+            label: "Price Trends",
+            sub: "Historical & projected prices",
+            href: "/nashik/price-trends",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "All",
+    icon: TrendingUp,
+    mega: [
+      {
+        group: "Agriculture",
+        image:
+          "https://images.unsplash.com/photo-1543314444-26a64fa5efe1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8YWdyaWN1bHR1cmUlMjBsYW5kfGVufDB8fDB8fHww",
+        items: [
+          {
+            label: "Agriculture Land",
+            sub: "Fertile farmland",
+            href: "/properties/city/nashik/agriculture",
+          },
+          {
+            label: "Farmhouse Plots",
+            sub: "Weekend homes",
+            href: "/properties/city/nashik/farmhouse",
+          },
+          {
+            label: "Orchard Land",
+            sub: "Fruit-growing plots",
+            href: "/properties/city/nashik/orchard",
+          },
+        ],
+      },
+      {
+        group: "Commercial",
+        image:
+          "https://images.unsplash.com/photo-1577110682084-7bfe2b52c10c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTAyfHxjb21tZXJjaWFsJTIwcHJvcGVydGllcyUyMGZvciUyMHNhbGUlMjBpbiUyMGluZGlhfGVufDB8fDB8fHww",
+        items: [
+          {
+            label: "Commercial Plots",
+            sub: "High footfall land",
+            href: "/properties/city/nashik/commercial",
+          },
+          {
+            label: "Warehouse Land",
+            sub: "Logistics zones",
+            href: "/properties/city/nashik/warehouse",
+          },
+          {
+            label: "Industrial Sheds",
+            sub: "Manufacturing-ready",
+            href: "/properties/city/nashik/industrial-shed",
+          },
+        ],
+      },
+      {
+        group: "NA Plots",
+        image:
+          "https://images.unsplash.com/photo-1773215023063-e662ea91a69c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8TkElMjBwbG90c3xlbnwwfHwwfHx8MA%3D%3D",
+        items: [
+          {
+            label: "NA Plots",
+            sub: "Approved land",
+            href: "/properties/city/nashik/na-plot",
+          },
+          {
+            label: "Collector NA",
+            sub: "Collector approved",
+            href: "/properties/city/nashik/collector-na",
+          },
+          {
+            label: "CIDCO Plots",
+            sub: "Planned layouts",
+            href: "/properties/city/nashik/cidco-plot",
+          },
+        ],
+      },
+      {
+        group: "Industrial",
+        image:
+          "https://images.unsplash.com/photo-1621702840462-07cdc0c2c655?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGluZHVzdHJpYWwlMjBsYW5kJTIwcHJvcGVydHklMjBpbmRpYXxlbnwwfHwwfHx8MA%3D%3D",
+        items: [
+          {
+            label: "MIDC Land",
+            sub: "State industrial parks",
+            href: "/properties/city/nashik/midc",
+          },
+          {
+            label: "Non-MIDC Land",
+            sub: "Flexible zones",
+            href: "/properties/city/nashik/non-midc",
+          },
+          {
+            label: "Factory-ready",
+            sub: "Plug-and-play land",
+            href: "/properties/city/nashik/industrial",
+          },
+        ],
+      },
+      {
+        group: "Top Localities",
+        items: [
+          { label: "Gangapur Road", href: "/localities/gangapur-road" },
+          { label: "Nashik Road", href: "/localities/nashik-road" },
+          { label: "Ambad MIDC", href: "/localities/ambad" },
+          { label: "Pathardi Phata", href: "/localities/pathardi-phata" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Tools",
+    icon: Sparkles,
+    mega: [
+      {
+        group: "Property Tools",
+        items: [
+          {
+            label: "EMI Calculator",
+            sub: "Calculate home loan EMI",
+            href: "/tools/emi-calculator",
+          },
+          {
+            label: "Area Converter",
+            sub: "Sq.Ft, Guntha, Acre conversion",
+            href: "/tools/area-converter",
+          },
+          {
+            label: "Stamp Duty Calculator",
+            sub: "Maharashtra property charges",
+            href: "/tools/stamp-duty-calculator",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export function Navbar() {
@@ -136,7 +415,10 @@ export function Navbar() {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(e.target as Node)
+      ) {
         setShowProfileMenu(false);
       }
     };
@@ -178,8 +460,18 @@ export function Navbar() {
         const data = await res.json();
         setTotalCount(data.total || 0);
         const counts = data.counts || {};
-        const defaultCats = ["NA Plot", "Collector NA", "Agriculture", "Commercial", "Warehouse", "Investment", "Residential"];
-        defaultCats.forEach((cat) => { if (!(cat in counts)) counts[cat] = 0; });
+        const defaultCats = [
+          "NA Plot",
+          "Collector NA",
+          "Agriculture",
+          "Commercial",
+          "Warehouse",
+          "Investment",
+          "Residential",
+        ];
+        defaultCats.forEach((cat) => {
+          if (!(cat in counts)) counts[cat] = 0;
+        });
         const sorted = Object.entries(counts)
           .sort((a: any, b: any) => Number(b[1]) - Number(a[1]))
           .map(([cat]) => cat);
@@ -225,11 +517,41 @@ export function Navbar() {
   const closeMenu = () => { menuTimerRef.current = setTimeout(() => setActiveMenu(null), 150); };
   const keepMenu = () => { if (menuTimerRef.current) clearTimeout(menuTimerRef.current); };
 
-  const navMap = Object.fromEntries(NAV_LINKS.map((item) => [item.label, item]));
-  const finalMenus = menus.length > 0
-    ? menus.filter((m: any) => m.active && m.showOnDesktop && m.location === "header")
-        .map((m: any) => ({ ...m, label: m.title, icon: navMap[m.title]?.icon, mega: navMap[m.title]?.mega || [] }))
-    : NAV_LINKS;
+  const navMap = Object.fromEntries(
+    NAV_LINKS.map((item) => [item.label, item]),
+  );
+  const headerMenus = menus.filter(
+    (m: any) => m.active && m.showOnDesktop && m.location === "header",
+  );
+
+  const rootMenus = headerMenus.filter((m: any) => !m.parentId);
+
+  const finalMenus = rootMenus.map((parent: any) => {
+    const children = headerMenus.filter(
+      (m: any) => m.parentId?.toString() === parent._id.toString(),
+    );
+
+    return {
+      ...parent,
+      label: parent.title,
+      icon: navMap[parent.title]?.icon,
+
+      mega:
+        children.length > 0
+          ? [
+              {
+                group: parent.title,
+                items: children.map((c: any) => ({
+                  label: c.title,
+                  href: c.href,
+                  sub: c.description, // ✅ pass description
+                  image: c.image,
+                })),
+              },
+            ]
+          : navMap[parent.title]?.mega || [],
+    };
+  });
 
   const handleSearchSubmit = () => {
     if (searchQ.trim()) {
@@ -253,9 +575,12 @@ export function Navbar() {
           position: "sticky", top: 0, zIndex: 1000,
           background: BRAND.surface,
           borderBottom: `1px solid ${BRAND.border}`,
-          boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.06)" : "0 1px 0 rgba(0,0,0,0.03)",
+          boxShadow: scrolled
+            ? "0 4px 20px rgba(0,0,0,0.06)"
+            : "0 1px 0 rgba(0,0,0,0.03)",
           transition: "box-shadow 0.3s ease",
-          fontFamily: "var(--font-dm,'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif)",
+          fontFamily:
+            "var(--font-dm,'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif)",
         }}
       >
         {/* ═══ MAIN BAR ═══ */}
@@ -272,20 +597,36 @@ export function Navbar() {
           }}
         >
           {/* LOGO */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+          <Link
+            href="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0px",
+              textDecoration: "none",
+              flexShrink: 0,
+              marginRight: "0px",
+              marginLeft: "0px",
+            }}
+          >
             <div
               style={{
-                width: isMobile ? "100px" : searchExpanded ? "110px" : "145px",
-                height: isMobile ? "36px" : searchExpanded ? "38px" : "48px",
+                width: "105px",
+                height: "46px",
+                borderRadius: "11px",
+                overflow: "hidden",
                 position: "relative",
-                transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
+                boxShadow: "none",
+                background: "white",
+                flexShrink: 0,
+                transition: "all 0.35s ease",
               }}
             >
               <Image
                 src="/mahaproperties-logo.png"
                 alt="MahaProperties"
                 fill
-                style={{ objectFit: "contain", objectPosition: "left center" }}
+                style={{ objectFit: "contain", objectPosition: "center" }}
                 priority
               />
             </div>
@@ -293,64 +634,168 @@ export function Navbar() {
 
           {/* DESKTOP NAV */}
           {!searchExpanded && (
-            <nav style={{ display: "flex", alignItems: "center", gap: "2px", flex: 1, marginLeft: "8px" }} className="hide-md">
+            <nav
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "2px",
+                flex: 1,
+                marginLeft: "0px",
+              }}
+              className="hide-md"
+            >
               {finalMenus.map((item) => (
                 <div key={item.label} style={{ position: "relative" }}
                   onMouseEnter={() => openMenu(item.label)} onMouseLeave={closeMenu}>
                   <button
                     style={{
-                      display: "inline-flex", alignItems: "center", gap: "4px",
-                      padding: "10px 14px", borderRadius: "8px",
-                      fontSize: "13.5px", fontWeight: 600,
-                      color: activeMenu === item.label ? BRAND.primary : BRAND.text,
-                      background: activeMenu === item.label ? BRAND.primaryLight : "transparent",
-                      border: "none", cursor: "pointer", whiteSpace: "nowrap",
-                      transition: "all 0.18s ease", fontFamily: "inherit",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      fontSize: "13.5px",
+                      fontWeight: 600,
+                      color:
+                        activeMenu === item.label ? BRAND.primary : BRAND.text,
+                      background:
+                        activeMenu === item.label
+                          ? BRAND.primaryLight
+                          : "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                      transition: "all 0.18s ease",
+                      fontFamily: "inherit",
                     }}
                   >
                     {item.label}
-                    <ChevronDown size={13} style={{
-                      transition: "transform 0.2s ease",
-                      transform: activeMenu === item.label ? "rotate(180deg)" : "rotate(0)",
-                    }} />
+                    <ChevronDown
+                      size={13}
+                      style={{
+                        transition: "transform 0.2s ease",
+                        transform:
+                          activeMenu === item.label
+                            ? "rotate(180deg)"
+                            : "rotate(0)",
+                      }}
+                    />
                   </button>
 
                   {activeMenu === item.label && item.mega && (
                     <div onMouseEnter={keepMenu} onMouseLeave={closeMenu}
                       style={{
-                        position: "absolute", top: "calc(100% + 8px)",
-                        left: item.label === "All" ? "-200px" : item.label === "Localities" ? "-120px" : "0",
-                        background: "#ffffff", borderRadius: "14px",
-                        boxShadow: "0 16px 50px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
+                        position: "absolute",
+                        top: "calc(100% + 8px)",
+                        left: item.label === "All" ? "-160px" : "50%",
+
+                        transform:
+                          item.label === "All" ? "none" : "translateX(-50%)",
+                        background: "#ffffff",
+                        borderRadius: "14px",
+                        boxShadow:
+                          "0 16px 50px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
                         padding: "24px 28px",
-                        minWidth: item.label === "Localities" ? "680px" : "340px",
+                        minWidth:
+                          item.label === "All"
+                            ? "980px"
+                            : item.label === "Localities"
+                              ? "680px"
+                              : "340px",
                         zIndex: 100,
-                        animation: "megaSlideDown 0.22s cubic-bezier(0.4,0,0.2,1)",
+                        animation:
+                          "megaSlideDown 0.22s cubic-bezier(0.4,0,0.2,1)",
                         display: "grid",
-                        gridTemplateColumns: item.label === "Localities" ? "repeat(3, 1fr)" : "1fr",
+                        gridTemplateColumns:
+                          item.label === "All"
+                            ? "repeat(5, 1fr)"
+                            : item.label === "About Nashik"
+                              ? "1fr"
+                              : item.label === "Localities"
+                                ? "repeat(3, 1fr)"
+                                : "1fr",
                         gap: "22px",
                       }}>
                       {item.mega.map((section: any) => (
                         <div key={section.group}>
-                          <div style={{
-                            fontSize: "10px", fontWeight: 800, color: BRAND.primary,
-                            letterSpacing: "0.12em", textTransform: "uppercase",
-                            marginBottom: "12px", paddingBottom: "8px",
-                            borderBottom: `2px solid ${BRAND.borderLight}`,
-                          }}>{section.group}</div>
+                          <div
+                            style={{
+                              fontSize: "10px",
+                              fontWeight: 800,
+                              color: BRAND.primary,
+                              letterSpacing: "0.12em",
+                              textTransform: "uppercase",
+                              marginBottom: "12px",
+                              paddingBottom: "8px",
+                              borderBottom: `2px solid ${BRAND.borderLight}`,
+                            }}
+                          >
+                            {section.group}
+                          </div>
+
+                          {section.image && (
+                            <div
+                              style={{
+                                marginBottom: "12px",
+                                borderRadius: "10px",
+                                overflow: "hidden",
+                                height: "88px",
+                                position: "relative",
+                              }}
+                            >
+                              <Image
+                                src={section.image}
+                                alt={section.group}
+                                fill
+                                style={{ objectFit: "cover" }}
+                              />
+                            </div>
+                          )}
+
                           {section.items.map((link: NavSubLink) => (
-                            <Link key={link.label}
-                              href={link.href.replace("/properties/city/nashik", `/properties/city/${citySlug}`)}
+                            <Link
+                              key={link.label}
+                              href={link.href.replace(
+                                "/properties/city/nashik",
+                                `/properties/city/${citySlug}`,
+                              )}
                               style={{
                                 display: "block", padding: "8px 10px",
                                 borderRadius: "8px", marginBottom: "2px",
                                 transition: "all 0.15s ease", color: BRAND.text,
                                 textDecoration: "none",
                               }}
-                              onMouseEnter={(e) => { e.currentTarget.style.background = BRAND.primaryLight; e.currentTarget.style.paddingLeft = "14px"; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.paddingLeft = "10px"; }}>
-                              <div style={{ fontSize: "13px", fontWeight: 600, color: BRAND.text }}>{link.label}</div>
-                              {link.sub && <div style={{ fontSize: "11px", color: BRAND.textMuted, marginTop: "2px" }}>{link.sub}</div>}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background =
+                                  BRAND.primaryLight;
+                                e.currentTarget.style.paddingLeft = "14px";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  "transparent";
+                                e.currentTarget.style.paddingLeft = "10px";
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: 600,
+                                  color: BRAND.text,
+                                }}
+                              >
+                                {link.label}
+                              </div>
+                              {link.sub && (
+                                <div
+                                  style={{
+                                    fontSize: "11px",
+                                    color: BRAND.textMuted,
+                                    marginTop: "2px",
+                                  }}
+                                >
+                                  {link.sub}
+                                </div>
+                              )}
                             </Link>
                           ))}
                         </div>
@@ -381,7 +826,14 @@ export function Navbar() {
                 height: "100%", cursor: "pointer",
               }}>
                 <MapPin size={14} color={BRAND.primary} />
-                <span style={{ fontWeight: 700, fontSize: "13px", color: BRAND.text, whiteSpace: "nowrap" }}>
+                <span
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    color: BRAND.text,
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   Buy in {city || "Nashik"}
                 </span>
                 <ChevronDown size={13} color={BRAND.textMuted} />
@@ -391,8 +843,14 @@ export function Navbar() {
                 <input
                   value={searchQ}
                   onChange={(e) => handleInputChange(e.target.value)}
-                  onFocus={() => { setSearchFocus(true); setShowSuggestions(true); }}
-                  onBlur={() => { setSearchFocus(false); setTimeout(() => handleCloseSuggestions(), 200); }}
+                  onFocus={() => {
+                    setSearchFocus(true);
+                    setShowSuggestions(true);
+                  }}
+                  onBlur={() => {
+                    setSearchFocus(false);
+                    setTimeout(() => handleCloseSuggestions(), 200);
+                  }}
                   onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
                   placeholder="Search 'Gangapur Road' or 'NA Plot'..."
                   style={{
@@ -426,9 +884,17 @@ export function Navbar() {
                     suggestions={suggestions} isLoading={isLoading} isOpen={showSuggestions}
                     query={searchQ} onClose={handleCloseSuggestions}
                     onSelect={(item: any) => {
-                      const name = item.title || item.name || item.locality || item.city || item.category || "";
+                      const name =
+                        item.title ||
+                        item.name ||
+                        item.locality ||
+                        item.city ||
+                        item.category ||
+                        "";
                       setShowSuggestions(false);
-                      router.push(`/properties?q=${encodeURIComponent(name.trim())}`);
+                      router.push(
+                        `/properties?q=${encodeURIComponent(name.trim())}`,
+                      );
                     }}
                   />
                 </div>
@@ -735,18 +1201,33 @@ export function Navbar() {
               }}><X size={18} /></button>
             </div>
 
-            {user ? (
-              <div style={{
-                padding: "18px 24px", borderBottom: `1px solid ${BRAND.borderLight}`,
-                display: "flex", alignItems: "center", gap: "12px",
-                background: BRAND.surfaceAlt,
-              }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.primaryDark})`,
-                  color: "#fff", display: "flex", alignItems: "center",
-                  justifyContent: "center", fontWeight: 800, fontSize: "18px",
-                }}>{user?.name?.charAt(0) || "U"}</div>
+            {user && (
+              <div
+                style={{
+                  padding: "18px 24px",
+                  borderBottom: `1px solid ${BRAND.borderLight}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  background: BRAND.surfaceAlt,
+                }}
+              >
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.primaryDark})`,
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 800,
+                    fontSize: "18px",
+                  }}
+                >
+                  {user?.name?.charAt(0) || "U"}
+                </div>
                 <div>
                   <div style={{ fontWeight: 700, color: BRAND.text }}>{user?.name || "User"}</div>
                   <div style={{ fontSize: ".85rem", color: BRAND.textMuted, marginTop: "2px" }}>{user?.phone}</div>
@@ -773,14 +1254,46 @@ export function Navbar() {
               }}>Browse by Type</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                 {[
-                  { icon: "🏞️", label: "NA Plots", href: "/properties/city/nashik/na-plot" },
-                  { icon: "📋", label: "Collector NA", href: "/properties/city/nashik/collector-na" },
-                  { icon: "🌾", label: "Agriculture", href: "/properties/city/nashik/agriculture" },
-                  { icon: "🏭", label: "Warehouse", href: "/properties/city/nashik/warehouse" },
-                  { icon: "🏢", label: "Commercial", href: "/properties/city/nashik/commercial" },
-                  { icon: "📈", label: "Investment", href: "/properties/city/nashik/investment-plot" },
-                  { icon: "🍇", label: "Farmhouse", href: "/properties/city/nashik/farmhouse" },
-                  { icon: "🏗️", label: "Industrial", href: "/properties/city/nashik/industrial-shed" },
+                  {
+                    icon: "🏞️",
+                    label: "NA Plots",
+                    href: "/properties/city/nashik/na-plot",
+                  },
+                  {
+                    icon: "📋",
+                    label: "Collector NA",
+                    href: "/properties/city/nashik/collector-na",
+                  },
+                  {
+                    icon: "🌾",
+                    label: "Agriculture",
+                    href: "/properties/city/nashik/agriculture",
+                  },
+                  {
+                    icon: "🏭",
+                    label: "Warehouse",
+                    href: "/properties/city/nashik/warehouse",
+                  },
+                  {
+                    icon: "🏢",
+                    label: "Commercial",
+                    href: "/properties/city/nashik/commercial",
+                  },
+                  {
+                    icon: "📈",
+                    label: "Investment",
+                    href: "/properties/city/nashik/investment-plot",
+                  },
+                  {
+                    icon: "🍇",
+                    label: "Farmhouse",
+                    href: "/properties/city/nashik/farmhouse",
+                  },
+                  {
+                    icon: "🏗️",
+                    label: "Industrial",
+                    href: "/properties/city/nashik/industrial-shed",
+                  },
                 ].map((c) => (
                   <Link key={c.label}
                     href={c.href.replace("/properties/city/nashik", `/properties/city/${citySlug}`)}

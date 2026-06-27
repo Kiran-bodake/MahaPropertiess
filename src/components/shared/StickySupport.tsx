@@ -14,7 +14,7 @@ export default function StickySupport() {
           style={{
             position: "fixed",
             right: 20,
-            bottom: 165,
+            bottom: 90,
             width: 390,
             maxWidth: "calc(100vw - 32px)",
             background: "#4A433F",
@@ -121,7 +121,7 @@ export default function StickySupport() {
         style={{
           position: "fixed",
           right: 20,
-          bottom: 95,
+          bottom: 30,
           zIndex: 9999,
 
           display: "flex",

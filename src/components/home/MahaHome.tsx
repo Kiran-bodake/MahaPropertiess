@@ -13,21 +13,13 @@ import { useLocationStore } from "@/store/useLocationStore";
 import HeroSearch from "@/components/home/HeroSearch";
 
 import {
-
   Phone,
-
   Mail,
-
   MapPin,
-
   Instagram,
-
   Facebook,
-
   Youtube,
-
   Twitter,
-
 } from "lucide-react";
 
 import { Footer } from "../layout/footer";
@@ -41,7 +33,6 @@ import StickySupport from "../shared/StickySupport";
 ═══════════════════════════════════════════════════════════ */
 
 const G = {
-
   g: "#1a6b3c",
 
   gm: "#2d9455",
@@ -65,14 +56,11 @@ const G = {
   wa: "#25d366",
 
   go: "#c8973a",
-
 };
 
 const FONT = "'DM Sans', system-ui, sans-serif";
 
 const E = "cubic-bezier(0.4,0,0.2,1)";
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -372,8 +360,6 @@ input,select{font-family:inherit;font-size:16px;-webkit-appearance:none}
 
 `;
 
-
-
 /* ═══════════════════════════════════════════════════════════
 
    ICONS
@@ -381,478 +367,270 @@ input,select{font-family:inherit;font-size:16px;-webkit-appearance:none}
 ═══════════════════════════════════════════════════════════ */
 
 const I = {
-
   menu: (
-
     <svg
-
       width="20"
-
       height="20"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <line x1="4" y1="7" x2="20" y2="7" />
 
       <line x1="4" y1="12" x2="20" y2="12" />
 
       <line x1="4" y1="17" x2="20" y2="17" />
-
     </svg>
-
   ),
 
   x: (
-
     <svg
-
       width="17"
-
       height="17"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <line x1="18" y1="6" x2="6" y2="18" />
 
       <line x1="6" y1="6" x2="18" y2="18" />
-
     </svg>
-
   ),
 
   srch: (
-
     <svg
-
       width="14"
-
       height="14"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <circle cx="11" cy="11" r="7" />
 
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
-
     </svg>
-
   ),
 
   ph: (
-
     <svg
-
       width="13"
-
       height="13"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .27h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.1a16 16 0 006.29 6.29l1.19-1.19a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
-
     </svg>
-
   ),
 
   usr: (
-
     <svg
-
       width="13"
-
       height="13"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
 
       <circle cx="12" cy="7" r="4" />
-
     </svg>
-
   ),
 
   pin: (
-
     <svg
-
       width="12"
-
       height="12"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
 
       <circle cx="12" cy="10" r="3" />
-
     </svg>
-
   ),
 
   arr: (
-
     <svg
-
       width="13"
-
       height="13"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.5"
-
       strokeLinecap="round"
-
     >
-
       <line x1="5" y1="12" x2="19" y2="12" />
 
       <polyline points="12 5 19 12 12 19" />
-
     </svg>
-
   ),
 
   arL: (
-
     <svg
-
       width="16"
-
       height="16"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <line x1="19" y1="12" x2="5" y2="12" />
 
       <polyline points="12 19 5 12 12 5" />
-
     </svg>
-
   ),
 
   arR: (
-
     <svg
-
       width="16"
-
       height="16"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <line x1="5" y1="12" x2="19" y2="12" />
 
       <polyline points="12 19 19 12 12 5" />
-
     </svg>
-
   ),
 
   chk: (
-
     <svg
-
       width="10"
-
       height="10"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="3.2"
-
       strokeLinecap="round"
-
     >
-
       <polyline points="20 6 9 17 4 12" />
-
     </svg>
-
   ),
 
   cd: (
-
     <svg
-
       width="12"
-
       height="12"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.5"
-
       strokeLinecap="round"
-
     >
-
       <polyline points="6 9 12 15 18 9" />
-
     </svg>
-
   ),
 
   bll: (
-
     <svg
-
       width="13"
-
       height="13"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
 
       <path d="M13.73 21a2 2 0 01-3.46 0" />
-
     </svg>
-
   ),
 
   rul: (
-
     <svg
-
       width="11"
-
       height="11"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2"
-
     >
-
       <path d="M3 3l18 18M9 3v6M3 9h6M15 21v-6M21 15h-6" />
-
     </svg>
-
   ),
 
   eye: (
-
     <svg
-
       width="11"
-
       height="11"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2"
-
     >
-
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
 
       <circle cx="12" cy="12" r="3" />
-
     </svg>
-
   ),
 
   star: (
-
     <svg
-
       width="11"
-
       height="11"
-
       viewBox="0 0 24 24"
-
       fill="#f59e0b"
-
       stroke="none"
-
     >
-
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-
     </svg>
-
   ),
 
   hrt: (
-
     <svg
-
       width="14"
-
       height="14"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-
     </svg>
-
   ),
 
   wa: (
-
     <svg viewBox="0 0 24 24" fill="white" width="26" height="26">
-
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-
     </svg>
-
   ),
 
   mail: (
-
     <svg
-
       width="13"
-
       height="13"
-
       viewBox="0 0 24 24"
-
       fill="none"
-
       stroke="currentColor"
-
       strokeWidth="2.2"
-
       strokeLinecap="round"
-
     >
-
       <rect x="3" y="5" width="18" height="14" rx="2" />
 
       <polyline points="3,7 12,13 21,7" />
-
     </svg>
-
   ),
-
 };
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -861,9 +639,7 @@ const I = {
 ═══════════════════════════════════════════════════════════ */
 
 const SLIDES = [
-
   {
-
     img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=85",
 
     tag: "NA Plots from ₹8 Lakh",
@@ -871,11 +647,9 @@ const SLIDES = [
     h: "Find Your Perfect\nPlot in Nashik",
 
     sub: "2,500+ verified properties · 40+ localities · RERA compliant",
-
   },
 
   {
-
     img: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1600&q=85",
 
     tag: "Agriculture Land — Clear Title",
@@ -883,11 +657,9 @@ const SLIDES = [
     h: "Invest in Nashik & Fertile Farmlands",
 
     sub: "Prime agriculture land with RERA compliance and clean title records",
-
   },
 
   {
-
     img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1600&q=85",
 
     tag: "Commercial & Industrial",
@@ -895,15 +667,10 @@ const SLIDES = [
     h: "Premium Commercial\nSpaces in Nashik",
 
     sub: "Industrial sheds, warehouses & commercial plots across MIDC zones",
-
   },
-
 ];
 
-
-
 const ICONS: any = {
-
   "NA Plot": "🏞️",
 
   "Agriculture Land": "🌾",
@@ -915,127 +682,89 @@ const ICONS: any = {
   "Investment Plot": "📈",
 
   "Collector NA": "📋",
-
 };
 
-
-
 const PIMGS: Record<string, string[]> = {
-
   "1": [
-
     "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=80",
 
     "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=700&q=80",
 
     "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80",
-
   ],
 
   "2": [
-
     "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=700&q=80",
 
     "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=700&q=80",
 
     "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=700&q=80",
-
   ],
 
   "3": [
-
     "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=700&q=80",
 
     "https://images.unsplash.com/photo-1565891741441-64926e441838?w=700&q=80",
 
     "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80",
-
   ],
 
   "4": [
-
     "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=80",
 
     "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=700&q=80",
 
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=700&q=80",
-
   ],
 
   "5": [
-
     "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80",
 
     "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=700&q=80",
 
     "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=700&q=80",
-
   ],
 
   "6": [
-
     "https://images.unsplash.com/photo-1565891741441-64926e441838?w=700&q=80",
 
     "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80",
 
     "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=700&q=80",
-
   ],
 
   "7": [
-
     "https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=700&q=80",
 
     "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=700&q=80",
 
     "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=700&q=80",
-
   ],
 
   "8": [
-
     "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=700&q=80",
 
     "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=700&q=80",
 
     "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=80",
-
   ],
-
 };
 
-
-
 function PropertyLinks({ properties }: any) {
-
   if (!properties || properties.length === 0) return null;
-
-
 
   const links = properties.map((p: any) => `/properties/${p.slug}`);
 
-
-
   return (
-
     <section
-
       className="sec"
-
       style={{ background: "#f9fafb", padding: "40px 0" }}
-
     >
-
       <div className="w">
-
         <div className="sl">Property details</div>
 
-
-
         <h2
-
           style={{
-
             fontFamily: FONT,
 
             fontSize: "clamp(1.2rem,2.5vw,1.7rem)",
@@ -1043,147 +772,97 @@ function PropertyLinks({ properties }: any) {
             fontWeight: 800,
 
             color: G.ink,
-
           }}
-
         >
-
           All dynamic property detail URLs
-
         </h2>
 
-
-
         <p style={{ color: G.mu, marginBottom: "16px" }}>
-
           Click any entry to go directly to the property details page.
-
         </p>
 
-
-
         <div
-
           style={{
-
             display: "flex",
 
             flexWrap: "wrap",
 
             gap: "10px",
-
           }}
-
         >
-
           {links.map((link: string) => (
-
             <Link
-
               key={link}
-
               href={link}
-
               className="b bo"
-
               style={{
-
                 padding: "7px 12px",
 
                 fontSize: "12px",
 
                 borderRadius: "7px",
-
               }}
-
             >
-
               {link}
-
             </Link>
-
           ))}
-
         </div>
-
       </div>
-
     </section>
-
   );
-
 }
 
-
-
 const WHY = [
-
   {
-
     e: "✈️",
 
     t: "Connectivity",
 
     b: "60 km from Mumbai–Pune expressway. Direct highway to all major cities. Upcoming Metro project approved.",
-
   },
 
   {
-
     e: "🍷",
 
     t: "Wine Capital",
 
     b: "India's Napa Valley. World-class wineries driving high-end residential and tourism demand.",
-
   },
 
   {
-
     e: "🏭",
 
     t: "Industrial Hub",
 
     b: "MIDC Satpur & Ambad: Maharashtra's fastest-growing zones. 3,000+ registered companies.",
-
   },
 
   {
-
     e: "💧",
 
     t: "Water Abundance",
 
     b: "Three rivers, India's grape & onion capital. Most fertile agriculture land in Maharashtra.",
-
   },
 
   {
-
     e: "📈",
 
     t: "30–40% Appreciation",
 
     b: "Select localities doubled in value over 5 years. NA plots compounding 25–35% annually.",
-
   },
 
   {
-
     e: "🏛️",
 
     t: "Quality of Life",
 
     b: "IIM Nashik, world-class hospitals, Phoenix Mall. Quality that rivals Pune & Aurangabad.",
-
   },
-
 ];
 
-
-
 const TABS_P = [
-
   "All",
 
   "NA Plot",
@@ -1197,11 +876,9 @@ const TABS_P = [
   "Investment",
 
   "Collector NA",
-
 ];
 
 const CC: Record<string, { bg: string; c: string }> = {
-
   "Buying Guide": { bg: "#f0fdf4", c: "#166534" },
 
   Investment: { bg: "#fffbeb", c: "#854d0e" },
@@ -1209,10 +886,7 @@ const CC: Record<string, { bg: string; c: string }> = {
   Commercial: { bg: "#f5f3ff", c: "#5b21b6" },
 
   Legal: { bg: "#eff6ff", c: "#1e40af" },
-
 };
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -1221,55 +895,40 @@ const CC: Record<string, { bg: string; c: string }> = {
 ═══════════════════════════════════════════════════════════ */
 
 function useInView(thr = 0.1) {
-
   const ref = useRef<HTMLDivElement>(null!);
 
   const [v, setV] = useState(false);
 
   useEffect(() => {
-
     const o = new IntersectionObserver(
-
       ([e]) => {
-
         if (e.isIntersecting) {
-
           setV(true);
 
           o.disconnect();
-
         }
-
       },
 
       { threshold: thr },
-
     );
 
     if (ref.current) o.observe(ref.current);
 
     return () => o.disconnect();
-
   }, [thr]);
 
   return [ref, v] as const;
-
 }
 
-
-
 function useCnt(target: number, active: boolean) {
-
   const [v, setV] = useState(0);
 
   useEffect(() => {
-
     if (!active) return;
 
     let s = 0;
 
     const step = (ts: number) => {
-
       if (!s) s = ts;
 
       const p = Math.min((ts - s) / 1500, 1);
@@ -1277,18 +936,13 @@ function useCnt(target: number, active: boolean) {
       setV(Math.round((1 - Math.pow(1 - p, 3)) * target));
 
       if (p < 1) requestAnimationFrame(step);
-
     };
 
     requestAnimationFrame(step);
-
   }, [target, active]);
 
   return v;
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -1297,12 +951,8 @@ function useCnt(target: number, active: boolean) {
 ═══════════════════════════════════════════════════════════ */
 
 function Nav() {
-
   return <MegaNavbar />;
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -1311,61 +961,39 @@ function Nav() {
 ═══════════════════════════════════════════════════════════ */
 
 function Hero() {
-
   const { city } = useLocationStore();
 
   const [slide, setSlide] = useState(0);
 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-
-
   const go = useCallback((i: number) => {
-
     setSlide(i);
 
     if (timer.current) clearInterval(timer.current);
 
     timer.current = setInterval(
-
       () => setSlide((s) => (s + 1) % SLIDES.length),
 
       6000,
-
     );
-
   }, []);
 
-
-
   useEffect(() => {
-
     timer.current = setInterval(() => {
-
       setSlide((prev) => (prev + 1) % SLIDES.length);
-
     }, 6000);
 
     return () => {
-
       if (timer.current) clearInterval(timer.current);
-
     };
-
   }, []);
-
-
 
   const S = SLIDES[slide];
 
-
-
   return (
-
     <section
-
       style={{
-
         position: "relative",
 
         height: "min(720px,100svh)",
@@ -1377,21 +1005,14 @@ function Hero() {
         overflow: "hidden",
 
         marginTop: "20px",
-
       }}
-
     >
-
       {/* Slides — opacity cross-fade */}
 
       {SLIDES.map((sl, i) => (
-
         <div
-
           key={i}
-
           style={{
-
             position: "absolute",
 
             inset: 0,
@@ -1401,63 +1022,38 @@ function Hero() {
             transition: `opacity 1s ${E}`,
 
             pointerEvents: i === slide ? "auto" : "none",
-
           }}
-
         >
-
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-
             <Image
-
               src={sl.img}
-
               alt=""
-
               fill
-
               style={{ objectFit: "cover" }}
-
               priority={i === 0}
-
             />
-
           </div>
 
           <div
-
             style={{
-
               position: "absolute",
 
               inset: 0,
 
               background:
-
                 "linear-gradient(to bottom, rgba(0,0,0,.45) 0%, rgba(0,0,0,.15) 35%, rgba(0,0,0,.65) 75%, rgba(0,0,0,.88) 100%)",
-
             }}
-
           />
-
         </div>
-
       ))}
-
-
 
       {/* ← → arrows */}
 
       <button
-
         className="hero-arrow"
-
         onClick={() => go((slide - 1 + SLIDES.length) % SLIDES.length)}
-
         aria-label="Previous slide"
-
         style={{
-
           position: "absolute",
 
           top: "42%",
@@ -1489,25 +1085,16 @@ function Hero() {
           justifyContent: "center",
 
           display: "flex",
-
         }}
-
       >
-
         {I.arL}
-
       </button>
 
       <button
-
         className="hero-arrow"
-
         onClick={() => go((slide + 1) % SLIDES.length)}
-
         aria-label="Next slide"
-
         style={{
-
           position: "absolute",
 
           top: "42%",
@@ -1539,23 +1126,15 @@ function Hero() {
           justifyContent: "center",
 
           display: "flex",
-
         }}
-
       >
-
         {I.arR}
-
       </button>
-
-
 
       {/* Content overlay */}
 
       <div
-
         style={{
-
           position: "absolute",
 
           inset: 0,
@@ -1569,29 +1148,18 @@ function Hero() {
           justifyContent: "center",
 
           padding: "0 0 110px",
-
         }}
-
       >
-
         <div className="w">
-
           {/* Tag */}
 
           <div
-
             key={`tag-${slide}`}
-
             className="fu"
-
             style={{ marginBottom: "12px" }}
-
           >
-
             <span
-
               style={{
-
                 display: "inline-flex",
 
                 alignItems: "center",
@@ -1617,15 +1185,10 @@ function Hero() {
                 letterSpacing: ".04em",
 
                 textTransform: "uppercase",
-
               }}
-
             >
-
               <span
-
                 style={{
-
                   width: "5px",
 
                   height: "5px",
@@ -1637,29 +1200,19 @@ function Hero() {
                   display: "inline-block",
 
                   animation: "_pd 1.8s infinite",
-
                 }}
-
               />
 
               {S.tag}
-
             </span>
-
           </div>
-
-
 
           {/* Heading */}
 
           <h1
-
             key={`h-${slide}`}
-
             className="fu d1"
-
             style={{
-
               fontFamily: FONT,
 
               fontSize: "clamp(1.75rem,4.2vw,3rem)",
@@ -1679,27 +1232,17 @@ function Hero() {
               maxWidth: "680px",
 
               textShadow: "0 2px 20px rgba(0,0,0,.35)",
-
             }}
-
           >
-
             {S.h.replaceAll("Nashik", city)}
-
           </h1>
-
-
 
           {/* Subtitle */}
 
           <p
-
             key={`s-${slide}`}
-
             className="fu d2"
-
             style={{
-
               color: "rgba(255,255,255,.85)",
 
               fontSize: "clamp(.95rem,1.6vw,1.05rem)",
@@ -1711,37 +1254,23 @@ function Hero() {
               marginBottom: "26px",
 
               textShadow: "0 1px 10px rgba(0,0,0,.3)",
-
             }}
-
           >
-
             {S.sub.replaceAll("Nashik", city)}
-
           </p>
-
-
 
           {/* ✅ NEW SEARCH BAR — redirects to /properties with filters */}
 
           <div className="fu d3" style={{ maxWidth: "880px" }}>
-
             <HeroSearch />
-
           </div>
-
         </div>
-
       </div>
-
-
 
       {/* Slide dots */}
 
       <div
-
         style={{
-
           position: "absolute",
 
           bottom: "34px",
@@ -1755,23 +1284,14 @@ function Hero() {
           gap: "6px",
 
           zIndex: 3,
-
         }}
-
       >
-
         {SLIDES.map((_, i) => (
-
           <button
-
             key={i}
-
             onClick={() => go(i)}
-
             aria-label={`Go to slide ${i + 1}`}
-
             style={{
-
               width: i === slide ? "26px" : "8px",
 
               height: "8px",
@@ -1785,22 +1305,13 @@ function Hero() {
               background: i === slide ? "white" : "rgba(255,255,255,.45)",
 
               transition: `all .28s ${E}`,
-
             }}
-
           />
-
         ))}
-
       </div>
-
     </section>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -1809,209 +1320,81 @@ function Hero() {
 ═══════════════════════════════════════════════════════════ */
 
 function CatGrid({ properties }: any) {
-
   const [ref, v] = useInView();
-
-
 
   const { city } = useLocationStore();
 
-
-
-  const citySlug =
-
-    city?.trim().toLowerCase().replace(/\s+/g, "-") || "nashik";
-
-
-
-
+  const citySlug = city?.trim().toLowerCase().replace(/\s+/g, "-") || "nashik";
 
   // ✅ FIX: Always make sure properties is an array
-const propertyList = Array.isArray(properties)
-  ? properties
-  : properties?.data || properties?.properties || [];
-
-
-
+  const propertyList = Array.isArray(properties)
+    ? properties
+    : properties?.data || properties?.properties || [];
 
   if (!propertyList.length) return null;
-
-
-
-
-
-
 
   // ✅ Dynamic category data from DB
 
   const categoriesMap: any = {};
 
-
-
-
-
-
-
   propertyList.forEach((p: any) => {
-
-
-
-
-
-    const category =
-
-      p.category || p.cat;
-
-
-
-
-
-
+    const category = p.category || p.cat;
 
     if (!category) return;
 
-
-
-
-
-
-
     if (!categoriesMap[category]) {
-
-
-
-
-
       categoriesMap[category] = {
-
-
-
-
-
         label: category,
-
-
-
-
 
         count: 0,
 
-
-
-
-
         image:
-
           p.img ||
-
           p.image ||
-
           "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80",
-
-
-
-
-
       };
-
-
-
-
-
     }
 
-
-
-
-
-
-
     categoriesMap[category].count += 1;
-
-
-
-
-
-
-
   });
-
-
-
-
-
-
 
   // ✅ Convert object → array
 
   const dynamicCats = Object.values(categoriesMap);
 
-
-
-
-
-
-
   return (
-
     <section
-
       className="sec"
-
       style={{
-
         background: G.off,
 
-        padding: "44px 0"
-
+        padding: "44px 0",
       }}
-
       ref={ref}
-
     >
-
-
-
-
-
       <div className="w">
-
-
-
-
-
         {/* Header */}
 
         <div
-
           style={{
+            display: "flex",
 
-            display:"flex",
+            justifyContent: "space-between",
 
-            justifyContent:"space-between",
+            alignItems: "flex-end",
 
-            alignItems:"flex-end",
+            marginBottom: "22px",
 
-            marginBottom:"22px",
+            flexWrap: "wrap",
 
-            flexWrap:"wrap",
-
-            gap:"10px",
-
+            gap: "10px",
           }}
-
         >
-
           <div>
-
             <div className="sl">Browse Properties</div>
 
-
-
             <h2
-
               style={{
-
                 fontFamily: FONT,
 
                 fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
@@ -2023,71 +1406,43 @@ const propertyList = Array.isArray(properties)
                 color: G.ink,
 
                 lineHeight: 1.15,
-
               }}
-
             >
-
               What are you looking for?
-
             </h2>
-
           </div>
 
-
-
           <Link
-
             href="/properties"
-
             className="b bo"
-
             style={{ padding: "8px 16px", fontSize: "12.5px" }}
-
           >
-
             All Properties {I.arr}
-
           </Link>
-
         </div>
-
-
 
         {/* Dynamic Grid */}
 
         <div
-
           className="cg"
-
           style={{
-
             display: "grid",
 
             gridTemplateColumns: "repeat(6,1fr)",
 
             gap: "12px",
-
           }}
-
         >
-
           {dynamicCats.map((c: any, i: number) => (
-
             <Link
-
               key={c.label}
-
               href={`/properties/city/${citySlug}/${c.label
 
                 .toLowerCase()
 
                 .replace(/\s+/g, "-")}`}
-
-             className="zm"
-
+              className="zm"
               style={{
-
                 borderRadius: "12px",
 
                 overflow: "hidden",
@@ -2105,57 +1460,36 @@ const propertyList = Array.isArray(properties)
                 border: `1px solid ${G.li}`,
 
                 flexShrink: 0,
-
               }}
-
             >
-
               {/* Image */}
 
               <div style={{ position: "absolute", inset: 0 }}>
-
                 <Image
-
                   src={c.image}
-
                   alt={c.label}
-
                   fill
-
                   style={{ objectFit: "cover" }}
-
                 />
-
               </div>
-
-
 
               {/* Overlay */}
 
               <div
-
                 style={{
-
                   position: "absolute",
 
                   inset: 0,
 
                   background:
-
                     "linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.22) 55%, transparent 100%)",
-
                 }}
-
               />
-
-
 
               {/* Content */}
 
               <div
-
                 style={{
-
                   position: "absolute",
 
                   bottom: 0,
@@ -2165,15 +1499,10 @@ const propertyList = Array.isArray(properties)
                   right: 0,
 
                   padding: "10px 11px",
-
                 }}
-
               >
-
                 <div
-
                   style={{
-
                     fontWeight: 800,
 
                     fontSize: "12.5px",
@@ -2183,46 +1512,27 @@ const propertyList = Array.isArray(properties)
                     lineHeight: 1.2,
 
                     marginBottom: "2px",
-
                   }}
-
                 >
-
                   {c.label}
-
                 </div>
 
-
-
                 <div
-
                   style={{
-
                     fontSize: "10.5px",
 
                     color: "rgba(255,255,255,.72)",
 
                     fontWeight: 600,
-
                   }}
-
                 >
-
                   {c.count} listings
-
                 </div>
-
               </div>
-
             </Link>
-
           ))}
-
         </div>
-
       </div>
-
-
 
       {/* Responsive */}
 
@@ -2251,14 +1561,9 @@ const propertyList = Array.isArray(properties)
         }
 
       `}</style>
-
     </section>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -2267,13 +1572,7 @@ const propertyList = Array.isArray(properties)
 ═══════════════════════════════════════════════════════════ */
 
 function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
-
- const imgs =
-  p.images?.length
-    ? p.images
-    : p.img
-      ? [p.img]
-      : ["/maha.png"];
+  const imgs = p.images?.length ? p.images : p.img ? [p.img] : ["/maha.png"];
 
   const [ii, setIi] = useState(0);
 
@@ -2281,16 +1580,10 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
 
   console.log("PROPERTY:", p);
 
-
-
   return (
-
     <Link
-
       href={`/properties/${p.slug}`}
-
       style={{
-
         textDecoration: "none",
 
         color: "inherit",
@@ -2298,17 +1591,11 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
         display: "block",
 
         height: "100%",
-
       }}
-
     >
-
       <div
-
         className="lf"
-
         style={{
-
           background: "white",
 
           borderRadius: "13px",
@@ -2319,7 +1606,7 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
 
           boxShadow: "0 2px 8px rgba(0,0,0,.05)",
 
-          opacity:  1 ,
+          opacity: 1,
 
           transform: vis ? "none" : "translateY(14px)",
 
@@ -2328,17 +1615,12 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
           cursor: "pointer",
 
           height: "100%",
-
         }}
-
       >
-
         {/* Gallery */}
 
         <div
-
           style={{
-
             position: "relative",
 
             height: "170px",
@@ -2348,73 +1630,43 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
             background: G.off,
 
             flexShrink: 0,
-
           }}
-
         >
-
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
-
             {imgs.length > 0 && (
-
               <Image
-
                 src={imgs[ii]}
-
                 alt={`${p.title || p.t || "Property"} in ${p.city || "Nashik"}`}
-
                 fill
-
                 style={{
-
                   objectFit: "cover",
-
                 }}
-
               />
-
             )}
-
           </div>
 
-
-
           <div
-
             style={{
-
               position: "absolute",
 
               inset: 0,
 
               background:
-
                 "linear-gradient(to top,rgba(0,0,0,.32) 0%,transparent 50%)",
-
             }}
-
           />
-
-
 
           {/* Image prev/next */}
 
           {imgs.length > 1 && (
-
             <>
-
               <button
-
                 onClick={(e) => {
-
                   e.preventDefault();
 
                   setIi((n) => (n - 1 + imgs.length) % imgs.length);
-
                 }}
-
                 style={{
-
                   position: "absolute",
 
                   top: "50%",
@@ -2444,29 +1696,18 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                   zIndex: 2,
 
                   cursor: "pointer",
-
                 }}
-
               >
-
                 {I.arL}
-
               </button>
 
-
-
               <button
-
                 onClick={(e) => {
-
                   e.preventDefault();
 
                   setIi((n) => (n + 1) % imgs.length);
-
                 }}
-
                 style={{
-
                   position: "absolute",
 
                   top: "50%",
@@ -2496,21 +1737,13 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                   zIndex: 2,
 
                   cursor: "pointer",
-
                 }}
-
               >
-
                 {I.arR}
-
               </button>
 
-
-
               <div
-
                 style={{
-
                   position: "absolute",
 
                   bottom: "7px",
@@ -2524,27 +1757,17 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                   gap: "4px",
 
                   zIndex: 2,
-
                 }}
-
               >
-
                 {imgs.map((_: any, j: number) => (
-
                   <button
-
                     key={j}
-
                     onClick={(e) => {
-
                       e.preventDefault();
 
                       setIi(j);
-
                     }}
-
                     style={{
-
                       width: ii === j ? "16px" : "5px",
 
                       height: "5px",
@@ -2558,27 +1781,17 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                       transition: `all .22s ${E}`,
 
                       cursor: "pointer",
-
                     }}
-
                   />
-
                 ))}
-
               </div>
-
             </>
-
           )}
-
-
 
           {/* Badges */}
 
           <div
-
             style={{
-
               position: "absolute",
 
               top: "9px",
@@ -2590,17 +1803,11 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               gap: "5px",
 
               zIndex: 3,
-
             }}
-
           >
-
             {p.rera && (
-
               <span
-
                 style={{
-
                   display: "flex",
 
                   alignItems: "center",
@@ -2620,25 +1827,15 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                   borderRadius: "5px",
 
                   backdropFilter: "blur(8px)",
-
                 }}
-
               >
-
                 {I.chk} RERA
-
               </span>
-
             )}
 
-
-
             {p.badge && (
-
               <span
-
                 style={{
-
                   background: "rgba(200,151,58,.9)",
 
                   color: "white",
@@ -2652,35 +1849,22 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                   borderRadius: "5px",
 
                   backdropFilter: "blur(8px)",
-
                 }}
-
               >
-
                 {p.badge}
-
               </span>
-
             )}
-
           </div>
-
-
 
           {/* Wishlist */}
 
           <button
-
             onClick={(e) => {
-
               e.preventDefault();
 
               setSv((s) => !s);
-
             }}
-
             style={{
-
               position: "absolute",
 
               top: "9px",
@@ -2708,41 +1892,23 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               zIndex: 3,
 
               cursor: "pointer",
-
             }}
-
           >
-
             <svg
-
               width="13"
-
               height="13"
-
               viewBox="0 0 24 24"
-
               fill={sv ? "#ef4444" : "none"}
-
               stroke={sv ? "#ef4444" : "#9ca3af"}
-
               strokeWidth="2.2"
-
               strokeLinecap="round"
-
             >
-
               <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-
             </svg>
-
           </button>
 
-
-
           <span
-
             style={{
-
               position: "absolute",
 
               bottom: "17px",
@@ -2764,27 +1930,17 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               backdropFilter: "blur(8px)",
 
               zIndex: 2,
-
             }}
-
           >
-
             {p.cat || p.category}
-
           </span>
-
         </div>
-
-
 
         {/* Info */}
 
         <div style={{ padding: "13px 14px" }}>
-
           <h3
-
             style={{
-
               fontWeight: 700,
 
               fontSize: "13.5px",
@@ -2796,21 +1952,13 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               lineHeight: 1.3,
 
               letterSpacing: "-0.01em",
-
             }}
-
           >
-
             {p.t || p.title}
-
           </h3>
 
-
-
           <div
-
             style={{
-
               display: "flex",
 
               alignItems: "center",
@@ -2822,23 +1970,15 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               fontSize: "11.5px",
 
               marginBottom: "9px",
-
             }}
-
           >
-
             <span style={{ color: G.g }}>{I.pin}</span>
 
             {p.locality ? `${p.locality}, ${p.city || ""}` : p.city || "Nashik"}
-
           </div>
 
-
-
           <div
-
             style={{
-
               fontSize: "1.2rem",
 
               fontWeight: 900,
@@ -2850,21 +1990,13 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               marginBottom: "9px",
 
               fontFamily: FONT,
-
             }}
-
           >
-
             {p.pr || p.price}
-
           </div>
 
-
-
           <div
-
             style={{
-
               display: "flex",
 
               gap: "12px",
@@ -2876,15 +2008,10 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
               borderBottom: `1px solid ${G.li}`,
 
               marginBottom: "11px",
-
             }}
-
           >
-
             <span
-
               style={{
-
                 display: "flex",
 
                 alignItems: "center",
@@ -2894,21 +2021,13 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                 fontSize: "11px",
 
                 color: G.mu,
-
               }}
-
             >
-
               {I.rul} {p.area}
-
             </span>
 
-
-
             <span
-
               style={{
-
                 display: "flex",
 
                 alignItems: "center",
@@ -2920,41 +2039,26 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                 color: G.mu,
 
                 marginLeft: "auto",
-
               }}
-
             >
-
               {I.eye} {p.views} views
-
             </span>
-
           </div>
-
-
 
           {/* Bottom Buttons */}
 
           <div
-
             style={{
-
               display: "grid",
 
               gridTemplateColumns: "1fr 1fr",
 
               gap: "7px",
-
             }}
-
           >
-
             <div
-
               className="b bo"
-
               style={{
-
                 fontSize: "12px",
 
                 padding: "8px 10px",
@@ -2962,23 +2066,14 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                 borderRadius: "7px",
 
                 textAlign: "center",
-
               }}
-
             >
-
               Details
-
             </div>
-
-
 
             <div
-
               className="b bg"
-
               style={{
-
                 fontSize: "12px",
 
                 padding: "8px 10px",
@@ -2986,28 +2081,16 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
                 borderRadius: "7px",
 
                 textAlign: "center",
-
               }}
-
             >
-
               {I.ph} Contact
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </Link>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -3016,438 +2099,155 @@ function PCard({ p, vis, d }: { p: any; vis: boolean; d: number }) {
 ═══════════════════════════════════════════════════════════ */
 
 function Featured({ properties }: any) {
-
   const [tab, setTab] = useState("All");
 
   const [ref, vis] = useInView();
 
-
-
-
-
   // ✅ Normalize API response
 
- const propertyList = Array.isArray(properties)
-
-  ? properties
-
-  : properties?.data || [];
-
-
-
-
+  const propertyList = Array.isArray(properties)
+    ? properties
+    : properties?.data || [];
 
   if (!propertyList.length) {
-
     return null;
-
   }
 
-
-
-
-
-
-
   // ✅ FILTER
-const filteredList = 
-  tab === "All"
-    ? propertyList
-    : propertyList.filter((p:any)=>{
+  const filteredList =
+    tab === "All"
+      ? propertyList
+      : propertyList.filter((p: any) => {
+          const category = (p.category || p.cat || "").toLowerCase();
 
-        const category =
-          (p.category || p.cat || "")
-          .toLowerCase();
+          const title = (p.title || "").toLowerCase();
 
-        const title =
-          (p.title || "")
-          .toLowerCase();
+          const selected = tab.toLowerCase();
 
-
-        const selected =
-          tab.toLowerCase();
-
-
-        return (
-          category.includes(selected) ||
-          title.includes(selected)
-        );
-
-      });
-
-
-
-
+          return category.includes(selected) || title.includes(selected);
+        });
 
   return (
-
     <section
-
       className="sec"
-
       style={{
-
         background: "white",
 
-        padding: "44px 0"
-
+        padding: "44px 0",
       }}
-
       ref={ref}
-
     >
-
-
-
       <div className="w">
-
-
-
-
-
         {/* Header */}
 
-
-
         <div
-
           style={{
+            display: "flex",
 
-            display:"flex",
+            justifyContent: "space-between",
 
-            justifyContent:"space-between",
+            alignItems: "flex-end",
 
-            alignItems:"flex-end",
+            marginBottom: "16px",
 
-            marginBottom:"16px",
+            flexWrap: "wrap",
 
-            flexWrap:"wrap",
-
-            gap:"10px",
-
+            gap: "10px",
           }}
-
         >
-
-
-
           <div>
-
-
-
-            <div className="sl">
-
-              Handpicked
-
-            </div>
-
-
-
-
+            <div className="sl">Handpicked</div>
 
             <h2
-
               style={{
+                fontFamily: FONT,
 
-                fontFamily:FONT,
+                fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
 
-                fontSize:"clamp(1.4rem,2.8vw,2.1rem)",
+                fontWeight: 800,
 
-                fontWeight:800,
+                letterSpacing: "-0.03em",
 
-                letterSpacing:"-0.03em",
-
-                color:G.ink,
-
+                color: G.ink,
               }}
-
             >
-
-
-
               Featured Properties
-
-
-
             </h2>
-
-
-
-
-
           </div>
 
-
-
-
-
-
-
           <Link
-
             href="/properties"
-
             className="b bo"
-
             style={{
+              padding: "8px 15px",
 
-              padding:"8px 15px",
-
-              fontSize:"12.5px"
-
+              fontSize: "12.5px",
             }}
-
           >
-
-
-
             View All {I.arr}
-
-
-
           </Link>
-
-
-
-
-
         </div>
-
-
-
-
-
-
-
-
 
         {/* Tabs */}
 
-
-
-
-
         <div
-
           style={{
+            display: "flex",
 
-            display:"flex",
+            gap: "6px",
 
-            gap:"6px",
+            overflowX: "auto",
 
-            overflowX:"auto",
-
-            marginBottom:"14px",
-
+            marginBottom: "14px",
           }}
-
         >
-
-
-
-          {TABS_P.map((t)=>(
-
-            
-
+          {TABS_P.map((t) => (
             <button
-
-
-
               key={t}
-
-
-
-              onClick={()=>setTab(t)}
-
-
-
+              onClick={() => setTab(t)}
               className="b"
-
-
-
               style={{
+                padding: "6px 14px",
 
-                padding:"6px 14px",
+                borderRadius: "99px",
 
-                borderRadius:"99px",
+                fontSize: "12.5px",
 
-                fontSize:"12.5px",
+                fontWeight: 600,
 
-                fontWeight:600,
+                background: tab === t ? G.ink : "white",
 
-                background:
+                color: tab === t ? "white" : G.sl,
 
-                  tab===t
-
-                  ? G.ink
-
-                  :"white",
-
-
-
-                color:
-
-                  tab===t
-
-                  ?"white"
-
-                  :G.sl,
-
-
-
-                border:
-
-                `1.5px solid ${
-
-                  tab===t
-
-                  ? G.ink
-
-                  : G.li
-
-                }`,
-
+                border: `1.5px solid ${tab === t ? G.ink : G.li}`,
               }}
-
-
-
             >
-
-
-
               {t}
-
-
-
             </button>
-
-
-
           ))}
-
-
-
         </div>
-
-
-
-
-
-
-
-
-
-
 
         {/* Property Cards */}
 
-
-
-
-
         <div
-
-
-
           style={{
+            display: "grid",
 
-            display:"grid",
+            gridTemplateColumns: "repeat(4,1fr)",
 
-            gridTemplateColumns:"repeat(4,1fr)",
-
-            gap:"14px",
-
+            gap: "14px",
           }}
-
-
-
         >
+          {filteredList
 
+            .slice(0, 8)
 
-
-
-
-          {
-
-            filteredList
-
-            .slice(0,8)
-
-            .map(
-
-              (p:any,i:number)=>(
-
-
-
-
-
-                <PCard
-
-
-
-                  key={
-
-                    p._id ||
-
-                    p.id ||
-
-                    i
-
-                  }
-
-
-
-                  p={p}
-
-
-
-                  vis={vis}
-
-
-
-                  d={
-
-                    i * 0.05
-
-                  }
-
-
-
-                />
-
-
-
-
-
-              )
-
-            )
-
-          }
-
-
-
-
-
-
-
+            .map((p: any, i: number) => (
+              <PCard key={p._id || p.id || i} p={p} vis={vis} d={i * 0.05} />
+            ))}
         </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
         {/* Responsive */}
-
-
 
         <style>{`
 
@@ -3520,23 +2320,9 @@ const filteredList =
 
 
         `}</style>
-
-
-
-
-
-
-
       </div>
-
-
-
-
-
     </section>
-
   );
-
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -3546,7 +2332,6 @@ const filteredList =
 ═══════════════════════════════════════════════════════════ */
 
 const SDATA = [
-
   { v: 2500, s: "+", l: "Active Listings", d: "All categories" },
 
   { v: 2000, s: "+", l: "Happy Clients", d: "Buyers & investors" },
@@ -3556,91 +2341,55 @@ const SDATA = [
   { v: 42, s: "+", l: "Localities", d: "Nashik district" },
 
   { v: 98, s: "%", l: "Satisfaction Rate", d: "Client reviews" },
-
 ];
 
-
-
 function Stats() {
-
   const [ref, vis] = useInView(0.3);
 
   const v0 = useCnt(SDATA[0].v, vis),
-
     v1 = useCnt(SDATA[1].v, vis),
-
     v2 = useCnt(SDATA[2].v, vis),
-
     v3 = useCnt(SDATA[3].v, vis),
-
     v4 = useCnt(SDATA[4].v, vis);
 
   const vals = [v0, v1, v2, v3, v4];
 
-
-
   return (
-
     <section
-
       ref={ref}
-
       style={{ position: "relative", padding: "56px 0", overflow: "hidden" }}
-
     >
-
       <div style={{ position: "absolute", inset: 0 }}>
-
         <Image
-
           src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=55"
-
           alt=""
-
           fill
-
           style={{ objectFit: "cover" }}
-
         />
 
         <div
-
           style={{
-
             position: "absolute",
 
             inset: 0,
 
             background: "rgba(8,12,18,.87)",
-
           }}
-
         />
-
       </div>
 
       <div className="w" style={{ position: "relative", zIndex: 1 }}>
-
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
-
           <div
-
             className="sl"
-
             style={{ justifyContent: "center", color: "#4ade80" }}
-
           >
-
             <span style={{ background: "#4ade80" }} />
-
             Nashik&apos;s Most Trusted
-
           </div>
 
           <h2
-
             style={{
-
               fontFamily: FONT,
 
               fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
@@ -3650,59 +2399,37 @@ function Stats() {
               color: "white",
 
               letterSpacing: "-0.03em",
-
             }}
-
           >
-
             By the numbers
-
           </h2>
-
         </div>
 
         <div
-
           style={{
-
             display: "grid",
 
             gridTemplateColumns: "repeat(5,1fr)",
 
             gap: 0,
-
           }}
-
         >
-
           {SDATA.map((s, i) => (
-
             <div
-
               key={s.l}
-
               style={{
-
                 textAlign: "center",
 
                 padding: "24px 12px",
 
                 borderRight:
-
                   i < SDATA.length - 1
-
                     ? "1px solid rgba(255,255,255,.08)"
-
                     : "none",
-
               }}
-
             >
-
               <div
-
                 style={{
-
                   fontSize: "clamp(1.75rem,3.5vw,2.75rem)",
 
                   fontWeight: 900,
@@ -3716,21 +2443,15 @@ function Stats() {
                   letterSpacing: "-0.04em",
 
                   fontFamily: FONT,
-
                 }}
-
               >
-
                 {vals[i].toLocaleString()}
 
                 {s.s}
-
               </div>
 
               <div
-
                 style={{
-
                   fontSize: "12.5px",
 
                   fontWeight: 700,
@@ -3738,31 +2459,20 @@ function Stats() {
                   color: "#4ade80",
 
                   marginBottom: "3px",
-
                 }}
-
               >
-
                 {s.l}
-
               </div>
 
               <div style={{ fontSize: "11px", color: "rgba(255,255,255,.38)" }}>
-
                 {s.d}
-
               </div>
-
             </div>
-
           ))}
-
         </div>
 
         <div
-
           style={{
-
             textAlign: "center",
 
             marginTop: "36px",
@@ -3770,64 +2480,40 @@ function Stats() {
             paddingTop: "28px",
 
             borderTop: "1px solid rgba(255,255,255,.07)",
-
           }}
-
         >
-
           <p
-
             style={{
-
               color: "rgba(255,255,255,.52)",
 
               fontSize: "14.5px",
 
               marginBottom: "18px",
-
             }}
-
           >
-
             Join thousands of happy property owners across Nashik
-
           </p>
 
           <Link
-
             href="/register"
-
             className="b bg"
-
             style={{
-
               padding: "12px 30px",
 
               fontSize: "14px",
 
               borderRadius: "9px",
-
             }}
-
           >
-
             Join the List {I.arr}
-
           </Link>
-
         </div>
-
       </div>
 
       <style>{`@media(max-width:768px){.sg{grid-template-columns:repeat(3,1fr)!important}}@media(max-width:480px){.sg{grid-template-columns:repeat(2,1fr)!important}}`}</style>
-
     </section>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -3836,883 +2522,279 @@ function Stats() {
 ═══════════════════════════════════════════════════════════ */
 
 function Locs({ properties }: any) {
-
-
-
   const { city } = useLocationStore();
 
-
-
   const [ref, vis] = useInView();
-
-
-
-
-
-
 
   // ✅ FIX: support both API response and direct array
 
   const propertyList = Array.isArray(properties)
-
     ? properties
-
     : properties?.data || [];
 
-
-
-
-
-
-
   if (!propertyList.length) {
-
     return null;
-
   }
-
-
-
-
-
-
-
-
 
   // ✅ Create dynamic locality data from DB
 
-
-
   const localityMap: any = {};
 
-
-
-
-
-
-
   propertyList.forEach((p: any) => {
-
-
-
-
-
-    const locality =
-
-      p.location ||
-
-      p.loc ||
-
-      p.locality;
-
-
-
-
-
-
+    const locality = p.location || p.loc || p.locality;
 
     if (!locality) return;
 
-
-
-
-
-
-
     if (!localityMap[locality]) {
-
-
-
-
-
       localityMap[locality] = {
-
-
-
-
-
         name: locality,
-
-
-
-
 
         count: 0,
 
-
-
-
-
-        image:
-
-          p.img ||
-
-          p.images?.[0] ||
-
-          "/maha.png",
-
-
-
-
-
-
+        image: p.img || p.images?.[0] || "/maha.png",
 
         types: new Set(),
-
-
-
-
-
       };
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
 
     localityMap[locality].count += 1;
 
-
-
-
-
-
-
     if (p.category || p.cat) {
-
-
-
-
-
-      localityMap[locality]
-
-        .types
-
-        .add(
-
-          p.category || p.cat
-
-        );
-
-
-
-
-
+      localityMap[locality].types.add(p.category || p.cat);
     }
-
-
-
-
-
-
-
   });
-
-
-
-
-
-
-
-
-
-
 
   // Convert object → array
 
+  const locs = Object.values(localityMap).map((l: any) => ({
+    name: l.name,
 
-const locs = Object
-.values(localityMap)
-.map((l:any)=>({
+    count: l.count,
 
-  name:l.name,
+    image: l.image,
 
-  count:l.count,
-
-  image:l.image,
-
-  tp:Array.from(l.types)
-    .slice(0,2)
-    .join(" • ")
-
-}));
-
-
-
-
-
-
-
-
-
-
+    tp: Array.from(l.types).slice(0, 2).join(" • "),
+  }));
 
   // sort
 
+  locs.sort((a: any, b: any) => b.count - a.count);
 
-
-  locs.sort(
-
-    (a:any,b:any)=>
-
-      b.count - a.count
-
-  );
-
-
-
-
-
-
-
-
-
-  const show =
-
-    locs.slice(0,12);
-
-
-
-
-
-
-
-
-
-
+  const show = locs.slice(0, 12);
 
   return (
-
-
-
     <section
-
-
-
       className="sec"
-
-
-
       style={{
+        background: G.off,
 
-        background:G.off,
-
-        padding:"44px 0"
-
+        padding: "44px 0",
       }}
-
-
-
       ref={ref}
-
-
-
     >
-
-
-
-
-
       <div className="w">
-
-
-
-
-
-
-
         <div
-
-
-
           style={{
+            display: "flex",
 
-            display:"flex",
+            justifyContent: "space-between",
 
-            justifyContent:"space-between",
+            alignItems: "flex-end",
 
-            alignItems:"flex-end",
+            marginBottom: "22px",
 
-            marginBottom:"22px",
+            flexWrap: "wrap",
 
-            flexWrap:"wrap",
-
-            gap:"10px"
-
+            gap: "10px",
           }}
-
-
-
         >
-
-
-
-
-
           <div>
-
-
-
-
-
-            <div className="sl">
-
-
-
-              Explore {city}
-
-
-
-            </div>
-
-
-
-
-
-
+            <div className="sl">Explore {city}</div>
 
             <h2
-
-
-
               style={{
+                fontFamily: FONT,
 
-                fontFamily:FONT,
+                fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
 
-                fontSize:"clamp(1.4rem,2.8vw,2.1rem)",
+                fontWeight: 800,
 
-                fontWeight:800,
+                letterSpacing: "-0.03em",
 
-                letterSpacing:"-0.03em",
-
-                color:G.ink
-
+                color: G.ink,
               }}
-
-
-
             >
-
-
-
               Top Localities
-
-
-
             </h2>
-
-
-
-
-
-
-
           </div>
 
-
-
-
-
-
-
           <Link
-
-
-
             href="/properties"
-
-
-
             className="b bo"
-
-
-
             style={{
+              padding: "8px 16px",
 
-              padding:"8px 16px",
-
-              fontSize:"12.5px"
-
+              fontSize: "12.5px",
             }}
-
-
-
           >
-
-
-
             View All Localities {I.arr}
-
-
-
           </Link>
-
-
-
-
-
-
-
         </div>
 
-
-
-
-
-
-
-
-
-
-
         <div
-
-
-
           className="lg"
-
-
-
           style={{
+            display: "grid",
 
-            display:"grid",
+            gridTemplateColumns: "repeat(4,1fr)",
 
-            gridTemplateColumns:"repeat(4,1fr)",
-
-            gap:"12px"
-
+            gap: "12px",
           }}
-
-
-
         >
-
-
-
-
-
-
-
-        {show.map((l:any,i:number)=>(
-
-
-
-
-
-          <Link
-
-
-
-            key={l.name}
-
-
-
-            href={
-
-              `/localities/${
-
-                l.name
+          {show.map((l: any, i: number) => (
+            <Link
+              key={l.name}
+              href={`/localities/${l.name
 
                 .toLowerCase()
 
-                .replace(/\s+/g,"-")
-
-              }`
-
-            }
-
-
-
-
-
-            className="lf zm"
-
-
-
-
-
-            style={{
-
-              borderRadius:"11px",
-
-              overflow:"hidden",
-
-              position:"relative",
-
-              display:"block",
-
-              height:"138px",
-
-              boxShadow:"0 2px 8px rgba(0,0,0,.07)",
-
-              opacity:1,
-
-              transform:vis
-
-              ?"none"
-
-              :"translateY(10px)",
-
-            }}
-
-
-
-
-
-          >
-
-
-
-
-
-
-
-            <div
-
+                .replace(/\s+/g, "-")}`}
+              className="lf zm"
               style={{
+                borderRadius: "11px",
 
-                position:"absolute",
+                overflow: "hidden",
 
-                inset:0
+                position: "relative",
 
+                display: "block",
+
+                height: "138px",
+
+                boxShadow: "0 2px 8px rgba(0,0,0,.07)",
+
+                opacity: 1,
+
+                transform: vis ? "none" : "translateY(10px)",
               }}
-
             >
-
-
-
-              <Image
-
-
-
-                src={l.image}
-
-
-
-                alt={l.name}
-
-
-
-                fill
-
-
-
-                style={{
-
-                  objectFit:"cover"
-
-                }}
-
-
-
-              />
-
-
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-            <div
-
-
-
-              style={{
-
-                position:"absolute",
-
-                inset:0,
-
-                background:
-
-                "linear-gradient(to top,rgba(0,0,0,.7),transparent)"
-
-              }}
-
-
-
-            />
-
-
-
-
-
-
-
-
-
-
-
-            {l.count >=5 && (
-
-
-
-              <span
-
-
-
-                style={{
-
-                  position:"absolute",
-
-                  top:"8px",
-
-                  right:"8px",
-
-                  background:"#ef4444",
-
-                  color:"white",
-
-                  fontSize:"8.5px",
-
-                  fontWeight:800,
-
-                  padding:"2px 7px",
-
-                  borderRadius:"99px"
-
-                }}
-
-
-
-              >
-
-
-
-                🔥 HOT
-
-
-
-              </span>
-
-
-
-            )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <div
-
-
-
-              style={{
-
-                position:"absolute",
-
-                bottom:0,
-
-                left:0,
-
-                right:0,
-
-                padding:"9px 11px"
-
-              }}
-
-
-
-            >
-
-
-
-
-
-              <h3
-
-
-
-                style={{
-
-                  fontWeight:800,
-
-                  fontSize:"12.5px",
-
-                  color:"white"
-
-                }}
-
-
-
-              >
-
-
-
-                {l.name}
-
-
-
-              </h3>
-
-
-
-
-
-
-
-
-
               <div
-
-
-
                 style={{
+                  position: "absolute",
 
-                  display:"flex",
-
-                  justifyContent:"space-between"
-
+                  inset: 0,
                 }}
-
-
-
               >
-
-
-
-
-
-                <span
-
-
-
+                <Image
+                  src={l.image}
+                  alt={l.name}
+                  fill
                   style={{
-
-                    fontSize:"10px",
-
-                    color:"rgba(255,255,255,.68)"
-
+                    objectFit: "cover",
                   }}
-
-
-
-                >
-
-
-
-                  {l.tp || "Properties"}
-
-
-
-                </span>
-
-
-
-
-
-
-
-
-
-                <span
-
-
-
-                  style={{
-
-                    fontSize:"10px",
-
-                    background:"rgba(255,255,255,.17)",
-
-                    color:"white",
-
-                    padding:"2px 7px",
-
-                    borderRadius:"99px"
-
-                  }}
-
-
-
-                >
-
-
-
-                  {l.count}+
-
-
-
-                </span>
-
-
-
-
-
-
-
+                />
               </div>
 
+              <div
+                style={{
+                  position: "absolute",
 
+                  inset: 0,
 
+                  background:
+                    "linear-gradient(to top,rgba(0,0,0,.7),transparent)",
+                }}
+              />
 
+              {l.count >= 5 && (
+                <span
+                  style={{
+                    position: "absolute",
 
-            </div>
+                    top: "8px",
 
+                    right: "8px",
 
+                    background: "#ef4444",
 
+                    color: "white",
 
+                    fontSize: "8.5px",
 
+                    fontWeight: 800,
 
+                    padding: "2px 7px",
 
-          </Link>
+                    borderRadius: "99px",
+                  }}
+                >
+                  🔥 HOT
+                </span>
+              )}
 
+              <div
+                style={{
+                  position: "absolute",
 
+                  bottom: 0,
 
+                  left: 0,
 
+                  right: 0,
 
-        ))}
+                  padding: "9px 11px",
+                }}
+              >
+                <h3
+                  style={{
+                    fontWeight: 800,
 
+                    fontSize: "12.5px",
 
+                    color: "white",
+                  }}
+                >
+                  {l.name}
+                </h3>
 
+                <div
+                  style={{
+                    display: "flex",
 
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
 
+                      color: "rgba(255,255,255,.68)",
+                    }}
+                  >
+                    {l.tp || "Properties"}
+                  </span>
 
+                  <span
+                    style={{
+                      fontSize: "10px",
 
+                      background: "rgba(255,255,255,.17)",
+
+                      color: "white",
+
+                      padding: "2px 7px",
+
+                      borderRadius: "99px",
+                    }}
+                  >
+                    {l.count}+
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
-
-
-
-
-
-
-
       </div>
-
-
-
-
-
-
-
-
-
-
 
       <style>{`
 
@@ -4753,24 +2835,9 @@ const locs = Object
 
 
       `}</style>
-
-
-
-
-
-
-
     </section>
-
-
-
   );
-
-
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -4779,41 +2846,25 @@ const locs = Object
 ═══════════════════════════════════════════════════════════ */
 
 function WhyNashik() {
-
   const [ac, setAc] = useState(0);
 
   const [ref] = useInView();
 
-
-
   useEffect(() => {
-
     const t = setInterval(() => setAc((a) => (a + 1) % WHY.length), 3400);
 
     return () => clearInterval(t);
-
   }, []);
 
-
-
   return (
-
     <section
-
       className="sec"
-
       style={{ background: "white", padding: "44px 0" }}
-
       ref={ref}
-
     >
-
       <div className="w">
-
         <div
-
           style={{
-
             display: "grid",
 
             gridTemplateColumns: "1fr 1fr",
@@ -4821,21 +2872,14 @@ function WhyNashik() {
             gap: "52px",
 
             alignItems: "center",
-
           }}
-
         >
-
           {/* Image collage */}
 
           <div style={{ position: "relative", height: "340px" }}>
-
             <div
-
               className="zm"
-
               style={{
-
                 position: "absolute",
 
                 top: 0,
@@ -4851,35 +2895,21 @@ function WhyNashik() {
                 overflow: "hidden",
 
                 boxShadow: "0 18px 44px rgba(0,0,0,.13)",
-
               }}
-
             >
-
               <div style={{ position: "absolute", inset: 0 }}>
-
                 <Image
-
                   src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=700&q=80"
-
                   alt=""
-
                   fill
-
                   style={{ objectFit: "cover" }}
-
                 />
-
               </div>
-
             </div>
 
             <div
-
               className="zm"
-
               style={{
-
                 position: "absolute",
 
                 bottom: 0,
@@ -4897,33 +2927,20 @@ function WhyNashik() {
                 boxShadow: "0 18px 44px rgba(0,0,0,.11)",
 
                 border: "3px solid white",
-
               }}
-
             >
-
               <div style={{ position: "absolute", inset: 0 }}>
-
                 <Image
-
                   src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=80"
-
                   alt=""
-
                   fill
-
                   style={{ objectFit: "cover" }}
-
                 />
-
               </div>
-
             </div>
 
             <div
-
               style={{
-
                 position: "absolute",
 
                 bottom: "40%",
@@ -4941,15 +2958,10 @@ function WhyNashik() {
                 border: `1px solid ${G.li}`,
 
                 animation: "_fl 5s ease-in-out infinite",
-
               }}
-
             >
-
               <div
-
                 style={{
-
                   fontSize: "1.4rem",
 
                   fontWeight: 900,
@@ -4957,19 +2969,13 @@ function WhyNashik() {
                   color: G.g,
 
                   lineHeight: 1,
-
                 }}
-
               >
-
                 40%
-
               </div>
 
               <div
-
                 style={{
-
                   fontSize: "10.5px",
 
                   color: G.mu,
@@ -4977,35 +2983,22 @@ function WhyNashik() {
                   marginTop: "3px",
 
                   lineHeight: 1.4,
-
                 }}
-
               >
-
                 Avg. price appreciation
-
                 <br />
-
                 over 5 years
-
               </div>
-
             </div>
-
           </div>
-
-
 
           {/* Tabs + content */}
 
           <div>
-
             <div className="sl">Location Advantage</div>
 
             <h2
-
               style={{
-
                 fontFamily: FONT,
 
                 fontSize: "clamp(1.4rem,2.6vw,2.1rem)",
@@ -5019,19 +3012,13 @@ function WhyNashik() {
                 lineHeight: 1.15,
 
                 marginBottom: "8px",
-
               }}
-
             >
-
               Why invest in Nashik?
-
             </h2>
 
             <p
-
               style={{
-
                 fontSize: "13.5px",
 
                 color: G.mu,
@@ -5039,19 +3026,13 @@ function WhyNashik() {
                 lineHeight: 1.65,
 
                 marginBottom: "20px",
-
               }}
-
             >
-
               Maharashtra&apos;s fastest-growing real estate destination.
-
             </p>
 
             <div
-
               style={{
-
                 display: "flex",
 
                 gap: "6px",
@@ -5059,21 +3040,13 @@ function WhyNashik() {
                 flexWrap: "wrap",
 
                 marginBottom: "16px",
-
               }}
-
             >
-
               {WHY.map((w, i) => (
-
                 <button
-
                   key={w.t}
-
                   onClick={() => setAc(i)}
-
                   style={{
-
                     padding: "5px 12px",
 
                     borderRadius: "99px",
@@ -5091,27 +3064,17 @@ function WhyNashik() {
                     cursor: "pointer",
 
                     transition: `all .18s ${E}`,
-
                   }}
-
                 >
-
                   {w.e} {w.t}
-
                 </button>
-
               ))}
-
             </div>
 
             <div
-
               key={ac}
-
               className="fu"
-
               style={{
-
                 background: G.off,
 
                 borderRadius: "12px",
@@ -5121,37 +3084,24 @@ function WhyNashik() {
                 border: `1px solid ${G.li}`,
 
                 minHeight: "76px",
-
               }}
-
             >
-
               <div
-
                 style={{
-
                   display: "flex",
 
                   alignItems: "flex-start",
 
                   gap: "12px",
-
                 }}
-
               >
-
                 <span style={{ fontSize: "1.6rem", flexShrink: 0 }}>
-
                   {WHY[ac].e}
-
                 </span>
 
                 <div>
-
                   <h4
-
                     style={{
-
                       fontWeight: 800,
 
                       fontSize: "14px",
@@ -5159,41 +3109,25 @@ function WhyNashik() {
                       color: G.ink,
 
                       marginBottom: "5px",
-
                     }}
-
                   >
-
                     {WHY[ac].t}
-
                   </h4>
 
                   <p
-
                     style={{ fontSize: "13px", color: G.mu, lineHeight: 1.62 }}
-
                   >
-
                     {WHY[ac].b}
-
                   </p>
-
                 </div>
-
               </div>
-
             </div>
 
             <div style={{ marginTop: "12px", display: "flex", gap: "4px" }}>
-
               {WHY.map((_, i) => (
-
                 <div
-
                   key={i}
-
                   style={{
-
                     flex: 1,
 
                     height: "2.5px",
@@ -5203,27 +3137,17 @@ function WhyNashik() {
                     background: ac === i ? G.g : G.li,
 
                     transition: `background .28s ${E}`,
-
                   }}
-
                 />
-
               ))}
-
             </div>
-
           </div>
-
         </div>
-
-
 
         {/* Two action cards */}
 
         <div
-
           style={{
-
             marginTop: "32px",
 
             display: "grid",
@@ -5231,15 +3155,10 @@ function WhyNashik() {
             gridTemplateColumns: "1fr 1fr",
 
             gap: "14px",
-
           }}
-
         >
-
           <div
-
             style={{
-
               background: G.ink,
 
               borderRadius: "14px",
@@ -5249,15 +3168,10 @@ function WhyNashik() {
               position: "relative",
 
               overflow: "hidden",
-
             }}
-
           >
-
             <div
-
               style={{
-
                 position: "absolute",
 
                 top: "-24px",
@@ -5271,15 +3185,11 @@ function WhyNashik() {
                 borderRadius: "50%",
 
                 background: "rgba(255,255,255,.025)",
-
               }}
-
             />
 
             <p
-
               style={{
-
                 fontWeight: 800,
 
                 fontSize: "15px",
@@ -5289,19 +3199,13 @@ function WhyNashik() {
                 marginBottom: "7px",
 
                 letterSpacing: "-0.02em",
-
               }}
-
             >
-
               MahaProperties — Nashik&apos;s Trusted Partner
-
             </p>
 
             <p
-
               style={{
-
                 fontSize: "12.5px",
 
                 color: "rgba(255,255,255,.52)",
@@ -5309,47 +3213,30 @@ function WhyNashik() {
                 lineHeight: 1.68,
 
                 marginBottom: "16px",
-
               }}
-
             >
-
               40+ localities · RERA-compliant · transparent pricing since 2018.
-
               Connecting buyers with verified sellers across all property
-
               categories in Nashik.
-
             </p>
 
             <Link
-
               href="/about"
-
               className="b bg"
-
               style={{
-
                 padding: "9px 18px",
 
                 fontSize: "13px",
 
                 borderRadius: "8px",
-
               }}
-
             >
-
               Our Story {I.arr}
-
             </Link>
-
           </div>
 
           <div
-
             style={{
-
               background: `linear-gradient(135deg,${G.g},${G.gm})`,
 
               borderRadius: "14px",
@@ -5359,15 +3246,10 @@ function WhyNashik() {
               position: "relative",
 
               overflow: "hidden",
-
             }}
-
           >
-
             <div
-
               style={{
-
                 position: "absolute",
 
                 top: "-20px",
@@ -5381,15 +3263,11 @@ function WhyNashik() {
                 borderRadius: "50%",
 
                 background: "rgba(255,255,255,.08)",
-
               }}
-
             />
 
             <div
-
               style={{
-
                 position: "absolute",
 
                 bottom: "-28px",
@@ -5403,15 +3281,11 @@ function WhyNashik() {
                 borderRadius: "50%",
 
                 background: "rgba(255,255,255,.06)",
-
               }}
-
             />
 
             <p
-
               style={{
-
                 fontWeight: 800,
 
                 fontSize: "15px",
@@ -5421,19 +3295,13 @@ function WhyNashik() {
                 marginBottom: "7px",
 
                 letterSpacing: "-0.02em",
-
               }}
-
             >
-
               Post Your Property Free
-
             </p>
 
             <p
-
               style={{
-
                 fontSize: "12.5px",
 
                 color: "rgba(255,255,255,.72)",
@@ -5441,29 +3309,18 @@ function WhyNashik() {
                 lineHeight: 1.68,
 
                 marginBottom: "16px",
-
               }}
-
             >
-
               List your NA plot, agriculture land, warehouse or commercial
-
               property. Reach{" "}
-
               <strong style={{ color: "white" }}>10,000+ active buyers</strong>{" "}
-
               every month — completely free.
-
             </p>
 
             <Link
-
               href="/post-property"
-
               className="b"
-
               style={{
-
                 padding: "9px 18px",
 
                 fontSize: "13px",
@@ -5475,28 +3332,16 @@ function WhyNashik() {
                 color: G.g,
 
                 fontWeight: 700,
-
               }}
-
             >
-
               Post Property Free {I.arr}
-
             </Link>
-
           </div>
-
         </div>
-
       </div>
-
     </section>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -5505,79 +3350,46 @@ function WhyNashik() {
 ═══════════════════════════════════════════════════════════ */
 
 function Testi({ testimonials }: any) {
-
   const [ac, setAc] = useState(0);
 
   const [ref, vis] = useInView();
 
-
-
   const data = testimonials || [];
 
-
-
   useEffect(() => {
-
     if (data.length === 0) return;
 
     const interval = setInterval(() => {
-
       setAc((prev) => (prev + 1) % data.length);
-
     }, 3000);
 
-
-
     return () => clearInterval(interval);
-
   }, [data.length]);
-
-
 
   useEffect(() => {
-
     setAc(0);
-
   }, [data.length]);
 
-
-
   if (!testimonials || testimonials.length === 0) return null;
-
-
 
   const T = data[ac];
 
   if (!T) return null;
 
-
-
   return (
-
     <section
-
       className="sec"
-
       style={{ background: G.off, padding: "44px 0" }}
-
       ref={ref}
-
     >
-
       <div className="w">
-
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
-
           <div className="sl" style={{ justifyContent: "center" }}>
-
             Testimonials
-
           </div>
 
           <h2
-
             style={{
-
               fontFamily: FONT,
 
               fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
@@ -5587,21 +3399,14 @@ function Testi({ testimonials }: any) {
               letterSpacing: "-0.03em",
 
               color: G.ink,
-
             }}
-
           >
-
             What our clients say
-
           </h2>
-
         </div>
 
         <div
-
           style={{
-
             display: "grid",
 
             gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
@@ -5609,23 +3414,15 @@ function Testi({ testimonials }: any) {
             gap: "32px",
 
             alignItems: "start",
-
           }}
-
         >
-
           {/* Big card */}
 
           <div>
-
             <div
-
               key={ac}
-
               className="fu"
-
               style={{
-
                 background: "white",
 
                 borderRadius: "16px",
@@ -5635,57 +3432,37 @@ function Testi({ testimonials }: any) {
                 border: `1px solid ${G.li}`,
 
                 boxShadow: "0 4px 18px rgba(0,0,0,.06)",
-
               }}
-
             >
-
               <div
-
                 style={{
-
                   aspectRatio: "16/7",
 
                   overflow: "hidden",
 
                   position: "relative",
-
                 }}
-
               >
-
                 <Image
-
                   src={T.pImg}
-
                   alt={T.r}
-
                   fill
-
                   style={{ objectFit: "cover" }}
-
                 />
 
                 <div
-
                   style={{
-
                     position: "absolute",
 
                     inset: 0,
 
                     background:
-
                       "linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 60%)",
-
                   }}
-
                 />
 
                 <span
-
                   style={{
-
                     position: "absolute",
 
                     bottom: "11px",
@@ -5707,41 +3484,25 @@ function Testi({ testimonials }: any) {
                     backdropFilter: "blur(8px)",
 
                     border: "1px solid rgba(255,255,255,.2)",
-
                   }}
-
                 >
-
                   📍 {T.r} · {T.lc}
-
                 </span>
-
               </div>
 
               <div style={{ padding: "20px 22px" }}>
-
                 <svg
-
                   viewBox="0 0 24 24"
-
                   fill={G.gll}
-
                   width="28"
-
                   height="28"
-
                   style={{ marginBottom: "10px" }}
-
                 >
-
                   <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-
                 </svg>
 
                 <p
-
                   style={{
-
                     fontSize: "14.5px",
 
                     color: G.ink,
@@ -5751,25 +3512,16 @@ function Testi({ testimonials }: any) {
                     fontStyle: "italic",
 
                     marginBottom: "16px",
-
                   }}
-
                 >
-
                   &quot;{T.txt}&quot;
-
                 </p>
 
                 <div
-
                   style={{ display: "flex", alignItems: "center", gap: "11px" }}
-
                 >
-
                   <div
-
                     style={{
-
                       width: "42px",
 
                       height: "42px",
@@ -5791,77 +3543,50 @@ function Testi({ testimonials }: any) {
                       color: "white",
 
                       flexShrink: 0,
-
                     }}
-
                   >
-
                     {T.av}
-
                   </div>
 
                   <div>
-
                     <div
-
                       style={{
-
                         fontWeight: 700,
 
                         fontSize: "13.5px",
 
                         color: G.ink,
-
                       }}
-
                     >
-
                       {T.n}
-
                     </div>
 
                     <div style={{ fontSize: "11.5px", color: G.mu }}>
-
                       {T.r} · {T.lc}
-
                     </div>
 
                     <div
-
                       style={{
-
                         display: "flex",
 
                         gap: "1.5px",
 
                         marginTop: "3px",
-
                       }}
-
                     >
-
                       {[0, 1, 2, 3, 4].map((j) => (
-
                         <span key={j}>{I.star}</span>
-
                       ))}
-
                     </div>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
 
             {/* Nav */}
 
             <div
-
               style={{
-
                 display: "flex",
 
                 gap: "9px",
@@ -5869,23 +3594,14 @@ function Testi({ testimonials }: any) {
                 marginTop: "14px",
 
                 alignItems: "center",
-
               }}
-
             >
-
               <button
-
                 onClick={() =>
-
                   setAc((a) => (a - 1 + data.length) % data.length)
-
                 }
-
                 className="b bo"
-
                 style={{
-
                   width: "38px",
 
                   height: "38px",
@@ -5893,27 +3609,17 @@ function Testi({ testimonials }: any) {
                   borderRadius: "50%",
 
                   padding: 0,
-
                 }}
-
               >
-
                 {I.arL}
-
               </button>
 
               <div style={{ display: "flex", gap: "5px" }}>
-
                 {data.map((_: any, i: number) => (
-
                   <button
-
                     key={i}
-
                     onClick={() => setAc(i)}
-
                     style={{
-
                       width: ac === i ? "22px" : "6px",
 
                       height: "6px",
@@ -5927,23 +3633,15 @@ function Testi({ testimonials }: any) {
                       background: ac === i ? G.ink : G.li,
 
                       transition: `all .28s ${E}`,
-
                     }}
-
                   />
-
                 ))}
-
               </div>
 
               <button
-
                 onClick={() => setAc((a) => (a + 1) % data.length)}
-
                 className="b bo"
-
                 style={{
-
                   width: "38px",
 
                   height: "38px",
@@ -5951,33 +3649,21 @@ function Testi({ testimonials }: any) {
                   borderRadius: "50%",
 
                   padding: 0,
-
                 }}
-
               >
-
                 {I.arR}
-
               </button>
-
             </div>
-
           </div>
 
           {/* Right: client list */}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
-
             {data.map((t: any, i: number) => (
-
               <button
-
                 key={t.n}
-
                 onClick={() => setAc(i)}
-
                 style={{
-
                   display: "flex",
 
                   alignItems: "center",
@@ -5997,7 +3683,6 @@ function Testi({ testimonials }: any) {
                   textAlign: "left",
 
                   boxShadow:
-
                     ac === i ? "0 3px 14px rgba(26,107,60,.09)" : "none",
 
                   transition: `all .2s ${E}`,
@@ -6005,15 +3690,10 @@ function Testi({ testimonials }: any) {
                   opacity: 1,
 
                   transform: "none",
-
                 }}
-
               >
-
                 <div
-
                   style={{
-
                     width: "46px",
 
                     height: "46px",
@@ -6025,67 +3705,40 @@ function Testi({ testimonials }: any) {
                     flexShrink: 0,
 
                     position: "relative",
-
                   }}
-
                 >
-
                   <Image
-
                     src={t.pImg}
-
                     alt={t.n}
-
                     fill
-
                     style={{ objectFit: "cover" }}
-
                   />
-
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-
                   <div
-
                     style={{ fontWeight: 700, fontSize: "13px", color: G.ink }}
-
                   >
-
                     {t.n}
-
                   </div>
 
                   <div
-
                     style={{ fontSize: "11px", color: G.mu, marginTop: "1px" }}
-
                   >
-
                     {t.r} · {t.lc}
-
                   </div>
-
                 </div>
 
                 <div style={{ display: "flex", gap: "1px" }}>
-
                   {[0, 1, 2, 3, 4].map((j) => (
-
                     <span key={j}>{I.star}</span>
-
                   ))}
-
                 </div>
-
               </button>
-
             ))}
 
             <div
-
               style={{
-
                 marginTop: "6px",
 
                 background: "white",
@@ -6097,15 +3750,10 @@ function Testi({ testimonials }: any) {
                 border: `1px solid ${G.li}`,
 
                 textAlign: "center",
-
               }}
-
             >
-
               <div
-
                 style={{
-
                   fontSize: "1.75rem",
 
                   fontWeight: 900,
@@ -6113,33 +3761,21 @@ function Testi({ testimonials }: any) {
                   color: G.g,
 
                   lineHeight: 1,
-
                 }}
-
               >
-
                 500+
-
               </div>
 
               <div
-
                 style={{ fontSize: "12.5px", color: G.mu, marginTop: "3px" }}
-
               >
-
                 Verified reviews
-
               </div>
 
               <Link
-
                 href="/testimonials"
-
                 className="b bo"
-
                 style={{
-
                   marginTop: "12px",
 
                   padding: "8px 16px",
@@ -6149,30 +3785,17 @@ function Testi({ testimonials }: any) {
                   width: "100%",
 
                   justifyContent: "center",
-
                 }}
-
               >
-
                 Read All Reviews {I.arr}
-
               </Link>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </section>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -6181,41 +3804,23 @@ function Testi({ testimonials }: any) {
 ═══════════════════════════════════════════════════════════ */
 
 function Blogs({ blogs }: any) {
-
   const [ref, vis] = useInView();
-
-
 
   // dynamic blogs data
 
-
-
   if (!blogs || blogs.length === 0) return null;
-
-
 
   const [main, ...rest] = blogs;
 
-
-
   return (
-
     <section
-
       className="sec"
-
       style={{ background: "white", padding: "44px 0" }}
-
       ref={ref}
-
     >
-
       <div className="w">
-
         <div
-
           style={{
-
             display: "flex",
 
             justifyContent: "space-between",
@@ -6227,19 +3832,13 @@ function Blogs({ blogs }: any) {
             flexWrap: "wrap",
 
             gap: "10px",
-
           }}
-
         >
-
           <div>
-
             <div className="sl">Insights</div>
 
             <h2
-
               style={{
-
                 fontFamily: FONT,
 
                 fontSize: "clamp(1.4rem,2.8vw,2.1rem)",
@@ -6249,61 +3848,36 @@ function Blogs({ blogs }: any) {
                 letterSpacing: "-0.03em",
 
                 color: G.ink,
-
               }}
-
             >
-
               Nashik Property Insights
-
             </h2>
-
           </div>
 
-
-
           <Link
-
             href="/blogs"
-
             className="b bo"
-
             style={{ padding: "8px 16px", fontSize: "12.5px" }}
-
           >
-
             All Articles {I.arr}
-
           </Link>
-
         </div>
 
-
-
         <div
-
           style={{
-
             display: "grid",
 
             gridTemplateColumns: "1.4fr 1fr",
 
             gap: "16px",
-
           }}
-
         >
-
           {/* Main Blog */}
 
           <Link
-
             href={`/blogs/${main.s}`}
-
             className="lf zm"
-
             style={{
-
               background: "white",
 
               borderRadius: "14px",
@@ -6313,47 +3887,28 @@ function Blogs({ blogs }: any) {
               border: `1px solid ${G.li}`,
 
               display: "block",
-
             }}
-
           >
-
             <div
-
               style={{
-
                 aspectRatio: "16/9",
 
                 position: "relative",
 
                 overflow: "hidden",
-
               }}
-
             >
-
               <Image
-
                 src={main.img}
-
                 alt={main.t}
-
                 fill
-
                 style={{ objectFit: "cover" }}
-
               />
-
             </div>
 
-
-
             <div style={{ padding: "18px" }}>
-
               <h3
-
                 style={{
-
                   fontWeight: 800,
 
                   fontSize: "1rem",
@@ -6361,21 +3916,13 @@ function Blogs({ blogs }: any) {
                   color: G.ink,
 
                   marginBottom: "7px",
-
                 }}
-
               >
-
                 {main.t}
-
               </h3>
 
-
-
               <div
-
                 style={{
-
                   display: "flex",
 
                   gap: "12px",
@@ -6383,43 +3930,26 @@ function Blogs({ blogs }: any) {
                   fontSize: "11.5px",
 
                   color: G.mu,
-
                 }}
-
               >
-
                 <span>📅 {main.d}</span>
 
                 <span>⏱ {main.r} read</span>
-
               </div>
-
             </div>
-
           </Link>
-
-
 
           {/* Side Blogs */}
 
           <div
-
             style={{ display: "flex", flexDirection: "column", gap: "11px" }}
-
           >
-
             {rest.map((b: any, i: number) => (
-
               <Link
-
                 key={b.s}
-
                 href={`/blogs/${b.s}`}
-
                 className="lf"
-
                 style={{
-
                   background: "white",
 
                   borderRadius: "12px",
@@ -6429,39 +3959,22 @@ function Blogs({ blogs }: any) {
                   border: `1px solid ${G.li}`,
 
                   display: "flex",
-
                 }}
-
               >
-
                 <div
-
                   style={{ width: "96px", flexShrink: 0, position: "relative" }}
-
                 >
-
                   <Image
-
                     src={b.img}
-
                     alt={b.t}
-
                     fill
-
                     style={{ objectFit: "cover" }}
-
                   />
-
                 </div>
 
-
-
                 <div style={{ padding: "11px 13px" }}>
-
                   <span
-
                     style={{
-
                       ...CC[b.cat],
 
                       display: "inline-flex",
@@ -6475,21 +3988,13 @@ function Blogs({ blogs }: any) {
                       fontWeight: 700,
 
                       marginBottom: "6px",
-
                     }}
-
                   >
-
                     {b.cat}
-
                   </span>
 
-
-
                   <h3
-
                     style={{
-
                       fontWeight: 700,
 
                       fontSize: "12.5px",
@@ -6497,21 +4002,13 @@ function Blogs({ blogs }: any) {
                       color: G.ink,
 
                       marginBottom: "5px",
-
                     }}
-
                   >
-
                     {b.t}
-
                   </h3>
 
-
-
                   <div
-
                     style={{
-
                       display: "flex",
 
                       gap: "9px",
@@ -6519,33 +4016,20 @@ function Blogs({ blogs }: any) {
                       fontSize: "10.5px",
 
                       color: G.mu,
-
                     }}
-
                   >
-
                     <span>{b.d}</span>
 
                     <span>{b.r} read</span>
-
                   </div>
-
                 </div>
-
               </Link>
-
             ))}
-
           </div>
-
         </div>
-
       </div>
-
     </section>
-
   );
-
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -6555,73 +4039,44 @@ function Blogs({ blogs }: any) {
 ═══════════════════════════════════════════════════════════ */
 
 function CTA() {
-
   return (
-
     <section
-
       style={{ padding: "60px 0", position: "relative", overflow: "hidden" }}
-
     >
-
       <div style={{ position: "absolute", inset: 0 }}>
-
         <Image
-
           src="https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=1600&q=70"
-
           alt=""
-
           fill
-
           style={{ objectFit: "cover" }}
-
         />
 
         <div
-
           style={{
-
             position: "absolute",
 
             inset: 0,
 
             background:
-
               "linear-gradient(135deg,rgba(8,12,18,.94) 0%,rgba(22,90,50,.72) 100%)",
-
           }}
-
         />
-
       </div>
 
       <div
-
         className="w"
-
         style={{ position: "relative", zIndex: 1, textAlign: "center" }}
-
       >
-
         <div
-
           className="sl"
-
           style={{ justifyContent: "center", color: "#4ade80" }}
-
         >
-
           <span style={{ background: "#4ade80" }} />
-
           Free Consultation Available
-
         </div>
 
         <h2
-
           style={{
-
             fontFamily: FONT,
 
             fontSize: "clamp(1.6rem,3.8vw,2.85rem)",
@@ -6635,19 +4090,13 @@ function CTA() {
             lineHeight: 1.1,
 
             marginBottom: "12px",
-
           }}
-
         >
-
           Ready to find your dream property?
-
         </h2>
 
         <p
-
           style={{
-
             fontSize: "clamp(.875rem,1.7vw,1rem)",
 
             color: "rgba(255,255,255,.6)",
@@ -6657,21 +4106,14 @@ function CTA() {
             margin: "0 auto 28px",
 
             lineHeight: 1.7,
-
           }}
-
         >
-
           Talk to our Nashik property experts for free. Right plot, right price
-
           — no pressure, zero brokerage surprises.
-
         </p>
 
         <div
-
           style={{
-
             display: "flex",
 
             flexWrap: "wrap",
@@ -6681,83 +4123,53 @@ function CTA() {
             justifyContent: "center",
 
             marginBottom: "28px",
-
           }}
-
         >
-
           <a
-
             href="tel:+919876543210"
-
             className="b bg"
-
             style={{
-
               padding: "12px 26px",
 
               fontSize: "14px",
 
               borderRadius: "9px",
-
             }}
-
           >
-
             {I.ph} Call Now — Free
-
           </a>
 
           <a
-
             href="https://wa.me/919876543210"
-
             className="b bwa"
-
             style={{
-
               padding: "12px 26px",
 
               fontSize: "14px",
 
               borderRadius: "9px",
-
             }}
-
           >
-
             {I.wa} WhatsApp Us
-
           </a>
 
           <Link
-
             href="/properties"
-
             className="b bgh"
-
             style={{
-
               padding: "12px 26px",
 
               fontSize: "14px",
 
               borderRadius: "9px",
-
             }}
-
           >
-
             Browse Properties {I.arr}
-
           </Link>
-
         </div>
 
         <div
-
           style={{
-
             display: "flex",
 
             flexWrap: "wrap",
@@ -6765,13 +4177,9 @@ function CTA() {
             gap: "18px",
 
             justifyContent: "center",
-
           }}
-
         >
-
           {[
-
             "RERA Compliant",
 
             "Zero Hidden Charges",
@@ -6779,15 +4187,10 @@ function CTA() {
             "2,500+ Verified Listings",
 
             "Free Expert Advice",
-
           ].map((b) => (
-
             <span
-
               key={b}
-
               style={{
-
                 display: "flex",
 
                 alignItems: "center",
@@ -6799,30 +4202,18 @@ function CTA() {
                 fontWeight: 600,
 
                 color: "rgba(255,255,255,.48)",
-
               }}
-
             >
-
               <span style={{ color: "#4ade80" }}>{I.chk}</span>
 
               {b}
-
             </span>
-
           ))}
-
         </div>
-
       </div>
-
     </section>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -6831,26 +4222,18 @@ function CTA() {
 ═══════════════════════════════════════════════════════════ */
 
 function WA() {
-
   return (
-
     <a
-
       href="https://wa.me/919876543210"
-
       target="_blank"
-
       rel="noopener noreferrer"
-
       title="Chat on WhatsApp"
-
       style={{
-
         position: "fixed",
 
         bottom: "24px",
 
-        right: "24px",
+        left: "24px",
 
         zIndex: 850,
 
@@ -6873,20 +4256,12 @@ function WA() {
         animation: "_wb 3s ease-in-out infinite",
 
         border: "2px solid rgba(255,255,255,.28)",
-
       }}
-
     >
-
       {I.wa}
-
     </a>
-
   );
-
 }
-
-
 
 /* ═══════════════════════════════════════════════════════════
 
@@ -6895,7 +4270,6 @@ function WA() {
 ═══════════════════════════════════════════════════════════ */
 
 export default function MahaHome() {
-
   const { city } = useLocationStore();
 
   const [properties, setProperties] = useState([]);
@@ -6904,52 +4278,35 @@ export default function MahaHome() {
 
   const [testimonials, setTestimonials] = useState([]);
 
-
-
   useEffect(() => {
-
     fetch("/api/blogs")
-
       .then((res) => res.json())
 
       .then((data) => setBlogs(data))
 
       .catch((err) => console.error(err));
-
   }, []);
 
-
-
   useEffect(() => {
-
     fetch("/api/properties")
-
       .then((res) => res.json())
 
       .then((data) => setProperties(data))
 
       .catch((err) => console.error(err));
-
   }, []);
 
-
-
   useEffect(() => {
-
     fetch("/api/testimonials")
-
       .then((res) => res.json())
 
       .then((data) => setTestimonials(data))
 
       .catch((err) => console.error(err));
-
   }, []);
 
   return (
-
     <>
-
       <style dangerouslySetInnerHTML={{ __html: GCSS }} />
 
       {/* Nav is here — NOT in layout.tsx (which is now a passthrough) */}
@@ -6957,7 +4314,6 @@ export default function MahaHome() {
       <Nav />
 
       <main style={{ paddingBottom: "10px" }}>
-
         <Hero />
 
         <CatGrid properties={properties} />
@@ -6975,7 +4331,6 @@ export default function MahaHome() {
         <Blogs blogs={blogs} />
 
         <CTA />
-
       </main>
 
       {/* Single footer */}
@@ -6987,9 +4342,6 @@ export default function MahaHome() {
       {/* WhatsApp sticky — official logo */}
 
       <WA />
-
     </>
-
   );
-
-} 
+}
