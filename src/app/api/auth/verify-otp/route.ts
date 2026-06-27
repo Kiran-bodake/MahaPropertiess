@@ -8,501 +8,225 @@ import Role from "@/models/Role";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-
 export async function POST(req: NextRequest) {
-
   try {
+    const { phone, otp } = await req.json();
 
-    const {
-      phone,
-      otp
-    } = await req.json();
-
-
-
-    if(!phone || !otp){
-
+    if (!phone || !otp) {
       return NextResponse.json(
         {
-          success:false,
-          error:"Phone and OTP required"
+          success: false,
+          error: "Phone and OTP required",
         },
         {
-          status:400
-        }
+          status: 400,
+        },
       );
-
     }
 
-
-
     await connectDB();
-
-
-
 
     // FIND OTP
 
     const record = await Otp.findOne({
-      phone
+      phone,
     });
 
-
-
-    if(!record){
-
+    if (!record) {
       return NextResponse.json(
         {
-          success:false,
-          error:"OTP not found"
+          success: false,
+          error: "OTP not found",
         },
         {
-          status:400
-        }
+          status: 400,
+        },
       );
-
     }
-
-
-
 
     // OTP EXPIRY
 
-    if(record.expiresAt < new Date()){
-
-
+    if (record.expiresAt < new Date()) {
       await record.deleteOne();
-
 
       return NextResponse.json(
         {
-          success:false,
-          error:"OTP expired"
+          success: false,
+          error: "OTP expired",
         },
         {
-          status:400
-        }
+          status: 400,
+        },
       );
-
     }
-
-
-
-
-
 
     // VERIFY OTP
 
-
     const isValid = await bcrypt.compare(
-
       otp,
 
-      record.otp
-
+      record.otp,
     );
 
-
-
-    if(!isValid){
-
-
-      record.attempts =
-        (record.attempts || 0) + 1;
-
+    if (!isValid) {
+      record.attempts = (record.attempts || 0) + 1;
 
       await record.save();
 
-
-
       return NextResponse.json(
         {
-          success:false,
-          error:"Invalid OTP"
+          success: false,
+          error: "Invalid OTP",
         },
         {
-          status:400
-        }
+          status: 400,
+        },
       );
-
     }
-
-
-
-
-
-
 
     // FIND USER
 
-
     let user = await User.findOne({
-
-      phone
-
+      phone,
     });
-
-
-
-
-
-
-
-
 
     // CREATE USER
 
-
-    if(!user){
-
-
-
+    if (!user) {
       // GET DEFAULT USER ROLE
 
       const userRole = await Role.findOne({
-
-        name:"user"
-
+        name: "user",
       });
 
-
-
-
-
-      if(!userRole){
-
-
+      if (!userRole) {
         return NextResponse.json(
           {
-            success:false,
-            error:"User role not found in database"
+            success: false,
+            error: "User role not found in database",
           },
           {
-            status:500
-          }
+            status: 500,
+          },
         );
-
-
       }
 
+      const passwordHash = await bcrypt.hash(
+        crypto.randomUUID(),
 
-
-
-
-
-      const passwordHash =
-
-        await bcrypt.hash(
-
-          crypto.randomUUID(),
-
-          10
-
-        );
-
-
-
-
-
-
+        10,
+      );
 
       user = await User.create({
-
-
-        name:
-
-          `User ${phone.slice(-4)}`,
-
+        name: `User ${phone.slice(-4)}`,
 
         phone,
 
-
-
-        email:
-
-          `${phone}@temp.com`,
-
-
+        email: `${phone}@temp.com`,
 
         passwordHash,
 
+        role: userRole._id,
 
+        isVerified: true,
 
-        role:
+        loginCount: 1,
 
-          userRole._id,
-
-
-
-        isVerified:true,
-
-
-
-        loginCount:1,
-
-
-
-        lastLoginAt:
-
-          new Date()
-
-
-
+        lastLoginAt: new Date(),
       });
-
-
-
-
     }
 
-
-
-
-
-
-
     // EXISTING USER LOGIN
-
-
-
     else {
-
-
-
       // FIX OLD USERS
 
-
-      if(!user.email){
-
-
-        user.email =
-          `${phone}@temp.com`;
-
-
+      if (!user.email) {
+        user.email = `${phone}@temp.com`;
       }
 
+      if (!user.passwordHash) {
+        user.passwordHash = await bcrypt.hash(
+          crypto.randomUUID(),
 
-
-
-
-      if(!user.passwordHash){
-
-
-        user.passwordHash =
-
-          await bcrypt.hash(
-
-            crypto.randomUUID(),
-
-            10
-
-          );
-
-
+          10,
+        );
       }
 
+      user.loginCount = (user.loginCount || 0) + 1;
 
-
-
-
-      user.loginCount =
-
-        (user.loginCount || 0) + 1;
-
-
-
-
-      user.lastLoginAt =
-
-        new Date();
-
-
-
+      user.lastLoginAt = new Date();
 
       user.isVerified = true;
 
-
-
-
       await user.save();
-
-
-
     }
-
-
-
-
-
-
-
-
 
     // DELETE OTP
 
-
     await record.deleteOne();
-
-
-
-
-
-
-
 
     // JWT TOKEN
 
-
-
     const token = jwt.sign(
-
-
       {
+        userId: user._id,
 
-        userId:user._id,
+        phone: user.phone,
 
-        phone:user.phone,
-
-        role:user.role
-
-
+        role: user.role,
       },
-
 
       process.env.JWT_SECRET!,
 
-
       {
-
-        expiresIn:"7d"
-
-      }
-
-
+        expiresIn: "7d",
+      },
     );
 
-
-
-
-
-
-
-
-
     const response = NextResponse.json({
+      success: true,
 
+      message: "Login successful",
 
-      success:true,
-
-
-      message:"Login successful",
-
-
-      user:user.getPublicProfile()
-
-
-
+      user: user.getPublicProfile(),
     });
 
-
-
-
-
-
-
-
-
-
     response.cookies.set(
-
-
       "propvista-access-token",
-
 
       token,
 
-
       {
+        httpOnly: true,
 
+        secure: process.env.NODE_ENV === "production",
 
-        httpOnly:true,
+        sameSite: "lax",
 
+        maxAge: 7 * 24 * 60 * 60,
 
-        secure:
-
-          process.env.NODE_ENV === "production",
-
-
-
-        sameSite:"lax",
-
-
-
-        maxAge:
-
-          7 * 24 * 60 * 60,
-
-
-
-        path:"/"
-
-
-      }
-
-
+        path: "/",
+      },
     );
-
-
-
-
-
-
-
 
     return response;
-
-
-
-
-
-  }
-
-
-
-  catch(error:any){
-
-
-
+  } catch (error: any) {
     console.error(
-
       "Verify OTP Error:",
 
-      error
-
+      error,
     );
 
-
-
     return NextResponse.json(
-
       {
+        success: false,
 
-        success:false,
-
-        error:error.message || "OTP verification failed"
-
+        error: error.message || "OTP verification failed",
       },
 
       {
-
-        status:500
-
-      }
-
+        status: 500,
+      },
     );
-
-
   }
-
-
 }
