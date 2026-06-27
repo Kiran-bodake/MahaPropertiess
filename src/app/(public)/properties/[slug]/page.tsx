@@ -4,15 +4,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ContactButton from "@/components/property/ContactButton";
 import Breadcrumbs from "@/components/shared/Breadcrumbs";
-
 import { Navbar } from "@/components/layout/navbar/Navbar";
-
 import { Footer } from "@/components/layout/footer";
 import ViewTracker from "@/components/property/ViewTracker";
 import FloatingWhatsapp from "@/components/shared/FloatingWhatsapp";
 import { StickyContactForm } from "@/components/shared/StickyContactForm";
 import PropertyLeadForm from "@/components/shared/PropertyLeadForm";
-87;
 import { PropertySectionTabs } from "@/components/property/PropertySectionTabs";
 import { PropertyActions } from "@/components/property/PropertyActions";
 import { PropertyGallery } from "@/components/property/PropertyGallery";
@@ -48,6 +45,7 @@ import {
 import PropertyEMIBadge from "@/components/property/PropertyEMIBadge";
 import AreaConversion from "@/components/property/AreaConversion";
 import PropertyMap from "@/components/property/PropertyMapWrapper";
+import StickySupport from "@/components/shared/StickySupport";
 
 type PropertyType = {
   _id?: string;
@@ -955,6 +953,7 @@ export default async function PropertyDetailPage({
 
 `}</style>
       </main>
+      <StickySupport />
       <FloatingWhatsapp />
 
       <Footer />

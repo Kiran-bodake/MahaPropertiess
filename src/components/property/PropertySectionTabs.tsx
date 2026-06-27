@@ -40,7 +40,7 @@ export function PropertySectionTabs() {
     <div
       style={{
         position: "sticky",
-        top: 100,
+        top: 60,
         zIndex: 40,
 
         background: "rgba(255,255,255,.88)",
