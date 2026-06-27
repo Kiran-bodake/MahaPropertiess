@@ -54,6 +54,12 @@ export const createProperty = async (body: any) => {
 
       categoryLabel: body.categoryLabel || "",
 
+       city: body.city || "",
+
+  state: body.state || "",
+
+  locality: body.locality || "",
+
       status: body.status || "available",
 
       constructionStatus: body.constructionStatus || "ready",

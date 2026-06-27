@@ -28,6 +28,7 @@ export async function GET(
 
     /* Find main property */
     const property = await Property.findOne({
+
       $or: [
         {
           slug: slug,

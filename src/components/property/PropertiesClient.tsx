@@ -156,6 +156,18 @@ async function fetchAllProperties(signal?: AbortSignal): Promise<Property[]> {
     cache: "no-store",
     signal,
   });
+<<<<<<< HEAD
+=======
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch properties");
+  }
+
+  const json = await res.json();
+
+  return Array.isArray(json.data) ? json.data : [];
+}
+>>>>>>> 5c29cd3 (navbar updated)
 
   if (!res.ok) {
     throw new Error("Failed to fetch properties");
@@ -432,7 +444,9 @@ function PropertiesContent({
 
   const properties = useMemo(() => {
     const q = norm(debouncedFilters.q);
-    const selectedCats = debouncedFilters.category.map((c) => norm(c));
+const selectedCats = debouncedFilters.category.map((c) =>
+  norm(c).replace(/\s+/g, "-")
+);
     const loc = norm(debouncedFilters.locality);
 
     let list = allProperties.filter((p) => {
