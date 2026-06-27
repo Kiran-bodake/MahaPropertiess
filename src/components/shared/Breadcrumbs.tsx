@@ -46,7 +46,7 @@ export default function Breadcrumbs({ items, property }: Props) {
 
         <style jsx>{`
           .breadcrumbs {
-            padding: 6px 0;
+            padding: 4px 0;
             margin-bottom: 12px;
           }
 
@@ -183,7 +183,7 @@ export default function Breadcrumbs({ items, property }: Props) {
       <style jsx>{`
         .breadcrumbs {
           padding: 12px 0;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           background: #f8fafc;
           border-radius: 12px;
           padding: 12px 20px;

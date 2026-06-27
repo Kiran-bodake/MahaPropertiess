@@ -342,7 +342,7 @@ export default async function PropertyDetailPage({
 
             margin: "0 auto",
 
-            padding: "20px 16px 40px",
+            padding: "8px 16px 40px",
             overflow: "visible",
           }}
         >
