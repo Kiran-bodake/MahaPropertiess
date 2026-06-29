@@ -22,6 +22,7 @@ export async function getFeaturedProperties(city: string, limit = 12) {
     },
     approvalStatus: "approved",
   })
+    .select("-agentPhone -agentName -postedBy -email -ownerPhone -ownerEmail")
     .sort({ createdAt: -1 })
     .limit(limit)
     .lean();
